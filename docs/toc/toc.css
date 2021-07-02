@@ -1,0 +1,70 @@
+#TOC {
+	font-size: 1.4rem;
+	margin-top: 1rem;
+}
+
+#TOC .book-title {
+	display: block;
+	text-align: right;
+	font-style: italic;
+}
+
+#TOC nav {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0 1em;
+	border: 1px solid lightgray;
+	border-left: none;
+	border-right: none;
+	white-space: pre;
+	counter-reset: part chapter;
+}
+
+#TOC .rest {
+	position: absolute;
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 0.2s;
+	padding-right: 0.4em;
+	background: white;
+}
+
+#TOC .dropdown {
+	transform: scaleY(0);
+	transform-origin: top;
+	transition: transform 0.2s;
+	padding: 0.2em 0.4em;
+	border: 1px solid lightgray;
+	border-top-width: 4px;
+	background: white;
+}
+
+#TOC :is(.book-title, .first, .rest) {
+	padding-top: 0.4em;
+	padding-bottom: 0.4em;
+}
+
+#TOC .part-container:hover :is(.rest, .dropdown) { transform: none; }
+
+#TOC .dropdown-container { position: absolute; }
+
+#TOC    .part-title { display: flex; }
+#TOC .chapter-title { display: flex; }
+
+#TOC    .part-title::before { --counter:    part; --style: upper-roman; }
+#TOC .chapter-title::before { --counter: chapter; --style:     decimal; }
+
+#TOC ::before {
+	content: counter(var(--counter), var(--style));
+	counter-increment: var(--counter);
+	padding-left: 0.4em;
+	padding-right: 0.5em;
+	font-size: 0.7em;
+	font-weight: bold;
+	align-self: center;
+}
+
+#TOC :link {
+	background: none;
+	text-shadow: none;
+}
