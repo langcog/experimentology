@@ -30,14 +30,41 @@ As with all developmental research, there are many constraints on measurement th
 The first page of the MacArthur-Bates Communicative Development Inventory, a parent report instrument for measuring children's early language.
 ```
 
-To decide which of these methods to use for a specific study, we need to think through the properties of these measurement instruments -- both in terms of reliability and validity and also in terms of their practicality for a specific research situation. For example, observational measurement can be extremely costly in both time and money because it not only requires a visit of some sort (to the home or the lab) but also transcription of speech, which is quite time-consuming -- often taking 5-10 minutes of work to transcribe a single minute of speech. Direct assessment still requires a lab or home visit, but scoring is typically more straightforward. Finally, parent report -- (e)mailing a questionnaire to the parent -- is extremely time- and cost-effective. These practicalities may make a big difference in our selection of measures. 
+To decide which of these methods to use for a specific study, we need to think through the properties of these measurement instruments -- both in terms of reliability and validity and also in terms of their practicality for a specific research situation. Practicalities matter! For example, observational measurement can be extremely costly in both time and money because it not only requires a visit of some sort (to the home or the lab) but also transcription of speech, which is quite time-consuming -- often taking 5-10 minutes of work to transcribe a single minute of speech. Direct assessment still requires a lab or home visit, but scoring is typically more straightforward. Finally, parent report -- (e)mailing a questionnaire to the parent -- is extremely time- and cost-effective. 
 
-On the other hand, we wouldn't want to use sparent report 
-
-
+On the other hand, we wouldn't want to use CDI questionnaires as a tool if they were a bad measurement instrument. How can we tell? This is where assessment of reliability and validity are critical. In practice, the task of selecting and justifying a measurement instrument comes down to an argument about reliability and validity.
 
 
-MacArthur Bates CDI (Fenson et al., 1994; Frank et al., 2021) as an example of a measure of a construct where we can step through validity and reliability as well as discuss the pros and cons of adopting this measure as an experimental outcome.
+```{r measurement-reliability}
+library(wordbankr)
+ws <- wordbankr::get_instrument_data(language = "English (American)", 
+                                     form = "WS", administrations = TRUE, 
+                                     iteminfo = TRUE)
+
+ws_mat <- ws |>
+  filter(!longitudinal, type == "word") |>
+  mutate(value = value == "produces", 
+         even_item = ifelse(num_item_id %% 2 == 0, "even","odd")) |>
+  group_by(data_id, even_item) |>
+  summarise(prop = mean(value)) |>
+  pivot_wider(names_from = even_item, values_from = prop) 
+
+test_retest <- cor.test(ws_mat$even, ws_mat$odd)$estimate
+```
+
+How reliable is the CDI? As we'll discuss more below, there's no single answer to this question. Not only are there multiple ways to compute reliability, but also reliability in practice is going to depend on the population being measured, the fidelity with which the instrument is administered, and other factors. 
+
+
+
+Given that CDI forms are relatively reliable instruments, are they valid? Well, as a starting point, they certainly have reasonable **face validity** -- they look like they are measuring the construct that they purport to measure. They also arguably have some **ecological validity** in that they measure the child's language (as observed by the parent) in their day-to-day experiences, rather than in a particular lab situation. 
+
+
+
+```{marginfigure, echo=TRUE}
+<img src="images/cdi-validity.png"/>
+Relations between an early form of the CDI (the ELI) and several other measurements of children's early language from both transcripts and direct assessments. Arrows indicate loadings of different measures (boxes) onto a single construct (circle). Numbers give stanardized weights [@bornstein1998].
+```
+
 :::
 
 
@@ -51,8 +78,16 @@ The nomological network (Cronbach and Meehl 1955). In other words, the measure i
 
 ## Measurement Reliability
 
+
+### Computing reliability
+
 Test-retest. Variance related to the test-taker’s performance. 	
 Inter-rater. Variance related to the measurement method.
+
+### Reliability paradoxes
+
+https://lucklab.ucdavis.edu/blog/2019/2/19/reliability-and-precision
+
 
 ## Design of measures
 
