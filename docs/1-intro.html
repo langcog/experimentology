@@ -12,7 +12,7 @@
 
 
 
-<meta name="author" content="Michael C. Frank et al" />
+<meta name="author" content="Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwick, Robert Hawkins, Maya Mathur, and Rondeline Williams" />
 
 
 
@@ -48,21 +48,22 @@
 <li><a href="3-ethics.html#ethics"><span class="toc-section-number">3</span> Ethics</a></li>
 <li class="part"><span><b>II Experimental design and planning</b></span></li>
 <li><a href="4-measurement.html#measurement"><span class="toc-section-number">4</span> Measurement</a></li>
-<li><a href="5-design-of-experiments.html#design-of-experiments"><span class="toc-section-number">5</span> Design of experiments</a></li>
-<li><a href="6-statistical-models.html#statistical-models"><span class="toc-section-number">6</span> Statistical models</a></li>
-<li><a href="7-inferences.html#inferences"><span class="toc-section-number">7</span> Inferences</a></li>
+<li><a href="5-design.html#design"><span class="toc-section-number">5</span> Design of experiments</a></li>
+<li><a href="6-inference.html#inference"><span class="toc-section-number">6</span> Statistical inference for comparing groups</a></li>
+<li><a href="7-models.html#models"><span class="toc-section-number">7</span> Statistical models for more complex designs</a></li>
 <li><a href="8-sampling.html#sampling"><span class="toc-section-number">8</span> Sampling</a></li>
 <li><a href="9-preregistration.html#preregistration"><span class="toc-section-number">9</span> Preregistration</a></li>
-<li class="part"><span><b>III Data collection and management</b></span></li>
-<li><a href="10-data-collection.html#data-collection"><span class="toc-section-number">10</span> Data collection</a></li>
-<li><a href="11-data-management.html#data-management"><span class="toc-section-number">11</span> Data management</a></li>
-<li class="part"><span><b>IV Analysis, reporting, and contextualization</b></span></li>
-<li><a href="12-visualization.html#visualization"><span class="toc-section-number">12</span> Visualization</a></li>
-<li><a href="13-exploratory-data-analysis.html#exploratory-data-analysis"><span class="toc-section-number">13</span> Exploratory data analysis</a></li>
-<li><a href="14-reproducible-writing.html#reproducible-writing"><span class="toc-section-number">14</span> Reproducible writing</a></li>
-<li><a href="15-meta-analysis.html#meta-analysis"><span class="toc-section-number">15</span> Meta-analysis</a></li>
-<li class="part"><span><b>V Conclusion</b></span></li>
-<li><a href="16-conclusion.html#conclusion"><span class="toc-section-number">16</span> Conclusion</a></li>
+<li class="part"><span><b>III Doing the experiment</b></span></li>
+<li><a href="10-selection.html#selection"><span class="toc-section-number">10</span> Replicating or extending an existing study</a></li>
+<li><a href="11-collection.html#collection"><span class="toc-section-number">11</span> Data collection</a></li>
+<li><a href="12-management.html#management"><span class="toc-section-number">12</span> Data management</a></li>
+<li class="part"><span><b>IV Analysis and reporting</b></span></li>
+<li><a href="13-viz.html#viz"><span class="toc-section-number">13</span> Visualization</a></li>
+<li><a href="14-eda.html#eda"><span class="toc-section-number">14</span> Exploratory data analysis</a></li>
+<li><a href="15-writing.html#writing"><span class="toc-section-number">15</span> Reproducible writing</a></li>
+<li class="part"><span><b>V Contextualizing your study</b></span></li>
+<li><a href="16-meta.html#meta"><span class="toc-section-number">16</span> Meta-analysis</a></li>
+<li><a href="17-conclusions.html#conclusions"><span class="toc-section-number">17</span> Conclusions</a></li>
 </ul>
 </div>
 </div>
@@ -71,16 +72,37 @@
 <div class="col-sm-12">
 <div id="intro" class="section level1" number="1">
 <h1><span class="header-section-number">Chapter 1</span> Introduction: theory and experiments</h1>
+<div class="learning-goals">
+<p>🍎 Learning goals: Define “experiment”and “theory,” distinguish between bias and precision, reason about the relationship between the experimental method and causal inference, and analyze features of an experiment that can lead to weaker or stronger tests of theory.</p>
+</div>
 <div class="case-study">
-<p>Case study: the rational speech act model of pragmatics as a model of the closed loop between theory and data (Goodman &amp; Frank, 2016)</p>
+<p>🔬 Case study: the Rational Speech Act model of pragmatics as a model of the closed loop between theory and data (Goodman and Frank 2016).</p>
 </div>
 <p><label for="tufte-mn-1" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-1" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/rsa.png"/></span></span></p>
-<p>What is an experiment and why do one? Experiments are “the worst way to learn about the world” (in the words of one of my mentors). Quick answer: experiments provide strong causal inferences about the hidden structure of the world.</p>
-<div class="box">
-<p>Box: causal graphical models as an approach to understanding causal inference</p>
-</div>
+<p>What is an experiment and why do one?</p>
+<ul>
+<li>On one hand, experiments are “the worst way to learn about the world” (in the words of one of our mentors). “You can’t play 20 questions with nature and win” (Newell 1973). But experiments are also one of our best tools for making strong causal inferences about the hidden structure of the world. They allow us to not just observe the world but to systematically intervene on it.</li>
+<li>We used to just poke things or people and measure what happened (see Hacking, 1990 on the 19th century craze of just measuring everything for fun.) Now we typically want our experiments to resolve deeper questions or test hypotheses.</li>
+<li>Causal graphical models as an approach to understanding causal inference via counterfactuals (Pearl and Mackenzie 2018).</li>
+</ul>
 <p>What is a theory?</p>
-<p>How to do experiments that help build theory</p>
+<p>Theories aim to predict and to explain, but there is some tension between these. Theories with high predictive value are not necessarily causal or parsimonious (e.g., a black-box neural network model that predicts heart disease risk). Meanwhile, theories with high explanatory value may only account for a small proportion of overall variance in a behavior (e.g. a theory of lexical priming that introduces a new, causal role of accessibility.)</p>
+<div class="ethics-box">
+<p>🌿 Ethics box: Who are we theorizing about? How does this theory build on prior history? And what are the consequences of that theorizing? Example: the input-uptake relationship in language learning is a well-supported idea, but it can become weaponized against communities of color (Sperry, Sperry, and Miller 2019).</p>
+</div>
+<p>How to do experiments that help build theory?</p>
+<ul>
+<li>Introducing the concepts of precision and bias (dartboard analogy).
+<ul>
+<li>Precision of measurement is a foundational value allowing for cumulative progress and falsification; measuring null effects with precision can be just as important.</li>
+<li>Precise measurements must also be unbiased to be helpful in theory construction – or else theories risk reifying bias into their constructs.</li>
+</ul></li>
+<li>“Risky tests” (Meehl 1978) vs. “flexible theories” (Roberts and Pashler 2000)
+<ul>
+<li>Formal relationship to Bayes Occam’s Razor and example of spreading bets across every horse vs. placing all your money on one horse (if that one horse wins, you get a much higher payoff in the second case).</li>
+</ul></li>
+<li>Each experiment can be viewed as a single operationalization of an underlying theory, thus the value of meta-analysis to pool across these instantiations (see Chapter 16).</li>
+</ul>
 
 </div>
 <p style="text-align: center;">
