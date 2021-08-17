@@ -17,12 +17,12 @@ Not all measurements are created equal. This point is obvious when you think abo
 
 When we have a physical quantity of interest, we can assess how well an instrument measures that quantity. But, as we saw in Chapter \@ref(theory), things are much trickier when the construct we are trying to measure can't be assessed directly. We have to measure something observable -- our **operationalization** of the construct -- and then make an argument about how it relates to the construct of interest. We call this argument an argument for the **validity** of the measure. 
 
-These two concepts, reliability and validity, provide a conceptual toolkit for assessing how good a psychological measurement instrument is. Let's start by taking a look at an example of the challenge of measuring a particular latent construct, children's early language ability. We can use this example to understand the concepts of reliability and validity in practice. 
+These two concepts, reliability and validity, provide a conceptual toolkit for assessing how good a psychological measurement instrument is. Let's start by taking a look at an example of the challenge of measuring a particular latent construct, children's early language ability. We can use this example to understand the concepts of reliability and validity. 
 
 ::: {.case-study}
 Anyone who has worked with little children or had children of their own can attest to how variable their early language is. Some children speak clearly and produce long sentences from an early age. Others struggle to produce words but clearly show evidence of understanding. And yet others show deficits in both producing and understanding language. Further, this variation appears to be linked to later outcomes -- children whose very early language processing is slower and whose vocabularies are smaller tend to do worse in school years later [@fernald2008]. Thus, there are many reasons why you'd want to make precise measurements of children's early language ability as a latent construct of interest.^[Of course, you can also ask if early language is a single construct, or whether it is multi-dimensional! For example, does grammar develop separately from vocabulary? It turns out the two are very closely coupled [@frank2021]. This point illustrates the general idea that, especially in psychology, measurement and theory building are intimately related -- you need data to inform your theory, but the measurement instruments you use to collect your data in turn presuppose some theory!]
 
-As with all developmental research, there are many constraints on measurement that are imposed by the age of the children you want to work with. You can't give toddlers a multiple-choice test! So to measure early language (to be concrete, let's say for children under two and a half years old), you have roughly three options open. First, you can do some kind of observation of them and transcribe their language production -- this could be a play session in the lab or at home, with an experimenter or with a parent or other caregiver. Second, you could do some kind of direct assessment, e.g. by asking them to point or look at the referent of a word (e.g. "look at the kitty") and record their responses using video, a tablet, or even eye-tracking technology [@frank2016]. Or, you could ask thier parents about their language, for example sending a questionnaire like the MacArthur Bates Communicative Development Inventory (CDI for short), which asks parents to check off the words that their child says or understands.
+As with all developmental research, there are many constraints on measurement that are imposed by the age of the children you want to work with. You can't give toddlers a multiple-choice test! So to measure early language ability (to be concrete, let's say for children under two and a half years old), you have roughly three options open. First, you can do some kind of observation of them and transcribe their language production -- this could be a play session in the lab or at home, with an experimenter or with a parent or other caregiver. Second, you could do some kind of direct assessment, e.g. by asking them to point or look at the referent of a word (e.g. "look at the kitty") and record their responses using video, a tablet, or even eye-tracking technology [@frank2016]. Or, you could ask their parents about their language, for example sending a questionnaire like the MacArthur Bates Communicative Development Inventory (CDI for short), which asks parents to mark words that their child says or understands. CDI forms are basically long checklists of words (and other items, which we'll ignore for now); the first page of an English form is shown in the margin.
 
 
 ```{marginfigure, echo=TRUE}
@@ -49,27 +49,36 @@ ws_mat <- ws |>
   summarise(prop = mean(value)) |>
   pivot_wider(names_from = even_item, values_from = prop) 
 
+n <- length(unique(ws_mat$data_id))
 test_retest <- cor.test(ws_mat$even, ws_mat$odd)$estimate
 ```
 
-How reliable is the CDI? As we'll discuss more below, there's no single answer to this question. Not only are there multiple ways to compute reliability, but also reliability in practice is going to depend on the population being measured, the fidelity with which the instrument is administered, and other factors. 
+How reliable is the CDI? As we'll discuss more below, there's no single answer to this question. Not only are there multiple ways to compute reliability, but also reliability in practice is going to depend on the population being measured, the fidelity with which the instrument is administered, and other factors. That said, a quick and dirty thing we can do is called a **split half correlation**. We can take a dataset of CDI data [from Wordbank; @frank2017] and split each test in half. Since there are 680 words on the CDI, that means we pretend that each of our `r n` participants took two versions of the CDI, each with 340 items -- one test consists of only the even-numbered items and the other is the odd numbered items. Then we just compute the correlation between each participant's score on the even CDI and the odd CDI. The resulting correlation is very high: $r = `r round(test_retest, digits = 3)`$. So that gives us a sense that CDIs are pretty reliable. 
 
 
+```{marginfigure, echo=TRUE}
+<img src="images/psycho-cors.png"/>
+Longitudinal correlations between a child's score on one administration of the CDI and another one several months later. 
+```
 
-Given that CDI forms are relatively reliable instruments, are they valid? Well, as a starting point, they certainly have reasonable **face validity** -- they look like they are measuring the construct that they purport to measure. They also arguably have some **ecological validity** in that they measure the child's language (as observed by the parent) in their day-to-day experiences, rather than in a particular lab situation. 
+On the other hand, a stronger test of reliability is a **test-retest** correlation. Our split-half number only tells us about what was happening within a single administration session, but lots of things vary between administration sessions. For example, maybe the child was having a bad day and not producing as much complex language. Comparing correlations across different days removes this source of correlation -- at a cost. The longer you wait between observations the more the child has changed! The figure in the margin shows longitudinal test-retest correlations for two CDIs, showing how correlations start off high and drop off as the gap between observations increases [@frank2021]. Overall, this evidence is comforting. It looks like the CDI shows good reliability ($>.9$) across several methods. 
 
+Given that CDI forms are relatively reliable instruments, are they valid? Well, as a starting point, they certainly have reasonable **face validity** -- they look like they are measuring the construct that they purport to measure. They also arguably have some **ecological validity** in that they measure the child's language (as observed by the parent) in their day-to-day experiences, rather than in a particular lab situation. But how well do they really measure the construct of interest, namely children's early language ability? 
 
 
 ```{marginfigure, echo=TRUE}
 <img src="images/cdi-validity.png"/>
-Relations between an early form of the CDI (the ELI) and several other measurements of children's early language from both transcripts and direct assessments. Arrows indicate loadings of different measures (boxes) onto a single construct (circle). Numbers give stanardized weights [@bornstein1998].
+Relations between an early form of the CDI (the ELI) and several other measurements of children's early language from both transcripts and direct assessments. Arrows indicate loadings of different measures (boxes) onto a single construct (circle). Numbers give standardized weights [@bornstein1998].
 ```
 
+A study by @bornstein1998 answered this question via a common measure validation strategy: concurrently administering a variety of measures that are hypothesized to relate to the same construct. The figure in the the margin shows the results of a structural equation model that measures the shared variance between a variety of different measures (critically including examples of the other two methods of assessment we discussed, direct assessment and observational, transcript-based assessments) and a single hypothesized central construct. The relation between the ELI (an early version of the CDI) and the central construct is quite strong: the ELI score correlated closely with the shared variance among all the different measures. Taken together with the reliability evidence, this kind of **concurrent validity** evidence suggests that, if you want to measure early language, the CDI is a pretty good way to do so. 
+
+The story of the CDI is a success story -- it's a relatively inexpensive measure that has some evidence for both reliability and validity. We should celebrate (and also use it as a potential outcome measure in our studies). But there is also plenty more work to do! A critic could very reasonably point out that we haven't shown any evidence that reliability and validity extends across different populations or ages. For any measure, it's important to start by asking whether there is *any* evidence for reliability and validity. But once you have a specific target population in mind, you can also ask how likely it is that the measure will yield reliable and valid data with *that particular population*. Oftentimes you yourself will have to do this measurement work, "checking" that your instruments function appropriately in the particular situation you want to use them. This is sometimes a lot of hard work, but it's an important part of doing good experimental measurement!
 :::
 
-
-
 ## Measurement Validity
+
+In Chapter \@ref(theory), we talked about the "game of psychological science" as 
 
 Does the measure relate to the construct? Classic concurrent and predictive validation strategies.
 
