@@ -24,7 +24,10 @@ header.append(nav);
 
 TOC.querySelectorAll('li')
 .forEach(({classList, firstChild: {textContent, href}}) => {
-	const [title] = textContent.match(/(?<=\s).+/g);
+//	const [title] = textContent.match(/(?<=\s).+/g);
+    const [title] = textContent.match(/\s.+/g);
+//  words = textContent.split(" ");
+//  const [title] = textContent;
 
 	if (classList.contains('part')) {
 		const [, first, rest] = title.match(/([A-z]+)(.*)/);
