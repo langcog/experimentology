@@ -8,7 +8,7 @@ const hover = (target, element, property) => window.addEventListener('load', () 
 	hide();
 })
 
-const title = 'Experimental Methods in the Behavioral and Cognitive Sciences';
+const title = 'Experimentology: An Open Science Approach to Experimental Psychology Methods';
 
 const header = document.createElement('header');
 header.id = 'TOC';
@@ -25,9 +25,7 @@ header.append(nav);
 TOC.querySelectorAll('li')
 .forEach(({classList, firstChild: {textContent, href}}) => {
 //	const [title] = textContent.match(/(?<=\s).+/g);
-    const [title] = textContent.match(/\s.+/g);
-//  words = textContent.split(" ");
-//  const [title] = textContent;
+    const [title] = textContent.match(/\s.+/g); // safari fix
 
 	if (classList.contains('part')) {
 		const [, first, rest] = title.match(/([A-z]+)(.*)/);
