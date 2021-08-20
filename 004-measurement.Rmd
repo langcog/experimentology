@@ -15,7 +15,7 @@ No matter where you are working in the sciences, you need to measure things. If 
 
 Not all measurements are created equal. This point is obvious when you think about physical measurement instruments: a caliper will give you a much more precise estimate of the thickness of a small object than a ruler. One way to see that the measurement is more precise is by repeating it a bunch of times. The measurements from the caliper will likely be more similar to one another, reflecting the fact that the amount of error in each individual measurement is smaller. We can do the same thing with a psychological measurement -- repeat and assess variation -- though as we'll see below it's a little trickier. Measurement instruments that have less error are called more **reliable** instruments.^[Is **reliability** the same as **precision**? Yes, more or less. Confusingly, different fields call these concepts different things [there's a helpful table of these names in @brandmaier2018]. Here we'll talk about reliability as a property of instruments specifically while using the term precision to talk about the measurements themselves.]
 
-When we have a physical quantity of interest, we can assess how well an instrument measures that quantity. But, as we saw in Chapter \@ref(theory), things are much trickier when the construct we are trying to measure can't be assessed directly. We have to measure something observable -- our **operationalization** of the construct -- and then make an argument about how it relates to the construct of interest. We call this argument an argument for the **validity** of the measure. 
+When we have a physical quantity of interest, we can assess how well an instrument measures that quantity. But, as we saw in Chapter \@ref(theory), things are much trickier when the construct we are trying to measure can't be assessed directly. We have to measure something observable -- our **operationalization** of the construct -- and then make an argument about how it relates to the construct of interest. We call this argument an argument for the **validity** of the measure.^[We are also going to talk in Chapter \@ref(design) about the validity of manipulations. The way you identify a causal effect on some measure is by operationalizing some construct as well. If this is done badly, the manipulation can be invalid -- meaning the causal effect that's measured doesn't map onto the construct.]  
 
 These two concepts, reliability and validity, provide a conceptual toolkit for assessing how good a psychological measurement instrument is. Let's start by taking a look at an example of the challenge of measuring a particular latent construct, children's early language ability. We can use this example to understand the concepts of reliability and validity. 
 
@@ -142,7 +142,7 @@ This example leads us to a major issue with calculating reliabilities using the 
 
 But we can construct a much more worrisome version of the same problem. Say we are very sloppy in our administration of the CDI and create lots of between subjects variability, perhaps by giving different instructions to different families. This practice will actually *increase* our estimate of split-half reliability -- while the within-participant variability will remain the same, the between-participant variability will go up! You could call this a "reliability paradox" -- sloppier data collection can actually lead to higher reliabilities.^[Much of this discussion comes from a nice blogpost by Steve Luck: https://lucklab.ucdavis.edu/blog/2019/2/19/reliability-and-precision. If you get interested in this topic, a fascinating article by @hedge2018 shows why many robust cognitive tasks like the Stroop task nevertheless show low reliability by the definition we've been using here: they don't vary very much between individuals!] 
 
-More generally, we need to be sensitive to the sources of variability we're quantifying reliability over -- both the numerator and the denominator. If we're computing split-half reliabilities, typically we're looking at variability across test questions (from some question bank) vs. across individuals (from some population). Both of these sets matter -- if the population is more variable *or* the questions are less variable, we'll get higher reliability.
+More generally, we need to be sensitive to the sources of variability we're quantifying reliability over -- both the numerator and the denominator. If we're computing split-half reliabilities, typically we're looking at variability across test questions (from some question bank) vs. across individuals (from some population). Both of these sets matter -- if the population is more variable *or* the questions are less variable, we'll get higher reliability.^[We're not going to cover this, but all the same concepts come up when you quantify the reliability of different observers' ratings of the same stimulus (**inter-annotator reliability**), say for example when you have two coders rate how aggressive a person seems in a video. The most common measure of inter-annotator aggreement is a categorical measure called Cohen's $\kappa$, for categorical aggreement, but you can use ICCs and many other measures, and they fall prey to the same paradoxes we've discussed here for measure reliability.]  
 
 In sum, it's really important to know something about the reliability of the  measurement instrument that you want to use. But it's also a mistake to think that there's one true reliability for that measure. Rather, reasoning about whether a measure is reliable enough for your purposes means you need to think about both the numerator and the denominator for that estimate! 
 
@@ -152,60 +152,76 @@ All of this theoretical talk about reliabilities is somewhat distressing, and do
 
 First, ignorance is not bliss. If you don't know the reliability of your measures for an experiment, you risk wasting your and your participants' time. As we'll see in Chapter \@ref(sampling), the necessary sample size for your study is intimately related to the degree of within- and between-participant variance -- the same quantities that determine reliability. A higher reliability measure will lead to more precise measurements of a causal effect of interest and hence smaller sample sizes. Low-reliability measures are also a graveyard for individual differences studies. One author (MCF) spent several fruitless months in graduate school running dozens of participants through batteries of language processing tasks and correlating the results across tasks. This exercise was a waste of time because most of the tasks were of such low reliability that, even had they been highly correlated with another task, this relationship would have been almost impossible to detect without a huge sample size.^[One rule of thumb that proves very helpful for individual difference designs of this sort is that the maximal correlation that can be observed between two variables $x$ and $y$ is the square root of the product of their reliabilities: $\sqrt{r_x r_y}$. So if you have two measures that are reliable at .25, the maximal measured correlation between them is .25 as well!]
 
-Second, test-retest reliability is generally more conservative (and hence more useful) than split-half reliability. In test-retest reliability, your within-participant reliability computation includes variation across different testing sessions (and sometimes different versions of a test, since some tests are hard to repeat). Since others participants' scores are produced by different test sessions as well, adding in this extra variability makes the comparison to between-participant variability much fairer. It's hard work to do real test-retest reliability estimates, but if you plan on using a measure more than once, it will likely be worth-while, not least because your estimates of reliability may make your measure more likely to be adopted by others.^[Don't be fooled by the use of Cronbach's $\alpha$, a commonly reported measure for reliability. $\alpha$ is just split-half reliabilty averaged across all possible splits. It has all the same problems of split-half reliability. What's more, people often report $\alpha$ as an index of internal consistency on the idea that it reflects the relatedness of test items to one another. This is just wrong [@sijtsma2009]!]
+Second, test-retest reliability is generally more conservative (and hence more useful) than split-half reliability. All the old textbooks knew this, and simply tried to derive other measures as stand-ins.^[Because we are experimentalists, we get to collect new data, so doing a test-retest preliminary study is a totally reasonable option, rather than just blithely moving forward with our planned experiment.] In test-retest reliability, your within-participant reliability computation includes variation across different testing sessions (and sometimes different versions of a test, since some tests are hard to repeat). Since others participants' scores are produced by different test sessions as well, adding in this extra variability makes the comparison to between-participant variability much fairer. It's hard work to do real test-retest reliability estimates, but if you plan on using a measure more than once, it will likely be worth-while, not least because your estimates of reliability may make your measure more likely to be adopted by others.^[Don't be fooled by the use of Cronbach's $\alpha$, a commonly reported measure for reliability. $\alpha$ is just split-half reliabilty averaged across all possible splits. It has all the same problems of split-half reliability. What's more, people often report $\alpha$ as an index of internal consistency on the idea that it reflects the relatedness of test items to one another. This is just wrong [@sijtsma2009]!]
 
-Third, if you have multiple measurement items as part of your instrument and they vary substantially, make sure you evaluate how they contribute to the reliability of the measure. It may be the case that some of them are unrelated (perhaps because they do not measure the same construct, as we'll discuss below) or perhaps they are very noisy. [@embretson2009]
+Third, if you have multiple measurement items as part of your instrument and they vary substantially, make sure you evaluate how they contribute to the reliability of the measure. This could happen because you have an inventory comprised of different survey items or because you have multiple vignettes or test stimuli that vary in content or difficulty. In this common situation, some of these items may not contribute to the reliability of your measure -- and some may even detract. This could be because some items don't measure the same construct as the rest, as we'll discuss below, or it could be because they are noisy. There are many statistical methods that you can use to find such items and remove them from your measure, ranging from the simple (e.g., visualizing distributions to scan for floor and ceiling effects and looking for items that do not correlate with others) to the more complex (e.g., structural equation models). The development of measurement models  for binary tests, item response theory [@embretson2009] can be used to find test items that show limited discrimination between participants of high and low ability. 
 
 ## Validity
 
-In Chapter \@ref(theory), we talked about the process of theory building as a process of constructing 
+In Chapter \@ref(theory), we talked about the process of theory building as a process of describing the relationships between constructs. But for the theory to be tested, the constructs must be measured so that the posited relationships between them can be probed.^[If you can't measure a construct, then its role in the theory may be more questionable. But there can be a role for unmeasured -- and unmeasureable -- entities in a theory!] Measurement and measure construction is therefore intimately related to theory construction, and the notion of validity is central. 
 
-constructs.  Measurement and measure construction is intimately related to theory building also
+A valid measure is one that measures the construct of interest.^[In the target diagram above, invalidity is pictured as bias -- the holes in the target are tightly grouped but in the wrong place. That can be a helpful guide to thinking about validity, but it also breaks the target metaphor. If distance on the target is variation in the measurement, then the "bias" pictures actually show bias in the measurement, e.g. systematic over- or under-estimation of the true quantity.]    That sounds simple, but really, how can you tell, given that the construct of interest is unobserved? The answer -- given by @cronbach1958 -- is that there is no single test of the validity of a measure. Rather, the measure is valid if there is evidence that it fits into the nomological network (the theory). 
+
+If you look in a standard research methods textbook, there will be names for a large and somewhat variable number of different kinds of validity. These terms are used in very confusing ways! Below are some definitions, but keep in mind that these these are just names for specific ways that a measure might not match up with a construct, and they are not an exhaustive list.  
+
+* **Face validity**: The measure looks like the construct, such that intuitively it is reasonable that it measures the construct. Example: Even if a child's height is correlated with their early language ability, we might be skeptical of this measure due to its lack of face validity.
+* **Ecological validity**: The measure incorporates how the construct is used in people's lives. Example: Language measures that look at the diversity of language used in children's productions at home might be more ecologically valid than a processing measure from a tablet-based game.   
+* **Internal validity**: Usually used negatively. A "challenge to internal validity" is a description of a case where the measure is administered in such a way as to weaken the relationship between measure and construct.^[Sometimes this concept is described as only being relevant to the validity of a manipulation, e.g. when the manipulation of the construct is confounded and some other psychological variable is manipulated as well.]. Example: CDI instructions are given using confusing or overly complex language, leading lower-educated parents to misinterpret the questionnaire and hence for the measure to underestimate language ability in some children. 
+* **Convergent validity**: The classic strategy for showing validity is to show that a measure relates (usually, correlates) with other putative measures of the same construct. This evidence is most convincing when the other measures themselves have validity evidence.^[This is precisely the circularity of Cronbach and Meehl's "nomological network" idea -- a measure is valid if it relates to other valid measures, which themselves are only valid if the first one is! The measures are valid because the theory works, and the theory works because the measures are valid.] Example: CDI scores correlate with word-recognition eye-tracking experiments. 
+* **Predictive validity**. If the measure predicts other later measures of the construct; often used in lifespan and developmental studies where it is particularly prized for a measure to be able to predict meaningful life outcomes in the future. Example: relation of CDI scores at age 2 to reading scores during elementary school.^[Both concurrent/convergent and 
+* **Divergent validity**. If the measure can be shown to be distinct from measure(s) of a different construct, this evidence can help establish that the measure is specifically linked to the target construct. Example: CDI scores are more related to word recognition reaction times than reaction times in a visual search task. 
+
+\noindent As we mentioned above, some of these forms of validity can also be used as descriptions of the validity of a manipulation (rather than a measure). We discuss this issue in more depth in Chapter \@ref(design). 
+
+Argument-based validity. @kane1992
+
+### Improving validity
+
+The first principle for improving validity is: think hard about validity and report your thinking about it. Simply reasoning about what construct you want to measure, how your measure relates to the construct, and whether your measure is a valid measure of the construct will go a long way towards ensuring that you make good decisions about measurement. On the flip side, @flake2020 describe what they call "questionable measurement practices" -- a suite of practices that can undermine the contribution of a study by reducing validity. Table \@ref(tab:flake-questions) gives our adaptation of the set of questions they offer up to try and provoke thoughtful reporting of measurement practices. One big thing on their mind is that researchers have been known to modify their scales and their scale scoring practices (say, omitting items from a survey or rescaling responses) after data collection. This doesn't have to be a bad thing -- sometimes it is justified -- but it clearly needs to be disclosed, and it may call statistical inferences into question (see Chapter \@ref(prereg))! 
 
 
-Is validity the same as bias? It's really a metaphor. 
+```{r flake-questions}
+# <img src="images/validity-questions.jpg"/>
+# Questions about validity. From @flake2020.
+flake <- tribble(~Question, ~`Information to Report`,
+                 "What is your construct?", "Define construct, describe theory and research.",
+                 "What measure did you use to operationalize your construct?", "Describe measure and justify operationalization.",
+                 "Did you select your measure from the literature or create it from scratch?","Justify measure selection and review evidence on reliability and validity  (or disclose the lack of such evidence).",
+                 "Did you modify your measure during the process?", "Describe and justify any modifications; note whether they occurred before or after data collection.",
+                 "How did you quantify your measure?", "Describe decisions underlying the calculation of scores on the measure; note whether these were established before or after data collection and whether they are based on standards from previous literature.")
 
-
-
-
-Does the measure relate to the construct? Classic concurrent and predictive validation strategies.
-
-Face and ecological validity.
-
-The nomological network (Cronbach and Meehl 1955). In other words, the measure is valid if it fits into the theory and is supported by other aspects of the theory.
-
-
-```{marginfigure, echo=TRUE}
-<img src="images/validity-questions.jpg"/>
-Questions about validity. From @flake2020. 
+knitr::kable(flake, caption = "Questions about measurement that every reseacher should answer in their paper. Adapted from Flake & Fried (2020).", booktabs = TRUE)
 ```
 
 
-## How to design a good measure?
+## How to select a good measure?
 
-We have discussed that ideally you want a measure that is reliable and valid. How do you get one? 
+Ideally you want a measure that is reliable and valid. How do you get one? An important first principle is to use a pre-existing measure. Perhaps someone else has done the hard work of compiling evidence on reliability and validity, and in that case you will most likely want to piggyback on that work. Standardized measures are typically broad in their application and so the tendency can be to discard these because they are not tailored for our studies specifically. But the benefits of a standardized measure are substantial. Not only can you justify the measure using the prior literature, you also have an important index of population variability by comparing absolute scores to other reports.^[Comparing absolute measurements is a really important trick for "sanity-checking" your data. If your participants are way less accurate than the ones in the paper you're following up, that may be a signal that something has gone wrong.] If you don't use someone else's measure, you'll need to make one up yourself. 
 
-
-First, use someone else's measure. Perhaps they have done the hard work of validating. 
-
-If you don't use someone else's measure, you'll need to make one up yourself. 
-
-What's the thing you're measuring?
-
-All else being equal, ask more questions. 
-
-### Measure types
-
+### What to measure? 
 
 ```{marginfigure, echo=TRUE}
 <img src="images/measure-considerations.png"/>
-Often choosing a measure can be consolidated into a choice along a continuum from simple measures that provide a small amount of information but are quick and easy to repeat and those that provide much richer information but require more time and more explicit cognition.
+Often choosing a measure can be consolidated into a choice along a continuum from simple measures that provide a small amount of information but are quick and easy to repeat and those that provide much richer information but require more time. 
 ```
 
-Implicit vs. explicit measures. 
+We can measure almost anything about experimental participants' behavior or even their physiology. We could do an experiment on children's exploratory play and measure the number of times they interact with another child [@ross1989], or an experiment on aggression where we measure the amount of hot sauce [@lieberman1999]. Yet most of the time we choose a relatively small set to focus on: asking survey questions, collecting choices and reaction times, and measuring physiological variables like eye-movements. Besides following these conventions, how do we choose the right measurement type for a particular experiment? 
+
+There's no hard and fast rule about what aspect of behavior to measure, but here we will focus on two dimensions that can help us organize the broad space of possible measure targets. The first of these is the continuum between simple and complex behaviors. 
+
+
+^[Some authors differentiate between "self-report" and "observational" measures. This distinction seems simple on its face, but actually gets kind of complicated. ]
+
+The second dimension of organization for measures is the difference between implict and explicit behaviors. If we ask our participants to answer a math problem. ^[ 
+
 
 Classic cognitive psychology measures: Forced choices and reaction times
 
+All else being equal, ask more questions. 
+
+Physiological measures
+
+Since they are ubiquitous in psychology research, our next section deals with survey measures. 
 
 ### Survey measures
 
@@ -228,6 +244,7 @@ It rarely helps matters to add a "don't know" or "other" option to survey questi
 
 In sum, survey questions can be a helpful tool for eliciting graded judgments about explicit questions. The best way to execute them well is to try and make them as clear and easy to answer as possible. 
 
+
 ## Conclusion
 
 In olden times, all the psychologists went to the same conferences and worried about the same things. But then a split formed between different groups. Educational psychologists and psychometricians thought a lot about how different problems on tests had different measurement properties. They began exploring how to select good and bad items, and how to figure out people's ability abstracted away from specific items. This led to a profusion of interesting ideas about measurement and modeling, but these ideas mostly got adopted in observational research.  
@@ -236,7 +253,7 @@ Cognitive and social psychologists, on the other hand, spurned measure validatio
 
 These sociological differences between fields has led to an unfortunate divergence, where experimentalists often do not recognize the value of the conceptual tools developed in observational fields, and hence fail to reason about the reliability and validity of their measures in ways that can help them make better experimental measurements. 
 
-The fundamental insight of this perspective is that the constructs we study as psychologists are latent, rather than observed. So when we attempt to measure these constructs, we need to understand the properties of our measures and how we hypothesize that they connect to the constructs of interest. As we said in our discussion of reliability, ignorance is not bliss. Even if you fail to make explicit assumptions about how your measure functions and how it connects to your construct of interest, simple default choices still matter. 
+The fundamental insight of this perspective is that the constructs we study as psychologists are latent, rather than observed. So when we attempt to measure these constructs, we need to understand the properties of our measures and how we hypothesize that they connect to the constructs of interest. As we said in our discussion of reliability, ignorance is not bliss. Even if you fail to make explicit assumptions about how your measure functions and how it connects to your construct of interest, your adoption of defaults still constitutes a choice. Much better to think these choices through!
 <!-- For example, by treating your experimental items as interchangeable, you may  -->
 
 
