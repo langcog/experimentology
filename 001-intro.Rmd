@@ -18,7 +18,46 @@
 
 - On one hand, experiments are “the worst way to learn about the world” (in the words of one of our mentors). “You can’t play 20 questions with nature and win” (Newell 1973). But experiments are also one of our best tools for making strong causal inferences about the hidden structure of the world. They allow us to not just observe the world but to systematically intervene on it.
 - We used to just poke things or people and measure what happened (see Hacking, 1990 on the 19th century craze of just measuring everything for fun.) Now we typically want our experiments to resolve deeper questions or test hypotheses.
+
+### Causal inference
+
 - Causal graphical models as an approach to understanding causal inference via counterfactuals (Pearl and Mackenzie 2018).
+  
+
+
+
+Every year, one of the trickiest concepts for me to teach in my experimental methods course is the difference between experimental confounds and covariates. Although this distinction seems simple, it's pretty deeply related to the definition of what an experiment is and why experiments lead to good causal inferences. It's also caught up in a number of methodological problems that come up again and again in my class. This post is my attempt to explain the distinction and how it relates to different problems and cultural practices in psychology.
+
+Throughout this post, I'll use a silly example. My first year of graduate school, I got distracted from my actual research by the hypothesis that listening to music with lyrics decreased my ability to write papers for my classes. I'll call this the "Bob Dylan" hypothesis, since I was listening to a lot of Dylan at the time. Let's represent this by the following causal diagram.
+
+```{marginfigure, echo=TRUE}
+<img src="images/dylan1.png"/>
+```
+
+
+Our outcome is writing skill (Y) and our predictor is Dylan listening (X). The edge between them represents a hypothesized causal relationship. Dylan is hypothesized to affect writing skill, and not vice versa. (These kinds of diagrams are called causal graphical models*).
+
+Suppose we did an observational study where we measured each of these variables in a large population. Assume we came up with some way to sample people's writing, get a measure of whether they either were or weren't listening to lyric-heavy music at the time, and assess the writing sample's quality. We might find that Y was correlated with X, but in a surprising direction: listening to Dylan would be related to better writing.
+
+Can we make a causal inference in this case? If so, we could get rich promoting a Dylan-based writing intervention. Unfortunately, we can't – correlation doesn't equal causation here, because there is (at least one) confounding third variable: age (Z). Age is positively related to both Dylan listening and writing skill in our population of interest. Older people tend to be good writers and also tend to be more into folk rockers; I'm not even going to put a question mark on this edge because I'm pretty sure this is true.
+
+```{marginfigure, echo=TRUE}
+<img src="images/dylan2.png"/>
+```
+
+But: the causal relationship of age to our other two variables means that variation in Z can induce a correlation in X and Y, even in the absence of a true causal link. We can say that age is a confound in estimating the Dylan-writing skill relationship: it's a variable that is correlated with both our predictor and our outcome variables.
+
+To get gold-standard evidence about causality, we need to do an experiment. (We won't discuss statistical techniques for inferring causality, which can be useful but don't give you gold standard evidence anyway; review here).
+
+Experiments are when we intervene on the world and measure the consequences. Here, this means forcing some people to listen to Dylan. In the language of graphical models, if we control the Dylan listening, that means that variable X is causally exogenous. (Exogenous means that it's not caused by anything else in the system). We "snipped" the causal link between age and Dylan listening.
+
+```{marginfigure, echo=TRUE}
+<img src="images/dylan3.png"/>
+```
+
+So now we can "wiggle" the Dylan listening variable – change it experimentally – and see if we detect any changes in writing skill. We do this by randomly assigning individuals to listen to Dylan or not and then measuring writing during the assigned listening (or non-listening) period. This is a "between-subjects" design. We can use our randomized experiment to get a measure of the average treatment effect of Dylan, the size of the causal effect of the intervention on the outcome. 
+
+<!-- In this simple experiment, the ATE is estimated by the regression Y ~ X (for ease of exposition, I'm not going to discuss so-called mixed models, which model variation across subjects and/or experimental items). That's the elegant logic of randomized experiments: the difference between condition gives you the average effect. -->
 
 ## What is a theory? 
 

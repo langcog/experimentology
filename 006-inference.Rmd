@@ -1,16 +1,23 @@
-# Statistical inference for comparing groups {#inference}
+# Statistical inference {#inference}
 
 ::: {.learning-goals}
 🍎 Learning goals: 
+* Discuss differences between frequentist and Bayesian perspectives
 * Reconceptualize statistical “tests” as models of data
 * Build intuitions about how specific “tests” (e.g., t-tests) relate to more general frameworks (e.g., regression, mixed effects models)
 * Identify which models are best suited for which research questions 
 * Reason about effect effect size as estimated by statistical models
 :::
 
-# Statistics and tea tasting
+## Statistics and tea tasting
 
-[Preamble - Pearson and Fisher and the “british statistics scene” (e.g., Galton) all endorsed eugenicist views]
+The birth of modern statistical inference came from a single, epochal act of mansplaining.^[An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed social darwinist who believed fervently in Eugenic legislation. These views are repugnant.] Sir Ronald Fisher was apparently at a party when a lady declared that she could tell the difference between cups when the tea was added to the milk vs. the milk to the tea. Rather than taking her at her word, Fisher devised an experimental and data analysis procedure to test her claim.^[If you're interested in this history, we recommend @salzburg2001's delightful book, "The Lady Tasting Tea" about the origins of modern statistics.]
+
+The basic schema of the experiment was that the lady would have to judge a set of new cups of tea, and her data would be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, in fact this is one of those touchstones that feels unremarkable because it literally established the way science was done for the next century. 
+
+The first element of the experiment that was unusual was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to assume that the best practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounders. Fisher recognized that this strategy was insufficient and that random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk).^[We just asserted the causal power of random assignment in Chapter \@ref(intro) but here's where it originates!]
+
+The second innovation was the idea of creating a model of what might happen during the experiment: specifically, a **null model** in which the nameless lady chose cups by chance rather than because of some tea sensitivity. 
 
 The lady tasting tea experiment:
 Ronald Fisher at a party
@@ -67,12 +74,12 @@ If she gets 8 or more, 19% probability
 Oh and - how many cups of tea should we taste? 
 Discussion goal: it depends on how strong we think her tea-tasting sense is!
 
-# Why do we do statistics? 
 
 This is a question about our goals, in particular 
 
-## Frequentists vs. Bayesians
+## Inferences about tea
 
+## Probability theory (also known as Bayes)
 
 Bringing back prior knowledge question: how about ESP? 
 Question: should we as scientists apply such a prior? 
@@ -93,6 +100,61 @@ p(d | h’) = .0000001
 So turn the crank to figure out whether Harry’s a wizard or no. 
 
 
+
+Bayesian approaches provide one alternative
+Philosophical alternative where probability indexes subjective belief, rather than long-run estimates of probability
+
+We want the probability of the hypothesis given the data.
+
+p(h | d) = p(d | h1) p(h1)
+	p(d | h1) p(h1) + p(d | h0) p(h0)
+
+P-values only give us the probability of the data given the hypothesis. 
+
+So if H1 is very unlikely, low p-value still doesn’t mean we should change our belief. 
+
+ESP example (Wagenmakers et al. 2011):
+Assume p(h1) is 10x-20:
+
+ 
+P < .05 provides almost no evidence!
+
+So you need to apply the priors to get the kind of inferences you want. 
+
+
+
+## Frequentist inference
+
+
+
+Philosophy
+Bayes: Data are the data, what can we infer? (subjective)
+Frequentist: Do the same thing again and again, what happens (objective truth)
+Prior information
+Bayes theorem
+“Data fixed” vs. “model fixed”
+
+Bayesians don’t have to care about optional stopping
+
+Differences in philosophy
+Bayesian stats are good for:
+Cases where you have a lot of prior knowledge
+E.g., statistics for voter prediction in elections
+Cases where you want to deal with uncertainty in a principled way
+E.g., integrating knowledge about measurement error into your model
+Null models
+Cases where you want to decide in favor of null
+(though you can do this in frequentist perspectives)
+Small N data
+Many frequentist tests are based on guarantees in the limit. Guarantees don’t hold at N=3 or 5 or even 10. 
+Frequentist good for:
+Decision theory (cf. bayesian decision theory)
+Absence of assumptions (“more objective”)
+Often easier to state and solve models
+
+
+
+### P-values: the root of all evil? 
 P-value misconceptions
 
 ```{r}
@@ -118,7 +180,7 @@ knitr::kable(dozen,
 
 Despite all these reasons to be worried about p-values, for many practicing scientists (at least at time of writing) there is no right answer. Even if we'd like to be Bayesian all the time because the paradigm makes philosophical and practical sense, there are a number of obstacles. First, though tools like `Stan`, `BayesFactor`, and `brms` make fitting Bayesian models easier (more about this below and in the next chapter), it's still on average quite a bit harder to fit a Bayesian model than it is a frequentist one. Second, because Bayesian analyses are less familiar, it may be an uphill battle to convince advisors, reviewers, and funders to use them. So as a group, we are still mostly Bayesian when we can be -- and frequentist when it's not practical. One reason we don't feel so bad about this stance is that, a lot of them time we're not so worried about making binary inferences, whether they are at $p < .05$ or $BF > 3$ or whatever the threshold is. 
 
-## Inference vs estimation
+## Making models: Inference vs estimation
 
 Throughout this book we've taken the position that the goal of experiments is to estimate a causal effect of interest, ideally as part of some theory of how different constructs relate to one another. All this talk of hypotheses and inferences above is only indirectly related to that goal. 
 
@@ -130,13 +192,11 @@ Throughout this book we've taken the position that the goal of experiments is to
 Clarifying the distinctions between Bayesian and Frequentist paradigms and the ways that they approach inference and estimation. For many settings, we think the estimation mindset is more useful. From Krushke and Liddell (2018). 
 ```
 
-Bottom line: for many scientists, the decision of whether to be freuquentist or Bayesian. 
+
+- Intuition builder: For very large n, or flat prior, Bayes and frequentist coincide. 
 
 
-# From tests to models
-
-
-# Simple models of between-group differences
+### Simple models of between-group differences
 
 Introducing simple inference models:
 
@@ -154,8 +214,6 @@ Introducing simple inference models:
 
 How to go from theory to hypotheses to statistical model
 
-- Krushke & Liddell (2018) taxonomy: Bayesian vs. frequentist, inference vs. estimation
-- Intuition builder: For very large n, or flat prior, Bayes and frequentist coincide. 
 
 # Effect size
 
@@ -163,6 +221,43 @@ With all our talk about estimation above, we didn't say nuch about what precisel
 
 Effect size: a common language for describing group differences. Pros and cons of this approach. Pro: comparability across studies. Con: loss of information about measures and real-world predictions; dependence on baseline variability. 
 
+Effect sizes (ES):
+Cohen’s = m1 - m2 / SD
+Units of ES easy to compare across studies
+Good for comparison 
+Example: school interventions to improve achievement
+Necessary for meta-analysis
+Example: MA of infant consonant discrimination (cross method comparison)
+Necessary for power analysis 
+Negative: not related to any real units
+Many measures of ES, e.g. r2, n2 (eta), log odds
+
+Precision
+
+Error bar:
+ - standard deviation (why is this bad)?
+- SEM
+- CI
+
+CIs for inference
+
+Confidence intervals:
+95% of these regions will contain the TRUE parameter
+	Remember frequentists - there is a TRUE parameter
+
+https://istats.shinyapps.io/ExploreCoverage/
+
+But this is not our typical interpretation, which is that 95% chance parameter is in this interval
+	That’s the BAYESIAN interpretation
+
+Bayesian Estimation
+
+Find the posterior distribution of the parameter of interest
+	You can take its mean
+	Its HPD (highest posterior density)
+
+Confidence in confidence intervals: 
+https://link.springer.com/article/10.3758/s13423-015-0947-8
 
 
 ::: {.interactive}

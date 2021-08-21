@@ -34,28 +34,6 @@ MathJax.Hub.Config({
 
 
 
-<style type="text/css">
-/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}
-</style>
 
 <link rel="stylesheet" href="css/style.css" type="text/css" />
 <link rel="stylesheet" href="toc/toc.css" type="text/css" />
@@ -78,19 +56,20 @@ div.csl-indent {
 <li><a href="4-measurement.html#measurement"><span class="toc-section-number">4</span> Measurement</a></li>
 <li><a href="5-design.html#design"><span class="toc-section-number">5</span> Design of experiments</a></li>
 <li><a href="6-inference.html#inference"><span class="toc-section-number">6</span> Statistical inference for comparing groups</a></li>
-<li><a href="7-models.html#models"><span class="toc-section-number">7</span> Statistical models for more complex designs</a></li>
-<li><a href="8-sampling.html#sampling"><span class="toc-section-number">8</span> Sampling</a></li>
-<li><a href="9-preregistration.html#preregistration"><span class="toc-section-number">9</span> Preregistration</a></li>
+<li><a href="7-effect-size.html#effect-size"><span class="toc-section-number">7</span> Effect size</a></li>
+<li><a href="8-models.html#models"><span class="toc-section-number">8</span> Statistical models for more complex designs</a></li>
+<li><a href="9-sampling.html#sampling"><span class="toc-section-number">9</span> Sampling</a></li>
+<li><a href="10-preregistration.html#preregistration"><span class="toc-section-number">10</span> Preregistration</a></li>
 <li class="part"><span><b>III Execution</b></span></li>
-<li><a href="10-selection.html#selection"><span class="toc-section-number">10</span> Replicating or extending an existing study</a></li>
-<li><a href="11-collection.html#collection"><span class="toc-section-number">11</span> Data collection</a></li>
-<li><a href="12-management.html#management"><span class="toc-section-number">12</span> Data management</a></li>
-<li class="part"><span><b>IV Analysis and reporting</b></span></li>
-<li><a href="13-viz.html#viz"><span class="toc-section-number">13</span> Visualization</a></li>
-<li><a href="14-eda.html#eda"><span class="toc-section-number">14</span> Exploratory data analysis</a></li>
-<li><a href="15-writing.html#writing"><span class="toc-section-number">15</span> Reproducible writing</a></li>
-<li><a href="16-meta.html#meta"><span class="toc-section-number">16</span> Meta-analysis</a></li>
-<li><a href="17-conclusions.html#conclusions"><span class="toc-section-number">17</span> Conclusions</a></li>
+<li><a href="11-selection.html#selection"><span class="toc-section-number">11</span> Replicating or extending an existing study</a></li>
+<li><a href="12-collection.html#collection"><span class="toc-section-number">12</span> Data collection</a></li>
+<li><a href="13-management.html#management"><span class="toc-section-number">13</span> Data management</a></li>
+<li class="part"><span><b>IV Analysis and Reporting</b></span></li>
+<li><a href="14-viz.html#viz"><span class="toc-section-number">14</span> Visualization</a></li>
+<li><a href="15-eda.html#eda"><span class="toc-section-number">15</span> Exploratory data analysis</a></li>
+<li><a href="16-writing.html#writing"><span class="toc-section-number">16</span> Reproducible writing</a></li>
+<li><a href="17-meta.html#meta"><span class="toc-section-number">17</span> Meta-analysis</a></li>
+<li><a href="18-conclusions.html#conclusions"><span class="toc-section-number">18</span> Conclusions</a></li>
 </ul>
 </div>
 </div>
@@ -100,16 +79,168 @@ div.csl-indent {
 <div id="inference" class="section level1" number="6">
 <h1><span class="header-section-number">Chapter 6</span> Statistical inference for comparing groups</h1>
 <div class="learning-goals">
-<p>🍎 Learning goals: Reconceptualize statistical “tests” as models of data; build intuitions about how specific “tests” (e.g., t-tests) relate to more general frameworks (e.g., regression, mixed effects models); identify which models are best suited for which research questions; reason about effect effect size as estimated by statistical models.</p>
+<p>🍎 Learning goals:
+* Reconceptualize statistical “tests” as models of data
+* Build intuitions about how specific “tests” (e.g., t-tests) relate to more general frameworks (e.g., regression, mixed effects models)
+* Identify which models are best suited for which research questions
+* Reason about effect effect size as estimated by statistical models</p>
 </div>
-<div class="case-study">
-<p>🔬 Case study: the “lady tasting tea” example (Salsburg 2001) – building intuitions about when statistical inference is important and what the limitations for this paradigm are. Historical origins of handling variability in measurement (Porter 2020).</p>
+<div id="statistics-and-tea-tasting" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> Statistics and tea tasting</h2>
+<p>[Preamble - Pearson and Fisher and the “british statistics scene” (e.g., Galton) all endorsed eugenicist views]</p>
+<p>The lady tasting tea experiment:
+Ronald Fisher at a party
+Intuitive hypotheses: chance vs. tea knowledge.</p>
+<p>Discussion question: What do we want to get out of this experiment?
+Binary conclusion: context of decision theory?
+Estimation of lady’s sensitivity for individual differences?</p>
+<p>Back to the lady.</p>
+<p>Discussion question: How many cups should she get right out of 12?</p>
+<p>What should we consider:
+Too low a standard means we are “liberal” – the lady could get lucky
+Too high a standard means we need the lady to know a lot!</p>
+<p>Define decision-theoretic framework:</p>
+<p>Intuitive solution to the lady tasting tea: given the binomial distribution, how likely is her answer by chance?
+Excursion: what’s a probability distribution? A mathematical form to the idea of randomness of a particular type.</p>
+<p>If she gets 6, clearly consistent with chance.
+If she gets 7, 19% of exactly 7.
+But what’s the probability we care about? 7 OR MORE = 38%
+If she gets 8 or more, 19% probability
+9 or more, 7% - ARE YOU CONVINCED?
+10 or more, 2%</p>
+<p>Oh and - how many cups of tea should we taste?
+Discussion goal: it depends on how strong we think her tea-tasting sense is!</p>
+<p>This is a question about our goals, in particular</p>
 </div>
-<p>How to go from theory to hypotheses to statistical model</p>
+<div id="inferences-about-tea" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> Inferences about tea</h2>
+</div>
+<div id="probability-theory-also-known-as-bayes" class="section level2" number="6.3">
+<h2><span class="header-section-number">6.3</span> Probability theory (also known as Bayes)</h2>
+<p>Bringing back prior knowledge question: how about ESP?
+Question: should we as scientists apply such a prior?</p>
+<p>Harry potter example</p>
+<p>p(h | d) = [p(d | h) p(h)] / [p(d | h) p(h) + p(d | h’) p(h’)]</p>
+<p>p(h) = .001</p>
+<p>p(d | h) = 1</p>
+<p>p(h’) = .999</p>
+<p>p(d | h’) = .0000001</p>
+<p>So turn the crank to figure out whether Harry’s a wizard or no.</p>
+<p>Bayesian approaches provide one alternative
+Philosophical alternative where probability indexes subjective belief, rather than long-run estimates of probability</p>
+<p>We want the probability of the hypothesis given the data.</p>
+<p>p(h | d) = p(d | h1) p(h1)
+p(d | h1) p(h1) + p(d | h0) p(h0)</p>
+<p>P-values only give us the probability of the data given the hypothesis.</p>
+<p>So if H1 is very unlikely, low p-value still doesn’t mean we should change our belief.</p>
+<p>ESP example (Wagenmakers et al. 2011):
+Assume p(h1) is 10x-20:</p>
+<p>P &lt; .05 provides almost no evidence!</p>
+<p>So you need to apply the priors to get the kind of inferences you want.</p>
+</div>
+<div id="frequentist-inference" class="section level2" number="6.4">
+<h2><span class="header-section-number">6.4</span> Frequentist inference</h2>
+<p>Philosophy
+Bayes: Data are the data, what can we infer? (subjective)
+Frequentist: Do the same thing again and again, what happens (objective truth)
+Prior information
+Bayes theorem
+“Data fixed” vs. “model fixed”</p>
+<p>Bayesians don’t have to care about optional stopping</p>
+<p>Differences in philosophy
+Bayesian stats are good for:
+Cases where you have a lot of prior knowledge
+E.g., statistics for voter prediction in elections
+Cases where you want to deal with uncertainty in a principled way
+E.g., integrating knowledge about measurement error into your model
+Null models
+Cases where you want to decide in favor of null
+(though you can do this in frequentist perspectives)
+Small N data
+Many frequentist tests are based on guarantees in the limit. Guarantees don’t hold at N=3 or 5 or even 10.
+Frequentist good for:
+Decision theory (cf. bayesian decision theory)
+Absence of assumptions (“more objective”)
+Often easier to state and solve models</p>
+<div id="p-values-the-root-of-all-evil" class="section level3" number="6.4.1">
+<h3><span class="header-section-number">6.4.1</span> P-values: the root of all evil?</h3>
+<p>P-value misconceptions</p>
+<p><!--
+<caption>--><span class="marginnote shownote"><span id="tab:unnamed-chunk-5">Table 6.1: </span>A “dirty dozen” p value misconceptions. From Goodman (2008).</span><!--</caption>--></p>
+<table>
+<colgroup>
+<col width="2%" />
+<col width="97%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right"></th>
+<th align="left">Misconception</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">If P = .05, the null hypothesis has only a 5% chance of being true.</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">A nonsignificant difference (eg, P ≥.05) means there is no difference between groups.</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">A statistically significant finding is clinically important.</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">Studies with P values on opposite sides of .05 are conflicting.</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">Studies with the same P value provide the same evidence against the null hypothesis.</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">P = .05 means that we have observed data that would occur only 5% of the time under the null hypothesis.</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="left">P = .05 and P ≤.05 mean the same thing.</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="left">P values are properly written as inequalities (eg, 'P ≤.02' when P = .015)</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="left">P = .05 means that if you reject the null hypothesis, the probability of a type I error is only 5%.</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="left">With a P = .05 threshold for significance, the chance of a type I error will be 5%.</td>
+</tr>
+<tr class="odd">
+<td align="right">11</td>
+<td align="left">You should use a one-sided P value when you don’t care about a result in one direction, or a difference in that direction is impossible.</td>
+</tr>
+<tr class="even">
+<td align="right">12</td>
+<td align="left">A scientific conclusion or treatment policy should be based on whether or not the P value is significant.</td>
+</tr>
+</tbody>
+</table>
+<p>Despite all these reasons to be worried about p-values, for many practicing scientists (at least at time of writing) there is no right answer. Even if we’d like to be Bayesian all the time because the paradigm makes philosophical and practical sense, there are a number of obstacles. First, though tools like <code>Stan</code>, <code>BayesFactor</code>, and <code>brms</code> make fitting Bayesian models easier (more about this below and in the next chapter), it’s still on average quite a bit harder to fit a Bayesian model than it is a frequentist one. Second, because Bayesian analyses are less familiar, it may be an uphill battle to convince advisors, reviewers, and funders to use them. So as a group, we are still mostly Bayesian when we can be – and frequentist when it’s not practical. One reason we don’t feel so bad about this stance is that, a lot of them time we’re not so worried about making binary inferences, whether they are at <span class="math inline">\(p &lt; .05\)</span> or <span class="math inline">\(BF &gt; 3\)</span> or whatever the threshold is.</p>
+</div>
+</div>
+<div id="making-models-inference-vs-estimation" class="section level2" number="6.5">
+<h2><span class="header-section-number">6.5</span> Making models: Inference vs estimation</h2>
+<p>Throughout this book we’ve taken the position that the goal of experiments is to estimate a causal effect of interest, ideally as part of some theory of how different constructs relate to one another. All this talk of hypotheses and inferences above is only indirectly related to that goal.</p>
+<p><label for="tufte-mn-1" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-1" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/krushke.png"/> Clarifying the distinctions between Bayesian and Frequentist paradigms and the ways that they approach inference and estimation. For many settings, we think the estimation mindset is more useful. From Krushke and Liddell (2018).</span></span></p>
 <ul>
-<li>Krushke &amp; Liddell (2018) taxonomy: Bayesian vs. frequentist, inference vs. estimation</li>
 <li>Intuition builder: For very large n, or flat prior, Bayes and frequentist coincide.</li>
 </ul>
+<div id="simple-models-of-between-group-differences" class="section level3" number="6.5.1">
+<h3><span class="header-section-number">6.5.1</span> Simple models of between-group differences</h3>
 <p>Introducing simple inference models:</p>
 <ul>
 <li>The chi-squared test for inferring whether two samples come from the same distribution</li>
@@ -117,18 +248,16 @@ div.csl-indent {
 <li>The t-test for inferring whether two groups differ from one another</li>
 <li>The paired t-test as a first glimpse at how we might account for participant-level random effects (see Chapter 7).</li>
 </ul>
-<div class="interactive">
-<p>⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance</p>
-</div>
 <div class="accident-report">
 <p>⚠️ Accident report: Once you have the basic t-test under your belt, it might feel natural to compare each group to 0 and conclude that one group is different from 0 and the other one isn’t. But “the difference between significant and not significant is not necessarily itself statistically significant” (Nieuwenhuis, Forstmann, and Wagenmakers 2011).</p>
 </div>
-<p>Effect size: a common language for describing group differences. Pros and cons of this approach. Pro: comparability across studies. Con: loss of information about measures and real-world predictions; dependence on baseline variability.</p>
-
+<p>How to go from theory to hypotheses to statistical model</p>
+</div>
+</div>
 </div>
 <p style="text-align: center;">
 <a href="5-design.html"><button class="btn btn-default">Previous</button></a>
-<a href="7-models.html"><button class="btn btn-default">Next</button></a>
+<a href="7-effect-size.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>
