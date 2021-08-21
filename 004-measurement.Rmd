@@ -1,15 +1,15 @@
 # (PART) Experimental design and planning {-}
 
-::: {learning-goals}
-🍎 Learning goals: 
-* Analyze measurement reliability; 
-* Provide validity arguments;
-* Reason about tradeoffs between different measures and measure types;
-* Articulate risks of measurement flexibility and the costs and benefits of multiple measures;
-* Identify well-constructed survey questions.
-:::
-
 # Measurement {#measurement}
+
+::: {.learning-goals}
+🍎 Learning goals: 
+* Analyze measurement reliability
+* Provide validity arguments
+* Reason about tradeoffs between different measures and measure types
+* Articulate risks of measurement flexibility and the costs and benefits of multiple measures
+* Identify well-constructed survey questions
+:::
 
 The goal of an experiment is to make a (maximally precise and unbiased) measurement of a particular causal effect of interest. In this next section of the book, we're going to try to figure out how to do that. This chapter focuses on the topic of measurement.^[As a topic, measurement is actually much less well-discussed in experimental contexts compared with, say, observational studies. As far as we can tell, this is a sociological fact, not a scientific one. No matter whether you can manipulate the world directly (as in an experiment) or whether you are doing observational or quasi-experimental research, good measurement is the name of the game.] To paraphrase @stevens1946, measurement is the practice of putting numbers to things. 
 
@@ -19,7 +19,7 @@ No matter where you are working in the sciences, you need to measure things. If 
 
 Not all measurements are created equal. This point is obvious when you think about physical measurement instruments: a caliper will give you a much more precise estimate of the thickness of a small object than a ruler. One way to see that the measurement is more precise is by repeating it a bunch of times. The measurements from the caliper will likely be more similar to one another, reflecting the fact that the amount of error in each individual measurement is smaller. We can do the same thing with a psychological measurement -- repeat and assess variation -- though as we'll see below it's a little trickier. Measurement instruments that have less error are called more **reliable** instruments.^[Is **reliability** the same as **precision**? Yes, more or less. Confusingly, different fields call these concepts different things [there's a helpful table of these names in @brandmaier2018]. Here we'll talk about reliability as a property of instruments specifically while using the term precision to talk about the measurements themselves.]
 
-When we have a physical quantity of interest, we can assess how well an instrument measures that quantity. But, as we saw in Chapter \@ref(theory), things are much trickier when the construct we are trying to measure can't be assessed directly. We have to measure something observable -- our **operationalization** of the construct -- and then make an argument about how it relates to the construct of interest. We call this argument an argument for the **validity** of the measure.^[We are also going to talk in Chapter \@ref(design) about the validity of manipulations. The way you identify a causal effect on some measure is by operationalizing some construct as well. If this is done badly, the manipulation can be invalid -- meaning the causal effect that's measured doesn't map onto the construct.]  
+When we have a physical quantity of interest, we can assess how well an instrument measures that quantity. But, as we saw in Chapter \@ref(intro), things are much trickier when the construct we are trying to measure can't be assessed directly. We have to measure something observable -- our **operationalization** of the construct -- and then make an argument about how it relates to the construct of interest. We call this argument an argument for the **validity** of the measure.^[We are also going to talk in Chapter \@ref(design) about the validity of manipulations. The way you identify a causal effect on some measure is by operationalizing some construct as well. If this is done badly, the manipulation can be invalid -- meaning the causal effect that's measured doesn't map onto the construct.]  
 
 These two concepts, reliability and validity, provide a conceptual toolkit for assessing how good a psychological measurement instrument is. Let's start by taking a look at an example of the challenge of measuring a particular latent construct, children's early language ability. We can use this example to understand the concepts of reliability and validity. 
 
@@ -124,8 +124,8 @@ So then how do we measure signal and noise when we don't have a true zero?^[For 
 
 This intuition gives us the intra-class correlation coefficient (ICC): 
 
-$$ICC = \frac{\sigma^2_w}{\sigma^2_w + \sigma^2_b}$$
-\noindent where $\sigma^2_w$ is the within-subject variance in measurements and $\sigma^2_b$ is the between-subject variance in the measurements. So now instead of comparing variation to the mean, we're comparing variation on one dimension (within person) to variation on another dimension (between person). 
+$$ICC = \frac{\sigma^2_b}{\sigma^2_w + \sigma^2_b}$$
+\noindent where $\sigma^2_w$ is the within-subject variance in measurements and $\sigma^2_b$ is the between-subject variance in the measurements. So now instead of comparing variation to the mean, we're comparing variation on one dimension (between person) to total variation (within and between person). 
 
 If you think about it, this is more or less what we were doing when we computed both **split-half** and **test-retest** reliabilities for the CDI in our case study above. In the split half case, we took the correlation between two halves of the test, computed across individuals. That correlation looks at the covariance between the two halves, scaled by the variance *across individuals* of each half. So now we know why that split half reliability number was so high ($r = `r round(test_retest, digits = 3)`$)! We were looking at the comparison of the variation between one individual's answers and the variation between tons of different kids whose answers are all over the place.^[If this intuition about the correlation doesn't make sense, @rodgers1988 give a really nice treatment of different ways of looking at a correlation.] Same thing was true with the test-retest example: we were computing the covariation between this individual's two CDI scores, scaled by the variation across *all the individuals in the sample.*
 
@@ -142,7 +142,7 @@ ws_mat_16 <- ws |>
 test_retest_16 <- cor.test(ws_mat_16$even, ws_mat_16$odd)$estimate
 ```
 
-This example leads us to a major issue with calculating reliabilities using the relative approach: *reliability numbers computed in this way are always relative to the variation in the sample*. So if the sample had less variability, reliability would decrease. We can see that in the CDI data by restricting our sample to only 16-month-olds (our prior sample had 16 -- 30-month-olds) with low maternal education. Within this more restricted subset, our reliability drops to $r = `r round(test_retest_16, digits = 3)`$ -- still high but not as high as within the full sample. 
+This example leads us to a major issue with calculating reliabilities using the relative approach: *reliability numbers computed in this way are always relative to the variation in the sample*. So if the sample had less variability, reliability would decrease. We can see that in the CDI data by restricting our sample to only 16-month-olds (our prior sample had 16 -- 30-month-olds) with low maternal education. Within this more restricted subset, our reliability drops to $r = `r round(test_retest_16, digits = 3)`$ -- still very high but not quite as high as within the full sample. 
 
 But we can construct a much more worrisome version of the same problem. Say we are very sloppy in our administration of the CDI and create lots of between subjects variability, perhaps by giving different instructions to different families. This practice will actually *increase* our estimate of split-half reliability -- while the within-participant variability will remain the same, the between-participant variability will go up! You could call this a "reliability paradox" -- sloppier data collection can actually lead to higher reliabilities.^[Much of this discussion comes from a nice blogpost by Steve Luck: https://lucklab.ucdavis.edu/blog/2019/2/19/reliability-and-precision. If you get interested in this topic, a fascinating article by @hedge2018 shows why many robust cognitive tasks like the Stroop task nevertheless show low reliability by the definition we've been using here: they don't vary very much between individuals!] 
 
