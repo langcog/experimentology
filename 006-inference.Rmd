@@ -1,31 +1,170 @@
 # Statistical inference for comparing groups {#inference}
 
 ::: {.learning-goals}
-🍎 Learning goals: Reconceptualize statistical “tests” as models of data; build intuitions about how specific “tests” (e.g., t-tests) relate to more general frameworks (e.g., regression, mixed effects models); identify which models are best suited for which research questions; reason about effect effect size as estimated by statistical models.
+🍎 Learning goals: 
+* Reconceptualize statistical “tests” as models of data
+* Build intuitions about how specific “tests” (e.g., t-tests) relate to more general frameworks (e.g., regression, mixed effects models)
+* Identify which models are best suited for which research questions 
+* Reason about effect effect size as estimated by statistical models
 :::
 
-::: {.case-study}
-🔬 Case study: the “lady tasting tea” example (Salsburg 2001) – building intuitions about when statistical inference is important and what the limitations for this paradigm are. Historical origins of handling variability in measurement (Porter 2020).
-:::
+# Statistics and tea tasting
 
-How to go from theory to hypotheses to statistical model
+[Preamble - Pearson and Fisher and the “british statistics scene” (e.g., Galton) all endorsed eugenicist views]
 
-  - Krushke & Liddell (2018) taxonomy: Bayesian vs. frequentist, inference vs. estimation
-  - Intuition builder: For very large n, or flat prior, Bayes and frequentist coincide. 
+The lady tasting tea experiment:
+Ronald Fisher at a party
+Intuitive hypotheses: chance vs. tea knowledge.
+
+Discussion question: What do we want to get out of this experiment? 
+Binary conclusion: context of decision theory? 
+Estimation of lady’s sensitivity for individual differences?
+
+Back to the lady.
+
+Discussion question: How many cups should she get right out of 12? 
+
+What should we consider:
+Too low a standard means we are “liberal” – the lady could get lucky
+Too high a standard means we need the lady to know a lot!
+
+Define decision-theoretic framework:
+
+```{r}
+# Truth of the hypothesis
+# 
+# 
+# 
+# 
+# TRUE
+# FALSE
+# Test outcome
+# FALSE
+# False negative (MISS)
+# True negative
+# (Correct Rejection)
+# TRUE
+# False positive 
+# (False Alarm)
+# True positive
+# (HIT)
+```
+
+
+
+
+
+Intuitive solution to the lady tasting tea: given the binomial distribution, how likely is her answer by chance? 
+Excursion: what’s a probability distribution? A mathematical form to the idea of randomness of a particular type.
+
+If she gets 6, clearly consistent with chance.
+If she gets 7, 19% of exactly 7. 
+But what’s the probability we care about? 7 OR MORE = 38%
+If she gets 8 or more, 19% probability
+9 or more, 7% - ARE YOU CONVINCED? 
+10 or more, 2%
+
+Oh and - how many cups of tea should we taste? 
+Discussion goal: it depends on how strong we think her tea-tasting sense is!
+
+# Why do we do statistics? 
+
+This is a question about our goals, in particular 
+
+## Frequentists vs. Bayesians
+
+
+Bringing back prior knowledge question: how about ESP? 
+Question: should we as scientists apply such a prior? 
+
+
+Harry potter example
+
+p(h | d) = [p(d | h) p(h)] / [p(d | h) p(h) + p(d | h’) p(h’)]   
+
+p(h) = .001
+
+p(d | h) = 1
+
+p(h’) = .999
+
+p(d | h’) = .0000001
+
+So turn the crank to figure out whether Harry’s a wizard or no. 
+
+
+P-value misconceptions
+
+```{r}
+dozen <- tribble(~` `, ~Misconception,
+                 1,	"If P = .05, the null hypothesis has only a 5% chance of being true.",
+                 2,	"A nonsignificant difference (eg, P ≥.05) means there is no difference between groups.",
+                 3,	"A statistically significant finding is clinically important.",
+                 4,	"Studies with P values on opposite sides of .05 are conflicting.",
+                 5,	"Studies with the same P value provide the same evidence against the null hypothesis.",
+                 6,	"P = .05 means that we have observed data that would occur only 5% of the time under the null hypothesis.",
+                 7,	"P = .05 and P ≤.05 mean the same thing.",
+                 8,	"P values are properly written as inequalities (eg, \\'P ≤.02\\' when P = .015)",
+                 9,	"P = .05 means that if you reject the null hypothesis, the probability of a type I error is only 5%.",
+                 10,	"With a P = .05 threshold for significance, the chance of a type I error will be 5%.",
+                 11,	"You should use a one-sided P value when you don't care about a result in one direction, or a difference in that direction is impossible.",
+                 12,	"A scientific conclusion or treatment policy should be based on whether or not the P value is significant.")
+
+knitr::kable(dozen, 
+             booktabs = TRUE, 
+             caption = "A \"dirty dozen\" p value misconceptions. From Goodman (2008).")
+```
+
+
+Despite all these reasons to be worried about p-values, for many practicing scientists (at least at time of writing) there is no right answer. Even if we'd like to be Bayesian all the time because the paradigm makes philosophical and practical sense, there are a number of obstacles. First, though tools like `Stan`, `BayesFactor`, and `brms` make fitting Bayesian models easier (more about this below and in the next chapter), it's still on average quite a bit harder to fit a Bayesian model than it is a frequentist one. Second, because Bayesian analyses are less familiar, it may be an uphill battle to convince advisors, reviewers, and funders to use them. So as a group, we are still mostly Bayesian when we can be -- and frequentist when it's not practical. One reason we don't feel so bad about this stance is that, a lot of them time we're not so worried about making binary inferences, whether they are at $p < .05$ or $BF > 3$ or whatever the threshold is. 
+
+## Inference vs estimation
+
+Throughout this book we've taken the position that the goal of experiments is to estimate a causal effect of interest, ideally as part of some theory of how different constructs relate to one another. All this talk of hypotheses and inferences above is only indirectly related to that goal. 
+
+
+
+
+```{marginfigure, echo=TRUE}
+<img src="images/krushke.png"/>
+Clarifying the distinctions between Bayesian and Frequentist paradigms and the ways that they approach inference and estimation. For many settings, we think the estimation mindset is more useful. From Krushke and Liddell (2018). 
+```
+
+Bottom line: for many scientists, the decision of whether to be freuquentist or Bayesian. 
+
+
+# From tests to models
+
+
+# Simple models of between-group differences
 
 Introducing simple inference models:
 
-  - The chi-squared test for inferring whether two samples come from the same distribution
-  - The t-test for inferring whether a single group’s effect differs from 0
-  - The t-test for inferring whether two groups differ from one another
-  - The paired t-test as a first glimpse at how we might account for participant-level random effects (see Chapter 7).
+- The chi-squared test for inferring whether two samples come from the same distribution
+- The t-test for inferring whether a single group’s effect differs from 0
+- The t-test for inferring whether two groups differ from one another
+- The paired t-test as a first glimpse at how we might account for participant-level random effects (see Chapter 7).
 
-::: {.interactive}
-⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance
-:::
 
 ::: {.accident-report}
 ⚠️ Accident report: Once you have the basic t-test under your belt, it might feel natural to compare each group to 0 and conclude that one group is different from 0 and the other one isn’t. But “the difference between significant and not significant is not necessarily itself statistically significant” (Nieuwenhuis, Forstmann, and Wagenmakers 2011). 
 :::
 
+
+
+How to go from theory to hypotheses to statistical model
+
+- Krushke & Liddell (2018) taxonomy: Bayesian vs. frequentist, inference vs. estimation
+- Intuition builder: For very large n, or flat prior, Bayes and frequentist coincide. 
+
+# Effect size
+
+With all our talk about estimation above, we didn't say nuch about what precisely was being estimated. 
+
 Effect size: a common language for describing group differences. Pros and cons of this approach. Pro: comparability across studies. Con: loss of information about measures and real-world predictions; dependence on baseline variability. 
+
+
+
+::: {.interactive}
+⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance
+:::
