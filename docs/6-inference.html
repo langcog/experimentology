@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="Chapter 6 Statistical inference for comparing groups | Experimentology" />
+<meta property="og:title" content="Chapter 6 Statistical inference | Experimentology" />
 <meta property="og:type" content="book" />
 
 
@@ -22,9 +22,9 @@ MathJax.Hub.Config({
 </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta name="description" content="Chapter 6 Statistical inference for comparing groups | Experimentology">
+<meta name="description" content="Chapter 6 Statistical inference | Experimentology">
 
-<title>Chapter 6 Statistical inference for comparing groups | Experimentology</title>
+<title>Chapter 6 Statistical inference | Experimentology</title>
 
 <script src="libs/header-attrs-2.9/header-attrs.js"></script>
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
@@ -34,6 +34,28 @@ MathJax.Hub.Config({
 
 
 
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <link rel="stylesheet" href="css/style.css" type="text/css" />
 <link rel="stylesheet" href="toc/toc.css" type="text/css" />
@@ -55,7 +77,7 @@ MathJax.Hub.Config({
 <li class="part"><span><b>II Design and Planning</b></span></li>
 <li><a href="4-measurement.html#measurement"><span class="toc-section-number">4</span> Measurement</a></li>
 <li><a href="5-design.html#design"><span class="toc-section-number">5</span> Design of experiments</a></li>
-<li><a href="6-inference.html#inference"><span class="toc-section-number">6</span> Statistical inference for comparing groups</a></li>
+<li><a href="6-inference.html#inference"><span class="toc-section-number">6</span> Statistical inference</a></li>
 <li><a href="7-effect-size.html#effect-size"><span class="toc-section-number">7</span> Effect size</a></li>
 <li><a href="8-models.html#models"><span class="toc-section-number">8</span> Statistical models for more complex designs</a></li>
 <li><a href="9-sampling.html#sampling"><span class="toc-section-number">9</span> Sampling</a></li>
@@ -77,17 +99,40 @@ MathJax.Hub.Config({
 <div class="row">
 <div class="col-sm-12">
 <div id="inference" class="section level1" number="6">
-<h1><span class="header-section-number">Chapter 6</span> Statistical inference for comparing groups</h1>
+<h1><span class="header-section-number">Chapter 6</span> Statistical inference</h1>
 <div class="learning-goals">
-<p>🍎 Learning goals:
-* Reconceptualize statistical “tests” as models of data
-* Build intuitions about how specific “tests” (e.g., t-tests) relate to more general frameworks (e.g., regression, mixed effects models)
-* Identify which models are best suited for which research questions
-* Reason about effect effect size as estimated by statistical models</p>
+<p>🍎 Learning goals:</p>
+<ul>
+<li>Discuss differences between frequentist and Bayesian perspectives</li>
+<li>Reconceptualize statistical “tests” as models of data</li>
+<li>Build intuitions about how specific “tests” (e.g., t-tests) relate to more general frameworks (e.g., regression, mixed effects models)</li>
+<li>Identify which models are best suited for which research questions</li>
+<li>Reason about effect effect size as estimated by statistical models</li>
+</ul>
 </div>
-<div id="statistics-and-tea-tasting" class="section level2" number="6.1">
-<h2><span class="header-section-number">6.1</span> Statistics and tea tasting</h2>
-<p>[Preamble - Pearson and Fisher and the “british statistics scene” (e.g., Galton) all endorsed eugenicist views]</p>
+<p>We’ve been arguing that experiments are about measuring effects. You might ask then, why does this book even need a chapter about statistical inference? Why can’t we just report our measurements and be done?</p>
+<p>Statistical inference is critical to experimental methods because experiments – especially experiments with human participants – tend to yield noisy and variable data. Statistical methods allow us to make sense of the data and ask critical questions of it, like:</p>
+<ol style="list-style-type: decimal">
+<li>How likely is it that this pattern of measurements was produced by chance variation?</li>
+<li>Do these data provide more support for one hypothesis or another?</li>
+<li>How big is the effect of a manipulation, and how precise is our estimate of that effect?</li>
+<li>What portion of the variation in the data is due to a particular manipulation (as opposed to variation between participants, stimulus items, or other manipulations)?</li>
+</ol>
+<p>Question (1) is associated with one particular type of statistical testing – <strong>null hypothesis significance testing</strong> (NHST) in the <strong>frequentist</strong> statistical tradition. NHST has become synonymous with data analysis. This equivalence has been to the detriment of both data analysis and statistics more generally. The instinct to “go test your data for significance” before visualizing your data and trying to understand how it relates to the various sources of variation in your design (participants, items, manipulations, etc.) is in our view one of the most unhelpful things an experimenter can do. <span class="math inline">\(p &lt; .05\)</span> or not, a test of this sort gives you literally <em>one bit</em><label for="tufte-sn-1" class="margin-toggle sidenote-number">1</label><input type="checkbox" id="tufte-sn-1" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">1</span> In the information theoretic sense, as well as the common sense!</span> of information about your data. The kinds of visualizations we advocate in Chapter <a href="14-viz.html#viz">14</a> give you a much richer sense of what happened in your experiment!</p>
+<p>In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. But we will also try to contextualize it as a very special case of a broader set of strategies around modeling and inference. Further, we will note how some of the pathologies of NHST have been a driver of the replication crisis.</p>
+<p><label for="tufte-mn-1" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-1" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/krushke.png"/> Clarifying the distinctions between Bayesian and Frequentist paradigms and the ways that they approach inference and estimation. For many settings, we think the estimation mindset is more useful. From Krushke and Liddell (2018).</span></span></p>
+<p>What should replace NHST? There has been a recent move towards the use of Bayes Factors to quantify the evidence in support of a hypothesis. Bayes Factors can help answer questions like (2). We introduce these tools, and believe that they have broader applicability than the NHST framework and should be known by students. Both NHST and Bayes Factors are examples of what are called <strong>inference</strong> strategies, which are centered around drawing conclusions from data: significant or not, hypothesis one or hypothesis two.<label for="tufte-sn-2" class="margin-toggle sidenote-number">2</label><input type="checkbox" id="tufte-sn-2" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">2</span> An important but subtle point is that “inference” is an ambiguous term. We are using it in the sense of drawing conclusions from data. But the term is used more broadly as well in the phrase “statisical inference,” which is often contrasted with purely descriptive approaches. In this usage, “inference” means making generalizations from data that extend beyond the current set of observations. We do want to do that!</span></p>
+<p>We contrast inference strategies with <strong>estimation</strong> and <strong>modeling</strong> stratgies, which are more suited towards questions (3) and (4) <span class="citation">(<a href="#ref-krushke2018" role="doc-biblioref"><strong>krushke2018?</strong></a>)</span>. The goal of these strategies is to yield a precise estimate of the relationships underlying observed variation in the data. Critically, one of these estimates is the causal effect of the experimental manipulation(s). That explains our affection for these approaches: if a good theory predicts these kinds of causal effects, it makes sense that we’d want to estimate them precisely! Estimating one quantity in isolation is not maximally effective, though, since often there will be variation in the estimate that has to do with other known sources. If it’s helpful to have an example, imagine the Stroop effect, which has a fairly consistent effect on both fast and slow readers <span class="citation">(<label for="tufte-mn-2" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-2" class="margin-toggle">Haaf and Rouder 2017<span class="marginnote">Haaf, Julia M, and Jeffrey N Rouder. 2017. <span>“Developing Constraint in Bayesian Mixed Models.”</span> <em>Psychological Methods</em> 22 (4): 779.</span>)</span>. But estimates of this effect will be more precise if we take into account that some readers are slower or faster, rather than just averaging across all this variation.]</p>
+<p>This isn’t a statistics book and we won’t attempt to teach the full array of important statistical concepts that will allow students to build good models of a broad array of datasets. (Sorry!).<label for="tufte-sn-3" class="margin-toggle sidenote-number">3</label><input type="checkbox" id="tufte-sn-3" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">3</span> If you’re interested in going deeper, here are two books that have been really influential for us. The first is <span class="citation"><label for="tufte-mn-3" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-3" class="margin-toggle">Gelman and Hill (2006)<span class="marginnote">Gelman, Andrew, and Jennifer Hill. 2006. <em>Data Analysis Using Regression and Multilevel/Hierarchical Models</em>. Cambridge university press.</span></span>, which teaches regression and multi-level modeling from the persepective of data description and modeling. The second is <span class="citation"><label for="tufte-mn-4" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-4" class="margin-toggle">McElreath (2018)<span class="marginnote">McElreath, Richard. 2018. <em>Statistical Rethinking: A Bayesian Course with Examples in r and Stan</em>. Chapman; Hall/CRC.</span></span>. a course on building Bayesian models of the causal structure of your data. Honestly, neither is an easy book to sit down and read (unless you are the kind of person who reads stats books on the subway for fun) but both really reward detailed study. We encourage you to get together a reading group and go through the exercises together. It’ll be well worth while in its impact on your statistical and scientific thinking.</span> Instead, we’re going to focus on the case wherethere is a single binary manipulation (experimental vs. control) and we want to estimate its effect</p>
+<p>We’ll start by looking at a case study that established modern statistical inference. Then we’ll try to break this down by establishing t</p>
+<div class="case-study">
+<p>🔬 Case study: The lady tasting tea</p>
+<p>The birth of modern statistical inference came from a single, epochal act of mansplaining.<label for="tufte-sn-4" class="margin-toggle sidenote-number">4</label><input type="checkbox" id="tufte-sn-4" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">4</span> An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed social darwinist who believed fervently in Eugenic legislation. These views are repugnant.</span> Sir Ronald Fisher was apparently at a party when a lady declared that she could tell the difference between cups when the tea was added to the milk vs. the milk to the tea. Rather than taking her at her word, Fisher devised an experimental and data analysis procedure to test her claim.<label for="tufte-sn-5" class="margin-toggle sidenote-number">5</label><input type="checkbox" id="tufte-sn-5" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">5</span> If you’re interested in this history, we recommend <span class="citation">(<a href="#ref-salzburg2001" role="doc-biblioref"><strong>salzburg2001?</strong></a>)</span>’s delightful book, “The Lady Tasting Tea” about the origins of modern statistics.</span></p>
+<p>The basic schema of the experiment was that the lady would have to judge a set of new cups of tea (a two-alternative forced choice measure). Her data would then be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, in fact this is one of those touchstones that feels unremarkable because it literally established the way science was done for the next century.</p>
+<p>The first element of the experiment that was unusual was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to assume that the best practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounders. Fisher recognized that this strategy was insufficient and that random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk).<label for="tufte-sn-6" class="margin-toggle sidenote-number">6</label><input type="checkbox" id="tufte-sn-6" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">6</span> We just asserted the causal power of random assignment in Chapter <a href="1-intro.html#intro">1</a> but here’s where it originates!</span></p>
+<p>The second innovation was the idea of creating a model of what might happen during the experiment: specifically, a <strong>null model</strong> in which the nameless lady chose cups by chance rather than because of some tea sensitivity. The goal of the experiment was then to compute the probability of the lady’s choices under this null model. Fisher computed the combinatorics of the situation and determined that correct classification of</p>
+<pre><code>#&gt; [1] 0.00390625</code></pre>
+<p>For example, if she completed 8 tea-tasting trials,</p>
 <p>The lady tasting tea experiment:
 Ronald Fisher at a party
 Intuitive hypotheses: chance vs. tea knowledge.</p>
@@ -112,11 +157,8 @@ If she gets 8 or more, 19% probability
 Discussion goal: it depends on how strong we think her tea-tasting sense is!</p>
 <p>This is a question about our goals, in particular</p>
 </div>
-<div id="inferences-about-tea" class="section level2" number="6.2">
-<h2><span class="header-section-number">6.2</span> Inferences about tea</h2>
-</div>
-<div id="probability-theory-also-known-as-bayes" class="section level2" number="6.3">
-<h2><span class="header-section-number">6.3</span> Probability theory (also known as Bayes)</h2>
+<div id="probability-theory-also-known-as-bayes" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> Probability theory (also known as Bayes)</h2>
 <p>Bringing back prior knowledge question: how about ESP?
 Question: should we as scientists apply such a prior?</p>
 <p>Harry potter example</p>
@@ -138,8 +180,8 @@ Assume p(h1) is 10x-20:</p>
 <p>P &lt; .05 provides almost no evidence!</p>
 <p>So you need to apply the priors to get the kind of inferences you want.</p>
 </div>
-<div id="frequentist-inference" class="section level2" number="6.4">
-<h2><span class="header-section-number">6.4</span> Frequentist inference</h2>
+<div id="frequentist-inference" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> Frequentist inference</h2>
 <p>Philosophy
 Bayes: Data are the data, what can we infer? (subjective)
 Frequentist: Do the same thing again and again, what happens (objective truth)
@@ -162,11 +204,11 @@ Frequentist good for:
 Decision theory (cf. bayesian decision theory)
 Absence of assumptions (“more objective”)
 Often easier to state and solve models</p>
-<div id="p-values-the-root-of-all-evil" class="section level3" number="6.4.1">
-<h3><span class="header-section-number">6.4.1</span> P-values: the root of all evil?</h3>
+<div id="p-values-the-root-of-all-evil" class="section level3" number="6.2.1">
+<h3><span class="header-section-number">6.2.1</span> P-values: the root of all evil?</h3>
 <p>P-value misconceptions</p>
 <p><!--
-<caption>--><span class="marginnote shownote"><span id="tab:unnamed-chunk-5">Table 6.1: </span>A “dirty dozen” p value misconceptions. From Goodman (2008).</span><!--</caption>--></p>
+<caption>--><span class="marginnote shownote"><span id="tab:unnamed-chunk-7">Table 6.1: </span>A “dirty dozen” p value misconceptions. From Goodman (2008).</span><!--</caption>--></p>
 <table>
 <colgroup>
 <col width="2%" />
@@ -232,15 +274,14 @@ Often easier to state and solve models</p>
 <p>Despite all these reasons to be worried about p-values, for many practicing scientists (at least at time of writing) there is no right answer. Even if we’d like to be Bayesian all the time because the paradigm makes philosophical and practical sense, there are a number of obstacles. First, though tools like <code>Stan</code>, <code>BayesFactor</code>, and <code>brms</code> make fitting Bayesian models easier (more about this below and in the next chapter), it’s still on average quite a bit harder to fit a Bayesian model than it is a frequentist one. Second, because Bayesian analyses are less familiar, it may be an uphill battle to convince advisors, reviewers, and funders to use them. So as a group, we are still mostly Bayesian when we can be – and frequentist when it’s not practical. One reason we don’t feel so bad about this stance is that, a lot of them time we’re not so worried about making binary inferences, whether they are at <span class="math inline">\(p &lt; .05\)</span> or <span class="math inline">\(BF &gt; 3\)</span> or whatever the threshold is.</p>
 </div>
 </div>
-<div id="making-models-inference-vs-estimation" class="section level2" number="6.5">
-<h2><span class="header-section-number">6.5</span> Making models: Inference vs estimation</h2>
+<div id="making-models-inference-vs-estimation" class="section level2" number="6.3">
+<h2><span class="header-section-number">6.3</span> Making models: Inference vs estimation</h2>
 <p>Throughout this book we’ve taken the position that the goal of experiments is to estimate a causal effect of interest, ideally as part of some theory of how different constructs relate to one another. All this talk of hypotheses and inferences above is only indirectly related to that goal.</p>
-<p><label for="tufte-mn-1" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-1" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/krushke.png"/> Clarifying the distinctions between Bayesian and Frequentist paradigms and the ways that they approach inference and estimation. For many settings, we think the estimation mindset is more useful. From Krushke and Liddell (2018).</span></span></p>
 <ul>
 <li>Intuition builder: For very large n, or flat prior, Bayes and frequentist coincide.</li>
 </ul>
-<div id="simple-models-of-between-group-differences" class="section level3" number="6.5.1">
-<h3><span class="header-section-number">6.5.1</span> Simple models of between-group differences</h3>
+<div id="simple-models-of-between-group-differences" class="section level3" number="6.3.1">
+<h3><span class="header-section-number">6.3.1</span> Simple models of between-group differences</h3>
 <p>Introducing simple inference models:</p>
 <ul>
 <li>The chi-squared test for inferring whether two samples come from the same distribution</li>

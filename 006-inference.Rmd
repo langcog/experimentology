@@ -2,6 +2,7 @@
 
 ::: {.learning-goals}
 🍎 Learning goals: 
+
 * Discuss differences between frequentist and Bayesian perspectives
 * Reconceptualize statistical “tests” as models of data
 * Build intuitions about how specific “tests” (e.g., t-tests) relate to more general frameworks (e.g., regression, mixed effects models)
@@ -9,15 +10,50 @@
 * Reason about effect effect size as estimated by statistical models
 :::
 
-## Statistics and tea tasting
+We've been arguing that experiments are about measuring effects. You might ask then, why does this book even need a chapter about statistical inference? Why can't we just report our measurements and be done? 
+
+Statistical inference is critical to experimental methods because experiments -- especially experiments with human participants -- tend to yield noisy and variable data. Statistical methods allow us to make sense of the data and ask critical questions of it, like:
+
+1. How likely is it that this pattern of measurements was produced by chance variation? 
+2. Do these data provide more support for one hypothesis or another? 
+3. How big is the effect of a manipulation, and how precise is our estimate of that effect?
+4. What portion of the variation in the data is due to a particular manipulation (as opposed to variation between participants, stimulus items, or other manipulations)?
+
+Question (1) is associated with one particular type of statistical testing -- **null hypothesis significance testing** (NHST) in the **frequentist** statistical tradition. NHST has become synonymous with data analysis. This equivalence has been to the detriment of both data analysis and statistics more generally. The instinct to "go test your data for significance" before visualizing your data and trying to understand how it relates to the various sources of variation in your design (participants, items, manipulations, etc.) is in our view one of the most unhelpful things an experimenter can do. $p < .05$ or not, a test of this sort gives you literally *one bit*^[In the information theoretic sense, as well as the common sense!] of information about your data. The kinds of visualizations we advocate in Chapter \@ref(viz) give you a much richer sense of what happened in your experiment!
+
+In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. But we will also try to contextualize it as a very special case of a broader set of strategies around modeling and inference. Further, we will note how some of the pathologies of NHST have been a driver of the replication crisis. 
+
+```{marginfigure, echo=TRUE}
+<img src="images/krushke.png"/>
+Clarifying the distinctions between Bayesian and Frequentist paradigms and the ways that they approach inference and estimation. For many settings, we think the estimation mindset is more useful. From Krushke and Liddell (2018). 
+```
+
+What should replace NHST? There has been a recent move towards the use of Bayes Factors to quantify the evidence in support of a hypothesis. Bayes Factors can help answer questions like (2). We introduce these tools, and believe that they have broader applicability than the NHST framework and should be known by students. Both NHST and Bayes Factors are examples of what are called **inference** strategies, which are centered around drawing conclusions from data: significant or not, hypothesis one or hypothesis two.^[An important but subtle point is that "inference" is an ambiguous term. We are using it in the sense of drawing conclusions from data. But the term is used more broadly as well in the phrase "statisical inference," which is often contrasted with purely descriptive approaches. In this usage, "inference" means making generalizations from data that extend beyond the current set of observations. We do want to do that!]
+
+We contrast inference strategies with **estimation** and **modeling** stratgies, which are more suited towards questions (3) and (4) [@krushke2018]. The goal of these strategies is to yield a precise estimate of the relationships underlying observed variation in the data. Critically, one of these estimates is the causal effect of the experimental manipulation(s). That explains our affection for these approaches: if a good theory predicts these kinds of causal effects, it makes sense that we'd want to estimate them precisely! Estimating one quantity in isolation is not maximally effective, though, since often there will be variation in the estimate that has to do with other known sources. If it's helpful to have an example, imagine the Stroop effect, which has a fairly consistent effect on both fast and slow readers [@haaf2017]. But estimates of this effect will be more precise if we take into account that some readers are slower or faster, rather than just averaging across all this variation.]
+
+This isn't a statistics book and we won't attempt to teach the full array of important statistical concepts that will allow students to build good models of a broad array of datasets. (Sorry!).^[If you're interested in going deeper, here are two books that have been really influential for us. The first is @gelman2006, which teaches regression and multi-level modeling from the persepective of data description and modeling. The second is @mcelreath2018. a course on building Bayesian models of the causal structure of your data. Honestly, neither is an easy book to sit down and read (unless you are the kind of person who reads stats books on the subway for fun) but both really reward detailed study. We encourage you to get together a reading group and go through the exercises together. It'll be well worth while in its impact on your statistical and scientific thinking.] Instead, we're going to focus on the case wherethere is a single binary manipulation (experimental vs. control) and we want to estimate its effect
+
+
+
+We'll start by looking at a case study that established modern statistical inference. Then we'll try to break this down by establishing t
+
+::: {.case-study}
+🔬 Case study: The lady tasting tea
 
 The birth of modern statistical inference came from a single, epochal act of mansplaining.^[An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed social darwinist who believed fervently in Eugenic legislation. These views are repugnant.] Sir Ronald Fisher was apparently at a party when a lady declared that she could tell the difference between cups when the tea was added to the milk vs. the milk to the tea. Rather than taking her at her word, Fisher devised an experimental and data analysis procedure to test her claim.^[If you're interested in this history, we recommend @salzburg2001's delightful book, "The Lady Tasting Tea" about the origins of modern statistics.]
 
-The basic schema of the experiment was that the lady would have to judge a set of new cups of tea, and her data would be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, in fact this is one of those touchstones that feels unremarkable because it literally established the way science was done for the next century. 
+The basic schema of the experiment was that the lady would have to judge a set of new cups of tea (a two-alternative forced choice measure). Her data would then be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, in fact this is one of those touchstones that feels unremarkable because it literally established the way science was done for the next century. 
 
 The first element of the experiment that was unusual was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to assume that the best practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounders. Fisher recognized that this strategy was insufficient and that random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk).^[We just asserted the causal power of random assignment in Chapter \@ref(intro) but here's where it originates!]
 
-The second innovation was the idea of creating a model of what might happen during the experiment: specifically, a **null model** in which the nameless lady chose cups by chance rather than because of some tea sensitivity. 
+The second innovation was the idea of creating a model of what might happen during the experiment: specifically, a **null model** in which the nameless lady chose cups by chance rather than because of some tea sensitivity. The goal of the experiment was then to compute the probability of the lady's choices under this null model. Fisher computed the combinatorics of the situation and determined that correct classification of 
+
+```{r}
+dbinom(x = 8, size = 8, prob = .5)
+```
+
+For example, if she completed 8 tea-tasting trials, 
 
 The lady tasting tea experiment:
 Ronald Fisher at a party
@@ -76,8 +112,7 @@ Discussion goal: it depends on how strong we think her tea-tasting sense is!
 
 
 This is a question about our goals, in particular 
-
-## Inferences about tea
+:::
 
 ## Probability theory (also known as Bayes)
 
@@ -186,11 +221,6 @@ Throughout this book we've taken the position that the goal of experiments is to
 
 
 
-
-```{marginfigure, echo=TRUE}
-<img src="images/krushke.png"/>
-Clarifying the distinctions between Bayesian and Frequentist paradigms and the ways that they approach inference and estimation. For many settings, we think the estimation mindset is more useful. From Krushke and Liddell (2018). 
-```
 
 
 - Intuition builder: For very large n, or flat prior, Bayes and frequentist coincide. 
