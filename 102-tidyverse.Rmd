@@ -8,7 +8,7 @@ knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
 ```
 
 <!-- ----------------------------------------------------------------------- -->
-# Goals and Introduction
+## Goals and Introduction
 
 By the end of this tutorial, you will know:
 
@@ -19,7 +19,7 @@ By the end of this tutorial, you will know:
 
 This intro will describe a few concepts that you will need to know, using the famous `iris` dataset that comes with `ggplot2`.
 
-## Data frames
+### Data frames
 
 The basic data structure we're working with is the data frame, or `tibble` (in the `tidyverse` reimplementation). 
 Data frames have rows and columns, and each column has a distinct data type. The implementation in Python's `pandas` is distinct but most of the concepts are the same. 
@@ -39,7 +39,7 @@ head(iris)
 
 > **Discussion.** Why might some ways of doing this be better than others? 
 
-## Tidy data
+### Tidy data
 
 > “Tidy datasets are all alike, but every messy dataset is messy in its own way.” –– Hadley Wickham
 
@@ -58,7 +58,7 @@ ju <- read_csv("data/janiszewski_rep_cleaned.csv")
 head(ju)
 ```
 
-## Functions and Pipes
+### Functions and Pipes
 
 Everything you typically want to do in statistical programming uses **functions**. `mean` is a good example. `mean` takes one **argument**, a numeric vector. 
 
@@ -112,7 +112,7 @@ iris$Species %>%
   length
 ```
 
-## `ggplot2` and tidy data
+### `ggplot2` and tidy data
 
 The last piece of our workflow here is going to be the addition of visualiation elements. `ggplot2` is a plotting package that easily takes advantage of tidy data. ggplots have two important parts (there are of course more):
 
@@ -136,7 +136,7 @@ iris %>%
 ```
 
 <!-- ----------------------------------------------------------------------- -->
-# Tidy Data Analysis with `dplyr`
+## Tidy Data Analysis with `dplyr`
 
 Reference: [R4DS Chapter 5](http://r4ds.had.co.nz/transform.html)
 
@@ -152,7 +152,7 @@ We are going to manipulate these data using "verbs" from `dplyr`. I'll only teac
 + `summarize` - apply some function over columns in each group  
 
 
-## Exploring and characterizing the dataset
+### Exploring and characterizing the dataset
 
 
 ```{r}
@@ -185,7 +185,7 @@ View(sgf)
 DT::datatable(sgf)
 ```
 
-## Filtering & Mutating
+### Filtering & Mutating
 
 There are lots of reasons you might want to remove *rows* from your dataset, including getting rid of outliers, selecting subpopulations, etc. `filter` is a verb (function) that takes a data frame as its first argument, and then as its second takes the **condition** you want to filter on. 
 
@@ -248,7 +248,7 @@ sgf <- sgf %>%
 head(sgf$age_group)
 ```
 
-## Standard psychological descriptives
+### Standard psychological descriptives
 
 We typically describe datasets at the level of subjects, not trials. We need two verbs to get a summary at the level of subjects: `group_by` and `summarise` (kiwi spelling). Grouping alone doesn't do much.
 
@@ -328,7 +328,7 @@ sgf_grand_means <- sgf_sub_means %>%
 ```
 
 <!-- ----------------------------------------------------------------------- -->
-# Getting to Tidy with `tidyr`
+## Getting to Tidy with `tidyr`
 
 Reference: [R4DS Chapter 12](http://r4ds.had.co.nz/tidy-data.html)
 
@@ -342,7 +342,7 @@ sklar <- read_csv("data/sklar_data.csv")
 head(sklar)
 ```
 
-## Tidy verbs
+### Tidy verbs
 
 The two main verbs for tidying are `gather` and `spread`. (There are lots of others in the `tidyr` package if you want to split or merge columns etc.). 
 
@@ -402,7 +402,7 @@ iris %>%
 
 
 <!-- ----------------------------------------------------------------------- -->
-# A bigger worked example: Wordbank data
+## A bigger worked example: Wordbank data
 
 We're going to be using some data on vocabulary growth that we load from the Wordbank database. [Wordbank](http://wordbank.stanford.edu) is a database of children's language learning. 
 
@@ -482,11 +482,11 @@ ggplot(ws_sex,
 
 
 <!-- ----------------------------------------------------------------------- -->
-# Exciting stuff you can do with this workflow
+## Exciting stuff you can do with this workflow
 
 Here are three little demos of exciting stuff that you can do (and that are facilitated by this workflow).
 
-## Reading bigger files, faster
+### Reading bigger files, faster
 
 A few other things will help you with "medium size data":
 
@@ -503,7 +503,7 @@ system.time(feather::read_feather("data/ws.feather"))
 ```
 I see about a 2x speedup for `read_csv` (bigger for bigger files) and a 20x speedup for `read_feather`.
 
-## Interactive visualization
+### Interactive visualization
 
 The `shiny` package is a great way to do interactives in R. We'll walk through constructing a simple shiny app for the wordbank data here. 
 
@@ -544,7 +544,7 @@ shinyApp(
 )
 ```
 
-## Function application 
+### Function application 
 
 As I've tried to highlight, `dplyr` is actually all about applying functions. `summarise` is a verb that helps you apply functions to chunks of data and then bind them together. But that creates a requirement that all the functions return a single value (e.g., `mean`). There are lots of things you can do that summarise data but *don't* return a single value. For example, maybe you want to run a linear regression and return the slope *and* the intercept. 
 
@@ -566,7 +566,7 @@ ws %>%
 In recent years, this workflow in R ihas gotten really good. `purrr` is an amazing package that introduces consistent ways to `map` functions. It's beyond the scope of the course. 
 
 <!-- ----------------------------------------------------------------------- -->
-# Exercise solutions
+## Exercise solutions
 
 Returning the third cell.
 

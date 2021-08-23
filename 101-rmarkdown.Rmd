@@ -1,6 +1,6 @@
 # R Markdown Tutorial {#rmarkdown}
 
-# Introduction
+## Introduction
 
 This is a short tutorial on using RMarkdown to mix prose and code together for creating reproducible scientific documents. If you find any errors and have a Github account, **[please suggest changes here](https://github.com/mcfrank/openscience_tutorial)**. This is adapted from [a slightly longer tutorial that Mike and Chris Hartgerink taught together at SIPS 2017](https://github.com/mcfrank/rmarkdown-workshop).
 
@@ -8,7 +8,7 @@ In short: RMarkdown allows you to create documents that are compiled with code, 
 
 Now we're together trying to help spread the word, because it can make writing manuscripts so much easier! We wrote this handout in RMarkdown as well. [Take a look at the source.](https://github.com/mcfrank/openscience_tutorial/blob/master/rmarkdown_handout.Rmd)
 
-## Who is this aimed at?
+### Who is this aimed at?
 
 We aim this document at anyone writing manuscripts and using R, including those who...
 
@@ -17,7 +17,7 @@ We aim this document at anyone writing manuscripts and using R, including those 
 3. ...want to be able to change bibliography styles with less hassle
 4. ...want to spend more time actually doing research!
 
-## Why write reproducible papers?
+### Why write reproducible papers?
 
 Cool, thanks for sticking with us and reading up through here!
 
@@ -29,7 +29,7 @@ There are three reasons to write reproducible papers. To be right, to be reprodu
 
 3. To create spiffy documents that can be revised easily. This is actually a really big neglected one for us. At least one of us used to tweak tables and figures by hand constantly, leading to a major incentive *never to rerun analyses* because it would mean re-pasting and re-illustratoring all the numbers and figures in a paper. That's a bad thing! It means you have an incentive to be lazy and to avoid redoing your stuff. And you waste tons of time when you do. In contrast, with a reproducible document, you can just rerun with a tweak to the code. You can even specify what you want the figures and tables to look like before you're done with all the data collection (e.g., for purposes of preregistraion or a registered report). 
 
-## Learning goals
+### Learning goals
 
 By the end of this class you should:
 
@@ -38,7 +38,7 @@ By the end of this class you should:
 * Understand the different output formats from RMarkdown and how to generate them, and
 * Know about generating APA format files with `papaja` and bibtex.
 
-# Getting Started
+## Getting Started
 
 Fire up Rstudio and create a new RMarkdown file. Don't worry about the settings, we'll get to that later.
 
@@ -46,11 +46,11 @@ If you click on "Knit" (or hit `CTRL+SHIFT+K`) the RMarkdown file will run and g
 
 We need that before we teach you more about RMarkdown. But you should feel good if you get here already, because honestly, you're about 80% of the way to being able to write basic RMarkdown files. It's _that_ easy.
 
-# Structure of an RMarkdown file
+## Structure of an RMarkdown file
 
 An RMarkdown file contains several parts. Most essential are the header, the body text, and code chunks.
 
-## Header
+### Header
 
 Headers in RMarkdown files contain some metadata about your document, which you can customize to your liking. Below is a simple example that purely states the title, author name(s), date, and output format. 
 
@@ -67,7 +67,7 @@ output: html_document
 
 For now, go ahead and set `html_document` to `word_document`, except if you have strong preferences for `HTML` or `PDF`.^[Note: to create PDF documents you also need a TeX installation. Don't know what that is? You probably don't have it then. More info below.]
 
-## Body text
+### Body text
 
 The body of the document is where you actually write your reports. This is primarily written in the Markdown format, which is explained in the [Markdown syntax](#markdown-syntax) section.
 
@@ -75,7 +75,7 @@ The beauty of RMarkdown is, however, that you can evaluate `R` code right in the
 
 For example, if you want to have the result of 48 times 35 in your text, you type \` r 48-35\`, which returns `r 48 - 35`. Please note that if you return a value with many decimals, it will also print these depending on your settings (for example, `r pi`).
 
-## Code chunks
+### Code chunks
 
 In the section above we introduced you to running code inside text, but often you need to take several steps in order to get to the result you need. And you don't want to do data cleaning in the text! This is why there are code chunks. A simple example is a code chunk loading packages. 
 
@@ -92,7 +92,7 @@ If you do not want to have the contents of the code chunk to be put into your do
 These code chunks can contain whatever you need, including tables, and figures (which we will go into more later). Note that all code chunks regard the location of the RMarkdown as the working directory, so when you try to read in data use the relative path in.
 
 
-# Markdown syntax
+## Markdown syntax
 
 Markdown is one of the simplest document languages around, that is an open standard and can be converted into `.tex`, `.docx`, `.html`, `.pdf`, etc. This is the main workhorse of RMarkdown and is very powerful. You can [learn Markdown in five (!) minutes](https://learnxinyminutes.com/docs/markdown/) Other resources include [http://rmarkdown.rstudio.com/authoring_basics.html](), and [this cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf). 
 
@@ -107,7 +107,7 @@ If you want a more extensive description of all the potential of Markdown, [this
 
 The great thing about Markdown is that it works almost everywhere! Github, OSF, slack, many wikis, and even in text documents it looks pretty good. I find myself writing emails in markdown just because it's a clear and consistent way to format and outline. 
 
-## Exercises
+### Exercises
 
 Swap over to your new sample markdown.
 
@@ -124,9 +124,9 @@ Now recompile. Looks nice, right?^[Pro-tip: you can specify how deep the TOC sho
 
 3. Try adding another option: `toc_float: true`. Recompile -- super cool. There are plenty more great output options that you can modify. [Here is a link to the documentation.](http://rmarkdown.rstudio.com/html_document_format.html)
 
-#  Headers, Tables, and Graphs
+##  Headers, Tables, and Graphs
 
-## Headers 
+### Headers 
 
 We're going to want more libraries loaded (for now we're loading them inline). 
 
@@ -154,7 +154,7 @@ opts_chunk$set(fig.width=8, fig.height=5,
 ```
 
 
-## Graphs
+### Graphs
 
 It's really easy to include graphs, like this one. (Using the `mtcars` dataset that comes with `ggplot2`).
 
@@ -170,7 +170,7 @@ External graphics can also be included, as follows:
 knitr::include_graphics("path/to/file")
 ```
 
-## Tables
+### Tables
 
 There are many ways to make good-looking tables using RMarkdown, depending on your display purpose. 
 
@@ -185,7 +185,7 @@ We recommend starting with `kable`:
 kable(head(mtcars), digits = 1)
 ```
 
-## Statistics
+### Statistics
 
 It's also really easy to include statistical tests of various types. 
 
@@ -210,17 +210,17 @@ To insert these stats inline I wrote e.g. `round(ts$parameter, 2)` inside an inl
 
 Note that rounding can occasionally get you in trouble here, because it's very easy to have an output of $p = 0$ when in fact $p$ can never be exactly equal to 0. Nonetheless, this can help you prevent rounding errors and the wrath of `statcheck`.
 
-## Exercises
+### Exercises
 
 1. Using the `mtcars` dataset, insert a table and a graph of your choice into the document.^[If you're feeling uninspired, try `hist(mtcars$mpg)`.]
 
-# Collaboration 
+## Collaboration 
 
 How do we collaborate using RMarkdown? There are lots of different workflows that people use. The way it works in my lab is that the first author typically makes a github repository with the markdown-formatted document in it. Sometimes we just collaborate through github or through writing comments on the rendered PDF and sending them back to the first author. (I like the dropbox PDF comment interface for this). 
 
 But, sometimes you want to do lots of line-editing or write collaboratively, especially with someone who doesn't like github and markdown and all that. For these cases, we often paste the intro into google docs or Word and edit until we converge, then the first author puts that back into the markdown. This is a little clunky, but not too bad. And critically, all the figures and numbers get rendered fresh when you re-knit, so nothing can get accidentally altered during the editing process.
 
-# Writing APA-format papers
+## Writing APA-format papers
 
 (Thanks to [Frederick Aust](http://github.com/crsh) for contributing this section!)
 
@@ -228,12 +228,12 @@ The end-game of reproducible research is to knit your entire paper. We'll focus 
 
 We're going to use the `papaja` package. `papaja` is a R-package including a R Markdown template that can be used to produce documents that adhere to the American Psychological Association (APA) manuscript guidelines (6th Edition).
 
-## Software requirements
+### Software requirements
 
 To use `papaja`, make sure you are using the latest versions of R and RStudio. If you want to create PDF- in addition to DOCX-files you need **[TeX](http://de.wikipedia.org/wiki/TeX) 2013 or later**. Try [MikTeX](http://miktex.org/) for Windows, [MacTeX](https://tug.org/mactex/) for Mac, or [TeX Live](http://www.tug.org/texlive/) for Linux. Some Linux users may need a few additional TeX packages for the LaTeX document class `apa6` to work.^[For Ubuntu, we suggest running: `sudo apt-get install texlive texlive-publishers texlive-fonts-extra texlive-latex-extra texlive-humanities lmodern`.]
 
 
-## Installing `papaja`
+### Installing `papaja`
 
 `papaja` has not yet been released on CRAN but you can install it from GitHub.
 
@@ -245,7 +245,7 @@ if(!"devtools" %in% rownames(installed.packages())) install.packages("devtools")
 devtools::install_github("crsh/papaja")
 ```
 
-## Creating a document
+### Creating a document
 
 The APA manuscript template should now be available through the RStudio menus when creating a new R Markdown file.
 
@@ -259,7 +259,7 @@ If `figurelist`, `tablelist`, or `footnotelist` are set to `yes` a list of figur
 `lineno` indicates whether lines should be continuously numbered through out the manuscript.
 
 
-## Bibiographic management
+### Bibiographic management
 
 It's also possible to include references using `bibtex`, by using `@ref` syntax. An option for managing references is [bibdesk](http://bibdesk.sourceforge.net/), which integrates with google scholar.^[But many other options are possible.] 
 
@@ -275,7 +275,7 @@ The references for the inserted citations are automatically added to the documen
 
 Once `citr` is installed (`install.packages("citr")`) and you have restarted your R session, the addin appears in the menus and you can define a [keyboard shortcut](https://rstudio.github.io/rstudioaddins/#keyboard-shorcuts) to call the addin.
 
-## Exercise
+### Exercise
 
 Make sure you've got `papaja`, then open a new template file. Compile this document, and look at how awesome it is. (To compile you need `texlive`, a library for compiling markdown to PDF, so you may need to wait and install this later if it's not working). 
 
