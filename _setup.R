@@ -1,6 +1,7 @@
 library(tidyverse)
 library(glue)
 library(knitr)
+library(shiny)
 
 opts_chunk$set(
   message = FALSE,

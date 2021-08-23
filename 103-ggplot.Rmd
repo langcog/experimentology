@@ -1,3 +1,299 @@
 # ggplot Tutorial {#ggplot}
 
+## Exploring ggplot2 using `qplot`
+
+We'll start by using `qplot`. `qplot` is the easy interface, meant to replace `plot`. You can give it simple `qplot(x,y)` examples, or slightly more complex examples like `qplot(x, y, col=grp, data=d)`. 
+
+We're going to be using the `diamonds` dataset. This is a set of measurements of diamonds, along with their price etc.
+
+```{r}
+head(diamonds)
+qplot(diamonds$carat, diamonds$price)
+```
+
+Scatter plots are trivial, and easy to add features to. Modify this plot so that it uses the dataframe rather than working from variables in the general namespace (good to get away from retyping `diamonds$` every time you reference a variable). 
+
+```{r}
+qplot(data = diamonds, 
+      carat, price, colour = price) + 
+  viridis::scale_color_viridis()
+```
+
+Try adding clarity and cut, using shape and color as your visual variables. 
+
+```{r}
+```
+
+
+## More complex with `ggplot`
+
+`ggplot` is just a way of building `qplot` calls up more systematically. It's
+sometimes easier to use and sometimes a bit more complicated. What I want to show off here is the functionality of being able to build up complex plots with multiple elements. You can actually do this using `qplot` pretty easily, but there are a few things that are hard to do. 
+
+`ggplot` is the basic call, where you specify A) a dataframe and B) an aesthetic (`aes`) mapping from variables in the plot space to variables in the dataset. 
+
+```{r}
+d <- ggplot(diamonds, aes(x=carat, y=price)) # first you set the aesthetic and dataset
+d + geom_point() # then you add geoms
+d + geom_point(aes(colour = carat)) # and you can keep doing this to add layers to the plot
+```
+
+Try writing this as a single set of additions (e.g. one line of R code, though you can put in linebreaks). This is the most common workflow for me. 
+
+
+```{r}
+ggplot(diamonds, aes(x=carat, y=price)) + 
+  geom_point() + 
+  geom_point(aes(colour = clarity)) 
+```
+
+
+## Facets
+
+Let's try out another version of the `qplot` example above. Rewrite the last qplot example with ggplot.
+
+```{r}
+ggplot(diamonds, aes(x=carat, y=price)) + 
+  geom_point() + 
+  geom_point(aes(colour = clarity)) 
+```
+
+One of the primary benefits of `ggplot2` is the use of facets - also known as small multiples in the Tufte vocabulary. That last plot was probably hard to read. Facets could make it better. Try adding `facet_grid(x ~ y)`.  `x ~ y` means row facets are by `x`, column facets by `y`. 
+
+```{r}
+ggplot(diamonds, aes(x=carat, y=price)) + 
+  geom_point(aes(colour = clarity), 
+             alpha = .2)  + 
+  facet_grid(. ~ cut) + 
+  theme_classic() + 
+  theme(legend.position = "bottom")
+```
+
+But facets can also get overwhelming. Try to strike a good balance between color, shape, and faceting.
+
+HINT: `facet_grid(. ~ x)` puts x on the columns, but `facet_wrap(~ x)` (no dot) *wraps* the facets. 
+
+```{r}
+ggplot(diamonds, aes(x=carat, y=price)) + 
+  geom_point(aes(colour = clarity), 
+             alpha = .2)  + 
+  facet_wrap(~ clarity) + 
+  theme_classic() + 
+  theme(legend.position = "bottom")
+```
+
+
+## Geoms
+
+As you've seen above, the basic unit of a ggplot plot is a "geom" - a mapping between data (via an "aesthetic") and a particular geometric configuration on coordinate axes. 
+
+Let's try adding some geoms and manipulating their parameters. One combo I really like is a scatterplot with a smoothing layer (`geom_smooth`). Try adding one onto this plot. 
+
+```{r}
+ggplot(diamonds, aes(x=carat, y=price)) +
+  geom_point(shape = ".") +
+  facet_grid(cut ~ clarity) 
+```
+
+
+CHALLENGE: You could also try starting with a histogram and adding densities. (`geom_density`), Try [this link](https://stackoverflow.com/questions/5688082/ggplot2-overlay-histogram-with-density-curve).
+
+```{r}
+ggplot(diamonds, aes(x = carat)) +
+  geom_density()
+```
+
+## Themes and plot cleanup
+
+I like a slightly cleaner look to my plots. Luckily, ggplot allows you to add "themes" to your plots. Try doing the same plot but adding `+ theme_bw()` or `+ theme_classic()`. Different themes work better for different applications, in my experience. My favorite right now is `ggthemes::theme_few`.
+
+You can also try different color scales. Experiment with `scale_color_...` - try writing that and hitting TAB for autocomplete options. Check out the help on this. 
+
+You can also try transparency/different point sizes to clean up scatterplots. Try `alpha = .1` or `pch = "."` to make transparent or small points. 
+
+Finally, don't forget to "fix the axis labels"! 
+
+Here's a somewhat ugly plot - see if you can make it look awesome. 
+
+```{r}
+ggplot(diamonds, aes(x = carat, y = price, col = cut)) + 
+  geom_point() + 
+  facet_wrap(~clarity) 
+```
+
+
+## Plot inheritance example
+
+Let's take this base plot. 
+
+```{r}
+ggplot(data = diamonds, 
+       aes(x = carat, y = price, 
+           color = cut)) + 
+  geom_point(alpha = .01) +
+  geom_smooth(method ="lm", se=FALSE) +
+  facet_wrap(~cut)
+```
+
+Say I want to map clarity to be mapped to size. Try adding it to the top level. This doesn't work. 
+
+```{r}
+ggplot(diamonds, 
+       aes(x = carat, y = price, 
+           color = cut, size = clarity)) + 
+  geom_point(alpha = .01) +
+  geom_smooth(method ="lm", se=FALSE) +
+  facet_wrap(~cut)
+```
+The reason is inheritance. I want the POINTS to have sizes, but the smoothing lines not to have that AES feature. 
+
+```{r}
+ggplot(diamonds, 
+       aes(x = carat, y = price, 
+           color = cut)) + 
+  geom_point(aes(size = clarity), alpha = .01) +
+  geom_smooth(method ="lm", se=FALSE) +
+  facet_wrap(~cut)
+```
+
+
+## Advanced plot exploration exercise
+
+This is an exploration of Blake et al. (2015), [Ontogeny of fairness in seven societies](http://www.nature.com/nature/journal/v528/n7581/full/nature15703.html).
+
+```{r}
+library(tidyverse)
+
+d <- read_csv("data/ontogeny_of_fairness.csv") %>%
+  mutate(trial_num = as.numeric(gsub(".(\\d+)", "\\1", trial)),
+         trial_type = factor(eq.uneq, 
+                             levels = c("E","U"), 
+                             labels = c("Equal","Unequal")), 
+         condition = factor(condition,
+                      levels = c("AI","DI"), 
+                      labels = c("Advantageous","Disadvantageous"))) %>%
+  arrange(country, condition, actor.id, trial_num)
+```
+
+The general structue of this experiment is that we have pairs of participants assigned to the Disadvantageous and Advantageous conditions, and they do 16 trials for each pair in two blocks (varying value of the offer). 
+
+```{r}
+d
+```
+
+
+### Variable exploration
+
+```{r}
+d %>%
+  group_by(country) %>%
+  summarise(n = n())
+```
+
+```{r}
+d %>%
+  group_by(country, actor.id) %>%
+  summarise(n = n()) %>%
+  summarise(n = n())
+
+d %>%
+  group_by(country) %>%
+  summarise(n = length(unique(actor.id)))
+```
+
+```{r}
+d %>%
+  group_by(country, actor.age.years, actor.id) %>%
+  summarise(n = n()) %>%
+  summarise(n = n())
+
+```
+
+
+Describe the dataset graphically in ways that are useful for you to get a handle on the data collection effort. 
+
+```{r}
+demo <- d %>%
+  mutate(age = floor(actor.age.years)) %>%
+  group_by(country, age, actor.id) %>%
+  summarise(n = n()) %>%
+  summarise(n = n())
+
+ggplot(demo, 
+       aes(x = age, y = n)) + 
+  geom_bar(stat = "identity") + 
+  facet_wrap(~ country)
+```
+
+### Hypothesis-related exploration
+
+Try just plotting the un-adjusted curves. 
+
+```{r}
+ms <- d %>%
+  filter(!is.na(eq.uneq)) %>%
+  mutate(age = floor(actor.age.years), 
+         decision = decision == "reject") %>%
+  group_by(country, trial_type, condition, age, actor.id) %>%
+  summarise(decision = mean(decision, na.rm=TRUE)) %>%
+  summarise(decision = mean(decision, na.rm=TRUE),
+            n = n())
+
+ggplot(ms, 
+       aes(x = age, y = decision, col = country)) + 
+  geom_point(aes(size = n)) +
+  facet_grid(condition ~ trial_type) + 
+  geom_smooth(method="lm", se = FALSE) + 
+  ylab("Proportion offers rejected") +
+  xlab("Age (years)") +
+  ylim(c(0,1)) + 
+  ggthemes::theme_few() + 
+  ggthemes::scale_color_solarized()
+```
+
+```{r}
+ggplot(filter(ms, country == "US"), 
+       aes(x = age, y = decision, col = country)) + 
+  geom_point(aes(size = n)) +
+  facet_grid(condition ~ trial_type) + 
+  geom_smooth(method="lm", se = FALSE) + 
+  ylab("Proportion offers rejected") +
+  xlab("Age (years)") +
+  ylim(c(0,1)) + 
+  ggthemes::theme_few() + 
+  ggthemes::scale_color_solarized()
+```
+
+Now rebin into 3-year bins.
+
+```{r}
+ms <- d %>%
+  filter(!is.na(eq.uneq)) %>%
+  mutate(age = floor(actor.age.years/2)*2, 
+         decision = decision == "reject") %>%
+  group_by(country, trial_type, condition, age, actor.id) %>%
+  summarise(decision = mean(decision, na.rm=TRUE)) %>%
+  summarise(decision = mean(decision, na.rm=TRUE),
+            n = n())
+
+ggplot(ms, aes(x = age, y = decision, col = country)) + 
+  geom_point(aes(size = n)) +
+  facet_grid(condition ~ trial_type) + 
+  geom_smooth(method="lm", se = FALSE) + 
+  ylab("Proportion offers rejected") +
+  xlab("Age (years)") +
+  ylim(c(0,1)) 
+```
+
+Break this down by country. I like this plot best so far. 
+
+```{r}
+ggplot(ms, aes(x = age, y = decision, col = condition)) + 
+  geom_point(aes(size = n)) +
+  facet_grid(trial_type ~ country) + 
+  geom_smooth(method="lm", se = FALSE, span = 2) + 
+  ylab("Proportion offers rejected") +
+  xlab("Age (years)") +
+  ylim(c(0,1)) 
+```
 
