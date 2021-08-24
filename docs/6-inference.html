@@ -124,72 +124,68 @@ div.csl-indent {
 <li>What portion of the variation in the data is due to a particular manipulation (as opposed to variation between participants, stimulus items, or other manipulations)?</li>
 </ol>
 <p>Question (1) is associated with one particular type of statistical testing – <strong>null hypothesis significance testing</strong> (NHST) in the <strong>frequentist</strong> statistical tradition. NHST has become synonymous with data analysis. This equivalence has been to the detriment of both data analysis and statistics more generally. The instinct to “go test your data for significance” before visualizing your data and trying to understand how it relates to the various sources of variation in your design (participants, items, manipulations, etc.) is in our view one of the most unhelpful things an experimenter can do. <span class="math inline">\(p &lt; .05\)</span> or not, a test of this sort gives you literally <em>one bit</em><label for="tufte-sn-1" class="margin-toggle sidenote-number">1</label><input type="checkbox" id="tufte-sn-1" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">1</span> In the information theoretic sense, as well as the common sense!</span> of information about your data. The kinds of visualizations we advocate in Chapter <a href="13-viz.html#viz">13</a> give you a much richer sense of what happened in your experiment!</p>
-<p>In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. But we will also try to contextualize it as a very special case of a broader set of strategies around modeling and inference. Further, we will note how some of the pathologies of NHST have been a driver of the replication crisis.</p>
+<p>In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. All practicing experimentalists need to understand NHST both to read the literature and also to apply this method in appropriate situations – for example, tests of interventions where the key question for informing practice is whether there is a significant difference between a treatment condition and an appropriate control. But we will also try to contextualize NHST as a very special case of a broader set of strategies around modeling and inference. Further, we will note how some of the pathologies of NHST have almost certainly 62been a driver of the replication crisis.</p>
 <p><label for="tufte-mn-1" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-1" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/krushke.png"/> Clarifying the distinctions between Bayesian and Frequentist paradigms and the ways that they approach inference and estimation. For many settings, we think the estimation mindset is more useful. From Krushke and Liddell (2018).</span></span></p>
 <p>What should replace NHST? There has been a recent move towards the use of Bayes Factors to quantify the evidence in support of a hypothesis. Bayes Factors can help answer questions like (2). We introduce these tools, and believe that they have broader applicability than the NHST framework and should be known by students. Both NHST and Bayes Factors are examples of what are called <strong>inference</strong> strategies, which are centered around drawing conclusions from data: significant or not, hypothesis one or hypothesis two.<label for="tufte-sn-2" class="margin-toggle sidenote-number">2</label><input type="checkbox" id="tufte-sn-2" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">2</span> An important but subtle point is that “inference” is an ambiguous term. We are using it in the sense of drawing conclusions from data. But the term is used more broadly as well in the phrase “statisical inference,” which is often contrasted with purely descriptive approaches. In this usage, “inference” means making generalizations from data that extend beyond the current set of observations. We do want to do that!</span></p>
 <p>We contrast inference strategies with <strong>estimation</strong> and <strong>modeling</strong> stratgies, which are more suited towards questions (3) and (4) <span class="citation">(<a href="#ref-krushke2018" role="doc-biblioref"><strong>krushke2018?</strong></a>)</span>. The goal of these strategies is to yield a precise estimate of the relationships underlying observed variation in the data. Critically, one of these estimates is the causal effect of the experimental manipulation(s). That explains our affection for these approaches: if a good theory predicts these kinds of causal effects, it makes sense that we’d want to estimate them precisely! Estimating one quantity in isolation is not maximally effective, though, since often there will be variation in the estimate that has to do with other known sources. If it’s helpful to have an example, imagine the Stroop effect, which has a fairly consistent effect on both fast and slow readers <span class="citation">(<label for="tufte-mn-2" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-2" class="margin-toggle">Haaf and Rouder 2017<span class="marginnote">Haaf, Julia M, and Jeffrey N Rouder. 2017. <span>“Developing Constraint in Bayesian Mixed Models.”</span> <em>Psychological Methods</em> 22 (4): 779.</span>)</span>. But estimates of this effect will be more precise if we take into account that some readers are slower or faster, rather than just averaging across all this variation.]</p>
-<p>This isn’t a statistics book and we won’t attempt to teach the full array of important statistical concepts that will allow students to build good models of a broad array of datasets. (Sorry!).<label for="tufte-sn-3" class="margin-toggle sidenote-number">3</label><input type="checkbox" id="tufte-sn-3" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">3</span> If you’re interested in going deeper, here are two books that have been really influential for us. The first is <span class="citation"><label for="tufte-mn-3" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-3" class="margin-toggle">Gelman and Hill (2006)<span class="marginnote">Gelman, Andrew, and Jennifer Hill. 2006. <em>Data Analysis Using Regression and Multilevel/Hierarchical Models</em>. Cambridge university press.</span></span>, which teaches regression and multi-level modeling from the persepective of data description and modeling. The second is <span class="citation"><label for="tufte-mn-4" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-4" class="margin-toggle">McElreath (2018)<span class="marginnote">McElreath, Richard. 2018. <em>Statistical Rethinking: A Bayesian Course with Examples in r and Stan</em>. Chapman; Hall/CRC.</span></span>. a course on building Bayesian models of the causal structure of your data. Honestly, neither is an easy book to sit down and read (unless you are the kind of person who reads stats books on the subway for fun) but both really reward detailed study. We encourage you to get together a reading group and go through the exercises together. It’ll be well worth while in its impact on your statistical and scientific thinking.</span> Instead, we’re going to focus on the case wherethere is a single binary manipulation (experimental vs. control) and we want to estimate its effect</p>
-<p>We’ll start by looking at a case study that established modern statistical inference. Then we’ll try to break this down by establishing t</p>
+<p>This isn’t a statistics book and we won’t attempt to teach the full array of important statistical concepts that will allow students to build good models of a broad array of datasets. (Sorry!).<label for="tufte-sn-3" class="margin-toggle sidenote-number">3</label><input type="checkbox" id="tufte-sn-3" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">3</span> If you’re interested in going deeper, here are two books that have been really influential for us. The first is <span class="citation"><label for="tufte-mn-3" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-3" class="margin-toggle">Gelman and Hill (2006)<span class="marginnote">Gelman, Andrew, and Jennifer Hill. 2006. <em>Data Analysis Using Regression and Multilevel/Hierarchical Models</em>. Cambridge university press.</span></span>, which teaches regression and multi-level modeling from the persepective of data description and modeling. The second is <span class="citation"><label for="tufte-mn-4" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-4" class="margin-toggle">McElreath (2018)<span class="marginnote">McElreath, Richard. 2018. <em>Statistical Rethinking: A Bayesian Course with Examples in r and Stan</em>. Chapman; Hall/CRC.</span></span>. a course on building Bayesian models of the causal structure of your data. Honestly, neither is an easy book to sit down and read (unless you are the kind of person who reads stats books on the subway for fun) but both really reward detailed study. We encourage you to get together a reading group and go through the exercises together. It’ll be well worth while in its impact on your statistical and scientific thinking.</span> Instead, we’re going to focus on the case wherethere is a single binary manipulation (experimental treatment vs. control) and we want to estimate its effect. In Chapter <a href="7-models.html#models">7</a>, we’ll generalize this approach to model other sources of variability. We’ll start by looking at a case study that established modern statistical inference.</p>
 <div class="case-study">
 <p>🔬 Case study: The lady tasting tea</p>
 <p>The birth of modern statistical inference came from a single, epochal act of mansplaining.<label for="tufte-sn-4" class="margin-toggle sidenote-number">4</label><input type="checkbox" id="tufte-sn-4" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">4</span> An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed social darwinist who believed fervently in Eugenic legislation. These views are repugnant.</span> Sir Ronald Fisher was apparently at a party when a lady declared that she could tell the difference between cups when the tea was added to the milk vs. the milk to the tea. Rather than taking her at her word, Fisher devised an experimental and data analysis procedure to test her claim.<label for="tufte-sn-5" class="margin-toggle sidenote-number">5</label><input type="checkbox" id="tufte-sn-5" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">5</span> If you’re interested in this history, we recommend <span class="citation">(<a href="#ref-salzburg2001" role="doc-biblioref"><strong>salzburg2001?</strong></a>)</span>’s delightful book, “The Lady Tasting Tea” about the origins of modern statistics.</span></p>
 <p>The basic schema of the experiment was that the lady would have to judge a set of new cups of tea (a two-alternative forced choice measure). Her data would then be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, in fact this is one of those touchstones that feels unremarkable because it literally established the way science was done for the next century.</p>
 <p>The first element of the experiment that was unusual was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to assume that the best practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounders. Fisher recognized that this strategy was insufficient and that random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk).<label for="tufte-sn-6" class="margin-toggle sidenote-number">6</label><input type="checkbox" id="tufte-sn-6" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">6</span> We just asserted the causal power of random assignment in Chapter <a href="1-intro.html#intro">1</a> but here’s where it originates!</span></p>
-<p>The second innovation was the idea of creating a model of what might happen during the experiment: specifically, a <strong>null model</strong> in which the nameless lady chose cups by chance rather than because of some tea sensitivity. The goal of the experiment was then to compute the probability of the lady’s choices under this null model. Fisher computed the combinatorics of the situation and determined that correct classification of</p>
-<pre><code>#&gt; [1] 0.00390625</code></pre>
-<p>For example, if she completed 8 tea-tasting trials,</p>
-<p>The lady tasting tea experiment:
-Ronald Fisher at a party
-Intuitive hypotheses: chance vs. tea knowledge.</p>
-<p>Discussion question: What do we want to get out of this experiment?
-Binary conclusion: context of decision theory?
-Estimation of lady’s sensitivity for individual differences?</p>
-<p>Back to the lady.</p>
-<p>Discussion question: How many cups should she get right out of 12?</p>
-<p>What should we consider:
-Too low a standard means we are “liberal” – the lady could get lucky
-Too high a standard means we need the lady to know a lot!</p>
-<p>Define decision-theoretic framework:</p>
-<p>Intuitive solution to the lady tasting tea: given the binomial distribution, how likely is her answer by chance?
-Excursion: what’s a probability distribution? A mathematical form to the idea of randomness of a particular type.</p>
-<p>If she gets 6, clearly consistent with chance.
-If she gets 7, 19% of exactly 7.
-But what’s the probability we care about? 7 OR MORE = 38%
-If she gets 8 or more, 19% probability
-9 or more, 7% - ARE YOU CONVINCED?
-10 or more, 2%</p>
-<p>Oh and - how many cups of tea should we taste?
-Discussion goal: it depends on how strong we think her tea-tasting sense is!</p>
-<p>This is a question about our goals, in particular</p>
+<p>The second innovation was the idea of creating a model of what might happen during the experiment: specifically, a <strong>null model</strong> in which the nameless lady chose cups by chance rather than because of some tea sensitivity. The goal of the analysis was then to compute the probability of the lady’s choices under this null model. Fisher then declared that it is “usual and convenient for experimenters to take 5 percent as a standard level of convenience,” establishing the .05 cutoff that has become gospel throughout the sciences.<label for="tufte-sn-7" class="margin-toggle sidenote-number">7</label><input type="checkbox" id="tufte-sn-7" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">7</span> Actually, right after establishing .05 as a cutoff, Fisher then writes that “in the statistical sense, we thereby admit that no isolated experiment, however significant in itself, can suffice for the experimental demonstration of any natural phenomenon… in order to assert that a natural phenomenon is experimentally demonstrable we need, not an isolated record, but a reliable method of procedure. In relation to the test of significance, we may say that a phenomenon is experimentally demonstrable when we know how to conduct an experiment which will rarely fail to give us a statistically significant result.” In other words, Fisher was all for replication!</span></p>
+<p>With apologies to Fisher, we’ll design a slightly more modern version of his experiment using a forced-choice judgmeent measure. We present participants with a series of cups of tea (in random order, of course). Half are prepared with milk first, half tea first. Then the participant must give a judgement. The null model is based on the idea that, if the participant knows nothing then they should choose at random between the two possibilities. Hence, we can use a simple binomial distribution to show expected chance performance for different sets of trials.<label for="tufte-sn-8" class="margin-toggle sidenote-number">8</label><input type="checkbox" id="tufte-sn-8" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">8</span> We quantify our measure as the proportion of correct trials, since trials here are interchangeable.</span></p>
+<p>These null distributions are shown in Figure @ref(fig:null_model). We show cases with 6, 12, 24, and 48 trials, and highlight a significance threshold – the threshold above which you would fall only 5% of the time if you were guessing by chance.<label for="tufte-sn-9" class="margin-toggle sidenote-number">9</label><input type="checkbox" id="tufte-sn-9" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">9</span> Note that we are effectively doing a “one-tailed” test here, since we’re attending only to the right hand side of each plot and ignoring cases where the participant is exactly flipped in their judgments.</span> Conventionally, if you cross this threshold, you can say you “reject the null.”</p>
+<div class="figure">
+<p class="caption marginnote shownote">
+(#fig:null_model)Probability of observing a particular number of trials correct under the null model of no sensitivity to tea preparation order. Each facet gives a different number of trials. The red line indicates a significance threshold above which data have less than a 5% chance of appearing.
+</p>
+<img src="experimentology_files/figure-html/null_model-1.png" alt="Probability of observing a particular number of trials correct under the null model of no sensitivity to tea preparation order. Each facet gives a different number of trials. The red line indicates a significance threshold above which data have less than a 5\% chance of appearing." width="\linewidth"  />
 </div>
-<div id="probability-theory-also-known-as-bayes" class="section level2" number="6.1">
-<h2><span class="header-section-number">6.1</span> Probability theory (also known as Bayes)</h2>
-<p>Bringing back prior knowledge question: how about ESP?
-Question: should we as scientists apply such a prior?</p>
-<p>Harry potter example</p>
-<p>p(h | d) = [p(d | h) p(h)] / [p(d | h) p(h) + p(d | h’) p(h’)]</p>
-<p>p(h) = .001</p>
-<p>p(d | h) = 1</p>
-<p>p(h’) = .999</p>
-<p>p(d | h’) = .0000001</p>
-<p>So turn the crank to figure out whether Harry’s a wizard or no.</p>
-<p>Bayesian approaches provide one alternative
-Philosophical alternative where probability indexes subjective belief, rather than long-run estimates of probability</p>
-<p>We want the probability of the hypothesis given the data.</p>
-<p>p(h | d) = p(d | h1) p(h1)
-p(d | h1) p(h1) + p(d | h0) p(h0)</p>
+<p>Examining these null distributions reveals an intuitive regularity. The more trials a participant completes, the lower the threshold for significance becomes. With 6 trials, you need to get all 5 correct for that result to have a probability of less than 5% probable under the null model. With 12, you need to observe 10 (9.0833333%) or more. With 24 and 48, you need 17 (16.0416667%) and 31 (30.0208333%) respectively.<label for="tufte-sn-10" class="margin-toggle sidenote-number">10</label><input type="checkbox" id="tufte-sn-10" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">10</span> You can calculate these numbers by looking at what’s called the <strong>quantile function</strong> of the binomial binomial: the function that tells you how many correct trials out of the total number corresponds to a particular probability.</span> With greater numbers of trials, the expectation based on chance becomes more precise and so we are able to reject then null based on smaller deviations from chance. Even here in the original case of null hypothesis significance testing, it is clear that our goals matter. If we’re merely testing a hypothesis informally at a garden party, perhaps we don’t want to subject our friend to dozens of trials. But if the stakes were higher and a more precise estimate was necessary, maybe we’d want to do a more extensive experiment!</p>
+<p>Something very important is missing from this way of evaluating tea tasting. If we think back to our goals as experimentalists, we are hoping to use the logic of random assignment to measure causal effects of interest. Here, the effect we’re measuring is something like the effect of tea preparation on taste perception (maybe not the most consequential question, but…). Yet our statistical paradigm is misaligned with our goal! All of this talk of significance and rejecting the null doesn’t tell us about either how big the effect is, or how precisely we have measured it! That’s why we are going to be advocating throughout for estimation as the key goal for our statistical analysis, with the varieties of inference (significance testing included) as a secondary goal.</p>
+</div>
+<div id="a-probabilistic-framework" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> A probabilistic framework</h2>
+<p>An alternative way to frame our statistical practice is to start from the idea of estimation.</p>
+<p>Let’s say we want to estimate some quantity, we’ll call it <span class="math inline">\(h\)</span> – our belief about the participant’s accuracy.<label for="tufte-sn-11" class="margin-toggle sidenote-number">11</label><input type="checkbox" id="tufte-sn-11" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">11</span> You can’t get away from measurement and psychometrics! We said we were really interested in the effect of tea ordering on tea perception. But this number that we’re estimating is something more like this particular participant’s accuracy, and that’s not the same thing that we actually wanted. To get from what we’re estimating to our effect of interest, we’d need to establish some <strong>linking hypotheses</strong> about how the participant’s accuracy can be derived from the participant’s perception and the properties of the stimulus. That’s perhaps not worth doing in this toy example, but more generally it’s a critical part of getting from your measure to your construct of interest!</span> We observe some data <span class="math inline">\(d\)</span>, consisting of the set of correct and incorrect responses in the experiment. Now we can use <strong>Bayes’ rule</strong>, a tool from basic probability theory, to estimate this number.</p>
+<p>Bayes’ rule says:</p>
+<p><span class="math display">\[
+\color{purple}{p(h | d)} = \frac{\color{red}{p(d | h)} \color{blue}{p(h)}}{p(d)}.
+\]</span>
+Each part of this equation has a name, and it’s worth becoming familiar with them. The thing we want to compute (<span class="math inline">\(p(h|d)\)</span>) is called the <strong>posterior probability</strong> – it tell us what we should believe about the participant’s ability given the data we observed. We then break that down into two terms in the numerator.<label for="tufte-sn-12" class="margin-toggle sidenote-number">12</label><input type="checkbox" id="tufte-sn-12" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">12</span> We’re making the posterior  to indicate the combination of likelihood () and prior ().</span></p>
+<p>The first part of the numerator is <span class="math inline">\(p(d|h)\)</span>, the probability of the data we observed given our hypothesis about the participant’s ability. This part is called the <strong>likelihood</strong>.<label for="tufte-sn-13" class="margin-toggle sidenote-number">13</label><input type="checkbox" id="tufte-sn-13" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">13</span> Speaking informally, “likelihood” is just a synonym for probability, but this is a technical meaning for the term, which can get a bit confusing.</span> This term tells us about the relationship between our hypothesis and the data we observed – so if we think the participant has high ability (say <span class="math inline">\(h = .9\)</span>) then the probability of a bunch of low accuracy observations will be fairly low.</p>
+<p>The second term in the numerator, <span class="math inline">\(p(h)\)</span>, is called the <strong>prior</strong>. This term encodes our beliefs about how likely our participant is to have different levels of ability. Intuitively, if we think that they are very unlikely to have high tea discrimination ability, we should require more evidence to convince us of a particular level of discrimination. In contrast, if we think they are likely to have this ability, we should be easier to convince.</p>
+<div class="figure">
+<p class="caption marginnote shownote">
+(#fig:bayes_demo)Examples of Bayesian inference about tea discrimination ability under three different priors (facets). Blue lines give the prior probability distribution, red lines give the likelihood of the data, and purple lines give the posterior distribution from combining likelihood and prior.
+</p>
+<img src="experimentology_files/figure-html/bayes_demo-1.png" alt="Examples of Bayesian inference about tea discrimination ability under three different priors (facets). Blue lines give the prior probability distribution, red lines give the likelihood of the data, and purple lines give the posterior distribution from combining likelihood and prior." width="\linewidth"  />
+</div>
+<p>Figure <a href="#fig:bayes-demo"><strong>??</strong></a> gives an example of the combination of prior and data.<label for="tufte-sn-14" class="margin-toggle sidenote-number">14</label><input type="checkbox" id="tufte-sn-14" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">14</span> The model we use for this example is called a <strong>Beta-Binomial conjugate model</strong> and is a very convenient model for working with count data representing successes and failures.</span> For the sake of this example, we assume that we have run 12 tea discrimination trials and observed 9 successes and 3 failures. The evidence alone – with no prior – suggests a discrimination estimate of <span class="math inline">\(9/12 = .75\)</span>.<label for="tufte-sn-15" class="margin-toggle sidenote-number">15</label><input type="checkbox" id="tufte-sn-15" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">15</span> Technically this is known as the <strong>maximum a posteriori</strong> estimate, or the MAP. We won’t use that term though.</span> When we use a flat prior, we get the same estimate of 0.75. In contrast, if we go in assuming that discrimination is likely to be absent or weak, we are biased downward in our eventual estimate of 0.69; if we go in assuming good discrimination, we end up biased upwards to 0.78.</p>
+<p>Fisher’s original framwork for significance testing focused only on the <strong>null hypothesis</strong> of no discrimination. In contrast, the Bayesian estimation method here focuses on the magnitude of accuracy.<label for="tufte-sn-16" class="margin-toggle sidenote-number">16</label><input type="checkbox" id="tufte-sn-16" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">16</span> If you’re reading carefully, you might have noticed that we <em>could</em> have discovered that the estimate of accuracy was very similar to chance – more about this below.</span> The intuition we’d like you to get is that, if you are an experimentalist who cares about the magnitude of causal relationships (and we hope you are), then Fisher’s statistical approach isn’t ideally suited to your goals.</p>
+<!-- TODO: HERE WOULD BE A GREAT PLACE FOR AN INTERACTIVE -->
+</div>
+<div id="inference-1" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> Inference</h2>
+<div id="what-is-a-bayes-factor" class="section level3" number="6.2.1">
+<h3><span class="header-section-number">6.2.1</span> What is a Bayes factor</h3>
+<p>Bayes factors defined as model comparison between null model and other model.</p>
+</div>
+<div id="what-is-a-p-value" class="section level3" number="6.2.2">
+<h3><span class="header-section-number">6.2.2</span> What is a p-value?</h3>
 <p>P-values only give us the probability of the data given the hypothesis.</p>
 <p>So if H1 is very unlikely, low p-value still doesn’t mean we should change our belief.</p>
-<p>P &lt; .05 provides almost no evidence!</p>
-<p>So you need to apply the priors to get the kind of inferences you want.</p>
+<p>Define decision-theoretic framework:</p>
 <div class="accident-report">
 <p>⚠️ Accident report: Feeling the future?</p>
 <p>ESP example (Wagenmakers et al. 2011):
 Assume p(h1) is 10x-20:</p>
 </div>
 </div>
-<div id="frequentist-inference" class="section level2" number="6.2">
-<h2><span class="header-section-number">6.2</span> Frequentist inference</h2>
+<div id="philosophical-views-of-probability" class="section level3" number="6.2.3">
+<h3><span class="header-section-number">6.2.3</span> Philosophical views of probability</h3>
 <p>Philosophy
 Bayes: Data are the data, what can we infer? (subjective)
 Frequentist: Do the same thing again and again, what happens (objective truth)
@@ -212,11 +208,16 @@ Frequentist good for:
 Decision theory (cf. bayesian decision theory)
 Absence of assumptions (“more objective”)
 Often easier to state and solve models</p>
-<div id="p-values-the-root-of-all-evil" class="section level3" number="6.2.1">
-<h3><span class="header-section-number">6.2.1</span> P-values: the root of all evil?</h3>
+</div>
+</div>
+<div id="when-inference-is-and-isnt-appropriate" class="section level2" number="6.3">
+<h2><span class="header-section-number">6.3</span> When inference is and isn’t appropriate</h2>
+<p>First discussion of overfitting. See Chapter <a href="#prereg"><strong>??</strong></a>.</p>
+<div id="p-values-the-root-of-all-evil" class="section level3" number="6.3.1">
+<h3><span class="header-section-number">6.3.1</span> P-values: the root of all evil?</h3>
 <p>P-value misconceptions</p>
 <p><!--
-<caption>--><span class="marginnote shownote"><span id="tab:unnamed-chunk-6">Table 6.1: </span>A “dirty dozen” p value misconceptions. From Goodman (2008).</span><!--</caption>--></p>
+<caption>--><span class="marginnote shownote"><span id="tab:unnamed-chunk-5">Table 6.1: </span>A “dirty dozen” p value misconceptions. From Goodman (2008).</span><!--</caption>--></p>
 <table>
 <colgroup>
 <col width="2%" />
@@ -282,14 +283,14 @@ Often easier to state and solve models</p>
 <p>Despite all these reasons to be worried about p-values, for many practicing scientists (at least at time of writing) there is no right answer. Even if we’d like to be Bayesian all the time because the paradigm makes philosophical and practical sense, there are a number of obstacles. First, though tools like <code>Stan</code>, <code>BayesFactor</code>, and <code>brms</code> make fitting Bayesian models easier (more about this below and in the next chapter), it’s still on average quite a bit harder to fit a Bayesian model than it is a frequentist one. Second, because Bayesian analyses are less familiar, it may be an uphill battle to convince advisors, reviewers, and funders to use them. So as a group, we are still mostly Bayesian when we can be – and frequentist when it’s not practical. One reason we don’t feel so bad about this stance is that, a lot of them time we’re not so worried about making binary inferences, whether they are at <span class="math inline">\(p &lt; .05\)</span> or <span class="math inline">\(BF &gt; 3\)</span> or whatever the threshold is.</p>
 </div>
 </div>
-<div id="making-models-inference-vs-estimation" class="section level2" number="6.3">
-<h2><span class="header-section-number">6.3</span> Making models: Inference vs estimation</h2>
+<div id="inference-and-estimation-for-two-group-designs" class="section level2" number="6.4">
+<h2><span class="header-section-number">6.4</span> Inference and estimation for two-group designs</h2>
 <p>Throughout this book we’ve taken the position that the goal of experiments is to estimate a causal effect of interest, ideally as part of some theory of how different constructs relate to one another. All this talk of hypotheses and inferences above is only indirectly related to that goal.</p>
 <ul>
 <li>Intuition builder: For very large n, or flat prior, Bayes and frequentist coincide.</li>
 </ul>
-<div id="simple-models-of-between-group-differences" class="section level3" number="6.3.1">
-<h3><span class="header-section-number">6.3.1</span> Simple models of between-group differences</h3>
+<div id="simple-models-of-between-group-differences" class="section level3" number="6.4.1">
+<h3><span class="header-section-number">6.4.1</span> Simple models of between-group differences</h3>
 <p>Introducing simple inference models:</p>
 <ul>
 <li>The chi-squared test for inferring whether two samples come from the same distribution</li>
@@ -303,8 +304,8 @@ Often easier to state and solve models</p>
 <p>How to go from theory to hypotheses to statistical model</p>
 </div>
 </div>
-<div id="effect-size" class="section level2" number="6.4">
-<h2><span class="header-section-number">6.4</span> Effect size</h2>
+<div id="effect-size" class="section level2" number="6.5">
+<h2><span class="header-section-number">6.5</span> Effect size</h2>
 <p>With all our talk about estimation above, we didn’t say nuch about what precisely was being estimated.</p>
 <p>Effect size: a common language for describing group differences. Pros and cons of this approach. Pro: comparability across studies. Con: loss of information about measures and real-world predictions; dependence on baseline variability.</p>
 <p>Effect sizes (ES):
@@ -338,9 +339,6 @@ Its HPD (highest posterior density)</p>
 <div class="interactive">
 <p>⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance</p>
 </div>
-</div>
-<div id="overfitting" class="section level2" number="6.5">
-<h2><span class="header-section-number">6.5</span> Overfitting</h2>
 
 </div>
 </div>
