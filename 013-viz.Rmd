@@ -3,16 +3,44 @@
 # Visualization {#viz}
 
 ::: {.learning-goals}
-🍎 Learning goals: Analyze and compare visualizations using principles of visualization; learn to make “the design plot” showing raw data relative to the critical design inferences of the experiment; select different visualizations of variability and distribution; connect these concepts to measurement principles.
+🍎 Learning goals: Analyze the principles behind informative visualizations; incorporate visualization into analysis workflow; learn to make “the design plot” showing raw data relative to the critical design inferences of the experiment; select different visualizations of variability and distribution; connect visualization concepts to measurement principles.
 :::
 
 ::: {.case-study}
-🔬 Case study: Sklar et al. (2012) reported evidence of “unconscious” arithmetic. Further reanalyses didn’t support this finding (Moors and Hesselmann 2018). Rabagliati et al. (2018) also failed to replicate. Visualizations provide a framework for asking about the ways the measurements relate to the manipulation that might have shed light on the issues.
+🔬 Case study: Sklar et al. (2012) reported evidence of “unconscious” arithmetic. Further reanalyses didn’t support this finding (Moors and Hesselmann 2018). Rabagliati et al. (2018) also failed to replicate. Visualizations provide a framework for asking about the ways the measurements relate to the manipulation that might have shed light on the issues. 
 :::
 
-Basic principles of visualization. This book will not provide a full treatment of visualizations, but we discuss some basic guidelines. (Tutorial for data manipulation and visualizations in Appendices C and D).
+```{marginfigure, echo=TRUE}
+<img src="images/snow_cholera_viz.jpg"/>
+Mapping out a cholera epidemic (1854).
+```
 
-- Statistical visualization vs. infoviz (Gelman and Unwin 2013)
+```{marginfigure, echo=TRUE}
+<img src="images/snow_cholera_voronoi.jpeg"/>
+Voronoi plot showing boundary of neighborhoods to nearest pump.
+```
+
+In 1854, a deadly outbreak of cholera was sweeping through London.
+The scientific consensus at the time was that diseases like cholera spread through breathing poisonous and foul-smelling vapors, an idea known as the "miasma theory" [@halliday2001death].
+An obstetrician and anesthesiologist named John Snow, however, had proposed an alternative theory: rather than spreading through foul air, he suggested that it was spreading a polluted water supply [@snow1855mode].
+To make a case for this idea, he started counting cholera deaths.
+He marked each case on a map of the area, and indicated the locations of the water pumps for reference.
+Furthermore, a can be drawn representing the region that was closest to each water pump, a technique which is now known as a [Voronoi diagram](https://en.wikipedia.org/wiki/Voronoi_diagram).
+The resulting illustration makes a persuasive argument that cases clustered around an area called Golden Square, which received water from the same pump on Broad Street.
+Indeed, the outbreak died down shortly after the pump's handle was removed.
+Although the precise causal role of these maps in Snow's own thinking is still disputed, and it is likely that they were produced well after the incident [@brody2000map], they nonetheless played a significant role in the history of visual explanations [@tufte1997visual] and data visualization [@friendly2021history] more broadly^[Actually, the use of disease maps goes back even further! [@seaman1798inquiry] mapped an outbreak of yellow fever in New York City to argue that deaths clustered around a handful of waste sites. He turned out to be right, but for the wrong reasons! These waste sites were breeding grounds for mosquitos, which were the real culprits. Coincidentally, Seaman is also known as the first to introduce vaccines to the United States. He vaccinated his children against smallpox and later organized a program to provide free vaccines to the public.]
+
+What makes visualizations so useful, and what role should they play in experimental psychology?
+Simply put, data visualization is the act of "making the invisible visible." 
+Our visual systems are remarkably powerful pattern detectors, and relationships that aren't at all clear when scanning through rows of raw data can immediately jump out at us when presented in an appropriate graphical form [@zacks2020designing].
+Good visualizations delibrately harness this power and put it to work at every stage of the research process, from the quick sanity checks we run when first reading in our data to the publication-quality figures we design when we are ready to communicate our findings.
+Yet those powerful pattern detectors can also be a liability; if we're not careful, we can easily be fooled into seeing patterns that are unreliable or even misleading.
+As psychology moves into an era of bigger data and more complex behaviors, we become increasingly reliant on **data visualization literacy** [@borner2019data] to make sense of what is going on.
+In this chapter, we introduce some practical guidelines for making informative visualizations^[Given our focus on the specific needs of experimental psychology, a full treatment of visualization is outside the scope of this book. The classic volumes are [@tukey1977exploratory] and [@tufte2001visual], and we recommend [@healy2018data] for a contemporary guide. For the purposes of understanding the examples in this chapter, it should be sufficient to work through our R tutorials for data manipulation and visualization in Appendices C and D].
+
+## Basic principles of visualization
+
+- Statistical visualization vs. infoviz [@gelman2013]
 - “Fix the axis labels”
 - Principles:
     - Show the design (see below for the “data plot”): make sure that the variables you manipulate are visible in your plots
@@ -29,6 +57,7 @@ Exploratory visualization
 ⚠️ Accident report: [Distributional] gorillas in the midst: Many data analysts don’t bother checking whether they are violating distribution assumptions. If they did, they’d sometimes realize there is a gorilla in the midst (Yanai and Lercher 2020).
 :::
 
+
 Confirmatory visualization (including “The design plot”)
 
 - How to make a plot that maps onto the key, pre-registered analyses
@@ -40,4 +69,8 @@ Visualizing variability
 
 ::: {.interactive}
 ⌨️ Interactive box: bootstrapping for confidence intervals, a nice generic method for getting some sense of precision. But be careful: there are many common abuses of the bootstrap, for example to obtain inference in small samples.
+:::
+
+::: {.accident-report}
+⚠️ Accident report: Visualizations have been instrumental in detecting fraudulent data. For example, when [@datacolada] made a simple histogram of the car mileage data reported in [@shu2012signing] and released publicly by [@kristal2020signing], they were immediately able to observe that it followed an unusually uniform distribution, truncated at exactly 50,000 miles. Over a given period of time, we would typically expect something more bell-shaped: a small number of people will drive very little (e.g. 1000 miles), a small number of people will drive a lot (e.g. 50,000 miles), but most people will fall between these tails. It is highly surprising to find exactly the same number of drivers in every mileage bin. While more specialized analyses revealed further evidence of fraud (e.g. based on patterns of rounding and pairs of duplicated data points), this humble histogram was already enough to set off alarm bells. A recurring regret raised by the co-authors of this paper is that they never thought to visualize the data before reporting statistics.
 :::
