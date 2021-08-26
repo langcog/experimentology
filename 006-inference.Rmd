@@ -1,4 +1,4 @@
-# Statistical inference {#inference}
+# Estimation and inference {#inference}
 
 ::: {.learning-goals}
 🍎 Learning goals: 
@@ -21,7 +21,7 @@ Statistical inference is critical to experimental methods because experiments --
 
 Question (1) is associated with one particular type of statistical testing -- **null hypothesis significance testing** (NHST) in the **frequentist** statistical tradition. NHST has become synonymous with data analysis. This equivalence has been to the detriment of both data analysis and statistics more generally. The instinct to "go test your data for significance" before visualizing your data and trying to understand how it relates to the various sources of variation in your design (participants, items, manipulations, etc.) is in our view one of the most unhelpful things an experimenter can do. $p < .05$ or not, a test of this sort gives you literally *one bit*^[In the information theoretic sense, as well as the common sense!] of information about your data. The kinds of visualizations we advocate in Chapter \@ref(viz) give you a much richer sense of what happened in your experiment!
 
-In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. All practicing experimentalists need to understand NHST both to read the literature and also to apply this method in appropriate situations -- for example, tests of interventions where the key question for informing practice is whether there is a significant difference between a treatment condition and an appropriate control. But we will also try to contextualize NHST as a very special case of a broader set of strategies around modeling and inference. Further, we will note how some of the pathologies of NHST have almost certainly 62been a driver of the replication crisis. 
+In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. All practicing experimentalists need to understand NHST both to read the literature and also to apply this method in appropriate situations -- for example, tests of interventions where the key question for informing practice is whether there is a significant difference between a treatment condition and an appropriate control. But we will also try to contextualize NHST as a very special case of a broader set of strategies around modeling and inference. Further, we will note how some of the pathologies of NHST have almost certainly been a driver of the replication crisis. 
 
 ```{marginfigure, echo=TRUE}
 <img src="images/krushke.png"/>
@@ -234,9 +234,41 @@ knitr::kable(dozen,
 
 Up until now we've presented Bayesian and frequentist tools as two different sets of computations. But in fact, these different tools derive from fundamentally different interpretations of what a probability even is. Very roughly, frequentist approaches tend to believe that probabilities quantify the long-run frequencies of certain events. So, if we say that some outcome of an event has probability .5, we're saying that if that event happened thousands of times, the long run frequency of the outcome would be 50% of the total events. In contrast, the Bayesian viewpoint doesn't depend on this sense that events could be exactly repeated. Instead, the **subjective Bayesian** interpretation of probability is that it quantifies the person's degree of belief in a particular outcome.^[This is really a very rough description. If you're interested in learning more about this philosophical background, we recommend the Stanford Encyclopedia of Philosophy entry on "interpretations of probability": https://plato.stanford.edu/entries/probability-interpret/.]
 
-Take our tea-tasting example (again). On a frequentist interpretation, the participant has a true accuracy that we can approximate via repeated measurement. 
-
 You don't have to take sides in this deep philosophical debate about what probability is. But it's helpful to know that people -- and scientists are no exception -- actually seem to reason about the world in ways that are well described by the subjective Bayesian view of probability. Recent cognitive science research has made a lot of headway in describing reasoning as a process of Bayesian probability estimation 
+
+
+## When inference is and isn't appropriate
+
+One big problem with inference as a method for thinking about experimental effects is that it's fragile. By the logic of statistical significance, either an experiment "worked" or it didn't. Because everyone would usually rather have an experiment that worked than one that didn't, inference criteria like p-values often become a target for selection, as we discussed in Chapter \@ref(replication).^[More generally, this is probably an example of Goodhart's law, which states that when a measure becomes a target, it ceases to be a good measure [@strathern1997]. Once the outcomes of statistical inference procedures become targets for publication, they are subject to selection biases that make them less meaningful.] So that means we get phenomena like $p$-hacking, where 
+
+Inference strategies -- especially $p$-values but Bayes Factors as well to a lesser extent -- 
+: because they are the single (often binary
+
+First discussion of overfitting. See Chapter \@ref(prereg). 
+
+
+::: {.accident-report}
+⚠️ Accident report: Do extraordinary claims require extraordinary evidence? 
+
+  
+
+
+ESP example (Wagenmakers et al. 2011):
+Assume p(h1) is 10x-20
+:::
+
+
+Despite all these reasons to be worried about p-values, for many practicing scientists (at least at time of writing) there is no one right answer as to whether to reject $p$-values. Even if we'd like to be Bayesian all the time because the paradigm makes philosophical and practical sense, there are a number of obstacles. First, though tools like `Stan`, `BayesFactor`, and `brms` make fitting Bayesian models easier (more about this below and in the next chapter), it's still on average quite a bit harder to fit a Bayesian model than it is a frequentist one. Second, because Bayesian analyses are less familiar, it may be an uphill battle to convince advisors, reviewers, and funders to use them. So as a group, we are still mostly Bayesian when we can be -- and frequentist when it's not practical. One reason we don't feel so bad about this stance is that, a lot of them time we're not so worried about making binary inferences, whether they are at $p < .05$ or $BF > 3$ or whatever the threshold is. 
+
+More generally, we hope we've convinced you that inference -- in the sense of trying to derive a particular decision on the basis of your data -- isn't the only strategy. We think that the estimation strategy is often much more helpful as a building block for theory. Towards this goal, the next chapter provides some tools for how to estimate causal effects from simple experimental manipulations. 
+
+::: {.exercise}
+Exercises:
+
+1. Take three of Goodman's (2008) "dirty dozen" in Table \@ref(tab:dirty-dozen) and write a description of why each is a misconception. These can be checked against the original article. 
+::: 
+
+
 
 
 <!-- Philosophy -->
@@ -263,110 +295,3 @@ You don't have to take sides in this deep philosophical debate about what probab
 <!-- Decision theory (cf. bayesian decision theory) -->
 <!-- Absence of assumptions (“more objective”) -->
 <!-- Often easier to state and solve models -->
-
-### Bayes Factors and p-values: Practical guidance
-
-
-
-::: {.accident-report}
-⚠️ Accident report: Do extraordinary claims require extraordinary evidence? 
-
-Feeling the future? 
-
-
-ESP example (Wagenmakers et al. 2011):
-Assume p(h1) is 10x-20
-:::
-
-## When inference is and isn't appropriate
-
-First discussion of overfitting. See Chapter \@ref(prereg). 
-
-
-
-## Inference and estimation for two-group designs
-
-Throughout this book we've taken the position that the goal of experiments is to estimate a causal effect of interest, ideally as part of some theory of how different constructs relate to one another. All this talk of hypotheses and inferences above is only indirectly related to that goal. 
-
-
-
-
-
-- Intuition builder: For very large n, or flat prior, Bayes and frequentist coincide. 
-
-
-### Simple models of between-group differences
-
-Introducing simple inference models:
-
-- The chi-squared test for inferring whether two samples come from the same distribution
-- The t-test for inferring whether a single group’s effect differs from 0
-- The t-test for inferring whether two groups differ from one another
-- The paired t-test as a first glimpse at how we might account for participant-level random effects (see Chapter 7).
-
-
-::: {.accident-report}
-⚠️ Accident report: Once you have the basic t-test under your belt, it might feel natural to compare each group to 0 and conclude that one group is different from 0 and the other one isn’t. But “the difference between significant and not significant is not necessarily itself statistically significant” (Nieuwenhuis, Forstmann, and Wagenmakers 2011). 
-:::
-
-
-
-How to go from theory to hypotheses to statistical model
-
-
-## Effect size
-
-With all our talk about estimation above, we didn't say nuch about what precisely was being estimated. 
-
-Effect size: a common language for describing group differences. Pros and cons of this approach. Pro: comparability across studies. Con: loss of information about measures and real-world predictions; dependence on baseline variability. 
-
-Effect sizes (ES):
-Cohen’s = m1 - m2 / SD
-Units of ES easy to compare across studies
-Good for comparison 
-Example: school interventions to improve achievement
-Necessary for meta-analysis
-Example: MA of infant consonant discrimination (cross method comparison)
-Necessary for power analysis 
-Negative: not related to any real units
-Many measures of ES, e.g. r2, n2 (eta), log odds
-
-Precision
-
-Error bar:
- - standard deviation (why is this bad)?
-- SEM
-- CI
-
-CIs for inference
-
-Confidence intervals:
-95% of these regions will contain the TRUE parameter
-	Remember frequentists - there is a TRUE parameter
-
-https://istats.shinyapps.io/ExploreCoverage/
-
-But this is not our typical interpretation, which is that 95% chance parameter is in this interval
-	That’s the BAYESIAN interpretation
-
-Bayesian Estimation
-
-Find the posterior distribution of the parameter of interest
-	You can take its mean
-	Its HPD (highest posterior density)
-
-Confidence in confidence intervals: 
-https://link.springer.com/article/10.3758/s13423-015-0947-8
-
-
-::: {.interactive}
-⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance
-:::
-
-
-Despite all these reasons to be worried about p-values, for many practicing scientists (at least at time of writing) there is no one right answer as to whether to reject $p$-values. Even if we'd like to be Bayesian all the time because the paradigm makes philosophical and practical sense, there are a number of obstacles. First, though tools like `Stan`, `BayesFactor`, and `brms` make fitting Bayesian models easier (more about this below and in the next chapter), it's still on average quite a bit harder to fit a Bayesian model than it is a frequentist one. Second, because Bayesian analyses are less familiar, it may be an uphill battle to convince advisors, reviewers, and funders to use them. So as a group, we are still mostly Bayesian when we can be -- and frequentist when it's not practical. One reason we don't feel so bad about this stance is that, a lot of them time we're not so worried about making binary inferences, whether they are at $p < .05$ or $BF > 3$ or whatever the threshold is. 
-
-
-::: {.exercise}
-1. Split up Goodman's (2008) "dirty dozen" in Table \@ref(tab:dirty-dozen) and write a description of why each is a misconception. These can be checked against the original article. 
-::: 
