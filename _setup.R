@@ -44,3 +44,13 @@ theme_update(panel.grid = ggplot2::element_blank(),
 .scale_colour_numerous <- scale_colour_discrete
 .scale_color_numerous <- .scale_colour_numerous
 .scale_fill_numerous <- scale_fill_discrete
+
+# from https://bookdown.org/yihui/rmarkdown-cookbook/font-color.html
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color,
+            x)
+  } else x
+}
