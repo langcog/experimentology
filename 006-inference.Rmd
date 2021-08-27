@@ -149,7 +149,7 @@ Standard confusion matrix.
 
 So now that we know our decision problem, we need to set up a decision rule -- how do we decide whether our data support a positive conclusion? There are at least two different common ways to set up this kind of inference. One of these is Fisher's way: null hypothesis significance testing. The second is via a technique called the **Bayes Factor**. Since we've already talked about NHST a bit, we'll introduce the Bayes Factor first. Then we can see how NHST relates. 
 
-### What is a Bayes factor?
+### Bayes Factors 
 
 Bayes Factors are a method for quantifying the support for one hypothesis over another, based on an observed dataset. Informally, we've now talked about two different distinct hypotheses about the tea situation: our participant could have *no* tea discrimination ability -- leading to chance performance. We call this $H_0$. Or they could have some non-zero ability -- leading to greater than chance perfomance. We call this $H_1$. The Bayes Factor is simply the likelihood of the data (in the technical sense used above) under $H_1$ vs. under $H_0$:
 
@@ -198,10 +198,9 @@ BF_24trials <- compute_tea_bf(18, 24)
 
 Once we set up our models, we can compute the relative likelihood of the data under each. The resulting BF is `r round(BF_12trials,2)`, somewhere between anecdotal and substantial evidence. On the other hand, if we doubled the size of the experiment and found the same pattern -- 18/24 trials correct -- the BF goes up to `r round(BF_24trials,2)`, which we could classify as strong evidence.
 
-### What a p-value is (and isn't) 
+### *p*-values
 
-We already have a working definition of what a $p$-value is from our discussion above: it's the **probability of the data (or any data that would be more extreme) under the null hypothesis**. How is this quantity related to either our Bayesian estimate or the BF? Well, the first thing to notice is that the $p$-value is very close (but not indentical to) a Bayesian likelihood, which is the probability of the data but doesn't include any more extreme data. So for example, the probability of getting 9 out of 12 tea-tasting trials correct under the null hypothesis is `r round(dbinom(9,12,.5),2)`, meaning there's a `r round(dbinom(9,12,.5),2)*100`% chance of observing exactly this many successes. But the p-value is given by the summed probability of 9, 10, 11, *and* 12 successes, which is `r round(sum(dbinom(9:12,12,.5)),2)`. You can see how $p$-values (from a one-tailed exact binomial test) compare to our Bayes Factors in Table \@ref(tab:p-bf-comparison). Although in general BFs tend to be a bit more conservative, you'll see that the relationship isn't obvious for this example. That's because, especially for small samples, BFs are going to be quite dependent on the specific assumptions used in their computation. 
-
+We already have a working definition of what a $p$-value is from our discussion above: it's the **probability of the data (or any data that would be more extreme) under the null hypothesis**. How is this quantity related to either our Bayesian estimate or the BF? Well, the first thing to notice is that the $p$-value is very close (but not indentical to) a Bayesian likelihood, which is the probability of the data but doesn't include any more extreme data. So for example, the probability of getting 9 out of 12 tea-tasting trials correct under the null hypothesis is `r round(dbinom(9,12,.5),2)`, meaning there's a `r round(dbinom(9,12,.5),2)*100`% chance of observing exactly this many successes. But the p-value is given by the summed probability of 9, 10, 11, *and* 12 successes, which is `r round(sum(dbinom(9:12,12,.5)),2)`. In Table \@ref(tab:p-bf-comparison), you can see how $p$-values (from a one-tailed exact binomial test) compare to our Bayes Factors. In general BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ generally translates to a BF of 3 or less [@benjamin2018]. 
 
 ```{r p-bf-comparison, fig.margin=TRUE }
 tibble(`Successes` = c(3,6,12,9,18,36,55,550),
@@ -213,7 +212,19 @@ tibble(`Successes` = c(3,6,12,9,18,36,55,550),
   kable(booktabs = TRUE, digits = 3, caption = "Comparison of p-value and BF for several different tea-tasting scenarios. p-values are one-tailed. Note that BF is heavily dependent on the specific prior on tasting successes that we assign.")
 ```
 
-The likelihood of the data under the null hypothesis is a critical number to know for computing the Bayes factor. But it doesn't tell us a lot of things that we might like to know! For example, it doesn't tell us the probability of the data under any positive hypothesis that we might be interested in -- that's the posterior probability $p(H_1 | d)$. In fact, people have so much troule understanding what $p$-values *do* say that there are whole articles written about these misconceptions. Table \@ref(tab:dirty-dozen) shows a set of misconceptions documented and refuted by @goodman2008. 
+The critical thing about $p$-values is not just that they are a specific kind of data likelihoods, it is that they are used in a specific inferential procedure The logic of NHST is that we make a binary decision about the presence of an effect. If $p < .05$, the null hypothesis is rejected; otherwise not. As @fisher1949 wrote, 
+
+> It should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis. (p. 19)
+
+This logic relates to the falsificationist logic of Popper that we touched on briefly in \@ref(intro). Under NHST, null hypotheses can be rejected (essentially, falsified) but positive hypotheses cannot be supported. As we said then, this logic doesn't appear either optimal from a normative statistical -- and as we'll discuss below, it doesn't really fit with a descriptive view of how scientists (and people more generally) reason about their hypotheses. 
+
+## Inference fallacies
+
+$p$-values are basically likelihoods. The likelihood of the data under the null hypothesis is a critical number to know -- for computing the Bayes Factor among other reasoms. But it doesn't tell us a lot of things that we might like to know! For example, it doesn't tell us the probability of the data under any positive hypothesis that we might be interested in -- that's the posterior probability $p(H_1 | d)$. Lots of folks mistake these two for one another, e.g. that the probability of the data given the null is the probability of the null given the data. 
+
+Another $p$-value problem that comes up frequently is what to conclude when $p>.05$. According to the classical logic of NHST, the answer is "nothing"! That is, a failure to reject the null does not mean that you can *accept* the null. Even if the probability of the data (or some more extreme data) under $H_0$ is high, their probability might be just as high or higher under $H_1$.^[Of course, weighing these two against one another brings you back to the Bayes Factor.] But many practicing researchers make this mistake. @aczel2018 coded a sample of articles from 2015 and found that 72% of negative statements were inconsistent with the logic of their statistical paradigm of choice -- most were cases where researchers said that an effect was not present when they had simply failed to reject the null. 
+
+These are not the only issues with $p$-values. In fact, people have so much trouble understanding what $p$-values *do* say that there are whole articles written about these misconceptions. Table \@ref(tab:dirty-dozen) shows a set of misconceptions documented and refuted by @goodman2008. 
 
 ```{r dirty-dozen}
 dozen <- tribble(~` `, ~Misconception,
@@ -237,6 +248,10 @@ knitr::kable(dozen,
 
 Further, the $p$-value is a probability of a certain set of events happening (corresponding to the observed data or any "more extreme" data, that is to say, data further from the null). Since $p$-values are probabilities, we can combine them together across different events. If we run a null experiment -- an experiment where we know the expected effect is zero -- the probability of a dataset with $p < .05$ is of course .05. But if we run two such experiments, we can get $p < .05$ with probability `r round(2*.05 - .05*.05,2)`. By the time we run 20 experiments, we have an `r round(1 - .95^20,2)` chance of getting a positive result. 
 
+It would obviously be a major mistake to run 20 null experiments and then report only the positive ones (which, by design, are false positives) as though these still were "statistically significant." The same thing applies to doing 20 different statistical tests within a single experiment. There are many statistical corrections that can be made to adjust for this problem.^[The simplest one, the Bonferroni correction, just divides .05 (or technically, whatever your threshold is) by the number of comparisons you are making. Using that correction, if you do 20 null experiments, you would have a `r round((1 - .95^20)/20)` chance of a false positive, which is actually a little conservative.] But the the broader issue is one of transparency: unless you *know* what the appropriate set of experiments or tests is, it's not possible to implement one of these corrections!^[This issue is especially problematic with $p$-values because they are so often presented as an independent set of tests, but the problem of multiple comparisons comes up when you compute a lot of independent Bayes Factors as well. "Posterior hacking" via selective reporting of Bayes Factors is perfectly possible [@simonsohn2014].]
+
+<!-- P goes to 0 as data goes to infinity. -->
+
 ::: {.accident-report}
 ⚠️ Accident report: Do extraordinary claims require extraordinary evidence? 
 
@@ -244,11 +259,13 @@ In a blockbuster paper that inadvertently kicked off the replication crisis, @be
 
 Probably not. @wagenmakers2011 gave an influential critique of Bem's findings, arguing that 1) Bem's experiments were exploratory in nature, 2) that Bem's conclusions were a priori unlikely, and 3) that the level of statistical evidence from his experiments was quite low. We find each of these arguments alone compelling; together they present a knockdown case. 
 
-First, we've already discussed the need to be skeptical about situations where experimenters have the opportunity for analytic flexibility in their choice of measures, manipulations, samples, and analyses. Flexibility leads to the possibility of cherry-picking those set of decisions from the "garden of forking paths" that lead to a positive outcome (defined here as $p<.05$) for the researcher's favored hypothesis. And there is plenty of flexibility on display even in Experiment 1 of Bem's paper. Although there were 100 participants in the study, they may have been combined post hoc from two distinct samples of 40 and 60, each of which saw different conditions. The 40 made guesses about the location of erotic, negative, and neutral pictures; the 60 saw erotic, positive non-romantic, and positive romantic pictures. The means of each of these conditions was presumably 
+First, we've already discussed the need to be skeptical about situations where experimenters have the opportunity for analytic flexibility in their choice of measures, manipulations, samples, and analyses. Flexibility leads to the possibility of cherry-picking those set of decisions from the "garden of forking paths" that lead to a positive outcome for the researcher's favored hypothesis. And there is plenty of flexibility on display even in Experiment 1 of Bem's paper. Although there were 100 participants in the study, they may have been combined post hoc from two distinct samples of 40 and 60, each of which saw different conditions. The 40 made guesses about the location of erotic, negative, and neutral pictures; the 60 saw erotic, positive non-romantic, and positive romantic pictures. The means of each of these conditions was presumably tested against chance (at least 6 comparisons, for a false positive rate of `r round(1 - .95^6,2)`), and had positive romantic pictures been found significant, an interpretation would have been available about this condition. 
 
-Second, 
+Second, as we discussed, a $p$-value close to .05 does not necessarily provide strong evidence against the null hypothesis. Wagenmakers et al. computed the Bayes Factor for each of experiments in Bem's paper and found that, in many cases, the amount of evidence for $H_1$ was quite modest under a default Bayesian $t$-test. Experiment 1 was no exception: the BF was `r round(1/.61,2) # they reported bf_01`, giving "anecotal" support for the hypothesis of some non-zero effect, even before the multiple-comparisons problem mentioned above. 
 
-^[If you are intrigued by this set of issues, you might enjoy Slate Star Codex's post ["The Control Group is Out of Control"](https://slatestarcodex.com/2014/04/28/the-control-group-is-out-of-control/) -- we don't agree with everything in it, but it's definitely thought-provoking and contains many interesting links.]
+Finally, since precognition is not attested by any compelling prior scientific evidence -- and many researchers have tried to provide this evidence -- perhaps we should assign a low prior probability to Bem's $H_1$, a non-zero precognition effect. Taking a strong Bayesian position, Wagenmakers et al. suggest that we might do well to adopt a prior reflecting how unlikely precognition is, say $p(H_1) = 10^{-20}$. And if we adopt this prior, even a very well-designed, highly informative experiment (with a Bayes factor conveying substantial or even decisive evidence) would still lead to a very low posterior probability of precognition. 
+
+Wagenmakers et al. concluded that, rather than suppporting precognition, the conclusion from Bem's paper should be psychologists should revise how they think about analyzing their data!^[If you are intrigued by this set of issues, you might enjoy Slate Star Codex's post ["The Control Group is Out of Control"](https://slatestarcodex.com/2014/04/28/the-control-group-is-out-of-control/) -- we don't agree with everything in it, but it's definitely thought-provoking and contains many interesting links.]
 :::
 
 ### Philosophical (and empirical) views of probability
@@ -260,24 +277,28 @@ You don't have to take sides in this deep philosophical debate about what probab
 These cognitive science findings help to explain some of the problems that people (scientists included) have reasoning about $p$-values. If you are an intuitively Bayesian reasoner, the quantity that you're probably tracking is how much you believe in your hypothesis (its posterior probability). So, many people treat the $p$-value as the posterior probability of the null hypothesis.^[@cohen1994 is a great treatment of this issue.] That's exactly what fallacy #1 -- "If *p* = .05, the null hypothesis has only a 5% chance of being true." -- states. It's not. Written in math, $p(d | H_0)$ (the likelihood that lets us compute the p-value) is not the same thing as $p(H_0 | d)$ (the posterior that we want). Pulling from our accident report above, even if the probability of the data given the null hypothesis of ESP is low, that doesn't mean that the probability of ESP is high.
 
 
-## When inference is and isn't appropriate
+## Summary: When inference is and isn't appropriate
 
-One big problem with inference as a method for thinking about experimental effects is that it's fragile. By the logic of statistical significance, either an experiment "worked" or it didn't. Because everyone would usually rather have an experiment that worked than one that didn't, inference criteria like p-values often become a target for selection, as we discussed in Chapter \@ref(replication).^[More generally, this is probably an example of Goodhart's law, which states that when a measure becomes a target, it ceases to be a good measure [@strathern1997]. Once the outcomes of statistical inference procedures become targets for publication, they are subject to selection biases that make them less meaningful.] So that means we get phenomena like $p$-hacking, where 
+Inferences like the ones we've discussed here are important for projects where there is a key binary hypothesis being tested. Did the intervention produce an effect? Were the two groups different from one another? These are questions that inference methods help us answer. But they are also only a subset of the interesting questions to be asked about an experiment.
 
-Inference strategies -- especially $p$-values but Bayes Factors as well to a lesser extent -- 
-: because they are the single (often binary
+More generally, the problem with inference as a method for thinking about experimental effects is that it creates a fragile scientific ecosystem. By the logic of statistical significance, either an experiment "worked" or it didn't. Because everyone would usually rather have an experiment that worked than one that didn't, inference criteria like p-values often become a target for selection, as we discussed in Chapter \@ref(replication).^[More generally, this is probably an example of Goodhart's law, which states that when a measure becomes a target, it ceases to be a good measure [@strathern1997]. Once the outcomes of statistical inference procedures become targets for publication, they are subject to selection biases that make them less meaningful.]
 
-First discussion of overfitting. See Chapter \@ref(prereg). 
+<!-- So that means we get phenomena like $p$-hacking, where  -->
 
+<!-- Inference strategies -- especially $p$-values but Bayes Factors as well to a lesser extent --  -->
+<!-- : because they are the single (often binary -->
 
-Despite all these reasons to be worried about p-values, for many practicing scientists (at least at time of writing) there is no one right answer as to whether to reject $p$-values. Even if we'd like to be Bayesian all the time because the paradigm makes philosophical and practical sense, there are a number of obstacles. First, though tools like `Stan`, `BayesFactor`, and `brms` make fitting Bayesian models easier (more about this below and in the next chapter), it's still on average quite a bit harder to fit a Bayesian model than it is a frequentist one. Second, because Bayesian analyses are less familiar, it may be an uphill battle to convince advisors, reviewers, and funders to use them. So as a group, we are still mostly Bayesian when we can be -- and frequentist when it's not practical. One reason we don't feel so bad about this stance is that, a lot of them time we're not so worried about making binary inferences, whether they are at $p < .05$ or $BF > 3$ or whatever the threshold is. 
+<!-- First discussion of overfitting. See Chapter \@ref(prereg).  -->
+
+We made the case here that, if you want to make inferences, Bayes Factors tend to make a bit more sense than $p$-values. In practice, $p$-values are hard to understand and many people misuse them. Despite the reasons to be worried about p-values, for many practicing scientists (at least at time of writing) there is no one right answer as to whether to reject $p$-values. Even if we'd like to be Bayesian all the time, there are a number of obstacles. First, though new computational tools make fitting Bayesian models and extracting Bayes Factors much easier than before (more about this below and in the next chapter), it's still on average quite a bit harder to fit a Bayesian model than it is a frequentist one. Second, because Bayesian analyses are less familiar, it may be an uphill battle to convince advisors, reviewers, and funders to use them. So as a group, we are still mostly Bayesian when we can be -- and frequentist when it's not practical. But one reason we don't feel so bad about this stance is that, a lot of them time we're not so worried about making binary inferences, whether they are at $p < .05$ or $BF > 3$ or whatever the threshold is. 
 
 More generally, we hope we've convinced you that inference -- in the sense of trying to derive a particular decision on the basis of your data -- isn't the only strategy. We think that the estimation strategy is often much more helpful as a building block for theory. Towards this goal, the next chapter provides some tools for how to estimate causal effects from simple experimental manipulations. 
 
 ::: {.exercise}
 Exercises:
 
-1. Take three of Goodman's (2008) "dirty dozen" in Table \@ref(tab:dirty-dozen) and write a description of why each is a misconception. These can be checked against the original article. 
+1. Step away from the computer. Can you write the definition of a $p$-value and a Bayes Factor? 
+2. Take three of Goodman's (2008) "dirty dozen" in Table \@ref(tab:dirty-dozen) and write a description of why each is a misconception. (These can be checked against the original article, which gives a nice discussion). 
 ::: 
 
 
