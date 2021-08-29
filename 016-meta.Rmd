@@ -59,11 +59,11 @@ Accident report: Money priming and vote counting.
 [Introduce the applied example]
 
 
-## Intuitive, but wrong, approaches to evidence synthesis
+## Intuitive, but problematic, approaches to evidence synthesis
 
-We have seen why it is important to synthesize evidence across studies on the same topic rather than just focus on one study at a time. How should we actually do this in practice? What most of us do intuitively in this situation is to essentially count how many studies supported the hypothesis under investigation, versus how many did not support the hypothesis. Indeed, many narrative reviews take essentially this approach as well. Such a count usually comes down to counting the number of studies that are "significant", since (for better or for worse) "significance" is largely what drives studies' take-home conclusions (CITE, e.g., McShane). This is called "*vote-counting*" (CITE HEDGES). For example, in Paluck et al.'s meta-analysis on the contact hypothesis, 11/27 (EYEBALLED) studies were significant, all with positive point estimates. So, based on this vote-count,  it seems like most studies do not support the contact hypothesis. 
+We have seen why it is important to synthesize evidence across studies on the same topic rather than just focus on one study at a time. How should we actually do this in practice? What most of us do intuitively in this situation is simply to count how many studies supported the hypothesis under investigation, versus how many did not support the hypothesis. Indeed, many narrative reviews take essentially this approach as well. Such a count usually amounts to counting the number of studies with "significant" $p$-values, since (for better or for worse) "significance" is largely what drives studies' take-home conclusions (@mcshane2017statistical; @nelson1986interpretation). This is called "*vote-counting*" (@borenstein2021introduction). For example, in Paluck et al.'s meta-analysis on the contact hypothesis, 11/27 (EYEBALLED) studies were significant, all with positive point estimates. So, based on this vote-count, we would have the impression that most studies do not support the contact hypothesis. 
 
-Despite its intuitive appeal, vote-counting can be very misleading. First, this approach characterizes evidence solely in terms of dichotomized p-values, while entirely ignoring effect sizes; this is the very same fetishism of statistical "significance" that we introduced in [Chapter XXX on replication] and is subject to all the same limitations. In the context of evidence synthesis, it could be the case that relatively few studies are "significant" (for example, in a literature of typically small studies), yet if the studies typically have large point estimates, then the consensus of evidence could actually be quite strong. Or inversely, it could be that nearly all studies are "significant", but if they typically have small point estimates, then the consensus of evidence might still be rather weak. In these cases, vote-counting could lead us badly astray.
+Despite its intuitive appeal, vote-counting can be very misleading. First, this approach characterizes evidence solely in terms of dichotomized p-values, while entirely ignoring effect sizes; this is the very same fetishism of statistical "significance" that we introduced in [Chapter \@ref(replication) on replication] and is subject to all the same limitations. In the context of evidence synthesis, it could be the case that relatively few studies are "significant" (for example, in a literature of typically small studies), yet if the studies typically have large point estimates, then the consensus of evidence could actually be quite strong. Or inversely, it could be that nearly all studies are "significant", but if they typically have small point estimates, then the consensus of evidence might still be rather weak. In these cases, vote-counting could lead us badly astray.
 
 To avoid these pitfalls, our evidence synthesis needs to account for effect sizes themselves. How about if we just average the studies' estimates? For example, in Paluck et al.'s meta-analysis, the mean of the studies' estimates was XXX. This approach is perhaps a step in the right direction, but still has some important limitations. In particular, this approach gives equal weight to each study, such that a small study (like Hull et al., with a sample size of XXX [note: this had the second-smallest RE weight]) contributes as much to the mean effect size as a large study (like Boisjoly et al., with a sample size of XXX [note: this had the highest RE weight]). That doesn't make sense: larger studies should clearly carry more weight in the analysis. This brings us to our first principled approach to meta-analysis, namely fixed-effects meta-analysis.
 
@@ -76,11 +76,17 @@ where $k$ is the number of studies, $\widehat{\theta}_i$ is the point estimate o
 
 [Do we want to show the SE for $\widehat{\mu}$?]
 
+### Applied example
+
 In Paluck et al.'s meta-analysis, we would calculate this as:
 
-[SHOW THE ACTUAL ARITHMETIC FOR THE FIRST FEW STUDIES]
+>[SHOW ARITHMETIC FOR THE FIRST FEW STUDIES]. 
 
-Fixed-effects meta-analysis does have an important limitation. To see the problem intuitively, imagine we actually had the full dataset of individual observations from each study. (This is what meta-analysts dream of, but it's rarely feasible in practice.) Fixed-effects meta-analysis is like gluing together all the studies' datasets and then calculating the effect size, ignoring that observations came from different studies. 
+We thus estimate that the effect size in this studies is a standardized mean difference of $\widehat{\mu} = XXX$; 95\% confidence interval: [XXX]; $p=$XXX. That is, we estimated that intergroup contact was associated with a decrease in prejudice of XXX standard deviations.
+
+### Limitations of fixed-effects meta-analysis
+
+Fixed-effects meta-analysis does have an important limitation. To see the problem intuitively, imagine we actually had the full dataset of individual observations from each study. (This is what meta-analysts dream of, but it's rarely feasible in practice.) Fixed-effects meta-analysis is like simply concatenating all the studies' datasets and then calculating the effect size, ignoring that observations came from different studies. 
 
 But what if the studies differ from one another? For example, in Paluck et al.'s meta-analysis, many design elements differed in ways that could make the interventions more or less effective in different studies: some studies recruited adult participants while others recruited children, some studies considered contact between participants of different races while others considered contact between participants of different ages, and so on. This means that the contact effect could actually differ across studies: the effects could be *heterogeneous*.
 
@@ -88,6 +94,35 @@ Does this presence of heterogeneity remind you of anything from when we analyzed
 
 
 ## Random-effects meta-analysis
+
+Whereas fixed-effects meta-analysis essentially postulates that all studies in the meta-analysis have the same population effect size, $\mu$, random-effects meta-analysis instead postulates that studies' population effects come from a normal distribution^[Technically, other specifications of random-effects meta-analysis are possible. For example, robust variance estimation does not require making assumptions about the distribution of effects across studies (@hedges2010robust).] with mean $\mu$ and standard deviation $\tau$. The larger the standard deviation $\tau$, the more heterogeneous the effects are across studies. A random-effects model then tries to estimate both $\mu$ and $\tau$, for example by maximum likelihood (@dersimonian1986meta; @brockwell2001comparison).  
+
+In practice, the estimate $\widehat{\mu}$ is still a weighted average of studies' estimates, as for fixed-effects meta-analysis:
+
+$$\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}$$
+but the inverse-variance weights now incorporate the heterogeneity as well: $w_i = 1/\left(\widehat{\tau}^2 + \widehat{\sigma}^2_i \right)$. These weights represent the inverse of studies' *marginal* variances, comprising not only statistical error due to their finite sample sizes ($\widehat{\sigma}^2_i$) but also genuine effect heterogeneity ($\widehat{\tau}^2$).^[The estimate of $\widehat{\tau}^2$ is a bit more complicated, but is essentially a weighted average of studies' residuals, $\widehat{\theta_i} - \widehat{\mu}$, while subtracting away variation due to statistical error, $\widehat{\sigma}^2_i$ (@dersimonian1986meta; @brockwell2001comparison).]
+
+The upshot is that small studies contribute more strongly to a random-effects meta-analysis than to a fixed-effects meta-analysis.^[Extra credit: Can you see why this is true mathematically?] Additionally, confidence intervals are typically wider in random-effects meta-analysis than in fixed-effects meta-analysis; heuristically, this is because random-effects meta-analysis has to draw inference to a distribution of heterogeneous effects.
+
+
+### Reporting on heterogeneity
+
+Remember that in random-effects meta-analysis, the estimate $\widehat{\mu}$ represents only the *mean* population effect across studies. It tells us nothing about the heterogeneity. In practice, we would recommend always reporting the heterogeneity estimate $\widehat{\tau}$ as well, perhaps supplemented by other related metrics (@riley2011interpretation, @wang2019simple, @mathur_mam). Reporting on the heterogeneity can help indicate how consistent or inconsistent the effects are across studies, which may point to the need to investigate moderators of the effect.^[For example, one approach to investigate moderators in meta-analysis is meta-regression, in which moderators (e.g., type of intergroup contact) are included as covariates in a random-effects meta-analysis model. As in standard regression, coefficients can then be estimated for each moderator, representing the mean difference in population effect between studies with versus without the moderator.]  
+
+
+### Applied example
+
+Conducting a random-effects meta-analysis of Paluck et al.'s dataset yields $\widehat{\mu} = XXX$; 95\% confidence interval: [XXX]; $p=$XXX. That is, we estimated that, *on average across studies*, intergroup contact was associated with a decrease in prejudice of XXX standard deviations. Additionally, we estimated that the standard deviation of population effects was $\widehat{\tau}=XXX$; 95\% confidence interval: [XXX].
+
+>[COULD INCLUDE A NORMAL DENSITY TO ILLUSTRATE THE FITTED DISTRIBUTION]
+
+
+## Bias in meta-analysis
+
+### Within-study biases
+
+
+### Across-study biases
 
 
 
@@ -97,10 +132,7 @@ Does this presence of heterogeneity remind you of anything from when we analyzed
 
 Basic meta-analysis approaches
 
-- Extracting effect sizes. Effect sizes for continuous data, binary data, and correlations.
-- Fixed and random effects meta-analysis. Distinction between fixed and random-effects meta-analysis, assumptions of both models, and the meaning of their summary effects.
-- Heterogeneity as a feature rather than a bug; summarizing effect sizes in the presence of heterogeneity. 
-- Meta-regression. Predicting heterogeneity by examining continuous and categorical moderators of effects.
+- Extracting effect sizes. Effect sizes for continuous data, binary data, and correlations (needs to come before applied example because it refers to standized mean differeneces)
 
 Within-study biases 
 
