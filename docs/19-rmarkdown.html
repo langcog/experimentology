@@ -30,6 +30,15 @@ MathJax.Hub.Config({
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+<script src="libs/jquery-3.5.1/jquery.min.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.18/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script>
 
 
 <style type="text/css">code{white-space: pre;}</style>
@@ -142,8 +151,8 @@ div.csl-indent {
 <li class="part"><span><b>II Design and Planning</b></span></li>
 <li><a href="4-measurement.html#measurement"><span class="toc-section-number">4</span> Measurement</a></li>
 <li><a href="5-design.html#design"><span class="toc-section-number">5</span> Design of experiments</a></li>
-<li><a href="6-inference.html#inference"><span class="toc-section-number">6</span> Statistical inference</a></li>
-<li><a href="7-models.html#models"><span class="toc-section-number">7</span> Statistical models for more complex designs</a></li>
+<li><a href="6-inference.html#inference"><span class="toc-section-number">6</span> Estimation and inference</a></li>
+<li><a href="7-models.html#models"><span class="toc-section-number">7</span> Statistical models</a></li>
 <li><a href="8-sampling.html#sampling"><span class="toc-section-number">8</span> Sampling</a></li>
 <li><a href="9-preregistration.html#preregistration"><span class="toc-section-number">9</span> Preregistration</a></li>
 <li class="part"><span><b>III Execution</b></span></li>
@@ -190,7 +199,7 @@ div.csl-indent {
 <p>Cool, thanks for sticking with us and reading up through here!</p>
 <p>There are three reasons to write reproducible papers. To be right, to be reproducible, and to be efficient. There are more, but these are convincing to us. In more depth:</p>
 <ol style="list-style-type: decimal">
-<li><p>To avoid errors. Using an automated method for scraping APA-formatted stats out of PDFs, <span class="citation"><label for="tufte-mn-1" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-1" class="margin-toggle">Nuijten et al. (2016)<span class="marginnote">Nuijten, Michèle B, Chris H J Hartgerink, Marcel A L M van Assen, Sacha Epskamp, and Jelte M Wicherts. 2016. <span>“The Prevalence of Statistical Reporting Errors in Psychology (1985–2013).”</span> <em>Behav. Res. Methods</em> 48 (4): 1205–26.</span></span> found that over 10% of p-values in published papers were inconsistent with the reported details of the statistical test, and 1.6% were what they called “grossly” inconsistent, e.g. difference between the p-value and the test statistic meant that one implied statistical significance and the other did not. Nearly half of all papers had errors in them.</p></li>
+<li><p>To avoid errors. Using an automated method for scraping APA-formatted stats out of PDFs, <span class="citation"><label for="tufte-mn-134" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-134" class="margin-toggle">Nuijten et al. (2016)<span class="marginnote">Nuijten, Michèle B, Chris H J Hartgerink, Marcel A L M van Assen, Sacha Epskamp, and Jelte M Wicherts. 2016. <span>“The Prevalence of Statistical Reporting Errors in Psychology (1985–2013).”</span> <em>Behav. Res. Methods</em> 48 (4): 1205–26.</span></span> found that over 10% of p-values in published papers were inconsistent with the reported details of the statistical test, and 1.6% were what they called “grossly” inconsistent, e.g. difference between the p-value and the test statistic meant that one implied statistical significance and the other did not. Nearly half of all papers had errors in them.</p></li>
 <li><p>To promote computational reproducibility. Computational reproducibility means that other people can take your data and get the same numbers that are in your paper. Even if you don’t have errors, it can still be very hard to recover the numbers from published papers because of ambiguities in analysis. Creating a document that literally specifies where all the numbers come from in terms of code that operates over the data removes all this ambiguity.</p></li>
 <li><p>To create spiffy documents that can be revised easily. This is actually a really big neglected one for us. At least one of us used to tweak tables and figures by hand constantly, leading to a major incentive <em>never to rerun analyses</em> because it would mean re-pasting and re-illustratoring all the numbers and figures in a paper. That’s a bad thing! It means you have an incentive to be lazy and to avoid redoing your stuff. And you waste tons of time when you do. In contrast, with a reproducible document, you can just rerun with a tweak to the code. You can even specify what you want the figures and tables to look like before you’re done with all the data collection (e.g., for purposes of preregistraion or a registered report).</p></li>
 </ol>
@@ -218,16 +227,16 @@ div.csl-indent {
 <div id="header" class="section level3" number="19.3.1">
 <h3><span class="header-section-number">19.3.1</span> Header</h3>
 <p>Headers in RMarkdown files contain some metadata about your document, which you can customize to your liking. Below is a simple example that purely states the title, author name(s), date, and output format.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="19-rmarkdown.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb1-2"><a href="19-rmarkdown.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Untitled&quot;</span></span>
-<span id="cb1-3"><a href="19-rmarkdown.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;NAME&quot;</span></span>
-<span id="cb1-4"><a href="19-rmarkdown.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;July 28, 2017&quot;</span></span>
-<span id="cb1-5"><a href="19-rmarkdown.html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> html_document</span></span>
-<span id="cb1-6"><a href="19-rmarkdown.html#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="19-rmarkdown.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb3-2"><a href="19-rmarkdown.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Untitled&quot;</span></span>
+<span id="cb3-3"><a href="19-rmarkdown.html#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;NAME&quot;</span></span>
+<span id="cb3-4"><a href="19-rmarkdown.html#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;July 28, 2017&quot;</span></span>
+<span id="cb3-5"><a href="19-rmarkdown.html#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> html_document</span></span>
+<span id="cb3-6"><a href="19-rmarkdown.html#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <blockquote>
 <p>ProTip: The header is written in “YAML,” which means “yet another markup language.” You don’t need to know that, and don’t worry about it. Just make sure you are careful with indenting, as YAML does care about that.</p>
 </blockquote>
-<p>For now, go ahead and set <code>html_document</code> to <code>word_document</code>, except if you have strong preferences for <code>HTML</code> or <code>PDF</code>.<label for="tufte-sn-1" class="margin-toggle sidenote-number">1</label><input type="checkbox" id="tufte-sn-1" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">1</span> Note: to create PDF documents you also need a TeX installation. Don’t know what that is? You probably don’t have it then. More info below.</span></p>
+<p>For now, go ahead and set <code>html_document</code> to <code>word_document</code>, except if you have strong preferences for <code>HTML</code> or <code>PDF</code>.<label for="tufte-sn-76" class="margin-toggle sidenote-number">76</label><input type="checkbox" id="tufte-sn-76" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">76</span> Note: to create PDF documents you also need a TeX installation. Don’t know what that is? You probably don’t have it then. More info below.</span></p>
 </div>
 <div id="body-text" class="section level3" number="19.3.2">
 <h3><span class="header-section-number">19.3.2</span> Body text</h3>
@@ -262,10 +271,10 @@ div.csl-indent {
 <li>Outlining using headings is a really great way to keep things organized! Try making a bunch of headings, and then recompiling your document.</li>
 <li>Add a table of contents. This will involve going to the header of the document (the <code>YAML</code>), and adding some options to the <code>html document</code> bit. You want it to look like this (indentation must to be correct):</li>
 </ol>
-<div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="19-rmarkdown.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> </span></span>
-<span id="cb2-2"><a href="19-rmarkdown.html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
-<span id="cb2-3"><a href="19-rmarkdown.html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div>
-<p>Now recompile. Looks nice, right?<label for="tufte-sn-2" class="margin-toggle sidenote-number">2</label><input type="checkbox" id="tufte-sn-2" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">2</span> Pro-tip: you can specify how deep the TOC should go by adding <code>toc_depth: 2</code> to go two levels deep</span></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="19-rmarkdown.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb4-2"><a href="19-rmarkdown.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
+<span id="cb4-3"><a href="19-rmarkdown.html#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div>
+<p>Now recompile. Looks nice, right?<label for="tufte-sn-77" class="margin-toggle sidenote-number">77</label><input type="checkbox" id="tufte-sn-77" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">77</span> Pro-tip: you can specify how deep the TOC should go by adding <code>toc_depth: 2</code> to go two levels deep</span></p>
 <ol start="3" style="list-style-type: decimal">
 <li>Try adding another option: <code>toc_float: true</code>. Recompile – super cool. There are plenty more great output options that you can modify. <a href="http://rmarkdown.rstudio.com/html_document_format.html">Here is a link to the documentation.</a></li>
 </ol>
@@ -288,7 +297,7 @@ div.csl-indent {
 <div id="graphs" class="section level3" number="19.5.2">
 <h3><span class="header-section-number">19.5.2</span> Graphs</h3>
 <p>It’s really easy to include graphs, like this one. (Using the <code>mtcars</code> dataset that comes with <code>ggplot2</code>).</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-8-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-42-1.png" width="\linewidth"  /></p>
 <p>All you have to do is make the plot and it will render straight into the text.</p>
 <p>External graphics can also be included, as follows:</p>
 </div>
@@ -449,13 +458,13 @@ div.csl-indent {
 <blockquote>
 <p>There’s a statistically-significant difference in horsepower for 4- and 6-cylinder cars (<span class="math inline">\(t(11.49) = -3.56\)</span>, <span class="math inline">\(p = 0.004\)</span>).</p>
 </blockquote>
-<p>To insert these stats inline I wrote e.g. <code>round(ts$parameter, 2)</code> inside an inline code block.<label for="tufte-sn-3" class="margin-toggle sidenote-number">3</label><input type="checkbox" id="tufte-sn-3" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">3</span> APA would require omission of the leading zero. <code>papaja::printp()</code> will let you do that, see below.</span></p>
+<p>To insert these stats inline I wrote e.g. <code>round(ts$parameter, 2)</code> inside an inline code block.<label for="tufte-sn-78" class="margin-toggle sidenote-number">78</label><input type="checkbox" id="tufte-sn-78" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">78</span> APA would require omission of the leading zero. <code>papaja::printp()</code> will let you do that, see below.</span></p>
 <p>Note that rounding can occasionally get you in trouble here, because it’s very easy to have an output of <span class="math inline">\(p = 0\)</span> when in fact <span class="math inline">\(p\)</span> can never be exactly equal to 0. Nonetheless, this can help you prevent rounding errors and the wrath of <code>statcheck</code>.</p>
 </div>
 <div id="exercises-1" class="section level3" number="19.5.5">
 <h3><span class="header-section-number">19.5.5</span> Exercises</h3>
 <ol style="list-style-type: decimal">
-<li>Using the <code>mtcars</code> dataset, insert a table and a graph of your choice into the document.<label for="tufte-sn-4" class="margin-toggle sidenote-number">4</label><input type="checkbox" id="tufte-sn-4" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">4</span> If you’re feeling uninspired, try <code>hist(mtcars$mpg)</code>.</span></li>
+<li>Using the <code>mtcars</code> dataset, insert a table and a graph of your choice into the document.<label for="tufte-sn-79" class="margin-toggle sidenote-number">79</label><input type="checkbox" id="tufte-sn-79" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">79</span> If you’re feeling uninspired, try <code>hist(mtcars$mpg)</code>.</span></li>
 </ol>
 </div>
 </div>
@@ -471,7 +480,7 @@ div.csl-indent {
 <p>We’re going to use the <code>papaja</code> package. <code>papaja</code> is a R-package including a R Markdown template that can be used to produce documents that adhere to the American Psychological Association (APA) manuscript guidelines (6th Edition).</p>
 <div id="software-requirements" class="section level3" number="19.7.1">
 <h3><span class="header-section-number">19.7.1</span> Software requirements</h3>
-<p>To use <code>papaja</code>, make sure you are using the latest versions of R and RStudio. If you want to create PDF- in addition to DOCX-files you need <strong><a href="http://de.wikipedia.org/wiki/TeX">TeX</a> 2013 or later</strong>. Try <a href="http://miktex.org/">MikTeX</a> for Windows, <a href="https://tug.org/mactex/">MacTeX</a> for Mac, or <a href="http://www.tug.org/texlive/">TeX Live</a> for Linux. Some Linux users may need a few additional TeX packages for the LaTeX document class <code>apa6</code> to work.<label for="tufte-sn-5" class="margin-toggle sidenote-number">5</label><input type="checkbox" id="tufte-sn-5" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">5</span> For Ubuntu, we suggest running: <code>sudo apt-get install texlive texlive-publishers texlive-fonts-extra texlive-latex-extra texlive-humanities lmodern</code>.</span></p>
+<p>To use <code>papaja</code>, make sure you are using the latest versions of R and RStudio. If you want to create PDF- in addition to DOCX-files you need <strong><a href="http://de.wikipedia.org/wiki/TeX">TeX</a> 2013 or later</strong>. Try <a href="http://miktex.org/">MikTeX</a> for Windows, <a href="https://tug.org/mactex/">MacTeX</a> for Mac, or <a href="http://www.tug.org/texlive/">TeX Live</a> for Linux. Some Linux users may need a few additional TeX packages for the LaTeX document class <code>apa6</code> to work.<label for="tufte-sn-80" class="margin-toggle sidenote-number">80</label><input type="checkbox" id="tufte-sn-80" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">80</span> For Ubuntu, we suggest running: <code>sudo apt-get install texlive texlive-publishers texlive-fonts-extra texlive-latex-extra texlive-humanities lmodern</code>.</span></p>
 </div>
 <div id="installing-papaja" class="section level3" number="19.7.2">
 <h3><span class="header-section-number">19.7.2</span> Installing <code>papaja</code></h3>
@@ -489,8 +498,8 @@ If <code>figurelist</code>, <code>tablelist</code>, or <code>footnotelist</code>
 </div>
 <div id="bibiographic-management" class="section level3" number="19.7.4">
 <h3><span class="header-section-number">19.7.4</span> Bibiographic management</h3>
-<p>It’s also possible to include references using <code>bibtex</code>, by using <code>@ref</code> syntax. An option for managing references is <a href="http://bibdesk.sourceforge.net/">bibdesk</a>, which integrates with google scholar.<label for="tufte-sn-6" class="margin-toggle sidenote-number">6</label><input type="checkbox" id="tufte-sn-6" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">6</span> But many other options are possible.</span></p>
-<p>With a bibtex file included, you can refer to papers. As an example, <code>@nuijten2016</code> results in the in text citation “<span class="citation"><label for="tufte-mn-2" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-2" class="margin-toggle">Nuijten et al. (2016)<span class="marginnote">Nuijten, Michèle B, Chris H J Hartgerink, Marcel A L M van Assen, Sacha Epskamp, and Jelte M Wicherts. 2016. <span>“The Prevalence of Statistical Reporting Errors in Psychology (1985–2013).”</span> <em>Behav. Res. Methods</em> 48 (4): 1205–26.</span></span>,” or cite them parenthetically with <code>[@nuijten2016]</code> <span class="citation">(<label for="tufte-mn-3" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-3" class="margin-toggle">Nuijten et al. 2016<span class="marginnote">Nuijten, Michèle B, Chris H J Hartgerink, Marcel A L M van Assen, Sacha Epskamp, and Jelte M Wicherts. 2016. <span>“The Prevalence of Statistical Reporting Errors in Psychology (1985–2013).”</span> <em>Behav. Res. Methods</em> 48 (4): 1205–26.</span>)</span>. Take a look at the <code>papaja</code> APA example to see how this works.</p>
+<p>It’s also possible to include references using <code>bibtex</code>, by using <code>@ref</code> syntax. An option for managing references is <a href="http://bibdesk.sourceforge.net/">bibdesk</a>, which integrates with google scholar.<label for="tufte-sn-81" class="margin-toggle sidenote-number">81</label><input type="checkbox" id="tufte-sn-81" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">81</span> But many other options are possible.</span></p>
+<p>With a bibtex file included, you can refer to papers. As an example, <code>@nuijten2016</code> results in the in text citation “<span class="citation"><label for="tufte-mn-135" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-135" class="margin-toggle">Nuijten et al. (2016)<span class="marginnote">Nuijten, Michèle B, Chris H J Hartgerink, Marcel A L M van Assen, Sacha Epskamp, and Jelte M Wicherts. 2016. <span>“The Prevalence of Statistical Reporting Errors in Psychology (1985–2013).”</span> <em>Behav. Res. Methods</em> 48 (4): 1205–26.</span></span>,” or cite them parenthetically with <code>[@nuijten2016]</code> <span class="citation">(<label for="tufte-mn-136" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-136" class="margin-toggle">Nuijten et al. 2016<span class="marginnote">Nuijten, Michèle B, Chris H J Hartgerink, Marcel A L M van Assen, Sacha Epskamp, and Jelte M Wicherts. 2016. <span>“The Prevalence of Statistical Reporting Errors in Psychology (1985–2013).”</span> <em>Behav. Res. Methods</em> 48 (4): 1205–26.</span>)</span>. Take a look at the <code>papaja</code> APA example to see how this works.</p>
 <p><code>citr</code> is an R package that provides an easy-to-use <a href="https://rstudio.github.io/rstudioaddins/">RStudio addin</a> that facilitates inserting citations.
 The addin will automatically look up the Bib(La)TeX-file(s) specified in the YAML front matter.
 The references for the inserted citations are automatically added to the documents reference section.</p>
