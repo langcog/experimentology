@@ -1,36 +1,41 @@
+# (PART) Statistics {-}
+
 # Estimation and inference {#inference}
 
 ::: {.learning-goals}
 🍎 Learning goals: 
 
 * Discuss differences between frequentist and Bayesian perspectives
+* Contrast inference and estimation as two goals of statistical analysis
 * Reconceptualize statistical “tests” as models of data
 * Build intuitions about how specific “tests” (e.g., t-tests) relate to more general frameworks (e.g., regression, mixed effects models)
 * Identify which models are best suited for which research questions 
 * Reason about effect effect size as estimated by statistical models
 :::
 
-We've been arguing that experiments are about measuring effects. You might ask then, why does this book even need a chapter about statistical inference? Why can't we just report our measurements and be done? 
+We've been arguing that experiments are about measuring effects. You might ask then, why does this book even need a chapter about statistical inference? Why can't we just report our measurements and be done? The answer is that we are not typically interested in the characteristics of our sample specifically. **Statistical inference** is the process of going beyond the specific chacteristics of the sample that you measured to make generalizations about the broader population. 
 
-Statistical inference is critical to experimental methods because experiments -- especially experiments with human participants -- tend to yield noisy and variable data. Statistical methods allow us to make sense of the data and ask questions like:
+Inference methods allow us to ask questions like:
 
 1. How likely is it that this pattern of measurements was produced by chance variation? 
 2. Do these data provide more support for one hypothesis or another? 
 3. How big is the effect of a manipulation, and how precise is our estimate of that effect?
 4. What portion of the variation in the data is due to a particular manipulation (as opposed to variation between participants, stimulus items, or other manipulations)?
 
-Question (1) is associated with one particular type of statistical testing -- **null hypothesis significance testing** (NHST) in the **frequentist** statistical tradition. NHST has become synonymous with data analysis, such that in the vast majority of research papers (and research  methods courses), all of the reported analyses are tests of this type. Yet the equivalence of NHST and data analysis more generally has been quite problematic. The instinct to "go test your data for significance" before visualizing your data and trying to understand how it relates to the various sources of variation in your design (participants, items, manipulations, etc.) is one of the most unhelpful things an experimenter can do. Whether $p < .05$ or not, a test of this sort gives you literally *one bit* of information about your data.^[In the information theoretic sense, as well as the common sense!] The kinds of visualizations we advocate in Chapter \@ref(viz) give you a much richer sense of what happened in your experiment!
+Question (1) is associated with one particular type of statistical inference method -- **null hypothesis significance testing** (NHST) in the **frequentist** statistical tradition. NHST has become synonymous with data analysis, such that in the vast majority of research papers (and research  methods courses), all of the reported analyses are tests of this type. Yet the equivalence of NHST -- in particular, the dichotomous infeence that something is "significant" or not -- and the idea of data analysis more generally has been quite problematic. 
 
-In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. All practicing experimentalists need to understand NHST both to read the literature and also to apply this method in appropriate situations -- for example, tests of interventions where the key question for informing practice is whether there is a significant difference between a treatment condition and an appropriate control.^[MM: I'd argue that even in this context, NHST in the strict, dichotomous sense is still not really an "appropriate" situation, as it connotes ignoring the continuous p-value and the effect size.] But we will also try to contextualize NHST as a very special case of a broader set of strategies around modeling and inference. Further, we will continue to flesh out our account of how some of the pathologies of NHST have been a driver of the replication crisis. 
+The instinct to "go test for significance" before visualizing your data and trying to understand sources of variation (participants, items, manipulations, etc.) is one of the most unhelpful things an experimenter can do. Whether $p < .05$ or not, a test of this sort gives you literally *one bit* of information about your data.^[In the information theoretic sense, as well as the common sense!] The kinds of visualizations we advocate in Chapter \@ref(viz) give you a much richer sense of what happened in your experiment!
+
+In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. All practicing experimentalists need to understand NHST, both to read the literature and also to apply this method in appropriate situations. For example, NHST is a reasonable tool for testing whether an intervention leads to a difference between a treatment condition and an appropriate control, although it still doesn't tell you about the size of the intervention effect! But we will also try to contextualize NHST as a very special case of a broader set of strategies around modeling and inference. Further, we will continue to flesh out our account of how some of the pathologies of NHST have been a driver of the replication crisis. 
 
 ```{marginfigure, echo=TRUE}
 <img src="images/inference/krushke.png"/>
 Clarifying the distinctions between Bayesian and Frequentist paradigms and the ways that they approach inference and estimation. For many settings, we think the estimation mindset is more useful. From Kruschke and Liddell (2018). 
 ```
 
-What should replace NHST? There has been a recent move towards the use of Bayes Factors to quantify the evidence in support of a hypothesis. Bayes Factors can help answer questions like (2). We introduce these tools, and believe that they have broader applicability than the NHST framework and should be known by students. Both NHST and Bayes Factors are examples of what are called **inference** strategies, which are centered around drawing conclusions from data: significant or not, hypothesis one or hypothesis two.^[An important but subtle point is that "inference" is an ambiguous term. We are using it in the sense of drawing conclusions from data. But the term is used more broadly as well in the phrase "statistical inference," which is often contrasted with purely descriptive approaches. In this usage, "inference" means making generalizations from data that extend beyond the current set of observations. We do want to do that!]^[MM: I don't understand how these definitions of "inference" differ. To me, both "drawing conclusions from data: significant or not, hypothesis one or hypothesis two" and "making generalizations from data that extend beyond the current set of observations" fall under the same, single definition of statistical inference. The former is a special case of the latter. This is because formally (between us, not for the book), I would define "statistical inference" as "drawing conclusions about an underlying distribution given a sample", closely resembling your second definition.]
+What should replace NHST? There has been a recent move towards the use of Bayes Factors to quantify the evidence in support of a hypothesis. Bayes Factors can help answer questions like (2). We introduce these tools, and believe that they have broader applicability than the NHST framework and should be known by students. On the other hand, Bayes Factors are not a panacea. They have the same problems as NHST when they are applied dichotomously.
 
-We contrast inference strategies with **estimation** and **modeling** strategies, which are more suited towards questions (3) and (4) [@kruschke2018]. The goal of these strategies is to yield an accurate and precise estimate of the relationships underlying observed variation in the data. Critically, one of these estimates is the causal effect of the experimental manipulation(s). That explains our affection for these approaches: if a good theory predicts these kinds of causal effects, it makes sense that we'd want to estimate them precisely! 
+Instead of dichotomous inference, we advocate for **estimation** and **modeling** strategies, which are more suited towards questions (3) and (4) [@cumming2014;@kruschke2018]. The goal of these strategies is to yield an accurate and precise estimate of the relationships underlying observed variation in the data. Critically, one of these estimates is the causal effect of the experimental manipulation(s). That explains our affection for these approaches: if a good theory predicts these kinds of causal effects, it makes sense that we'd want to estimate them precisely! 
 
 Estimating one quantity in isolation is not maximally effective, though, since often there will be variation in the estimate that has to do with other known sources. Imagine the Stroop effect, which has a fairly consistent effect on both fast and slow readers [@haaf2017]. But estimates of this effect will be more precise if we take into account that some readers are slower or faster, rather than just averaging across all this variation. That's why we need models that take into account different sources of variation.
 
@@ -221,7 +226,7 @@ One way to "patch" NHST is to introduce a decision-theoretic view, shown in Figu
 <!-- https://commons.wikimedia.org/wiki/File:ConfusionMatrixRedBlue.png -- CC -->
 
 
-```{r inference-power-alpha, fig.cap="Standard decision matrix for NHST.", fig.margin=TRUE}
+```{r inference-power-alpha2, fig.cap="Standard decision matrix for NHST.", fig.margin=TRUE}
 knitr::include_graphics("images/inference/power-alpha.png")
 ## TODO - RIGHTS ISSUE, NEEDS REMAKING
 ```
