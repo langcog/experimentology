@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="Chapter 6 Regression Models | Experimentology" />
+<meta property="og:title" content="Chapter 6 Models | Experimentology" />
 <meta property="og:type" content="book" />
 
 
@@ -16,9 +16,9 @@
 
 
 
-<meta name="description" content="Chapter 6 Regression Models | Experimentology">
+<meta name="description" content="Chapter 6 Models | Experimentology">
 
-<title>Chapter 6 Regression Models | Experimentology</title>
+<title>Chapter 6 Models | Experimentology</title>
 
 <script src="libs/header-attrs-2.9/header-attrs.js"></script>
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
@@ -47,9 +47,9 @@
 <li><a href="2-replication.html#replication"><span class="toc-section-number">2</span> Replication, reproducibility and transparency</a></li>
 <li><a href="3-ethics.html#ethics"><span class="toc-section-number">3</span> Ethics</a></li>
 <li class="part"><span><b>II Statistics</b></span></li>
-<li><a href="4-inference.html#inference"><span class="toc-section-number">4</span> Estimation and inference</a></li>
-<li><a href="5-models.html#models"><span class="toc-section-number">5</span> Statistical models</a></li>
-<li><a href="6-regression.html#regression"><span class="toc-section-number">6</span> Regression Models</a></li>
+<li><a href="4-estimation.html#estimation"><span class="toc-section-number">4</span> Estimation</a></li>
+<li><a href="5-inference.html#inference"><span class="toc-section-number">5</span> Inference</a></li>
+<li><a href="6-models.html#models"><span class="toc-section-number">6</span> Models</a></li>
 <li class="part"><span><b>III Design and Planning</b></span></li>
 <li><a href="7-measurement.html#measurement"><span class="toc-section-number">7</span> Measurement</a></li>
 <li><a href="8-design.html#design"><span class="toc-section-number">8</span> Design of experiments</a></li>
@@ -77,14 +77,33 @@
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="regression" class="section level1" number="6">
-<h1><span class="header-section-number">Chapter 6</span> Regression Models</h1>
+<div id="models" class="section level1" number="6">
+<h1><span class="header-section-number">Chapter 6</span> Models</h1>
 <div class="learning-goals">
 <p>🍎 Learning goals: Describe what it means to ‘control for’ something; explore what kinds of ‘clustered variance’ are present in our designs (e.g. selecting appropriate fixed vs. random effect structures); select models appropriate for different kinds of dependent variables.</p>
 </div>
 <div class="case-study">
 <p>🔬 Case study: Sometimes effects are driven by specific stimuli. The “language as fixed effects fallacy” (Clark, 1973) means that many early psycholinguistic effects didn’t take into account stimulus variability. This critique extends to a wide variety of other domains, e.g. task fMRI (Westfall, Nichols, and Yarkoni 2016).</p>
 </div>
+<div id="inference-and-estimation-for-two-group-designs" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> Inference and estimation for two-group designs</h2>
+<p>Throughout this book we’ve taken the position that the goal of experiments is to estimate a causal effect of interest, ideally as part of some theory of how different constructs relate to one another. All this talk of hypotheses and inferences above is only indirectly related to that goal.</p>
+<ul>
+<li>Intuition builder: For very large n, or flat prior, Bayes and frequentist coincide.</li>
+</ul>
+<div id="simple-models-of-between-group-differences" class="section level3" number="6.1.1">
+<h3><span class="header-section-number">6.1.1</span> Simple models of between-group differences</h3>
+<p>Introducing simple inference models:</p>
+<ul>
+<li>The chi-squared test for inferring whether two samples come from the same distribution</li>
+<li>The t-test for inferring whether a single group’s effect differs from 0</li>
+<li>The t-test for inferring whether two groups differ from one another</li>
+<li>The paired t-test as a first glimpse at how we might account for participant-level random effects (see Chapter 7).</li>
+</ul>
+<div class="accident-report">
+<p>⚠️ Accident report: Once you have the basic t-test under your belt, it might feel natural to compare each group to 0 and conclude that one group is different from 0 and the other one isn’t. But “the difference between significant and not significant is not necessarily itself statistically significant” (Nieuwenhuis, Forstmann, and Wagenmakers 2011).</p>
+</div>
+<p>How to go from theory to hypotheses to statistical model</p>
 <p>Re-casting the t-test as a regression model</p>
 <div class="interactive">
 <p>⌨️ Interactive box: Visualizing how different tests are variants of linear models.</p>
@@ -104,8 +123,10 @@
 <li>Dropping subjects who fail a manipulation check can be problematic (Aronow, Baron, and Pinson 2019).</li>
 <li>Mediation requires more confounding assumptions than causal inference about total effects, and these assumptions may be violated even in randomized experiments.</li>
 </ul>
-<div id="covariates" class="section level2" number="6.1">
-<h2><span class="header-section-number">6.1</span> Covariates</h2>
+</div>
+</div>
+<div id="covariates" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> Covariates</h2>
 <p>Going back to our example, now we have two variables – age and order – that are no longer confounded with our primary relationship of interest (i.e., Dylan and writing). But they may still be related to our outcome measure. Here’s what the picture looks like, repeated from above.</p>
 <p>Even if they are not confounding our experimental manipulation, age and experimental condition order may still be correlated with our outcome measure, writing skill. How does this work? Well, the average treatment effect of Dylan on writing is still given by the regression Y ~ X. But we also know that there is some variance in Y that is due to X’ and Z.</p>
 <p>That’s because age and order are covariates: they may – by virtue of their potential causal links with the outcome variable – have some correlation with outcomes, even in a case where the predictor is experimentally manipulated. This should be intuitive for the external (age) covariate, but it’s true for both: they may account for variance in Y over and above that controlled by the experimental manipulation of X.</p>
@@ -140,7 +161,7 @@
 
 
 <p style="text-align: center;">
-<a href="5-models.html"><button class="btn btn-default">Previous</button></a>
+<a href="5-inference.html"><button class="btn btn-default">Previous</button></a>
 <a href="7-measurement.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
