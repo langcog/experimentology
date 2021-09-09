@@ -11,9 +11,7 @@
 
 In the previous chapter, we gave a sober and considered introduction to the topic of experiments, their connection with causal inference, and their role in building psychological theory. In this chapter we're going to change gears a little bit and tell the story of the period from 2011 -- 2021 and how it has given rise to a number of "crisis" narratives in psychology. 
 
-
-In order to set the terms of discussion, we need to describe some of the outcomes we are interested in. Figure \@ref(fig:replication-terms) gives us a basic starting point for our definitions.^[These terms have been a bit of a problem for the field, at least at first, but it seems like people have been agreeing on them recently.] For some claim in a paper, if we can take the same data that were analyzed in that paper, do the same analysis, and get the same result, we call that result **reproducible** (sometimes, **computationally reproducible**). If we can collect new data in the same experiment, do the same analysis, and get the same result, we call that a **replication** and say that the experiment is **replicable**. If we can do a different analysis with the original dataset, we call this a **robustness check** and so if a claim passes it is **robust**.^[These are less common in experimental psychology, but are very common in fields that work with large, complex observational datasets like sociology.] And if the same finding obtains in a different population, perhaps with a different analysis, the result is likely to be more **generalizable** beyond the initial conditions in which it was observed.^[You might have observed that a lot of work is being done here by the word "same." How do we operationalize same-ness for experimental procedures, statistical analyses, or samples? These are difficult questions that we'll address in part below, but there's no single answer and so these terms are always going to helpful guides rather than exact labels.]
-
+In order to set the terms of discussion, we need to describe some of the outcomes we are interested in. Figure \@ref(fig:replication-terms) gives us a basic starting point for our definitions.^[These terms have been a bit of a problem for the field, at least at first, but it seems like people have been agreeing on them recently.] For some claim in a paper, if we can take the same data that were analyzed in that paper, do the same analysis, and get the same result, we call that result **reproducible** (sometimes, **analytically* or **computationally reproducible**). If we can collect new data in the same experiment, do the same analysis, and get the same result, we call that a **replication** and say that the experiment is **replicable**. If we can do a different analysis with the original dataset, we call this a **robustness check** and so if a claim passes it is **robust**.^[These are less common in experimental psychology, but are very common in fields that work with large, complex observational datasets like sociology.] And if the same finding obtains in a different population, perhaps with a different analysis, the result is likely to be more **generalizable** beyond the initial conditions in which it was observed.^[You might have observed that a lot of work is being done here by the word "same." How do we operationalize same-ness for experimental procedures, statistical analyses, or samples? These are difficult questions that we'll address in part below, but there's no single answer and so these terms are always going to helpful guides rather than exact labels.]
 
 
 ```{r replication-terms, fig.cap="A terminological framework for meta-science discussions. Based on [https://figshare.com/articles/Publishing_a_reproducible_paper/5440621]().", fig.margin=TRUE}
@@ -24,8 +22,7 @@ We're also going to abandon the sober tone of the introduction and try to get yo
 
 On the other hand, you might be thinking, how do you know that all this bad stuff is true? Claims about a literature or field as a whole go beyond the kind of standard paradigmatic science that we were talking about in the previous chapter -- instead they are part of a new field called **meta-science**. Meta-science research is research *about research*, for example investigating the rate of replication in a literature, or trying to figure out how widespread some negative practice is within a subfield. Meta-science allows us to go beyond one-off anecdotes about particular results or rumors about bad practices. Critically, we can also evaluate the strength of claims about the field using the same tools we use to evaluate standard research -- that is, we can critique research designs and inferences systematically, rather than just accepting (or failing to accept) assertions.
 
-In this 
-
+In this chapter, we'll discuss reproducibility and replicability primarily -- discussions of robustness and generalizability will be taken up in Chapters \@ref(models) and \@ref(sampling) respectively. We'll start out by reviewing some of the key concepts around reproducibility and replicability as well as the key meta-science findings. We'll then discuss some of the proposed sources of problems in replicability, focusing especially on how these might guide our study design and planning. We end by taking up the issue of how reproducibility and replicability relate to theory building in psychology. 
 
 ::: {.case-study}
 🔬 Case study: The Open Science Collaboration
@@ -44,19 +41,67 @@ The study's results -- and their interpretation -- were controversial, however, 
 And yet, the results are still important and compelling, and they undeniably changed the direction of the field of psychology. Many good studies are like this -- they have critical flaws but they lead the way towards other studies that pursue this new direction, often with greater technical precision and fewer issues. For several of us personally, working on this project was also transformative in that it showed us the power of collaborative work -- together we could do a study that no one of us had any hope of completing on our own, and potentially make a difference in our field.
 :::
 
+## Reproducibility
+
+As one of their primary purposes, scientific papers report measurements, statistical results, and more complex analytic findings and visualizations. For these results to be subject to scrutiny, readers and reviewers need to be able to access some aspects of the set of steps from the original raw measures all the way to the final products. For much of the history of the scientific paper, complete verification of the **provenance** of a particular reported number in a paper was impossible -- at best, a reader was presented with a verbal or mathematical description of the computations that were performed on the raw data, and the raw data themselves were not available.^[In practice, for many years data have been available "on request," and professional societies like the American Psychological Association have [mandated data sharing](https://www.apa.org/ethics/code) for purposes of verification. But in practice data are rarely made available [@wicherts2006]. We believe this is untenable, and we provide a longer argument justifying data sharing in Chapter \@ref(ethics) and discuss some of the practicalities of sharing in Chapter \@ref(management).]
+
+Data sharing (and the sharing of analytic code) is increasing, and we believe this is a very good thing for science as a whole.^[Psychology still likely lags behind other fields, however [@tedersoo2021].] But because sharing has been relatively limited in the past, the reproducibility of numbers in nearly all published papers cannot be checked, leaving open a number of negative possibilities. Most prominently, errors in calculation or reporting could lead to disparities between the reported result and the actual result. Mis-specification of analytic computations could mislead readers about the computations that were actually performed. And the robustness of analyses cannot be checked.^[We're focusing on data sharing here, because much experimental reseach uses relatively straightforward analyses. But the same points apply to code sharing as well! In computational research, the relevant position is nicely summed up by a prescient quote from @buckheit1995: "An article about computational science in a scientific publication is not the scholarship itself, it is merely advertising of the scholarship. The actual scholarship is the complete software development environment and the complete set of instructions which generated the figures."]
+
+Are errors common? There are plenty of individual instances of errors that are corrected in the published literature [e.g., @cesana-arlotti2018], and we ourselves have made significant analytic errors [@frank2013]. But these kinds of experiences don't tell us about the frequency of error (or the consequences of error for the conclusions that researchers draw).^[There is a very interesting discussion of the pernicious role of scientific error on theory building in @gould1996's "The Mismeasure of Man." Gould examines research on racial differences in intelligence and documents how scientific errors that supported racial differences were often overlooked. Errors are often caught asymmetrically; we are more motivated to double-check a result that contradicts our biases.] This question about frequency is a meta-scientific question that a variety of researchers have attempted to answer over the years. If errors are frequent, that would suggest a need for changes in our policies and practices to reduce their frequency! 
+
+```{r replication-fake-ttest}
+t <- t.test(1:10, 2:11)
+```
+
+Unfortunately, the lack of data availability creates a problem: it's hard to figure out if calculations are wrong if you can't reproduce them in the first place. One meta-scientific research program has taken a clever approach to this issue. In standard American Psychological Association (APA) reporting format, inferential statistics must be reported with three pieces of information: the test statistic, the degrees of freedom for the test, and the $p$-value (e.g., $t(`r t$parameter`) = `r round(t$statistic, 2)`$, $p = `r round(t$p.value, 3)`$). Yet these pieces of information are redundant with one another. Thus, reported statistics can be checked for consistency simply by evaluating whether they line up with one another -- that is, whether the $p$-value recomputed from the $t$ and degrees of freedom matches the reported value. 
+
+@bakker2011 performed precisely this analysis on a sample of 281 papers, and found that around 18% of statistical results were incorrectly reported. Even more worrisome, around 15% of articles contained at least decision error -- that is, a case where the error changed the direction of the inference that was made (e.g., from significant to insignificant).^[Confirming Gould's speculation, most of the reporting errors that led to decision errors were in line with the researchers' own hypotheses.] @nuijten2016 used an automated method called "statcheck"^[Statcheck is now available as a [web app](http://statcheck.io) and an R package so that you can check your own manuscripts!] to confirm and extend this analysis. They checked $p$-values for more than 250,000 psychology papers in the period 1985--2013 and found that around half of all papers contained at least one incorrect $p$-value! 
+
+```{r replication-hardwicke, fig.cap="Analytic reproducibility of results from open-data articles in *Cognition* and *Psychological Science*. From Hardwicke et al. (2021)."}
+knitr::include_graphics("images/replication/hardwicke2021.png")
+```
+There may be many more errors than are detected via this method: incorrect computation can be accompanied by correct reporting. While there is probably no general way to check reproducibility across the literature, a group of us conducted some more targeted studies of two journals with open-data policies. @hardwicke2018b and @hardwicke2021a identified datasets with reusable data (not all datasets were complete and comprehensible) and then downloaded the data and attempted to reproduce the main statistical results from 60 of these articles. This process was incredibly labor-intensive, with articles requiring 5--10 hours of work each. Only about a third of articles were completely reproducible without help from the original authors; around 62% were successfully reproduced after -- sometimes extensive -- correspondence (Figure \@ref(fig:replication-hardwicke)). A good number of the remaining papers appeared to have some irreproducible results due to errors of one type or another (and some reproducible numbers were reproducible despite errors identified by the team). Although none of the errors we identified invalidated the conclusions of the original studies, several authors were still motivated to submit corrections to their articles!
+
+This body of evidence suggests to us that reporting and computation errors are frequent in the published literature, and the identification of these errors depends on the findings being reproducible. If data are not available, then errors simply cannot be found. This body of evidence leads us to believe that transparency is a critical imperative for decreasing the frequency of errors in the published literature.^[Does the meta-scientific literature provide strong support for transparency as a policy intervention leading to better reproducibility outcomes? To our knowledge, this experiment hasn't been run yet, perhaps because it would be quite difficult to execute. On the other hand, we can't help but mention that there is an *association* between data sharing and reporting errors, such that author teams who were less likely to provide data on request also had more reporting errors in their papers [@wicherts2011].] 
+
+## Replication
+
+As we discussed in Chapter \@ref(intro), organized skepticism and independent verifiability of observations are key features of scientific inquiry. Reproducibility is thus a key desideratum for scientific work. But beyond verifying the analyses reported in a paper, we are often interested in understanding whether the measurements can be replicated. To quote from @popper2005, "the scientifically significant... effect may be defined as that which can be regularly reproduced by anyone who carries out the appropriate experiment in the way prescribed."
+
+### Conceptual frameworks for replication
+
+The key challenge of replication is **invariance** -- Popper's "in the way prescribed". That is, what are the features of the world over which a particular observation should be relatively constant, and what are those that are specified as the key ingredients for the effect? Replication is relatively straightforward in the physical and biological sciences, in part because of presupposed theoretical background that allows us to make strong inferences about invariance. If a biologist reports an observation about a particular cell type from an organism, the color of the microscope is presumed not to matter to the observation. 
+
+These invariances are far harder to state in psychology, for both the procedure of an experiment and its sample. Procedurally, how much should the color of the experimental stimulus matter to the measured effect? In some cases yes, in some cases no.^[A fascinating study by @baribault2018 proposes a method for empirically understanding psychological invariances. Treating a subliminal priming effect as their model system, they sampled thousands of "micro-experiments" in which small parameters of their experimental procedure were randomly sampled. These parameters allowed for measurement of their effect of interest, averaging across this irrelevant variation. Turned out in their case, color did not in fact matter.] If color does not matter, how about the context of presentation for an experiment -- should presentation to a participant at home on a web browser produce the same effect as presentation in a laboratory setting using custom software [@crump2013]? Without a theory of human responses to guide our decision-making, these invariances are quite hard to state. Yet problems of invariances in procedure pale in comparison to the problem of stating invariances across samples from human populations! In some sense, the research program of some branches of the social sciences amounts to an understanding of invariances across human cognition [@chomsky1967]. 
+
+A lot is at stake in this discussion. If Frog publishes a finding with US undergraduates and Toad then "replicates" the procedure in Germany, to what extent should we be perturbed if the effect is different in magnitude or absent?^[Presumably not very much if Toad gave the original instructions in English instead of in German -- that's another one of these pesky invariances that we are always worrying about!] People have amde a number of replication taxonomies to try and quantify the "distance" between two experiments. One influential one is the distinction between **direct replications** and **conceptual replications** [@zwaan2018]. 
 
 
 
-### Reproducibility
 
-Critical notion of the "provenance chain" for specific numbers - that they can be traced back to analytic computations. 
 
-### Replication
+- We describe the framework for replication in Zwaan et al. (2018), highlighting the idea of multiple dimensions on which a replication can differ from the original study and the ways that this complicates inferences about replication “success” (Mathur and VanderWeele 2019, 2020).
+- We can get different epistemic value from doing direct replications (attempt to copy original study with as much fidelity as possible) vs. conceptual replications (attempt to somewhat perturb operationalization of original study).
 
-questionable research practices
+::: {.accident-report}
+⚠️ Accident report: "Small Telescopes" 
 
-Publication bias
+We've been discussing the question of invariance with respect to procedure and sample, but we haven't really discussed invariance with respect to *result*. To what extent can we consider two measurements to be "the same"? @simonsohn2015 gives Several obvious definitions 
 
+case study of Simonsohn et al. (2015): what if weather really does affect mood, but the effect is too small for the original study to ever detect?
+
+^[Scott Alexander has a [graphic take](https://astralcodexten.substack.com/p/on-hreha-on-behavioral-economics) on this problem: "Imagine I claimed our next-door neighbor was a billionaire oil sheik who kept thousands of boxes of gold and diamonds hidden in his basement. Later we meet the neighbor, and he is the manager of a small bookstore and has a salary 10% above the US average... Should we describe this as “we have confirmed the Wealthy Neighbor Hypothesis, though the effect size was smaller than expected”? Or as “I made up a completely crazy story, and in unrelated news there was an irrelevant deviation from literally-zero in the same space”?"]
+:::
+
+
+### The meta-science of replication
+
+So, if we can't really take the Open Science Collaboration (2015) number of 33% seriously, how replicable is psychological research? Based on the discussion above, we hope we've made you skeptical that this is a well-posed question without a lot of additional details. Any answer is going to have to provide details about the scope of this claim, the definition of replication being used, and the metric for replication success. On the other hand, versions of this question have led to a number of empirical studies that help us better understand the scope of replication issues. We'll review these briefly here because we think a good understanding of the meta-science literature on replication can help us decide how worried we should be about the state of the psychology literature. 
+
+One set of follow-up studies to the OSC2015 study has focused on evaluating replication success within subsamples. Many of these have focused on particular subfields or journals, with the goal of informing particular field-specific practices or questions. For example, @camerer2016 largely adopted the methodological choices of OSC2015, but applied the procedure to all of the between-subject laboratory articles published in two top economics journals in the period 2011--2014. They found a top-line replication rate of 61%, higher than in OSC2015 but lower than the naive expectation based on their level of statistical power. Another notable followup to OSC2015 replicated all the 
+
+
+Another set ManyLabs
 
 
 
@@ -86,24 +131,14 @@ Scientists should critique, reproduce, and replicate -- these are all critical p
 As we will argue in the next chapter, we have an ethical duty as scientists to promote good science and critique low quality science. But we also have duties to our colleauges and communities to be good to one another.
 :::
 
-
-## A framework for replication 
-
-- We describe the framework for replication in Zwaan et al. (2018), highlighting the idea of multiple dimensions on which a replication can differ from the original study and the ways that this complicates inferences about replication “success” (Mathur and VanderWeele 2019, 2020).
-- We can get different epistemic value from doing direct replications (attempt to copy original study with as much fidelity as possible) vs. conceptual replications (attempt to somewhat perturb operationalization of original study).
-
-::: {.accident-report}
-⚠️ Accident report: The "small telescopes" case study of Simonsohn et al. (2015): what if weather really does affect mood, but the effect is too small for the original study to ever detect?
-
-> Imagine I claimed our next-door neighbor was a billionaire oil sheik who kept thousands of boxes of gold and diamonds hidden in his basement. Later we meet the neighbor, and he is the manager of a small bookstore and has a salary 10% above the US average... Should we describe this as “we have confirmed the Wealthy Neighbor Hypothesis, though the effect size was smaller than expected”? Or as “I made up a completely crazy story, and in unrelated news there was an irrelevant deviation from literally-zero in the same space”?
-:::
-
-## Relation to theory building
-
-How do reproducibility and replicability contribute to theory building? We draw on Hardwicke et al. (2018), considering these factors in the informativeness of an experiment.
+## Causes of the "replication crisis"
 
 
-Introduce p-hacking and publication biases as major sources of irreproducibility. These are biases - and we highlight bias reduction as a key goal.
+
+
+
+
+
 
 
 ::: {.accident-report}
@@ -115,7 +150,17 @@ Simmons, Simonsohn, Nelson introduce p-hacking into our lexicon.
 
 
 
+## Replication and theory building
 
-::: {.case-study}
-🔬 Case study: Hardwicke et al. (2018; 2021) meta-studies of the analytic reproducibility of specific analytic findings in the empirical literature.
-:::
+Crisis is a term in Kuhn for the period preceding a paradigm shift.
+
+How do reproducibility and replicability contribute to theory building? We draw on Hardwicke et al. (2018), considering these factors in the informativeness of an experiment.
+
+
+Introduce p-hacking and publication biases as major sources of irreproducibility. These are biases - and we highlight bias reduction as a key goal.
+
+
+
+<!-- ::: {.case-study} -->
+<!-- 🔬 Case study: Hardwicke et al. (2018; 2021) meta-studies of the analytic reproducibility of specific analytic findings in the empirical literature. -->
+<!-- ::: -->
