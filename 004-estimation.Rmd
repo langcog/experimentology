@@ -1,29 +1,32 @@
-# (PART) Statistics {-}
+# (PART) Statistics {.unnumbered}
 
-# Estimation {#estimation} 
+# Estimation {#estimation}
 
-Idea of a sampling distribution 
+Idea of a sampling distribution
 
-
-
-## A probabilistic framework 
+## A probabilistic framework
 
 NEEDS TO BE FIXED WITH RESPECT TO CASE STUDY
 
 An alternative way to frame our statistical practice is to start from the idea of estimation.
 
-Let's say we want to estimate some quantity, we'll call it $h$ -- our belief about the participant's accuracy.^[You can't get away from measurement and psychometrics! We said we were really interested in the effect of tea ordering on tea perception. But this number that we're estimating is something more like this particular participant's accuracy, and that's not the same thing that we actually wanted. To get from what we're estimating to our effect of interest, we'd need to establish some **linking hypotheses** about how the participant's accuracy can be derived from the participant's perception and the properties of the stimulus. That's perhaps not worth doing in this toy example, but more generally it's a critical part of getting from your measure to your construct of interest!] We observe some data $d$, consisting of the set of correct and incorrect responses in the experiment. Now we can use **Bayes' rule**, a tool from basic probability theory, to estimate this number. 
+Let's say we want to estimate some quantity, we'll call it $h$ -- our belief about the participant's accuracy.[^1] We observe some data $d$, consisting of the set of correct and incorrect responses in the experiment. Now we can use **Bayes' rule**, a tool from basic probability theory, to estimate this number.
+
+[^1]: You can't get away from measurement and psychometrics! We said we were really interested in the effect of tea ordering on tea perception. But this number that we're estimating is something more like this particular participant's accuracy, and that's not the same thing that we actually wanted. To get from what we're estimating to our effect of interest, we'd need to establish some **linking hypotheses** about how the participant's accuracy can be derived from the participant's perception and the properties of the stimulus. That's perhaps not worth doing in this toy example, but more generally it's a critical part of getting from your measure to your construct of interest!
 
 Bayes' rule says:
 
 $$
 \color{purple}{p(h | d)} = \frac{\color{red}{p(d | h)} \color{blue}{p(h)}}{\color{black}{p(d)}}.
-$$
-\noindent Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(h|d)$) is called the **posterior probability** -- it tell us what we should believe about the participant's ability given the data we observed. We then break that down into two terms in the numerator.^[We're making the posterior `r colorize("purple","purple")` to indicate the combination of likelihood (`r colorize("red","red")`) and prior (`r colorize("blue","blue")`).]
+$$ \noindent Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(h|d)$) is called the **posterior probability** -- it tell us what we should believe about the participant's ability given the data we observed. We then break that down into two terms in the numerator.[^2]
 
-The first part of the numerator is $p(d|h)$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.^[Speaking informally, "likelihood" is just a synonym for probability, but this is a technical meaning for the term, which can get a bit confusing.] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the participant has high ability (say $h = .9$) then the probability of a bunch of low accuracy observations will be fairly low. 
+[^2]: We're making the posterior `r colorize("purple","purple")` to indicate the combination of likelihood (`r colorize("red","red")`) and prior (`r colorize("blue","blue")`).
 
-The second term in the numerator, $p(h)$, is called the **prior**. This term encodes our beliefs about how likely our participant is to have different levels of ability. Intuitively, if we think that they are very unlikely to have high tea discrimination ability, we should require more evidence to convince us of a particular level of discrimination. In contrast, if we think they are likely to have this ability, we should be easier to convince. 
+The first part of the numerator is $p(d|h)$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.[^3] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the participant has high ability (say $h = .9$) then the probability of a bunch of low accuracy observations will be fairly low.
+
+[^3]: Speaking informally, "likelihood" is just a synonym for probability, but this is a technical meaning for the term, which can get a bit confusing.
+
+The second term in the numerator, $p(h)$, is called the **prior**. This term encodes our beliefs about how likely our participant is to have different levels of ability. Intuitively, if we think that they are very unlikely to have high tea discrimination ability, we should require more evidence to convince us of a particular level of discrimination. In contrast, if we think they are likely to have this ability, we should be easier to convince.
 
 ```{r inference-bayes-demo, fig.cap="Examples of Bayesian inference about tea discrimination ability under three different priors (facets). Blue lines give the prior probability distribution, red lines give the likelihood of the data, and purple lines give the posterior distribution from combining likelihood and prior."}
 bayes <- expand_grid(x = seq(0,1,.01), a = c(1, 3, 6)) %>%
@@ -55,71 +58,76 @@ ggplot(bayes, aes(x = x, y = h_norm)) +
   xlab("Discrimination level")
 ```
 
-Figure \@ref(fig:inference-bayes-demo) gives an example of the combination of prior and data.^[The model we use for this example is called a **Beta-Binomial conjugate model** and is a very convenient model for working with count data representing successes and failures.] For the sake of this example, we assume that we have run 12 tea discrimination trials and observed 9 successes and 3 failures. The evidence alone -- with no prior -- suggests a discrimination estimate of $9/12 = .75$.^[Technically this is known as the **maximum a posteriori** estimate, or the MAP. We won't use that term though.] When we use a flat prior, we get the same estimate of `r bayes$map[bayes$label == "Flat"][1]`.^[MM: I think it may be illuminating to say more explicitly that Bayes estimates and frequentist estimates will exactly coincide either under a flat prior or as $n \to \infty$.] In contrast, if we go in assuming that discrimination is likely to be absent or weak, we are biased downward in our eventual estimate of `r bayes$map[bayes$label == "Prior: no discrimination"][1]`; if we go in assuming good discrimination, we end up biased upwards to `r bayes$map[bayes$label == "Prior: discrimination"][1]`.
+Figure \@ref(fig:inference-bayes-demo) gives an example of the combination of prior and data.[^4] For the sake of this example, we assume that we have run 12 tea discrimination trials and observed 9 successes and 3 failures. The evidence alone -- with no prior -- suggests a discrimination estimate of $9/12 = .75$.[^5] When we use a flat prior, we get the same estimate of `r bayes$map[bayes$label == "Flat"][1]`.[^6] In contrast, if we go in assuming that discrimination is likely to be absent or weak, we are biased downward in our eventual estimate of `r bayes$map[bayes$label == "Prior: no discrimination"][1]`; if we go in assuming good discrimination, we end up biased upwards to `r bayes$map[bayes$label == "Prior: discrimination"][1]`.
 
-Fisher's original framwork for significance testing focused only on the **null hypothesis** of no discrimination. In contrast, the Bayesian estimation method here focuses on the magnitude of accuracy.^[If you're reading carefully, you might have noticed that we *could* have discovered that the estimate of accuracy was very similar to chance -- more about this below.][^MM: I entirely agree with the spirit of this, but I worry about framing this as "Fisherian NHST vs. Bayesian estimation" when the issue really is "Fisherian NHST" vs "any form of estimation with continuous inference". We wouldn't want to inadvertently reinforce the misconception that Bayesian methods *inherently* alleviate the central issues with NHST, even though Bayesian methods of course have numerous important merits.]   The intuition we'd like you to get is that, if you are an experimentalist who cares about the magnitude of causal relationships (and we hope you are), then Fisher's statistical approach isn't ideally suited to your goals.[^MM: Yes, I like this framing in the final sentence much better.]
+[^4]: The model we use for this example is called a **Beta-Binomial conjugate model** and is a very convenient model for working with count data representing successes and failures.
+
+[^5]: Technically this is known as the **maximum a posteriori** estimate, or the MAP. We won't use that term though.
+
+[^6]: MM: I think it may be illuminating to say more explicitly that Bayes estimates and frequentist estimates will exactly coincide either under a flat prior or as $n \to \infty$.
+
+Fisher's original framwork for significance testing focused only on the **null hypothesis** of no discrimination. In contrast, the Bayesian estimation method here focuses on the magnitude of accuracy.^[If you're reading carefully, you might have noticed that we *could* have discovered that the estimate of accuracy was very similar to chance -- more about this below.][^MM: I entirely agree with the spirit of this, but I worry about framing this as "Fisherian NHST vs. Bayesian estimation" when the issue really is "Fisherian NHST" vs "any form of estimation with continuous inference". We wouldn't want to inadvertently reinforce the misconception that Bayesian methods *inherently* alleviate the central issues with NHST, even though Bayesian methods of course have numerous important merits.] The intuition we'd like you to get is that, if you are an experimentalist who cares about the magnitude of causal relationships (and we hope you are), then Fisher's statistical approach isn't ideally suited to your goals.[\^MM: Yes, I like this framing in the final sentence much better.]
 
 <!-- TODO: HERE WOULD BE A GREAT PLACE FOR AN INTERACTIVE -->
 
 ## Effect size
 
-With all our talk about estimation above, we didn't say nuch about what precisely was being estimated. 
+With all our talk about estimation above, we didn't say much about what precisely was being estimated. Often, researchers seek out some sort of common standardized way for describing the relationships they observe in the study.
 
-Effect size: a common language for describing group differences. Pros and cons of this approach. Pro: comparability across studies. Con: loss of information about measures and real-world predictions; dependence on baseline variability. 
+For example, imagine that Mika and Nicholas are interested in examining whether a dog-petting intervention can reduce depression relative to a placebo. They use the same self-report depression measure, but Mika decides to make it a 10-point self-report scale (0 = "I feel blissful" to 10 = "I feel extremely depressed"), whereas Nicholas decides to make it a 100-point scale (1 = "I feel blissful" to 100 = "I feel extremely depressed"). Observing that the intervention led to a 1-point decrease in Mika's scale is quite impressive. But observing a 1-point decrease in Nicholas' scale? Not so much!
 
-Effect sizes (ES):
-Cohen’s = m1 - m2 / SD
-Units of ES easy to compare across studies
-Good for comparison 
-Example: school interventions to improve achievement
-Necessary for meta-analysis
-Example: MA of infant consonant discrimination (cross method comparison)
-Necessary for power analysis 
-Negative: not related to any real units
-Many measures of ES, e.g. r2, n2 (eta), log odds
+To ensure that we have a common currency, many researchers describe their observations using standardized metrics. A common example of a such a metric is Cohen's *d*, which provides a standardized estimate of the difference between two means. There are many different ways to calculate Cohen's *d* (Lakens, 2013), but there usually some variant of the following formula:
+
+$$d = \frac{M_1- M_2}{SD_1}$$
+
+In the above example, $M_1$ could be the depression scores of patients who were assigned to pet dogs, whereas $M_2$ would be the scores of patients who were assigned to a placebo condition. $SD_1$ refers refers to standard deviation of the participants who were randomly assigned to pet dogs. Note: researchers usually seek to pool the standard deviations of *both* groups, but (for simplicity) we will assume that both groups have the same standard deviation (and thus $SD_1 = SD_2 = SD_{pooled}$).
+
+Because Mika and Nicholas used different scales, they will nature observe different amount of variability. For example, if all participants indicate that they are between 2-8 on a 10-point scale, this should translate to a range of 20-80 on a 100-point scale. Similarly, a standard deviation of 2 on Mika's scale should correspond to a standard deviation of 20 on Nicholas' scale.
+
+So let's compare their results, assuming that participants in the placebo groups have a mean depression score at the center of the scale (5 out of 10; 50 out of 100) and that both Mika and Nicholas observe a 1-point decrease is depression in the dog-petting group.
+
+$${d_{Mika}} = \frac{M_1- M_2}{SD_1} = \frac{5- 4}{2} = \frac{1}{2} = 0.5$$
+
+$${d_{Nicholas}} = \frac{M_1- M_2}{SD_1} = \frac{50- 49}{20} = \frac{1}{20} =  .05$$
+
+When using Cohen's d, a value of .50 is often considered a strong effect, whereas a value of .05 would often be considered negligible (at least in the context of an intervention designed to improve depression).
+
+Of course, there are many different standardized effect sizes that researchers can use. Although we described a common standardized effect size to describe differences in means, there are also standardized effect sizes for describing the amount of variance explained (e.g., Pearson's *r*, R^2^, and $\eta^2$) or relationships involving categorical variables (e.g., Odds Ratio). For a review, see... (Any recommendations?)
+
+### Pros and cons of standardization
+
+Pro: comparability across studies (e.g., school interventions to improve achievement?). Useful for meta-analysis (e.g., MA of facial feedback, which used a lot of different measures of emotion; infant consonant discrimination (cross method comparison)). Useful for a lot of power analysis software and packages (e.g., GPower and many packages in R).
+
+Con: loss of information about measures and real-world predictions; dependence on baseline variability. Power analysis can only be done via annoying simulations. Not related to any real units. Often not very intuitive (have fun trying to explain what Cohen's *d* is to a very curious non-scientist. Fun fact: the Wikipedia article on effect sizes has been flagged as "too technical for most readers to understand" since 2014!)
 
 ## Variability and Precision
-
-
-
 
 ### Standard error of the mean
 
 Talk about standard error with respect to SD of sampling distribution
 
-
 ### Confidence intervals
 
 CIs for inference
 
-Confidence intervals:
-95% of these regions will contain the TRUE parameter
-	Remember frequentists - there is a TRUE parameter
+Confidence intervals: 95% of these regions will contain the TRUE parameter Remember frequentists - there is a TRUE parameter
 
-https://istats.shinyapps.io/ExploreCoverage/
+<https://istats.shinyapps.io/ExploreCoverage/>
 
-But this is not our typical interpretation, which is that 95% chance parameter is in this interval
-	That’s the BAYESIAN interpretation
+But this is not our typical interpretation, which is that 95% chance parameter is in this interval That's the BAYESIAN interpretation
 
 Bayesian Estimation
 
-Find the posterior distribution of the parameter of interest
-	You can take its mean
-	Its HPD (highest posterior density)
+Find the posterior distribution of the parameter of interest You can take its mean Its HPD (highest posterior density)
 
-Confidence in confidence intervals: 
-https://link.springer.com/article/10.3758/s13423-015-0947-8
-
+Confidence in confidence intervals: <https://link.springer.com/article/10.3758/s13423-015-0947-8>
 
 ### Visualizing variability
-Error bar:
- - standard deviation (why is this bad)?
-- SEM
-- CI
 
-
+Error bar: - standard deviation (why is this bad)? - SEM - CI
 
 <!-- ::: {.interactive} -->
-<!-- ⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance -->
-<!-- ::: -->
 
+<!-- ⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance -->
+
+<!-- ::: -->
