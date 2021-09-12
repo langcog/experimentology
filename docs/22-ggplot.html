@@ -145,7 +145,7 @@ div.csl-indent {
 <div id="TOC">
 <ul>
 <li class="part"><span><b>I Preliminaries</b></span></li>
-<li><a href="1-intro.html#intro"><span class="toc-section-number">1</span> Introduction: theory and experiments</a></li>
+<li><a href="1-intro.html#intro"><span class="toc-section-number">1</span> Experiments and Theories</a></li>
 <li><a href="2-replication.html#replication"><span class="toc-section-number">2</span> Replication and reproducibility</a></li>
 <li><a href="3-ethics.html#ethics"><span class="toc-section-number">3</span> Ethics</a></li>
 <li class="part"><span><b>II Statistics</b></span></li>
@@ -156,7 +156,7 @@ div.csl-indent {
 <li><a href="7-measurement.html#measurement"><span class="toc-section-number">7</span> Measurement</a></li>
 <li><a href="8-design.html#design"><span class="toc-section-number">8</span> Design of experiments</a></li>
 <li><a href="9-sampling.html#sampling"><span class="toc-section-number">9</span> Sampling</a></li>
-<li><a href="10-preregistration.html#preregistration"><span class="toc-section-number">10</span> Preregistration</a></li>
+<li><a href="10-prereg.html#prereg"><span class="toc-section-number">10</span> Preregistration</a></li>
 <li class="part"><span><b>IV Execution</b></span></li>
 <li><a href="11-selection.html#selection"><span class="toc-section-number">11</span> Replicating or extending an existing study</a></li>
 <li><a href="12-collection.html#collection"><span class="toc-section-number">12</span> Data collection</a></li>
@@ -194,9 +194,9 @@ div.csl-indent {
 #&gt; 4  0.29 Premium   I     VS2      62.4    58   334  4.2   4.23  2.63
 #&gt; 5  0.31 Good      J     SI2      63.3    58   335  4.34  4.35  2.75
 #&gt; 6  0.24 Very Good J     VVS2     62.8    57   336  3.94  3.96  2.48</code></pre>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-100-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-97-1.png" width="\linewidth"  /></p>
 <p>Scatter plots are trivial, and easy to add features to. Modify this plot so that it uses the dataframe rather than working from variables in the general namespace (good to get away from retyping <code>diamonds$</code> every time you reference a variable).</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-101-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-98-1.png" width="\linewidth"  /></p>
 <p>Try adding clarity and cut, using shape and color as your visual variables.</p>
 </div>
 <div id="more-complex-with-ggplot" class="section level2" number="22.2">
@@ -204,27 +204,27 @@ div.csl-indent {
 <p><code>ggplot</code> is just a way of building <code>qplot</code> calls up more systematically. It’s
 sometimes easier to use and sometimes a bit more complicated. What I want to show off here is the functionality of being able to build up complex plots with multiple elements. You can actually do this using <code>qplot</code> pretty easily, but there are a few things that are hard to do.</p>
 <p><code>ggplot</code> is the basic call, where you specify A) a dataframe and B) an aesthetic (<code>aes</code>) mapping from variables in the plot space to variables in the dataset.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-103-1.png" width="\linewidth"  /><img src="experimentology_files/figure-html/unnamed-chunk-103-2.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-100-1.png" width="\linewidth"  /><img src="experimentology_files/figure-html/unnamed-chunk-100-2.png" width="\linewidth"  /></p>
 <p>Try writing this as a single set of additions (e.g. one line of R code, though you can put in linebreaks). This is the most common workflow for me.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-104-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-101-1.png" width="\linewidth"  /></p>
 </div>
 <div id="facets" class="section level2" number="22.3">
 <h2><span class="header-section-number">22.3</span> Facets</h2>
 <p>Let’s try out another version of the <code>qplot</code> example above. Rewrite the last qplot example with ggplot.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-105-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-102-1.png" width="\linewidth"  /></p>
 <p>One of the primary benefits of <code>ggplot2</code> is the use of facets - also known as small multiples in the Tufte vocabulary. That last plot was probably hard to read. Facets could make it better. Try adding <code>facet_grid(x ~ y)</code>. <code>x ~ y</code> means row facets are by <code>x</code>, column facets by <code>y</code>.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-106-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-103-1.png" width="\linewidth"  /></p>
 <p>But facets can also get overwhelming. Try to strike a good balance between color, shape, and faceting.</p>
 <p>HINT: <code>facet_grid(. ~ x)</code> puts x on the columns, but <code>facet_wrap(~ x)</code> (no dot) <em>wraps</em> the facets.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-107-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-104-1.png" width="\linewidth"  /></p>
 </div>
 <div id="geoms" class="section level2" number="22.4">
 <h2><span class="header-section-number">22.4</span> Geoms</h2>
 <p>As you’ve seen above, the basic unit of a ggplot plot is a “geom” - a mapping between data (via an “aesthetic”) and a particular geometric configuration on coordinate axes.</p>
 <p>Let’s try adding some geoms and manipulating their parameters. One combo I really like is a scatterplot with a smoothing layer (<code>geom_smooth</code>). Try adding one onto this plot.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-108-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-105-1.png" width="\linewidth"  /></p>
 <p>CHALLENGE: You could also try starting with a histogram and adding densities. (<code>geom_density</code>), Try <a href="https://stackoverflow.com/questions/5688082/ggplot2-overlay-histogram-with-density-curve">this link</a>.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-109-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-106-1.png" width="\linewidth"  /></p>
 </div>
 <div id="themes-and-plot-cleanup" class="section level2" number="22.5">
 <h2><span class="header-section-number">22.5</span> Themes and plot cleanup</h2>
@@ -233,16 +233,16 @@ sometimes easier to use and sometimes a bit more complicated. What I want to sho
 <p>You can also try transparency/different point sizes to clean up scatterplots. Try <code>alpha = .1</code> or <code>pch = "."</code> to make transparent or small points.</p>
 <p>Finally, don’t forget to “fix the axis labels!”</p>
 <p>Here’s a somewhat ugly plot - see if you can make it look awesome.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-110-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-107-1.png" width="\linewidth"  /></p>
 </div>
 <div id="plot-inheritance-example" class="section level2" number="22.6">
 <h2><span class="header-section-number">22.6</span> Plot inheritance example</h2>
 <p>Let’s take this base plot.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-111-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-108-1.png" width="\linewidth"  /></p>
 <p>Say I want to map clarity to be mapped to size. Try adding it to the top level. This doesn’t work.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-112-1.png" width="\linewidth"  />
+<p><img src="experimentology_files/figure-html/unnamed-chunk-109-1.png" width="\linewidth"  />
 The reason is inheritance. I want the POINTS to have sizes, but the smoothing lines not to have that AES feature.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-113-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-110-1.png" width="\linewidth"  /></p>
 </div>
 <div id="advanced-plot-exploration-exercise" class="section level2" number="22.7">
 <h2><span class="header-section-number">22.7</span> Advanced plot exploration exercise</h2>
@@ -311,17 +311,17 @@ The reason is inheritance. I want the POINTS to have sizes, but the smoothing li
 #&gt; 10 Canada             11      18
 #&gt; # … with 66 more rows</code></pre>
 <p>Describe the dataset graphically in ways that are useful for you to get a handle on the data collection effort.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-119-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-116-1.png" width="\linewidth"  /></p>
 </div>
 <div id="hypothesis-related-exploration" class="section level3" number="22.7.2">
 <h3><span class="header-section-number">22.7.2</span> Hypothesis-related exploration</h3>
 <p>Try just plotting the un-adjusted curves.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-120-1.png" width="\linewidth"  /></p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-121-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-117-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-118-1.png" width="\linewidth"  /></p>
 <p>Now rebin into 3-year bins.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-122-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-119-1.png" width="\linewidth"  /></p>
 <p>Break this down by country. I like this plot best so far.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-123-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-120-1.png" width="\linewidth"  /></p>
 
 </div>
 </div>
