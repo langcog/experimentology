@@ -87,10 +87,16 @@ MathJax.Hub.Config({
 <div id="estimation" class="section level1">
 <h1><span class="header-section-number">Chapter 4</span> Estimation</h1>
 <p>Idea of a sampling distribution</p>
-<div id="a-probabilistic-framework" class="section level2">
-<h2><span class="header-section-number">4.1</span> A probabilistic framework</h2>
+<div id="introduction-1" class="section level2">
+<h2><span class="header-section-number">4.1</span> Introduction</h2>
+<p>An alternative(?) way to frame our statistical practice is to start from the idea of estimation.</p>
+</div>
+<div id="maximum-likelihood-estimation-fitting-the-model-to-the-data" class="section level2">
+<h2><span class="header-section-number">4.2</span> Maximum likelihood estimation: Fitting the model to the data</h2>
+</div>
+<div id="bayesian-estimation-incorporating-prior-beliefs" class="section level2">
+<h2><span class="header-section-number">4.3</span> Bayesian estimation: Incorporating prior beliefs</h2>
 <p>NEEDS TO BE FIXED WITH RESPECT TO CASE STUDY</p>
-<p>An alternative way to frame our statistical practice is to start from the idea of estimation.</p>
 <p>Let’s say we want to estimate some quantity, we’ll call it <span class="math inline">\(h\)</span> – our belief about the participant’s accuracy.<label for="tufte-sn-1" class="margin-toggle sidenote-number">1</label><input type="checkbox" id="tufte-sn-1" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">1</span> You can’t get away from measurement and psychometrics! We said we were really interested in the effect of tea ordering on tea perception. But this number that we’re estimating is something more like this particular participant’s accuracy, and that’s not the same thing that we actually wanted. To get from what we’re estimating to our effect of interest, we’d need to establish some <strong>linking hypotheses</strong> about how the participant’s accuracy can be derived from the participant’s perception and the properties of the stimulus. That’s perhaps not worth doing in this toy example, but more generally it’s a critical part of getting from your measure to your construct of interest!</span> We observe some data <span class="math inline">\(d\)</span>, consisting of the set of correct and incorrect responses in the experiment. Now we can use <strong>Bayes’ rule</strong>, a tool from basic probability theory, to estimate this number.</p>
 <p>Bayes’ rule says:</p>
 <p><span class="math display">\[
@@ -108,8 +114,8 @@ Figure 4.1: Examples of Bayesian inference about tea discrimination ability unde
 <p>Fisher’s original framework for significance testing focused only on the <strong>null hypothesis</strong> of no discrimination. In contrast, the Bayesian estimation method here focuses on the magnitude of accuracy.<sup>[If you’re reading carefully, you might have noticed that we <em>could</em> have discovered that the estimate of accuracy was very similar to chance – more about this below.][</sup>MM: I entirely agree with the spirit of this, but I worry about framing this as “Fisherian NHST vs. Bayesian estimation” when the issue really is “Fisherian NHST” vs “any form of estimation with continuous inference”. We wouldn’t want to inadvertently reinforce the misconception that Bayesian methods <em>inherently</em> alleviate the central issues with NHST, even though Bayesian methods of course have numerous important merits.] The intuition we’d like you to get is that, if you are an experimentalist who cares about the magnitude of causal relationships (and we hope you are), then Fisher’s statistical approach isn’t ideally suited to your goals.[^MM: Yes, I like this framing in the final sentence much better.]</p>
 <!-- TODO: HERE WOULD BE A GREAT PLACE FOR AN INTERACTIVE -->
 </div>
-<div id="effect-size" class="section level2">
-<h2><span class="header-section-number">4.2</span> Effect size</h2>
+<div id="measures-of-effect-size" class="section level2">
+<h2><span class="header-section-number">4.4</span> Measures of effect size</h2>
 <p>With all our talk about estimation above, we didn’t say much about what precisely was being estimated. Often, researchers seek out some sort of common standardized way for describing the relationships they observe in the study.</p>
 <p>For example, imagine that Mika and Nicholas are interested in examining whether a dog-petting intervention can reduce depression relative to a placebo. They use the same self-report depression measure, but Mika decides to make it a 10-point self-report scale (0 = “I feel blissful” to 10 = “I feel extremely depressed”), whereas Nicholas decides to make it a 100-point scale (1 = “I feel blissful” to 100 = “I feel extremely depressed”). Observing that the intervention led to a 1-point decrease in Mika’s scale is quite impressive. But observing a 1-point decrease in Nicholas’ scale? Not so much!</p>
 <p>To ensure that we have a common currency, many researchers describe their observations using standardized metrics. A common example of a such a metric is Cohen’s <em>d</em>, which provides a standardized estimate of the difference between two means. There are many different ways to calculate Cohen’s <em>d</em> (Lakens, 2013), but there usually some variant of the following formula:</p>
@@ -122,30 +128,11 @@ Figure 4.1: Examples of Bayesian inference about tea discrimination ability unde
 <p>When using Cohen’s d, a value of .50 is often considered a strong effect, whereas a value of .05 would often be considered negligible (at least in the context of an intervention designed to improve depression).</p>
 <p>Of course, there are many different standardized effect sizes that researchers can use. Although we described a common standardized effect size to describe differences in means, there are also standardized effect sizes for describing the amount of variance explained (e.g., Pearson’s <em>r</em>, R<sup>2</sup>, and <span class="math inline">\(\eta^2\)</span>) or relationships involving categorical variables (e.g., Odds Ratio). For a review, see… (Any recommendations?)</p>
 <div id="pros-and-cons-of-standardization" class="section level3">
-<h3><span class="header-section-number">4.2.1</span> Pros and cons of standardization</h3>
+<h3><span class="header-section-number">4.4.1</span> Pros and cons of standardization</h3>
 <p>Pro: comparability across studies (e.g., school interventions to improve achievement?). Useful for meta-analysis (e.g., MA of facial feedback, which used a lot of different measures of emotion; infant consonant discrimination (cross method comparison)). Useful for a lot of power analysis software and packages (e.g., GPower and many packages in R).</p>
 <p>Con: loss of information about measures and real-world predictions; dependence on baseline variability. Power analysis can only be done via annoying simulations. Not related to any real units. Often not very intuitive (have fun trying to explain what Cohen’s <em>d</em> is to a very curious non-scientist. Fun fact: the Wikipedia article on effect sizes has been flagged as “too technical for most readers to understand” since 2014!)</p>
-</div>
-</div>
-<div id="variability-and-precision" class="section level2">
-<h2><span class="header-section-number">4.3</span> Variability and Precision</h2>
-<div id="standard-error-of-the-mean" class="section level3">
-<h3><span class="header-section-number">4.3.1</span> Standard error of the mean</h3>
-<p>Talk about standard error with respect to SD of sampling distribution</p>
-</div>
-<div id="confidence-intervals" class="section level3">
-<h3><span class="header-section-number">4.3.2</span> Confidence intervals</h3>
-<p>CIs for inference</p>
-<p>Confidence intervals: 95% of these regions will contain the TRUE parameter Remember frequentists - there is a TRUE parameter</p>
-<p><a href="https://istats.shinyapps.io/ExploreCoverage/" class="uri">https://istats.shinyapps.io/ExploreCoverage/</a></p>
-<p>But this is not our typical interpretation, which is that 95% chance parameter is in this interval That’s the BAYESIAN interpretation</p>
-<p>Bayesian Estimation</p>
-<p>Find the posterior distribution of the parameter of interest You can take its mean Its HPD (highest posterior density)</p>
-<p>Confidence in confidence intervals: <a href="https://link.springer.com/article/10.3758/s13423-015-0947-8" class="uri">https://link.springer.com/article/10.3758/s13423-015-0947-8</a></p>
-</div>
-<div id="visualizing-variability" class="section level3">
-<h3><span class="header-section-number">4.3.3</span> Visualizing variability</h3>
-<p>Error bar: - standard deviation (why is this bad)? - SEM - CI</p>
+<p>[STILL VERBATIM FROM MRM]
+Standardized effect-size measures have limitations. For example, if two interventions produce the same absolute change in the same outcome measure, but are studied in different populations in which the variability on the outcome differs substantially, the interventions would produce different standardized mean differences.  When meta-analyzing studies that measure the outcome on the same scale (e.g., blood pressure in terms of mmHg), it may often be preferable to use raw mean differences. However, in many scientific fields, studies do not measure outcomes on exactly the same scale, as in both applied examples provided here; in such cases, using standardized mean differences may enable some approximate comparison and synthesis of effect sizes across studies. Additionally, when outcomes use arbitrary or unitless raw measures (e.g., points on a Likert scale), expressing effect sizes using standardized mean differences may provide some sense of effect sizes relative to variability in that sample, similar to measures of genetic heritability. </p>
 <!-- ::: {.interactive} -->
 <!-- ⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance -->
 <!-- ::: -->

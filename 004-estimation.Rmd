@@ -9,12 +9,61 @@ output:
 
 Idea of a sampling distribution
 
+
+## Meta-notes
+
+### Topics not yet covered
+
+### Not sure if there should be covered
+
+* Measures of effect-size for binary outcomes (maybe a brief mention?)
+
+
+
 ## Introduction
 
 An alternative(?) way to frame our statistical practice is to start from the idea of estimation.
 
+<!-- ::: {.case-study} -->
+<!-- 🔬 Case study: The lady tasting tea -->
+## The lady tasting tea
 
-## Maximum likelihood estimation: Fitting the model to the data
+The birth of modern statistical inference came from a single, epochal act of mansplaining.^[An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed Social Darwinist who believed fervently in Eugenic legislation. These views are repugnant.] Sir Ronald Fisher was apparently at a party when a lady declared that she could tell the difference between cups when the tea was added to the milk vs. the milk to the tea. Rather than taking her at her word, Fisher devised an experimental and data analysis procedure to test her claim.^[If you're interested in this history, we recommend @salsburg2001's delightful book, "The Lady Tasting Tea," about the origins of modern statistics.]
+
+The basic schema of the experiment was that the lady would have to judge a set of new cups of tea and sort them into milk-first vs. tea-first sets. Her data would then be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, in fact this is one of those touchstones that feels unremarkable because it literally established the way science was done for the next century. 
+
+The first element of the experiment that was unusual was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounders. Fisher recognized that this strategy was insufficient and that random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk).^[We discussed the causal power of random assignment in Chapter \@ref(intro) but here's where this idea originates!]^[MM: Minor, but there were written records of RCTs well before this (e.g., to investigate scurvy treatments in the 18th c.).]
+
+The second innovation was the idea of creating a model of what might happen during the experiment: specifically, a **null model** in which the nameless lady chose cups by chance rather than because of some tea sensitivity. The goal of Fisher's analysis strategy was then to compute the probability of the lady's choices under this null model. Fisher then declared that it is "usual and convenient for experimenters to take 5 percent as a standard level of convenience," establishing the .05 cutoff that has become gospel throughout the sciences.^[Actually, right after establishing .05 as a cutoff, Fisher then writes that "in the statistical sense, we thereby admit that no isolated experiment, however significant in itself, can suffice for the experimental demonstration of any natural phenomenon... in order to assert that a natural phenomenon is experimentally demonstrable we need, not an isolated record, but a reliable method of procedure. In relation to the test of significance, we may say that a phenomenon is experimentally demonstrable when we know how to conduct an experiment which will rarely fail to give us a statistically significant result." In other words, Fisher was all for replication!]
+
+With apologies to Fisher, for our example, we'll design a slightly more modern version of his experiment using a forced-choice judgmeent measure. We present participants with a series of cups of tea (in random order, of course). Half are prepared milk-first, half tea-first. Then the participant must give an independent judgement about each. The null model is based on the idea that, if the participant knows nothing then they should choose at random between the two possibilities. Hence, we can use a simple binomial distribution to show expected chance performance for different sets of trials.^[We quantify our measure as the proportion of correct trials, since trials here are interchangeable.] 
+
+These null distributions are shown in Figure \@ref(fig:inference-null-model).[^MM: The concept of a "null distribution" probably needs more scaffolding. In my experience with accidentally driving students crazy, I find that I have to go extremely slowly the first time I discuss sampling distributions.] We show cases with 6, 12, 24, and 48 trials, and highlight the .05 significance threshold -- the threshold above which you would fall only 5% of the time if you were guessing by chance.^[Note that we are effectively doing a "one-tailed" test here, since we're attending only to the right hand side of each plot and ignoring cases where the participant is exactly flipped in their judgments.] Conventionally, if you cross this threshold, you can say you "reject the null."
+
+```{r inference-null-model, fig.cap="Probability of observing a particular number of trials correct under the null model of no sensitivity to tea preparation order. Each facet gives a different number of trials. The red line indicates a significance threshold above which data have less than a 5\\% chance of appearing."}
+n_sims <- 10000
+null_model <- expand_grid(n = c(6,12,24,48),
+                          sim = 1:n_sims) %>%
+  group_by(n) %>%
+  mutate(correct = rbinom(n = n_sims, size = n, prob = .5)/n, 
+         cutoff = quantile(correct, .95)) %>%
+  group_by(n, correct) %>%
+  summarise(n_correct = n(), 
+            cutoff = cutoff[1]) %>%
+  group_by(n) %>%
+  mutate(prop_correct = n_correct / sum(n_correct))
+
+ggplot(null_model, aes(x = correct, y = prop_correct)) + 
+  geom_bar(stat = "identity") + 
+  facet_wrap(~n) + 
+  geom_vline(aes(xintercept = cutoff + .01), col = "red", lty = 2) + 
+  ylab("Probability") + xlab("Proportion correct responses")
+# dbinom(x = 8, size = 8, prob = .5)
+```
+
+
+
+## Maximum likelihood estimation: Fitting a model to the data
 
 ## Bayesian estimation: Incorporating prior beliefs
 
