@@ -3,6 +3,14 @@
 # Estimation {#estimation}
 
 
+::: {.learning-goals}
+🍎 Learning goals: 
+
+* Discuss differences between frequentist and Bayesian perspectives
+* Contrast inference and estimation as two goals of statistical analysis
+* Reason about standardized effect sizes and their strengths and weaknesses
+* Visualize and interpret measures of estimate variability (including confidence intervals)
+:::
 
 <!-- ## Meta-notes -->
 
@@ -14,57 +22,65 @@
 
 <!-- * Measures of effect-size for binary outcomes (maybe a brief mention?) -->
 
+In the first section of this book, our goal was to set up some of the theoretical ideas that motivate our approach to experimental design and planning. We introduced our key thesis, namely that experiments are about measuring causal effects. We also began to discuss some of our key themes, including precision of measurement, reduction of bias, and generalization across populations. In this next section of the book, treating statistical topics, we will integrate these ideas with an analytic toolkit for **estimation** of causal effects and quantifying the precision of estimates (this chapter), making **inferences** about the evidence for such effects (Chapter \@ref(inference)), and making models for estimation and inference in more complex settings (Chapter \@ref(models)). Although this book is not a statistics text, we hope that these chapters provide some practical foundations for beginning the statistical analysis of your experimental data. 
 
-
-## Introduction
-
-
-<!-- ::: {.case-study} -->
-<!-- 🔬 Case study: The lady tasting tea -->
-## Running example: The lady tasting tea
+::: {.case-study}
+🔬 Case study: The Lady Tasting Tea
 
 The birth of modern statistical inference came from a single, epochal act of mansplaining.^[An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed Social Darwinist who believed fervently in Eugenic legislation. These views are repugnant.] Sir Ronald Fisher was apparently at a party when a lady declared that she could tell the difference between cups when the tea was added to the milk vs. the milk to the tea. Rather than taking her at her word, Fisher devised an experimental and data analysis procedure to test her claim.^[If you're interested in this history, we recommend @salsburg2001's delightful book, "The Lady Tasting Tea," about the origins of modern statistics.]
 
 The basic schema of the experiment was that the lady would have to judge a set of new cups of tea and sort them into milk-first vs. tea-first sets. Her data would then be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, in fact this is one of those touchstones that feels unremarkable because it literally established the way science was done for the next century. 
 
-The first element of the experiment that was unusual was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounders. Fisher recognized that this strategy was insufficient and that random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk).^[We discussed the causal power of random assignment in Chapter \@ref(intro) but here's where this idea originates!] ^[MM: Minor, but there were written records of RCTs well before this (e.g., to investigate scurvy treatments in the 18th c.).]
+One important element of the experiment that was unusual was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounders. Fisher recognized that this strategy was insufficient and that random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk). We discussed the causal power of random assignment in Chapter \@ref(intro) -- this experiment is a key touchstone in the popularization of randomized experiments!^[Randomized experiments were not invented by Fisher. Perhaps the earliest example of a (somewhat) randomized experiment was a trial of scurvey treatments in the 1700s [@dunn1997]. @peirce1884 also report a strikingly modern use of randomized stimulus presentation (via shuffling cards). Nevertheless, Fisher's statistical work popularized randomized experiments throughout the sciences, in part by integrating them with a set of analytic methods.]
+:::
 
-With apologies to Fisher, for our example, we'll design a slightly more modern version of his experiment using a forced-choice judgment measure. We present participants with 50 cups of tea (in random order, of course). Half are prepared milk-first, half tea-first. Then the participant must give an independent judgment about each by rating the tea on a scale from 0 (horrible) to 10 (perfect). 
+## Estimating an effect
 
-Our task in this chapter will be to estimate the quality of the tea when it is milk-first. More formally, we want to use our **sample** of 50 tea judgments to estimate a **population parameter** that we can't directly observe, namely the true perceived quality of all possible milk-first cups.^[MM: This example is perhaps a little confusing for showing the sample vs. population parameter because the population here is a bit hard to conceptualize. Also, I worry that readers will be mislead into thinking that it's the subjectivity in tea ratings that causes statistical uncertainty, rather than the finite sample size. An easier example for this chapter might be something like estimating the mean height of students at College X, where it's more clear that there is no subjectivity involved and that the population is the mean height if we were to measure every student at College X rather than just a sample.] We will use $\mu$ to denote the parameter we want to estimate (the "estimand") and $\widehat{\mu}$ its sample estimate.^[It is common practice to use hats to denote sample estimates.]
+If experiments are about estimating effects, how do we actually use our experimental data to make these estimates? With apologies to Fisher, for our example we'll design a slightly more modern version of his experiment using a forced-choice judgment measure. We present participants with 50 cups of tea (in random order, of course). Half are prepared milk-first, half tea-first. Then the participant must give an independent judgment about each by rating the tea on a scale from 0 (horrible) to 10 (perfect). 
+
+Our goal will be to estimate the quality of the tea when it is milk-first. More formally, we want to use our **sample** of 50 tea judgments to estimate a **population parameter** that we can't directly observe, namely the true perceived quality of all possible milk-first cups. Here we're looking at this simple estimation problem rather than the more familiar problem where we have a sample of different people from a population and we want to try and estimate the population parameter. In Chapter \@ref(models) we'll talk more about modeling variability across experimental participants from a population.  
+
+<!-- ^[MM: This example is perhaps a little confusing for showing the sample vs. population parameter because the population here is a bit hard to conceptualize. Also, I worry that readers will be mislead into thinking that it's the subjectivity in tea ratings that causes statistical uncertainty, rather than the finite sample size. An easier example for this chapter might be something like estimating the mean height of students at College X, where it's more clear that there is no subjectivity involved and that the population is the mean height if we were to measure every student at College X rather than just a sample.]  -->
+
+We'll try to go easy on notation but some amount will make things clearer. We will use $\theta$ ("theta") to denote the parameter we want to estimate (the "estimand") and $\widehat{\theta}$ its sample estimate.^[Statisticians use "hats" like this to denote sample estimates. One way to remember this is that the "person in the hat" is wearing a hat to dress up as the actual quantity. Feel free to ignore this but it helps us.] This is the probability that the lady is correct in her judgment.
 
 
-## Maximum likelihood estimation: Fitting a model to the data
+### Maximum likelihood estimation
 
-[Here I would suggest that we ramp up more slowly to Bayes by simply estimating the mean in one sample.]
+OK, you are probably saying, if we we want our estimate of the lady's tea-sensitivity, shouldn't we just take her average accuracy across the 50 cups of tea? The answer is yes, but let's unpack that choice for just a moment. 
 
-Taking the sample mean as our estimate $\widehat{\mu}$ is an example of an estimation approach called **maximum likelihood estimation**. In general terms, maximum likelihood estimation is a two-step process. First, we assume a model for how the data were generated. This model is specified in terms of certain population parameters. In our example, the "model" is as simple as they come: we just assume the data have some unknown mean $\mu$. (In other problems, like multivariable regression, the model is more complicated, for example involving more than one regression coefficient.)
+Taking the sample mean as our estimate $\widehat{\theta}$ is an example of an estimation approach called **maximum likelihood estimation**. In general terms, maximum likelihood estimation is a two-step process. First, we assume a **model** for how the data were generated. This model is specified in terms of certain population parameters. In our example, the "model" is as simple as they come: we just assume the lady has some unknown accuracy such that on each trial she gets the right answer with probability $\theta$.^[In other problems, like multi-variable regression, the model is more complicated, for example involving more than one regression coefficient -- that's what we'll get to in Chapter \@ref(models).]
 
-Second, we try to find the values of the population parameters that make our observed data as likely as possible. For example, if our sample mean is $\widehat{\mu} = 3.45$, what underlying value of $\mu$ would make these data most likely to occur? Well, suppose the underlying parameter were $\mu=10$. Then it would be pretty unlikely that our sample mean would be so much smaller. So $\mu=10$ is a poor guess for the population parameter based on these data. Conversely, if the parameter were $\mu=-10$, it would pretty unlikely that our sample mean would be so much *larger*. The value of $\mu$ that makes these data most likely is just 3.45 itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate. 
+Second, we try to find the values of the population parameters that make our observed data as likely as possible. For example, if our sample mean is $\widehat{\theta} = .73$, what underlying value of $\theta$ would make these data most likely to occur? Well, suppose the underlying parameter were $\theta=.99$. Then it would be pretty unlikely that our sample mean would be so much smaller. So $\theta=.99$ is a poor guess for the population parameter based on these data. Conversely, if the parameter were $\theta=.5$, it would pretty unlikely that our sample mean would be so much *larger*. The value of $\theta$ that makes these data most likely is just .73 itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate. 
 
-## Bayesian estimation: Incorporating prior beliefs
+### Bayesian estimation
 
-[Here I would suggest transitioning by saying that what we did above makes sense if the only criterion for what constitutes a good guess is the data themselves. "But what if we had some background knowledge about heights in this college? For example, we have data from the US Census on adult heights, so we'd probably expect college students to be roughly similar.]
+In the case of the lady tasting tea, we don't really have strong expectations about what her $\theta$ is. Maybe she's tea-sensitive, maybe not. But in some cases, we want to bring our prior knowledge to bear. Say she claimed she could guess the state of each cup of tea without even tasting it -- or maybe even without even seeing it! You'd probably be skeptical. (We'll look at a case like this in the next chapter). How would you formalize this skepticism? One way is by putting in place a prior expectation about her sensitivity. 
 
-[EXISTING TEXT BELOW]
+<!-- [Here I would suggest transitioning by saying that what we did above makes sense if the only criterion for what constitutes a good guess is the data themselves. "But what if we had some background knowledge about heights in this college? For example, we have data from the US Census on adult heights, so we'd probably expect college students to be roughly similar.] -->
 
-Let's say we want to estimate some quantity, we'll call it $h$ -- our belief about the participant's accuracy.[^1] We observe some data $d$, consisting of the set of correct and incorrect responses in the experiment. Now we can use **Bayes' rule**, a tool from basic probability theory, to estimate this number.
+<!-- [EXISTING TEXT BELOW] -->
 
-[^1]: You can't get away from measurement and psychometrics! We said we were really interested in the effect of tea ordering on tea perception. But this number that we're estimating is something more like this particular participant's accuracy, and that's not the same thing that we actually wanted. To get from what we're estimating to our effect of interest, we'd need to establish some **linking hypotheses** about how the participant's accuracy can be derived from the participant's perception and the properties of the stimulus. That's perhaps not worth doing in this toy example, but more generally it's a critical part of getting from your measure to your construct of interest!
+<!-- [^1]: You can't get away from measurement and psychometrics! We said we were really interested in the effect of tea ordering on tea perception. But this number that we're estimating is something more like this particular participant's accuracy, and that's not the same thing that we actually wanted. To get from what we're estimating to our effect of interest, we'd need to establish some **linking hypotheses** about how the participant's accuracy can be derived from the participant's perception and the properties of the stimulus. That's perhaps not worth doing in this toy example, but more generally it's a critical part of getting from your measure to your construct of interest! -->
+
+We can do this via **Bayesian estimation** of $\theta$ -- our belief about the participant's accuracy. We observe some data $d$, consisting of the set of correct and incorrect responses in the experiment. Now we can use **Bayes' rule**, a tool from basic probability theory, to estimate this number.
+
 
 Bayes' rule says:
 
 $$
-\color{purple}{p(h | d)} = \frac{\color{red}{p(d | h)} \color{blue}{p(h)}}{\color{black}{p(d)}}.
-$$ \noindent Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(h|d)$) is called the **posterior probability** -- it tell us what we should believe about the participant's ability given the data we observed. We then break that down into two terms in the numerator.[^2]
+\color{purple}{p(\theta | d)} = \frac{\color{red}{p(d | \theta )} \color{blue}{p(\theta )}}{\color{black}{p(d)}}.
+$$ 
+
+\noindent Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(\theta |d)$) is called the **posterior probability** -- it tell us what we should believe about the participant's ability given the data we observed. We then break that down into two terms in the numerator.[^2]
 
 [^2]: We're making the posterior `r colorize("purple","purple")` to indicate the combination of likelihood (`r colorize("red","red")`) and prior (`r colorize("blue","blue")`).
 
-The first part of the numerator is $p(d|h)$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.[^3] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the participant has high ability (say $h = .9$) then the probability of a bunch of low accuracy observations will be fairly low.
+The first part of the numerator is $p(d|h)$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.[^3] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the participant has high ability (say $\theta  = .9$) then the probability of a bunch of low accuracy observations will be fairly low.
 
 [^3]: Speaking informally, "likelihood" is just a synonym for probability, but this is a technical meaning for the term, which can get a bit confusing.
 
-The second term in the numerator, $p(h)$, is called the **prior**. This term encodes our beliefs about how likely our participant is to have different levels of ability. Intuitively, if we think that they are very unlikely to have high tea discrimination ability, we should require more evidence to convince us of a particular level of discrimination. In contrast, if we think they are likely to have this ability, we should be easier to convince.
+The second term in the numerator, $p(\theta )$, is called the **prior**. This term encodes our beliefs about how likely our participant is to have different levels of ability. Intuitively, if we think that they are very unlikely to have high tea discrimination ability, we should require more evidence to convince us of a particular level of discrimination. In contrast, if we think they are likely to have this ability, we should be easier to convince.
 
 ```{r inference-bayes-demo, fig.cap="Examples of Bayesian inference about tea discrimination ability under three different priors (facets). Blue lines give the prior probability distribution, red lines give the likelihood of the data, and purple lines give the posterior distribution from combining likelihood and prior."}
 bayes <- expand_grid(x = seq(0,1,.01), a = c(1, 3, 6)) %>%
@@ -96,15 +112,11 @@ ggplot(bayes, aes(x = x, y = h_norm)) +
   xlab("Discrimination level")
 ```
 
-Figure \@ref(fig:inference-bayes-demo) gives an example of the combination of prior and data.[^4] For the sake of this example, we assume that we have run 12 tea discrimination trials and observed 9 successes and 3 failures. The evidence alone -- with no prior -- suggests a discrimination estimate of $9/12 = .75$.[^5] When we use a flat prior, we get the same estimate of `r bayes$map[bayes$label == "Flat"][1]`.[^6] In contrast, if we go in assuming that discrimination is likely to be absent or weak, we are biased downward in our eventual estimate of `r bayes$map[bayes$label == "Prior: no discrimination"][1]`; if we go in assuming good discrimination, we end up biased upwards to `r bayes$map[bayes$label == "Prior: discrimination"][1]`.
+Figure \@ref(fig:inference-bayes-demo) gives an example of the combination of prior and data.[^4] For the sake of this example, we assume that we have run 12 tea discrimination trials and observed 9 successes and 3 failures. The evidence alone -- with no prior -- suggests a discrimination estimate of $9/12 = .75$ (the maximum likelihood estimate). When we use a flat prior, we get the same estimate of `r bayes$map[bayes$label == "Flat"][1]`.[^6] In contrast, if we go in assuming that discrimination is likely to be absent or weak, we are biased downward in our eventual estimate of `r bayes$map[bayes$label == "Prior: no discrimination"][1]`; if we go in assuming good discrimination, we end up biased upwards to `r bayes$map[bayes$label == "Prior: discrimination"][1]`.
 
 [^4]: The model we use for this example is called a **Beta-Binomial conjugate model** and is a very convenient model for working with count data representing successes and failures.
 
-[^5]: Technically this is known as the **maximum a posteriori** estimate, or the MAP. We won't use that term though. (MM: I'd rephrase. This sounds like "MAP" = "MLE".)
-
-[^6]: MM: I think it may be illuminating to say more explicitly that Bayes estimates and frequentist estimates will exactly coincide either under a flat prior or as $n \to \infty$.
-
-Fisher's original framework for significance testing focused only on the **null hypothesis** of no discrimination. In contrast, the Bayesian estimation method here focuses on the magnitude of accuracy.^[If you're reading carefully, you might have noticed that we *could* have discovered that the estimate of accuracy was very similar to chance -- more about this below.][^MM: I entirely agree with the spirit of this, but I worry about framing this as "Fisherian NHST vs. Bayesian estimation" when the issue really is "Fisherian NHST" vs "any form of estimation with continuous inference". We wouldn't want to inadvertently reinforce the misconception that Bayesian methods *inherently* alleviate the central issues with NHST, even though Bayesian methods of course have numerous important merits.] The intuition we'd like you to get is that, if you are an experimentalist who cares about the magnitude of causal relationships (and we hope you are), then Fisher's statistical approach isn't ideally suited to your goals.[\^MM: Yes, I like this framing in the final sentence much better.]
+[^6]: In general, Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior or as you get infinite data ($n \to \infty$). Bayesian estimation is most important when you have strong beliefs and not a lot of data. 
 
 <!-- TODO: HERE WOULD BE A GREAT PLACE FOR AN INTERACTIVE -->
 
@@ -136,9 +148,9 @@ Of course, there are many different standardized effect sizes that researchers c
 
 Pro: comparability across studies (e.g., school interventions to improve achievement?). Useful for meta-analysis (e.g., MA of facial feedback, which used a lot of different measures of emotion; infant consonant discrimination (cross method comparison)). Useful for a lot of power analysis software and packages (e.g., GPower and many packages in R).
 
-Con: loss of information about measures and real-world predictions; dependence on baseline variability. Power analysis can only be done via annoying simulations. Not related to any real units. Often not very intuitive (have fun trying to explain what Cohen's *d* is to a very curious non-scientist. Fun fact: the Wikipedia article on effect sizes has been flagged as "too technical for most readers to understand" since 2014!)
+Con: loss of information about measures and real-world predictions; dependence on baseline variability. Power analysis can only be done via annoying simulations. Not related to any real units. Often not very intuitive (have fun trying to explain what Cohen's *d* is to a very curious non-scientist.^[Fun fact: the Wikipedia article on effect sizes has been flagged as "too technical for most readers to understand" since 2014!).]
 
-[STILL VERBATIM FROM MRM]
+<!-- [STILL VERBATIM FROM MRM] -->
 Standardized effect-size measures have limitations. For example, if two interventions produce the same absolute change in the same outcome measure, but are studied in different populations in which the variability on the outcome differs substantially, the interventions would produce different standardized mean differences.\citep{greenland1986fallacy,cummings2011arguments} \black{Some meta-analysts argue against the use of $SMD$s\citep{greenland1986fallacy,cummings2011arguments} or feel that the scale should never be used in any context (a point raised, for example, during the peer review of this paper). Whether and how $SMD$s should be used is a current debate in the field of meta-analysis. Our views are as follows.} When meta-analyzing studies that measure the outcome on the same scale (e.g., blood pressure in terms of mmHg), it may often be preferable to use raw mean differences.\citep{cummings2011arguments} However, in many scientific fields, studies do not measure outcomes on exactly the same scale, as in both applied examples provided here; in such cases, using standardized mean differences may enable some approximate comparison and synthesis of effect sizes across studies. Additionally, when outcomes use arbitrary or unitless raw measures (e.g., points on a Likert scale), expressing effect sizes using standardized mean differences may provide some sense of effect sizes relative to variability in that sample, similar to measures of genetic heritability. \black{For some outcomes, such as income or grades in high school, absolute changes may in fact be less substantively meaningful than effects relative to variability in the population, for example expressed by $SMD$s with appropriately chosen denominators.}
 
 ## Variability and Precision

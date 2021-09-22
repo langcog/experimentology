@@ -1,20 +1,18 @@
 # Inference {#inference}
 
-TODO:
-* Connections to Karl Popper
+<!-- TODO: -->
+<!-- * Connections to Karl Popper -->
 
 ::: {.learning-goals}
 🍎 Learning goals: 
 
-* Discuss differences between frequentist and Bayesian perspectives
+* Discuss the function of statistical inference
 * Contrast inference and estimation as two goals of statistical analysis
-* Reconceptualize statistical “tests” as models of data
-* Build intuitions about how specific “tests” (e.g., t-tests) relate to more general frameworks (e.g., regression, mixed effects models)
-* Identify which models are best suited for which research questions 
-* Reason about effect effect size as estimated by statistical models
+* Define $p$-values and Bayes Factors
+* Consider the fallacies of inference (especially for $p$-values)
 :::
 
-We've been arguing that experiments are about measuring effects. You might ask then, why does this book even need a chapter about statistical inference? Why can't we just report our measurements and be done? The answer is that we are not typically interested in the characteristics of our sample specifically. **Statistical inference** is the process of going beyond the specific characteristics of the sample that you measured to make generalizations about the broader population. 
+We've been arguing that experiments are about measuring effects. You might ask then, why does this book even need a chapter about statistical inference? Why can't we just report our estimates and be done? The answer is that we are not typically interested in the characteristics of our sample specifically. **Statistical inference** is the process of going beyond the specific characteristics of the sample that you measured to make generalizations about the broader population. 
 
 Inference methods allow us to ask questions like:
 
@@ -46,11 +44,14 @@ This isn't a statistics book and we won't attempt to teach the full array of imp
 <!-- 🔬 Case study: The lady tasting tea -->
 ## The lady tasting tea
 
-The birth of modern statistical inference came from a single, epochal act of mansplaining.^[An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed Social Darwinist who believed fervently in Eugenic legislation. These views are repugnant.] Sir Ronald Fisher was apparently at a party when a lady declared that she could tell the difference between cups when the tea was added to the milk vs. the milk to the tea. Rather than taking her at her word, Fisher devised an experimental and data analysis procedure to test her claim.^[If you're interested in this history, we recommend @salsburg2001's delightful book, "The Lady Tasting Tea," about the origins of modern statistics.]
+<!-- The birth of modern statistical inference came from a single, epochal act of mansplaining.^[An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed Social Darwinist who believed fervently in Eugenic legislation. These views are repugnant.] Sir Ronald Fisher was apparently at a party when a lady declared that she could tell the difference between cups when the tea was added to the milk vs. the milk to the tea. Rather than taking her at her word, Fisher devised an experimental and data analysis procedure to test her claim.^[If you're interested in this history, we recommend @salsburg2001's delightful book, "The Lady Tasting Tea," about the origins of modern statistics.] -->
 
-The basic schema of the experiment was that the lady would have to judge a set of new cups of tea and sort them into milk-first vs. tea-first sets. Her data would then be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, in fact this is one of those touchstones that feels unremarkable because it literally established the way science was done for the next century. 
+<!-- The basic schema of the experiment was that the lady would have to judge a set of new cups of tea and sort them into milk-first vs. tea-first sets. Her data would then be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, in fact this is one of those touchstones that feels unremarkable because it literally established the way science was done for the next century.  -->
 
-The first element of the experiment that was unusual was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounders. Fisher recognized that this strategy was insufficient and that random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk).^[We discussed the causal power of random assignment in Chapter \@ref(intro) but here's where this idea originates!]^[MM: Minor, but there were written records of RCTs well before this (e.g., to investigate scurvy treatments in the 18th c.).]
+<!-- The first element of the experiment that was unusual was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounders. Fisher recognized that this strategy was insufficient and that random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk).^[We discussed the causal power of random assignment in Chapter \@ref(intro) but here's where this idea originates!]^[MM: Minor, but there were written records of RCTs well before this (e.g., to investigate scurvy treatments in the 18th c.).] -->
+
+
+
 
 The second innovation was the idea of creating a model of what might happen during the experiment: specifically, a **null model** in which the nameless lady chose cups by chance rather than because of some tea sensitivity. The goal of Fisher's analysis strategy was then to compute the probability of the lady's choices under this null model. Fisher then declared that it is "usual and convenient for experimenters to take 5 percent as a standard level of convenience," establishing the .05 cutoff that has become gospel throughout the sciences.^[Actually, right after establishing .05 as a cutoff, Fisher then writes that "in the statistical sense, we thereby admit that no isolated experiment, however significant in itself, can suffice for the experimental demonstration of any natural phenomenon... in order to assert that a natural phenomenon is experimentally demonstrable we need, not an isolated record, but a reliable method of procedure. In relation to the test of significance, we may say that a phenomenon is experimentally demonstrable when we know how to conduct an experiment which will rarely fail to give us a statistically significant result." In other words, Fisher was all for replication!]
 
@@ -84,6 +85,11 @@ The more trials a participant completes, the lower the accuracy threshold for si
 Even here in the original case of null hypothesis significance testing, it is clear that our goals matter. If we're merely testing a hypothesis informally at a garden party, perhaps we don't want to subject our friend to dozens of trials. But if the stakes were higher and a more precise estimate was necessary, maybe we'd want to do a more extensive experiment!
 
 Something very important is missing from this analytic strategy. If we think back to our goals as experimentalists, we are hoping to use the logic of random assignment to measure causal effects of interest. Here, the effect we're measuring is something like the effect of tea preparation on taste perception (maybe not the most consequential question, but...). Yet our statistical paradigm is misaligned with this goal! All of this talk of significance and rejecting the null doesn't tell us about either how big the effect is, or how precisely we have measured it! That's why we are going to be advocating throughout for estimation as the key goal for our statistical analysis, with the varieties of inference (significance testing included) as a secondary goal.[^MM: This confuses me. Confidence intervals, continuous p-values, and continuous BFs are varieties of inference as well. To me the critical distinction is between dichotomized inference and continuous inference, not between estimation and inference.] 
+
+
+Fisher's original framework for significance testing focused only on the **null hypothesis** of no discrimination. In contrast, the Bayesian estimation method here focuses on the magnitude of accuracy.^[If you're reading carefully, you might have noticed that we *could* have discovered that the estimate of accuracy was very similar to chance -- more about this below and in the next chapter.] The intuition we'd like you to get is that, if you are an experimentalist who cares about the magnitude of causal relationships (and we hope you are), then Fisher's statistical approach isn't ideally suited to your goals.[\^MM: Yes, I like this framing in the final sentence much better.]
+
+
 ## Inference
 
 We just finished arguing that an estimation strategy is more aligned with the default goal of an experimentalist. But that's not always the case. Sometimes you do want to make an inference, in the sense of making some kind of rule-based decision about your data. The clearest case of this is in the context of an experiment that evaluates an intervention -- say a curriculum manipulation to improve an educational outcome. In this kind of case, we might primarily want a clear answer: does this intervention "work" -- meaning, improve our outcome relative to control -- or not. In this kind of context, perhaps the magnitude of the effect is going to be so dependent on the specifics of implementation that we don't really have a lot of predictions about the magnitude. 
