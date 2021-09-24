@@ -46,6 +46,7 @@ MathJax.Hub.Config({
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -181,164 +182,216 @@ div.csl-indent {
 <div class="col-sm-12">
 <div id="github" class="section level1" number="19">
 <h1><span class="header-section-number">Chapter 19</span> Github Tutorial</h1>
-<div id="introduction-1" class="section level2" number="19.1">
-<h2><span class="header-section-number">19.1</span> Introduction</h2>
+<div id="introduction-1" class="section level2 unnumbered">
+<h2>Introduction</h2>
 <p>Git’s like an undo button, but with labels showing you what changes were made when and with a history that goes back to the very first change you ever made to the project.</p>
 <p>Git makes it easy to have different versions of the same document, to easily work by yourself on the same project on multiple computers, and to collaborate with other people (whether you’re working at different times or simultaneously!)</p>
 </div>
-<div id="git-github" class="section level2" number="19.2">
-<h2><span class="header-section-number">19.2</span> Git ≠ GitHub</h2>
+<div id="git-github" class="section level2 unnumbered">
+<h2>Git ≠ GitHub</h2>
 <p>Git is software that you can install and run locally on your own computer.
 Github provides the service of storing and sharing your git repos online.
 Anyone can get a free account on GitHub and they provide free premium accounts to students (see <a href="https://education.github.com/">here</a>).</p>
 </div>
-<div id="terminology" class="section level2" number="19.3">
-<h2><span class="header-section-number">19.3</span> Terminology</h2>
-<ul>
-<li>What is a git “repo?”</li>
-</ul>
+<div id="terminology" class="section level2 unnumbered">
+<h2>Terminology</h2>
+<div id="what-is-a-git-repo" class="section level3 unnumbered">
+<h3>What is a git “repo?”</h3>
 <p>“Repo” is short for “repository”– repo is like a folder with files in it (that are usually related as part of a project), with an associated history of changes over time (“commits”).</p>
-<ul>
-<li>What is a “commit?”</li>
-</ul>
+</div>
+<div id="what-is-a-commit" class="section level3 unnumbered">
+<h3>What is a “commit?”</h3>
 <p>A commit is a snapshot of your project at a certain point in time. Each commit has an author, a time, a unique long ID (also called a ‘SHA’ or ‘hash’), and a message describing what change it makes.</p>
 </div>
-<div id="step-1-review-basic-terminal-commands" class="section level2" number="19.4">
-<h2><span class="header-section-number">19.4</span> Step 1: Review basic terminal commands</h2>
+</div>
+<div id="review-basic-terminal-commands" class="section level2 unnumbered">
+<h2>0. Review basic terminal commands</h2>
 <p>In this tutorial we’ll be working in Terminal. Here are a few useful commands to be aware of:</p>
 <p><img src="images/git_tutorial2.png" /></p>
 <p>(more <a href="https://github.com/0nn0/terminal-mac-cheatsheet">here</a>)</p>
 </div>
-<div id="step-2-install-git" class="section level2" number="19.5">
-<h2><span class="header-section-number">19.5</span> Step 2: Install git</h2>
+<div id="install-git" class="section level2 unnumbered">
+<h2>1. Install git</h2>
 <p>Go to <a href="http://git-scm.com/downloads">http://git-scm.com/downloads</a> and install git.</p>
 <p>(Windows users, open GitBash for the rest of the tutorial; Mac users, open Terminal.)</p>
-<div id="did-you-successfully-install" class="section level3" number="19.5.1">
-<h3><span class="header-section-number">19.5.1</span> Did you successfully install?</h3>
+<div id="did-you-successfully-install" class="section level3 unnumbered">
+<h3>1.1 Did you successfully install?</h3>
 <p>In terminal, type:</p>
-<p><strong>git –version</strong></p>
+<blockquote>
+<p><code>git --version</code></p>
+</blockquote>
 <p>to see the current version of git that is installed.</p>
-<p><strong>Mac troubleshooting</strong></p>
-<p>try installing: git version 1.8.4.2</p>
+<p><label for="tufte-mn-14" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-14" class="margin-toggle"><span class="marginnote"><span style="display: block;"><strong>Mac troubleshooting</strong></span>
+<span style="display: block;">try installing: git version 1.8.4.2</span></span></p>
 </div>
-<div id="other-versions" class="section level3" number="19.5.2">
-<h3><span class="header-section-number">19.5.2</span> Other versions</h3>
+<div id="other-versions" class="section level3 unnumbered">
+<h3>1.2 Other versions</h3>
 <p>You can install the Github <a href="https://desktop.github.com/">desktop app</a> if you’d like a simple point-and-click experience. Or <a href="https://www.sourcetreeapp.com/">SourceTree</a> (free), <a href="http://www.git-tower.com/">Tower</a> (not free, but powerful and ~$25 with a student discount). It’s also possible to <a href="http://happygitwithr.com/">set up a git pane in RStudio</a>.</p>
 </div>
-<div id="set-your-name-and-email-address" class="section level3" number="19.5.3">
-<h3><span class="header-section-number">19.5.3</span> Set your name and email address</h3>
+<div id="set-your-name-and-email-address" class="section level3 unnumbered">
+<h3>1.3 Set your name and email address</h3>
 <p>Every Git commit uses this information. Type:</p>
-<p>git config –global user.name “John Doe”</p>
-<p>git config –global user.email <a href="mailto:johndoe@example.com" class="email">johndoe@example.com</a></p>
+<blockquote>
+<p><code>git config --global user.name "John Doe"</code>
+<code>git config --global user.email johndoe@example.com</code></p>
+</blockquote>
 <p>Also run this once (it ensures that git pushes in a sane manner):</p>
-<p>git config –global push.default simple</p>
+<blockquote>
+<p><code>git config --global push.default simple</code></p>
+</blockquote>
 </div>
 </div>
-<div id="step-3-make-a-repo-on-github-clone-it-to-your-computer" class="section level2" number="19.6">
-<h2><span class="header-section-number">19.6</span> Step 3: Make a repo on GitHub, clone it to your computer</h2>
+<div id="make-a-repo-on-github-clone-it-to-your-computer" class="section level2 unnumbered">
+<h2>2. Make a repo on GitHub, clone it to your computer</h2>
 <p>Make an account on GitHub: <a href="https://github.com/" class="uri">https://github.com/</a>.</p>
 <p>Create a new empty public repository at <a href="https://github.com/new" class="uri">https://github.com/new</a></p>
-<p>Call it ‘hello’ and make sure the “initialize with readme” checkbox is checked.</p>
-<p>For future reference (feel free to ignore this!): you can also turn any directory that’s already on your computer into a git repo by going to that directory using <strong>cd</strong> and then typing <strong>git init</strong>. Later, when you want to put the repo on GitHub, you go through the steps to make a new repo <em>without initializing with a readme</em>, then from your directory on your computer type the following (replacing the red text):</p>
-<p><strong>git remote add origin <a href="mailto:git@github.com" class="email">git@github.com</a>:<span style="color: red;">your_user_name</span>/<span style="color: red;">repo_name</span>.git</strong></p>
-<p><strong>git push -u origin master</strong></p>
+<p>Call it ‘hello’ and make sure the “initialize with readme” checkbox is checked<label for="tufte-sn-135" class="margin-toggle sidenote-number">135</label><input type="checkbox" id="tufte-sn-135" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">135</span> For future reference (feel free to ignore this!): you can also turn any directory that’s already on your computer into a git repo by going to that directory using <code>cd</code> and then typing <code>git init</code>. Later, when you want to put the repo on GitHub, you go through the steps to make a new repo <em>without initializing with a readme</em>, then from your directory on your computer type the following (replacing the red text):</span>.</p>
+<p><label for="tufte-mn-15" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-15" class="margin-toggle"><span class="marginnote"><span style="display: block;"><strong>git remote add origin git@<span>github.</span>com:<span style="color: red;">your_user_name</span>/<span style="color: red;">repo_name</span>.git</strong></span></span></p>
+<p><label for="tufte-mn-16" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-16" class="margin-toggle"><span class="marginnote"><span style="display: block;"><strong>git push -u origin master</strong></span></span></p>
 <p>Then click ‘clone or download’ to get the HTTPS URL:</p>
 <p><img src="images/git_tutorial.png" /></p>
 <p>Go back to Terminal (or GitBash).</p>
 <p>Now we’ll clone the hello folder to your computer. For the purposes of this tutorial, let’s clone the folder to your desktop.</p>
-<p>First use <strong>cd</strong> and <strong>ls</strong> to navigate to your desktop. (Mac users can type <strong>cd ~/Desktop</strong> to get there.)</p>
+<p>First use <code>cd</code> and <code>ls</code> to navigate to your desktop. (Mac users can type <code>cd ~/Desktop</code> to get there.)</p>
 <p>Then type (replacing the URL with the one you copied above):</p>
-<p><strong>git clone <a href="https://github.com/%5Busername%5D/hello.git" class="uri">https://github.com/[username]/hello.git</a></strong></p>
+<blockquote>
+<p><code>git clone https://github.com/[username]/hello.git</code></p>
+</blockquote>
 <p>This will clone the empty repo onto your desktop. (You may need to enter your GitHub username and password here.)</p>
 </div>
-<div id="step-4-make-some-commits" class="section level2" number="19.7">
-<h2><span class="header-section-number">19.7</span> Step 4: Make some commits</h2>
-<div id="update-your-readme-file" class="section level3" number="19.7.1">
-<h3><span class="header-section-number">19.7.1</span> Update your README file</h3>
+<div id="make-some-commits" class="section level2 unnumbered">
+<h2>3. Make some commits</h2>
+<div id="update-your-readme-file" class="section level3 unnumbered">
+<h3>3.1 Update your README file</h3>
 <p>A README file contains information about other files in a directory, and it’s customary to include one in your git repo. Your README will be rendered from markdown on the front page of your GitHub repository (see <a href="https://github.com/gabrielecirulli/2048">here</a> and <a href="https://raw.githubusercontent.com/gabrielecirulli/2048/master/README.md">here</a> for an example).</p>
 <p>When you initialized your repo on GitHub, the site created an empty README file. Let’s write something in it.</p>
-<p>Open the README file in a text editor<label for="tufte-sn-131" class="margin-toggle sidenote-number">131</label><input type="checkbox" id="tufte-sn-131" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">131</span> There will be lots of files that are simple text files, with <strong>.md</strong>, <strong>.rmd</strong> etc. as filetypes. You can open all these with a text editor. Although your computer comes with a default one (e.g. Notepad, TextEdit), we would recommend downloading <a href="https://www.sublimetext.com/3">Sublime Text</a>, which is free and has a lot of powerful tools that will be helpful in the future.</span> and write a sentence or two describing your repo. (Read the <a href="https://guides.github.com/features/mastering-markdown/">basics of markdown</a> and use it appropriately in formatting your README.)</p>
+<p>Open the README file in a text editor<label for="tufte-sn-136" class="margin-toggle sidenote-number">136</label><input type="checkbox" id="tufte-sn-136" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">136</span> There will be lots of files that are simple text files, with <strong>.md</strong>, <strong>.rmd</strong> etc. as filetypes. You can open all these with a text editor. Although your computer comes with a default one (e.g. Notepad, TextEdit), we would recommend downloading <a href="https://www.sublimetext.com/3">Sublime Text</a>, which is free and has a lot of powerful tools that will be helpful in the future.</span> and write a sentence or two describing your repo. (Read the <a href="https://guides.github.com/features/mastering-markdown/">basics of markdown</a> and use it appropriately in formatting your README.)</p>
 </div>
-<div id="commit-changes-to-git" class="section level3" number="19.7.2">
-<h3><span class="header-section-number">19.7.2</span> Commit changes to git</h3>
-<p>In Terminal, navigate to the repo by typing:
-<strong>cd hello</strong></p>
-<p>If you type:
-<strong>git status</strong></p>
+<div id="commit-changes-to-git" class="section level3 unnumbered">
+<h3>3.2 Commit changes to git</h3>
+<p>In Terminal, navigate to the repo by typing:</p>
+<blockquote>
+<p><code>cd hello</code></p>
+</blockquote>
+<p>If you type:</p>
+<blockquote>
+<p><code>git status</code></p>
+</blockquote>
 <p>You’ll get a message telling you that your README has been modified.</p>
-<p>Now we will add this file and commit it<label for="tufte-sn-132" class="margin-toggle sidenote-number">132</label><input type="checkbox" id="tufte-sn-132" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">132</span> For future reference (feel free to ignore this!): you can add just part of the file by using <strong>git add -p README.md</strong> and following the instructions at the bottom of the terminal window.</span> so that git takes a snapshot of the changes we made:</p>
-<p><strong>git add README.md</strong></p>
-<p><strong>git commit -m “update readme”</strong></p>
-<p><em>(-m precedes a commit message, which allows you to describe what you changed)</em></p>
+<p>Now we will <strong>add this file and commit it</strong><label for="tufte-sn-137" class="margin-toggle sidenote-number">137</label><input type="checkbox" id="tufte-sn-137" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">137</span> For future reference (feel free to ignore this!): you can add just part of the file by using <code>git add -p README.md</code> and following the instructions at the bottom of the terminal window.</span> so that git takes a snapshot of the changes we made:</p>
+<blockquote>
+<p><code>git add README.md</code></p>
+</blockquote>
+<blockquote>
+<p><code>git commit -m "update readme"</code></p>
+</blockquote>
+<p>(<code>-m</code> precedes a commit message, which allows you to describe what you changed.)</p>
 <p>If you now type:</p>
-<p><strong>git status</strong></p>
+<blockquote>
+<p><code>git status</code></p>
+</blockquote>
 <p>You’ll get a message telling you that everything is up to date.</p>
 </div>
-<div id="add-another-file-to-the-repo-commit-it" class="section level3" number="19.7.3">
-<h3><span class="header-section-number">19.7.3</span> Add another file to the repo + commit it</h3>
-<p>Use RStudio<label for="tufte-sn-133" class="margin-toggle sidenote-number">133</label><input type="checkbox" id="tufte-sn-133" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">133</span> We’ll be using R and RStudio in the future. If you do not yet have those downloaded, you can open up a text editor and do the same thing.</span> to make a new R script containing one line, e.g.,
-<strong>print(“hello world”)</strong>.
-Save this as ‘pset0.R’ inside the hello folder.</p>
+<div id="add-another-file-to-the-repo-commit-it" class="section level3 unnumbered">
+<h3>3.3 Add another file to the repo + commit it</h3>
+<p>Use RStudio<label for="tufte-sn-138" class="margin-toggle sidenote-number">138</label><input type="checkbox" id="tufte-sn-138" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">138</span> We’ll be using R and RStudio in the future. If you do not yet have those downloaded, you can open up a text editor and do the same thing.</span> to make a new R script containing one line, e.g.,
+<code>print("hello world")</code>.
+Save this as <strong>‘pset0.R’</strong> inside the <strong>hello</strong> folder.</p>
 <p>Then, back in the terminal, type:</p>
-<p><strong>git status</strong></p>
-<p>This will tell you that a file called pset0.R exists, but isn’t being tracked by git.<label for="tufte-sn-134" class="margin-toggle sidenote-number">134</label><input type="checkbox" id="tufte-sn-134" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">134</span> If you find a file called “.DS_Store” that is being tracked, that is a mac file saving folder preferences. You can add this to a .gitignore file as described in step 8 below so that git will not track it.</span></p>
-<p>Now we will add this file and commit it (so that git starts to track it):</p>
-<p><strong>git add -A</strong></p>
-<p>(the -A specifies that we will add all of the files that have been changed in the repo)</p>
-<p><strong>git commit -m “initial commit of pset0.R”</strong></p>
+<blockquote>
+<p><code>git status</code></p>
+</blockquote>
+<p>This will tell you that a file called pset0.R exists, but isn’t being tracked by git.<label for="tufte-sn-139" class="margin-toggle sidenote-number">139</label><input type="checkbox" id="tufte-sn-139" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">139</span> If you find a file called “.DS_Store” that is being tracked, that is a mac file saving folder preferences. You can add this to a .gitignore file as described in step 7 below so that git will not track it.</span></p>
+<p>Now we will <strong>add this file and commit it</strong> (so that git starts to track it):</p>
+<blockquote>
+<p><code>git add -A</code></p>
+</blockquote>
+<p>(the <code>-A</code> specifies that we will add all of the files that have been changed in the repo)</p>
+<blockquote>
+<p><code>git commit -m "initial commit of pset0.R"</code></p>
+</blockquote>
 </div>
 </div>
-<div id="step-5-push-your-changes-to-github" class="section level2" number="19.8">
-<h2><span class="header-section-number">19.8</span> Step 5: Push your changes to GitHub</h2>
-<p>What we’ve done so far – <strong>add</strong> and <strong>commit</strong> – only affects your local computer. To get your changes on GitHub, use ****:</p>
-<p><strong>git push</strong></p>
+<div id="push-your-changes-to-github" class="section level2 unnumbered">
+<h2>4. Push your changes to GitHub</h2>
+<p>What we’ve done so far – <code>add</code> and <code>commit</code> – only affects your local computer. To get your changes on GitHub, use <code>push</code>:</p>
+<blockquote>
+<p><code>git push</code></p>
+</blockquote>
 <p>If you go to your GitHub account, you can now see the updated files.</p>
 </div>
-<div id="step-6-make-more-changes-to-the-repo" class="section level2" number="19.9">
-<h2><span class="header-section-number">19.9</span> Step 6: Make more changes to the repo</h2>
+<div id="make-more-changes-to-the-repo" class="section level2 unnumbered">
+<h2>5. Make more changes to the repo</h2>
 <p>Now make some changes to your pset0.R file (delete and/or add another line or two of code) and save it.</p>
 <p>In terminal, type</p>
-<p><strong>git status</strong></p>
+<blockquote>
+<p><code>git status</code></p>
+</blockquote>
 <p>to see that <strong>pset0.R</strong> has been modified since the last commit.</p>
-<p>To see the specific changes since the last commit, type</p>
-<p><strong>git diff</strong></p>
+<p>To see the specific changes since the last commit, type:</p>
+<blockquote>
+<p><code>git diff</code></p>
+</blockquote>
 <p>Then commit:</p>
-<p><strong>git add -A</strong></p>
-<p><strong>git commit -m “[describe change]”</strong></p>
+<blockquote>
+<p><code>git add -A</code></p>
+</blockquote>
+<blockquote>
+<p><code>git commit -m "[describe change]"</code></p>
+</blockquote>
 <p>Push to the repository on github:</p>
-<p><strong>git push</strong></p>
+<blockquote>
+<p><code>git push</code></p>
+</blockquote>
 <p>TIP: Commits should be focused. Try to commit little bite-sized changes that are all related to each other together and easy to label, and make separate commits for other changes.</p>
 <p>Best practice for commit messages is to make sure your commit message is not too long and would fit into the sentence: “When you pull this commit, it will ______.”</p>
 </div>
-<div id="step-7-rolling-back-to-previous-versions" class="section level2" number="19.10">
-<h2><span class="header-section-number">19.10</span> Step 7: Rolling back to previous versions</h2>
+<div id="rolling-back-to-previous-versions" class="section level2 unnumbered">
+<h2>6. Rolling back to previous versions</h2>
 <p>Sometimes you will want to go back to a previous commit. Here’s how to do it:</p>
-<p>To view previous commits, type</p>
-<p><strong>git log</strong></p>
-<p>To change the number of displayed commits, type the number you want to see preceded by a dash (e.g., to view the three most recent commits:)</p>
-<p><strong>git log -3</strong></p>
-<p>(You can also view the commit history on GitHub).</p>
+<p>To view previous commits, type:</p>
+<blockquote>
+<p><code>git log</code></p>
+</blockquote>
+<p>To change the number of displayed commits, type the number you want to see preceded by a dash. For example, to view the three most recent commits, type:</p>
+<blockquote>
+<p><code>git log -3</code></p>
+</blockquote>
+<p>(You can also view the commit history on GitHub.)</p>
 <p>You can use the long ID numbers attached to commits (also called hashes or SHAs) to roll back to them if you need to see a previous version of the repo. This can be very useful if something breaks and you don’t know how that happened. You can roll back to the last commit where your program wasn’t broken and see what files changed since then, and how.</p>
-<p>For example, let’s say we wanted to roll back to the very first commit so we could run the code as it was back then. Let’s look at the very first commit. You can find it by typing ‘git log’ and then pressing the space bar to scroll down to the very first commit. Copy and paste the hash for this commit, (press ‘q’ to get back to the main terminal window), and then type (replacing the red text with the hash you copied):</p>
-<p><strong>git checkout <span style="color: red;">a240f92a22cb8e9b1300bfa690e99ef07692151e</span></strong></p>
+<p>For example, let’s say we wanted to roll back to the very first commit so we could run the code as it was back then. Let’s look at the very first commit. You can find it by typing <code>git log</code> and then pressing the space bar to scroll down to the very first commit. Copy and paste the hash for this commit, (press ‘q’ to get back to the main terminal window), and then type (replacing the hash with the one you copied):</p>
+<blockquote>
+<p><code>git checkout a240f92a22cb8e9b1300bfa690e99ef07692151e</code></p>
+</blockquote>
 <p>or just</p>
-<p><strong>git checkout <span style="color: red;">a240f92</span></strong></p>
-<p>(Git is smart enough to figure out what commit you meant to type if you provide the first 8-10 characters of the hash)</p>
+<blockquote>
+<p><code>git checkout a240f92</code></p>
+</blockquote>
+<p>(Git is smart enough to figure out what commit you meant to type if you provide the first 8-10 characters of the hash.)</p>
 <p>If you open up the hello folder on your desktop, you’ll notice that it’s now in the state it was after you made your first commit.</p>
-<p><span style="color: red;"><strong>IMPORTANT WARNING</strong></span>: after you’ve finished inspecting a checkout, make sure you get back to where you started [the latest commit on the master branch] by typing</p>
-<p><strong>git checkout master</strong></p>
-<p>To revert your files to the state they were in in an earlier commit, type [replacing the red text with the first 8-10 characters of the hash you copied]</p>
-<p><strong>git revert –no-commit <span style="color: red;">0766c053</span>..HEAD </strong></p>
-<p><strong>git commit -m “revert all changes since first commit” </strong></p>
-<p>This will essentially take all of the changes you made since this commit, undo them, and then save this as a new commit. (Your prior commits will still exist).</p>
-<p>If you’d like to revert one specific commit (rather than all of the commits after a specific commit), type</p>
-<p><strong>git revert –no-commit <span style="color: red;">0766c053</span></strong>
-<strong>git commit -m “revert the commit where I did xyz…”</strong></p>
-<p>For more info on undoing things in git, check:
-<a href="https://github.com/blog/2019-how-to-undo-almost-anything-with-git" class="uri">https://github.com/blog/2019-how-to-undo-almost-anything-with-git</a></p>
+<p><span style="color: red;"><strong>IMPORTANT WARNING</strong></span>: After you’ve finished inspecting a checkout, make sure you get back to where you started [the latest commit on the master branch] by typing:</p>
+<blockquote>
+<p><code>git checkout master</code></p>
+</blockquote>
+<p>To revert your files to the state they were in in an earlier commit, type (replacing <code>0766c053</code> with the first 8-10 characters of the hash you copied):</p>
+<blockquote>
+<p><code>git revert --no-commit 0766c053..HEAD</code></p>
+</blockquote>
+<blockquote>
+<p><code>git commit -m "revert all changes since first commit"</code></p>
+</blockquote>
+<p>This will essentially take all of the changes you made since this commit, undo them, and then save this as a new commit. (Your prior commits will still exist.)</p>
+<p><label for="tufte-mn-17" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-17" class="margin-toggle"><span class="marginnote"><span style="display: block;">For more info on undoing things in git, check: <a href="https://github.com/blog/2019-how-to-undo-almost-anything-with-git" class="uri">https://github.com/blog/2019-how-to-undo-almost-anything-with-git</a></span></span></p>
+<p>If you’d like to revert one specific commit (rather than all of the commits after a specific commit), type:</p>
+<blockquote>
+<p><code>git revert --no-commit 0766c053</code></p>
+</blockquote>
+<blockquote>
+<p><code>git commit -m "revert the commit where I did xyz..."</code></p>
+</blockquote>
 </div>
-<div id="step-8-what-not-to-put-on-git" class="section level2" number="19.11">
-<h2><span class="header-section-number">19.11</span> Step 8: What not to put on git</h2>
+<div id="what-not-to-put-on-git" class="section level2 unnumbered">
+<h2>7. What not to put on git</h2>
 <p>There are some things you don’t want on git:</p>
 <ul>
 <li><p>output files (files that are deterministically generated by other files in the repo, e.g. generated PDFs in a LaTeX project repo)</p></li>
@@ -347,7 +400,7 @@ Save this as ‘pset0.R’ inside the hello folder.</p>
 <li><p>configuration files that have configurations specific to your computer (Important: If you are running stuff on Mechanical Turk, make sure your bin/mturk.properties file is NOT on git, because that file contains an access key to allow you to authenticate with Amazon.)</p></li>
 </ul>
 <p>You can put these in a special .gitignore file so git won’t suggest you add them and will even remind you not to add them if you try to. You can create this .gitignore file in a text editor like Sublime Text and update as needed.</p>
-<p>Your .gitignore file might look like this: (saved exactly as “.gitignore” without a file extension)</p>
+<p>Your .gitignore file might look like this (saved exactly as “.gitignore” without a file extension):</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="19-github.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># R created files</span></span>
 <span id="cb2-2"><a href="19-github.html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="sc">*</span>.Rproj</span>
 <span id="cb2-3"><a href="19-github.html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="sc">*</span>.Rproj.user</span>
@@ -388,31 +441,24 @@ Save this as ‘pset0.R’ inside the hello folder.</p>
 <span id="cb2-38"><a href="19-github.html#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="sc">!</span><span class="er">/</span>original....pdf</span>
 <span id="cb2-39"><a href="19-github.html#cb2-39" aria-hidden="true" tabindex="-1"></a>.Rproj.user</span></code></pre></div>
 </div>
-<div id="further-resources" class="section level2" number="19.12">
-<h2><span class="header-section-number">19.12</span> Further Resources</h2>
+<div id="further-resources" class="section level2 unnumbered">
+<h2>Further Resources</h2>
 <ul>
-<li>GitHub has many useful guides for learning about branches, pull requests, forking and more:</li>
-</ul>
-<p><a href="https://guides.github.com/" class="uri">https://guides.github.com/</a></p>
-<p><a href="https://help.github.com/articles/good-resources-for-learning-git-and-github/" class="uri">https://help.github.com/articles/good-resources-for-learning-git-and-github/</a></p>
-<ul>
+<li><p>GitHub has many useful guides for learning about branches, pull requests, forking and more:
+<a href="https://guides.github.com/" class="uri">https://guides.github.com/</a>
+<a href="https://help.github.com/articles/good-resources-for-learning-git-and-github/" class="uri">https://help.github.com/articles/good-resources-for-learning-git-and-github/</a></p></li>
 <li><p>Though the things we covered in this tutorial may seem overwhelming, there are really only a handful of commands that you need to know, which can be found (alongside some commands we didn’t cover) on this handy <a href="http://rogerdudler.github.io/git-guide/files/git_cheat_sheet.pdf">cheatsheet</a>.</p></li>
 <li><p>Request a premium account at <a href="https://education.github.com/" class="uri">https://education.github.com/</a> for free private repos.</p></li>
-<li><p>To save some time, tell git to remember your GitHub username and password:</p></li>
-</ul>
-<p><a href="https://help.github.com/articles/caching-your-github-password-in-git/" class="uri">https://help.github.com/articles/caching-your-github-password-in-git/</a></p>
-<ul>
-<li>Or set up an SSH key to log in less often:
-<a href="https://help.github.com/articles/generating-ssh-keys" class="uri">https://help.github.com/articles/generating-ssh-keys</a></li>
-</ul>
-<p>For Windows:</p>
+<li><p>To save some time, tell git to remember your GitHub username and password:
+<a href="https://help.github.com/articles/caching-your-github-password-in-git/" class="uri">https://help.github.com/articles/caching-your-github-password-in-git/</a></p></li>
+<li><p>Or set up an SSH key to log in less often:
+<a href="https://help.github.com/articles/generating-ssh-keys" class="uri">https://help.github.com/articles/generating-ssh-keys</a></p>
+<p><strong>For Windows:</strong></p>
 <p>you need this code:</p>
-<pre><code>eval `ssh-agent -s`
-
-ssh-add</code></pre>
-<p>and you need to run this part in GitBash</p>
-<ul>
-<li>For students seeking deeper Git knowledge, ProGit is a thorough <a href="https://git-scm.com/book">open source book</a> from Scott Chacon. It can be viewed online or downloaded in ePub, Mobi, or PDF formats.</li>
+<p>eval <code>ssh-agent -s</code></p>
+<p>ssh-add</p>
+<p>and you need to run this part in GitBash</p></li>
+<li><p>For students seeking deeper Git knowledge, ProGit is a thorough <a href="https://git-scm.com/book">open source book</a> from Scott Chacon. It can be viewed online or downloaded in ePub, Mobi, or PDF formats.</p></li>
 </ul>
 <p>Acknowledgments: Thank you to Cayce Hook, Erin Bennett and Daniel Watson for creating the first version of this tutorial for Psych 251!</p>
 
