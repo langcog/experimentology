@@ -16,15 +16,15 @@ Anyone can get a free account on GitHub and they provide free premium accounts t
 
 ## Terminology {-}
 
-* What is a git "repo"?
+### What is a git "repo"? {-}
 
 “Repo” is short for “repository”-- repo is like a folder with files in it (that are usually related as part of a project), with an associated history of changes over time (“commits”). 
 
-* What is a "commit"?
+### What is a "commit"? {-}
 
 A commit is a snapshot of your project at a certain point in time. Each commit has an author, a time, a unique long ID (also called a ‘SHA’ or ‘hash’), and a message describing what change it makes.
 
-## Step 1: Review basic terminal commands {-}
+## 0. Review basic terminal commands {-}
 
 In this tutorial we’ll be working in Terminal. Here are a few useful commands to be aware of:
 
@@ -33,56 +33,61 @@ In this tutorial we’ll be working in Terminal. Here are a few useful commands 
 (more [here](https://github.com/0nn0/terminal-mac-cheatsheet))
 
 
-## Step 2: Install git {-}
+## 1. Install git {-}
 
 Go to [http://git-scm.com/downloads](http://git-scm.com/downloads) and install git. 
 
 (Windows users, open GitBash for the rest of the tutorial; Mac users, open Terminal.) 
 
-### Did you successfully install? {-}
+### 1.1 Did you successfully install? {-}
 
 In terminal, type:
 
-    git --version
+>    `git --version`
 
 
 to see the current version of git that is installed.
 
+```{marginfigure, echo = TRUE}
 **Mac troubleshooting**
 
 try installing: git version 1.8.4.2
+```
 
-### Other versions {-}
+### 1.2 Other versions {-}
 
 You can install the Github [desktop app](https://desktop.github.com/) if you’d like a simple point-and-click experience. Or [SourceTree](https://www.sourcetreeapp.com/) (free), [Tower](http://www.git-tower.com/) (not free, but powerful and ~$25 with a student discount). It’s also possible to [set up a git pane in RStudio](http://happygitwithr.com/). 
 
-### Set your name and email address {-}
+### 1.3 Set your name and email address {-}
 
 Every Git commit uses this information. Type:
 
-    git config --global user.name "John Doe"
-    git config --global user.email johndoe@example.com
+>    `git config --global user.name "John Doe"`
+>    `git config --global user.email johndoe@example.com`
 
 
 Also run this once (it ensures that git pushes in a sane manner):
 
-    git config --global push.default simple
+>    `git config --global push.default simple`
 
  
 
-## Step 3: Make a repo on GitHub, clone it to your computer {-}
+## 2. Make a repo on GitHub, clone it to your computer {-}
 
 Make an account on GitHub: https://github.com/. 
 
 Create a new empty public repository at https://github.com/new 
 
-Call it ‘hello’ and make sure the “initialize with readme” checkbox is checked.
+Call it ‘hello’ and make sure the “initialize with readme” checkbox is checked^[For future reference (feel free to ignore this!): you can also turn any directory that's already on your computer into a git repo by going to that directory using `cd` and then typing `git init`. Later, when you want to put the repo on GitHub, you go through the steps to make a new repo *without initializing with a readme*, then from your directory on your computer type the following (replacing the red text):].
 
-For future reference (feel free to ignore this!): you can also turn any directory that's already on your computer into a git repo by going to that directory using `cd` and then typing `git init`. Later, when you want to put the repo on GitHub, you go through the steps to make a new repo *without initializing with a readme*, then from your directory on your computer type the following (replacing the red text):
+```{marginfigure, echo = TRUE}
 
-  **git remote add origin git@github.com:<span style="color: red;">your_user_name</span>/<span style="color: red;">repo_name</span>.git**
+**git remote add origin git@<span>github.</span>com:<span style="color: red;">your_user_name</span>/<span style="color: red;">repo_name</span>.git**
+```
 
-  **git push -u origin master**
+```{marginfigure, echo = TRUE}
+**git push -u origin master**
+```
 
 Then click ‘clone or download’ to get the HTTPS URL:
 
@@ -96,14 +101,14 @@ First use  `cd`  and `ls` to navigate to your desktop. (Mac users can type `cd ~
 
 Then type (replacing the URL with the one you copied above):
 
-    git clone https://github.com/[username]/hello.git
+>    `git clone https://github.com/[username]/hello.git`
 
 
 This will clone the empty repo onto your desktop. (You may need to enter your GitHub username and password here.) 
 
-## Step 4: Make some commits {-}
+## 3. Make some commits {-}
 
-### Update your README file {-}
+### 3.1 Update your README file {-}
 
 A README file contains information about other files in a directory, and it’s customary to include one in your git repo. Your README will be rendered from markdown on the front page of your GitHub repository (see [here](https://github.com/gabrielecirulli/2048) and [here](https://raw.githubusercontent.com/gabrielecirulli/2048/master/README.md) for an example). 
 
@@ -114,35 +119,35 @@ Open the README file in a text editor^[There will be lots of files that are simp
 
 
 
-### Commit changes to git {-}
+### 3.2 Commit changes to git {-}
 
 In Terminal, navigate to the repo by typing:
 
-    cd hello
+>    `cd hello`
 
 
 If you type:
 
-    git status
+>    `git status`
 
 You’ll get a message telling you that your README has been modified. 
 
 
 Now we will **add this file and commit it**^[For future reference (feel free to ignore this!): you can add just part of the file by using `git add -p README.md` and following the instructions at the bottom of the terminal window.] so that git takes a snapshot of the changes we made:
 
-    git add README.md
+>    `git add README.md`
 
-    git commit -m "update readme"
+>    `git commit -m "update readme"`
 
-*(-m precedes a commit message, which allows you to describe what you changed)*
+(`-m` precedes a commit message, which allows you to describe what you changed.)
 
 If you now type:
 
-    git status
+>    `git status`
 
 You’ll get a message telling you that everything is up to date. 
 
-### Add another file to the repo + commit it {-}
+### 3.3 Add another file to the repo + commit it {-}
 
 Use RStudio^[We’ll be using R and RStudio in the future. If you do not yet have those downloaded, you can open up a text editor and do the same thing.] to make a new R script containing one line, e.g., 
 `print("hello world")`. 
@@ -150,58 +155,57 @@ Save this as **‘pset0.R’** inside the **hello** folder.
 
 Then, back in the terminal, type:
 
-    git status
+>    `git status`
 
-This will tell you that a file called pset0.R exists, but isn’t being tracked by git.^[If you find a file called “.DS_Store” that is being tracked, that is a mac file saving folder preferences. You can add this to a .gitignore file as described in step 8 below so that git will not track it.]
+This will tell you that a file called pset0.R exists, but isn’t being tracked by git.^[If you find a file called “.DS_Store” that is being tracked, that is a mac file saving folder preferences. You can add this to a .gitignore file as described in step 7 below so that git will not track it.]
 
 
 Now we will **add this file and commit it** (so that git starts to track it):
 
-    git add -A
+>    `git add -A`
 
-*(the -A specifies that we will add all of the files that have been changed in the repo)*
+(the `-A` specifies that we will add all of the files that have been changed in the repo)
 
-    git commit -m "initial commit of pset0.R"
-
-
+>    `git commit -m "initial commit of pset0.R"`
 
 
-## Step 5: Push your changes to GitHub {-}
+
+
+## 4. Push your changes to GitHub {-}
 
 What we’ve done so far -- `add` and `commit` -- only affects your local computer. To get your changes on GitHub, use `push`:
 
-    git push
+>    `git push`
 
 
 If you go to your GitHub account, you can now see the updated files.
 
 
 
-## Step 6: Make more changes to the repo {-}
+## 5. Make more changes to the repo {-}
 Now make some changes to your pset0.R file (delete and/or add another line or two of code) and save it.
 
 In terminal, type 
 
-    git status
+>    `git status`
 
 
 to see that **pset0.R** has been modified since the last commit. 
 
-To see the specific changes since the last commit, type 
+To see the specific changes since the last commit, type: 
 
-    git diff
+>    `git diff`
 
 Then commit: 
 
-    git add -A
+>    `git add -A`
 
-    git commit -m "[describe change]"
+>    `git commit -m "[describe change]"`
 
 
 Push to the repository on github:
 
-    git push
-
+>    `git push`
 
 
 TIP: Commits should be focused. Try to commit little bite-sized changes that are all related to each other together and easy to label, and make separate commits for other changes. 
@@ -209,64 +213,65 @@ TIP: Commits should be focused. Try to commit little bite-sized changes that are
 Best practice for commit messages is to make sure your commit message is not too long and would fit into the sentence: "When you pull this commit, it will ______."
 
 
-## Step 7: Rolling back to previous versions {-}
+## 6. Rolling back to previous versions {-}
 
 Sometimes you will want to go back to a previous commit. Here’s how to do it:
 
-To view previous commits, type
+To view previous commits, type:
 
-    git log
-
-
-To change the number of displayed commits, type the number you want to see preceded by a dash (e.g., to view the three most recent commits:)
-
-    git log -3
+>    `git log`
 
 
-(You can also view the commit history on GitHub).
+To change the number of displayed commits, type the number you want to see preceded by a dash. For example, to view the three most recent commits, type:
+
+>    `git log -3`
+
+
+(You can also view the commit history on GitHub.)
 
 
 You can use the long ID numbers attached to commits (also called hashes or SHAs) to roll back to them if you need to see a previous version of the repo. This can be very useful if something breaks and you don't know how that happened. You can roll back to the last commit where your program wasn't broken and see what files changed since then, and how.
 
-For example, let's say we wanted to roll back to the very first commit so we could run the code as it was back then. Let’s look at the very first commit. You can find it by typing ‘git log’ and then pressing the space bar to scroll down to the very first commit. Copy and paste the hash for this commit, (press ‘q’ to get back to the main terminal window), and then type (replacing the red text with the hash you copied):
+For example, let's say we wanted to roll back to the very first commit so we could run the code as it was back then. Let’s look at the very first commit. You can find it by typing `git log` and then pressing the space bar to scroll down to the very first commit. Copy and paste the hash for this commit, (press ‘q’ to get back to the main terminal window), and then type (replacing the hash with the one you copied):
 
-**git checkout <span style="color: red;">a240f92a22cb8e9b1300bfa690e99ef07692151e</span>**
+>    `git checkout a240f92a22cb8e9b1300bfa690e99ef07692151e`
 
 or just
 
-**git checkout <span style="color: red;">a240f92</span>**
+>    `git checkout a240f92`
 
 
-(Git is smart enough to figure out what commit you meant to type if you provide the first 8-10 characters of the hash)
+(Git is smart enough to figure out what commit you meant to type if you provide the first 8-10 characters of the hash.)
 
 If you open up the hello folder on your desktop, you’ll notice that it’s now in the state it was after you made your first commit. 
 
-<span style="color: red;">**IMPORTANT WARNING**</span>: after you’ve finished inspecting a checkout, make sure you get back to where you started [the latest commit on the master branch] by typing
+<span style="color: red;">**IMPORTANT WARNING**</span>: After you’ve finished inspecting a checkout, make sure you get back to where you started [the latest commit on the master branch] by typing:
 
-    git checkout master
-
-
-To revert your files to the state they were in in an earlier commit, type [replacing the red text with the first 8-10 characters of the hash you copied]
-
-**git revert --no-commit <span style="color: red;">0766c053</span>..HEAD **
-
-**git commit -m "revert all changes since first commit" **
+>    `git checkout master`
 
 
-This will essentially take all of the changes you made since this commit, undo them, and then save this as a new commit. (Your prior commits will still exist). 
+To revert your files to the state they were in in an earlier commit, type (replacing `0766c053` with the first 8-10 characters of the hash you copied):
+
+>    `git revert --no-commit 0766c053..HEAD`
+
+>    `git commit -m "revert all changes since first commit"`
 
 
-If you’d like to revert one specific commit (rather than all of the commits after a specific commit), type
+This will essentially take all of the changes you made since this commit, undo them, and then save this as a new commit. (Your prior commits will still exist.) 
 
-**git revert --no-commit <span style="color: red;">0766c053</span>**
-**git commit -m "revert the commit where I did xyz..."**
-
-
+```{marginfigure, echo = TRUE}
 For more info on undoing things in git, check:
 https://github.com/blog/2019-how-to-undo-almost-anything-with-git
+```
+
+If you’d like to revert one specific commit (rather than all of the commits after a specific commit), type:
+
+>    `git revert --no-commit 0766c053`
+
+>    `git commit -m "revert the commit where I did xyz..."`
 
 
-## Step 8: What not to put on git {-}
+## 7. What not to put on git {-}
 There are some things you don't want on git:
 
 * output files (files that are deterministically generated by other files in the repo, e.g. generated PDFs in a LaTeX project repo)
@@ -280,7 +285,7 @@ There are some things you don't want on git:
 
 You can put these in a special .gitignore file so git won't suggest you add them and will even remind you not to add them if you try to. You can create this .gitignore file in a text editor like Sublime Text and update as needed. 
 
-Your .gitignore file might look like this: (saved exactly as “.gitignore” without a file extension)
+Your .gitignore file might look like this (saved exactly as “.gitignore” without a file extension):
 
 ```{r echo = TRUE, eval=FALSE}
 # R created files
