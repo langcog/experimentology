@@ -1,50 +1,48 @@
-# (PART) Appendices {-}
+# (PART) Appendices {.unnumbered}
 
 # GitHub Tutorial {#github}
 
-## Introduction {-}
+## Introduction {.unnumbered}
 
-Git’s like an undo button, but with labels showing you what changes were made when and with a history that goes back to the very first change you ever made to the project.
+<!-- ## NC: The introduction of Git features seems oddly ordered. I feel like Git is usually described first and foremost of a way of tracking changes to sets of files. From this, it follows that this allows you to use the tool as an undo button. And these features make it ideal for collaborative projects-->
+
+Git's like an undo button, but with labels showing you what changes were made when and with a history that goes back to the very first change you ever made to the project.
 
 Git makes it easy to have different versions of the same document, to easily work by yourself on the same project on multiple computers, and to collaborate with other people (whether you're working at different times or simultaneously!)
 
-## Git ≠ GitHub {-}
+## Git ≠ GitHub {.unnumbered}
 
-Git is software that you can install and run locally on your own computer.
-GitHub provides the service of storing and sharing your git repos online. 
-Anyone can get a free account on GitHub and they provide free premium accounts to students (see [here](https://education.github.com/)).
+Git is software that you can install and run locally on your own computer. GitHub provides the service of storing and sharing your git repos online. Anyone can get a free account on GitHub and they provide free premium accounts to students (see [here](https://education.github.com/)).
 
-## Terminology {-}
+## Terminology {.unnumbered}
 
-### What is a git "repo"? {-}
+### What is a git "repo"? {.unnumbered}
 
-“Repo” is short for “repository”-- repo is like a folder with files in it (that are usually related as part of a project), with an associated history of changes over time (“commits”). 
+"Repo" is short for "repository"-- repo is like a folder with files in it (that are usually related as part of a project), with an associated history of changes over time ("commits").
 
-### What is a "commit"? {-}
+### What is a "commit"? {.unnumbered}
 
-A commit is a snapshot of your project at a certain point in time. Each commit has an author, a time, a unique long ID (also called a ‘SHA’ or ‘hash’), and a message describing what change it makes.
+A commit is a snapshot of your project at a certain point in time. Each commit has an author, a time, a unique long ID (also called a 'SHA' or 'hash'), and a message describing what change it makes.
 
-## 0. Review basic terminal commands {-}
+## 0. Review basic terminal commands {.unnumbered}
 
-In this tutorial we’ll be working in Terminal. Here are a few useful commands to be aware of:
+In this tutorial we'll be working in Terminal. Here are a few useful commands to be aware of:
 
 ![](images/git_tutorial2.png)
 
 (more [here](https://github.com/0nn0/terminal-mac-cheatsheet))
 
+## 1. Install git {.unnumbered}
 
-## 1. Install git {-}
+Go to <http://git-scm.com/downloads> and install git.
 
-Go to [http://git-scm.com/downloads](http://git-scm.com/downloads) and install git. 
+(Windows users, open GitBash for the rest of the tutorial; Mac users, open Terminal.)
 
-(Windows users, open GitBash for the rest of the tutorial; Mac users, open Terminal.) 
-
-### 1.1 Did you successfully install? {-}
+### 1.1 Did you successfully install? {.unnumbered}
 
 In terminal, type:
 
->    `git --version`
-
+> `git --version`
 
 to see the current version of git that is installed.
 
@@ -54,32 +52,31 @@ to see the current version of git that is installed.
 try installing: git version 1.8.4.2
 ```
 
-### 1.2 Other versions {-}
+### 1.2 Other versions {.unnumbered}
 
-You can install the GitHub [desktop app](https://desktop.github.com/) if you’d like a simple point-and-click experience. Or [SourceTree](https://www.sourcetreeapp.com/) (free), [Tower](http://www.git-tower.com/) (not free, but powerful and ~$25 with a student discount). It’s also possible to [set up a git pane in RStudio](http://happygitwithr.com/). 
+You can install the GitHub [desktop app](https://desktop.github.com/) if you'd like a simple point-and-click experience. Or [SourceTree](https://www.sourcetreeapp.com/) (free), [Tower](http://www.git-tower.com/) (not free, but powerful and \~\$25 with a student discount). It's also possible to [set up a git pane in RStudio](http://happygitwithr.com/).
 
-### 1.3 Set your name and email address {-}
+### 1.3 Set your name and email address {.unnumbered}
 
 Every Git commit uses this information. Type:
 
->    `git config --global user.name "John Doe"`
+> `git config --global user.name "John Doe"`
 
->    `git config --global user.email johndoe@example.com`
-
+> `git config --global user.email johndoe@example.com`
 
 Also run this once (it ensures that git pushes in a sane manner):
 
->    `git config --global push.default simple`
+> `git config --global push.default simple`
 
- 
+## 2. Make a repo on GitHub, clone it to your computer {.unnumbered}
 
-## 2. Make a repo on GitHub, clone it to your computer {-}
+Make an account on GitHub: <https://github.com/>.
 
-Make an account on GitHub: https://github.com/. 
+Create a new empty public repository at <https://github.com/new>
 
-Create a new empty public repository at https://github.com/new 
+Call it 'hello' and make sure the "Add a README file" checkbox is checked[^1].
 
-Call it ‘hello’ and make sure the “Add a README file” checkbox is checked^[For future reference (feel free to ignore this!): you can also turn any directory that's already on your computer into a git repo by going to that directory using `cd` and then typing `git init`. Later, when you want to put the repo on GitHub, you go through the steps to make a new repo *without initializing with a readme*, then from your directory on your computer type the following (replacing the red text):].
+[^1]: For future reference (feel free to ignore this!): you can also turn any directory that's already on your computer into a git repo by going to that directory using `cd` and then typing `git init`. Later, when you want to put the repo on GitHub, you go through the steps to make a new repo *without initializing with a readme*, then from your directory on your computer type the following (replacing the red text):
 
 ```{marginfigure, echo = TRUE}
 
@@ -90,209 +87,194 @@ Call it ‘hello’ and make sure the “Add a README file” checkbox is checke
 **git push -u origin main**
 ```
 
-Then click the green ‘Code’ button to get the HTTPS URL:
+Then click the green 'Code' button to get the HTTPS URL:
 
-![](images/git_tutorial.png){width=50%}
+![](images/git_tutorial.png){width="50%"}
 
 Go back to Terminal (or GitBash).
 
-Now we’ll clone the hello folder to your computer. For the purposes of this tutorial, let’s clone the folder to your desktop. 
+Now we'll clone the hello folder to your computer. For the purposes of this tutorial, let's clone the folder to your desktop.
 
-First use  `cd`  and `ls` to navigate to your desktop. (Mac users can type `cd ~/Desktop` to get there.)  
+First use `cd` and `ls` to navigate to your desktop. (Mac users can type `cd ~/Desktop` to get there.)
 
 Then type (replacing the URL with the one you copied above):
 
->    `git clone https://github.com/[username]/hello.git`
+> `git clone https://github.com/[username]/hello.git`
 
-At this point, if you are using a new GitHub account, you will most likely be prompted to authenticate to GitHub. There are a few ways to do this, depending on how you are accessing GitHub (all the options are outlined in more detail [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github), including instructions for [GitHub Desktop](https://docs.github.com/en/desktop/installing-and-configuring-github-desktop/installing-and-authenticating-to-github-desktop/authenticating-to-github)), but we think the easiest way is to create a personal access token (PAT) to use in place of a password. To do this, follow the directions outlined [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token). 
+At this point, if you are using a new GitHub account, you will most likely be prompted to authenticate to GitHub. There are a few ways to do this, depending on how you are accessing GitHub (all the options are outlined in more detail [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github), including instructions for [GitHub Desktop](https://docs.github.com/en/desktop/installing-and-configuring-github-desktop/installing-and-authenticating-to-github-desktop/authenticating-to-github)), but we think the easiest way is to create a personal access token (PAT) to use in place of a password. To do this, follow the directions outlined [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
 
 Once you generate a PAT, try the command again:
 
->    `git clone https://github.com/[username]/hello.git`
+> `git clone https://github.com/[username]/hello.git`
 
-If prompted, enter your GitHub username and newly generated PAT in the place of your password^[If you would like a credential helper to help you store the PAT, follow instructions [here](https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git) based on your operation system]. 
-Now you should have a cloned copy of the empty repo on your Desktop. 
+If prompted, enter your GitHub username and newly generated PAT in the place of your password[^2]. Now you should have a cloned copy of the empty repo on your Desktop.
 
+[^2]: If you would like a credential helper to help you store the PAT, follow instructions [here](https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git) based on your operation system
 
-## 3. Make some commits {-}
+## 3. Make some commits {.unnumbered}
 
-### 3.1 Update your README file {-}
+### 3.1 Update your README file {.unnumbered}
 
-A README file contains information about other files in a directory, and it’s customary to include one in your git repo. Your README will be rendered from markdown on the front page of your GitHub repository (see [here](https://github.com/gabrielecirulli/2048) and [here](https://raw.githubusercontent.com/gabrielecirulli/2048/master/README.md) for an example). 
+A README file contains information about other files in a directory, and it's customary to include one in your git repo. Your README will be rendered from markdown on the front page of your GitHub repository (see [here](https://github.com/gabrielecirulli/2048) and [here](https://raw.githubusercontent.com/gabrielecirulli/2048/master/README.md) for an example).
 
-When you initialized your repo on GitHub, the site created an empty README file. Let’s write something in it. 
+When you initialized your repo on GitHub, the site created an empty README file. Let's write something in it.
 
-Open the README file in a text editor^[There will be lots of files that are simple text files, with **.md**, **.rmd** etc. as filetypes.  You can open all these with a text editor. Although your computer comes with a default one (e.g. Notepad, TextEdit), we would recommend downloading [Sublime Text](https://www.sublimetext.com/3), which is free and has a lot of powerful tools that will be helpful in the future.] and write a sentence or two describing your repo, and save your changes. (Read the [basics of markdown](https://guides.github.com/features/mastering-markdown/) and use it appropriately in formatting your README.)
+Open the README file in a text editor[^3] and write a sentence or two describing your repo, and save your changes. (Read the [basics of markdown](https://guides.github.com/features/mastering-markdown/) and use it appropriately in formatting your README.)
 
+[^3]: There will be lots of files that are simple text files, with **.md**, **.rmd** etc. as filetypes. You can open all these with a text editor. Although your computer comes with a default one (e.g. Notepad, TextEdit), we would recommend downloading [Sublime Text](https://www.sublimetext.com/3), which is free and has a lot of powerful tools that will be helpful in the future.
 
-
-
-### 3.2 Add and commit changes to git {-}
+### 3.2 Add and commit changes to git {.unnumbered}
 
 In Terminal, navigate to the repo by typing:
 
->    `cd hello`
-
+> `cd hello`
 
 If you type:
 
->    `git status`
+> `git status`
 
-You’ll get a message telling you that your README has been modified. 
+You'll get a message telling you that your README has been modified.
 
+Now we will **add this file and commit it**[^4] so that git takes a snapshot of the changes we made:
 
-Now we will **add this file and commit it**^[For future reference (feel free to ignore this!): you can add just part of the file by using `git add -p README.md` and following the instructions at the bottom of the terminal window.] so that git takes a snapshot of the changes we made:
+[^4]: For future reference (feel free to ignore this!): you can add just part of the file by using `git add -p README.md` and following the instructions at the bottom of the terminal window.
 
->    `git add README.md`
+> `git add README.md`
 
->    `git commit -m "update readme"`
+> `git commit -m "update readme"`
 
 (`-m` precedes a commit message, which allows you to describe what you changed.)
 
 If you now type:
 
->    `git status`
+> `git status`
 
-You’ll get a message telling you that everything is up to date ("nothing to commit, working tree clean"). 
+You'll get a message telling you that everything is up to date ("nothing to commit, working tree clean").
 
-### 3.3 Add another file to the repo + commit it {-}
+### 3.3 Add another file to the repo + commit it {.unnumbered}
 
-Use RStudio^[We’ll be using R and RStudio in the future. If you do not yet have those downloaded, you can open up a text editor and do the same thing.] to make a new R script containing one line, e.g., 
-`print("hello world")`. 
-Save this as **‘pset0.R’** inside the **hello** folder.
+Use RStudio[^5] to make a new R script containing one line, e.g., `print("hello world")`. Save this as **'pset0.R'** inside the **hello** folder.
+
+[^5]: We'll be using R and RStudio in the future. If you do not yet have those downloaded, you can open up a text editor and do the same thing.
 
 Then, back in the terminal, type:
 
->    `git status`
+> `git status`
 
-This will tell you that a file called pset0.R exists, but isn’t being tracked by git.^[If you find a file called “.DS_Store” that is being tracked, that is a mac file saving folder preferences. You can add this to a .gitignore file as described in step 7 below so that git will not track it.]
+This will tell you that a file called pset0.R exists, but isn't being tracked by git.[^6]
 
+[^6]: If you find a file called ".DS_Store" that is being tracked, that is a mac file saving folder preferences. You can add this to a .gitignore file as described in step 7 below so that git will not track it.
 
 Now we will **add this file and commit it** (so that git starts to track it):
 
->    `git add -A`
+> `git add -A`
 
 (the `-A` specifies that we will add all of the files that have been changed in the repo)
 
->    `git commit -m "initial commit of pset0.R"`
+> `git commit -m "initial commit of pset0.R"`
 
+## 4. Push your changes to GitHub {.unnumbered}
 
+What we've done so far -- `add` and `commit` -- only affects your local computer. To get your changes on GitHub, use `push`:
 
-
-## 4. Push your changes to GitHub {-}
-
-What we’ve done so far -- `add` and `commit` -- only affects your local computer. To get your changes on GitHub, use `push`:
-
->    `git push`
+> `git push`
 
 If you go to your GitHub account, you can now see the updated files.
 
+## 5. Make more changes to the repo {.unnumbered}
 
-
-## 5. Make more changes to the repo {-}
 Now make some changes to your pset0.R file (delete and/or add another line or two of code) and save it.
 
-In terminal, type 
+In terminal, type
 
->    `git status`
+> `git status`
 
+to see that **pset0.R** has been modified since the last commit.
 
-to see that **pset0.R** has been modified since the last commit. 
+To see the specific changes since the last commit, type:
 
-To see the specific changes since the last commit, type: 
+> `git diff`
 
->    `git diff`
+Then commit:
 
-Then commit: 
+> `git add -A`
 
->    `git add -A`
-
->    `git commit -m "[describe change]"`
-
+> `git commit -m "[describe change]"`
 
 Push to the repository on GitHub:
 
->    `git push`
+> `git push`
 
+TIP: Commits should be focused. Try to commit little bite-sized changes that are all related to each other together and easy to label, and make separate commits for other changes.
 
-TIP: Commits should be focused. Try to commit little bite-sized changes that are all related to each other together and easy to label, and make separate commits for other changes. 
+Best practice for commit messages is to make sure your commit message is not too long and would fit into the sentence: "When you pull this commit, it will \_\_\_\_\_\_."
 
-Best practice for commit messages is to make sure your commit message is not too long and would fit into the sentence: "When you pull this commit, it will ______."
+## 6. Rolling back to previous versions {.unnumbered}
 
-
-## 6. Rolling back to previous versions {-}
-
-Sometimes you will want to go back to a previous commit. Here’s how to do it:
+Sometimes you will want to go back to a previous commit. Here's how to do it:
 
 To view previous commits, type:
 
->    `git log`
-
+> `git log`
 
 To change the number of displayed commits, type the number you want to see preceded by a dash. For example, to view the three most recent commits, type:
 
->    `git log -3`
-
+> `git log -3`
 
 (You can also view the commit history on GitHub.)
 
-
 You can use the long ID numbers attached to commits (also called hashes or SHAs) to roll back to them if you need to see a previous version of the repo. This can be very useful if something breaks and you don't know how that happened. You can roll back to the last commit where your program wasn't broken and see what files changed since then, and how.
 
-For example, let's say we wanted to roll back to the very first commit so we could run the code as it was back then. Let’s look at the very first commit. You can find it by typing `git log` and then pressing the space bar to scroll down to the very first commit. Copy and paste the hash for this commit, (press ‘q’ to get back to the main terminal window), and then type (replacing the hash with the one you copied):
+For example, let's say we wanted to roll back to the very first commit so we could run the code as it was back then. Let's look at the very first commit. You can find it by typing `git log` and then pressing the space bar to scroll down to the very first commit. Copy and paste the hash for this commit, (press 'q' to get back to the main terminal window), and then type (replacing the hash with the one you copied):
 
->    `git checkout a240f92a22cb8e9b1300bfa690e99ef07692151e`
+> `git checkout a240f92a22cb8e9b1300bfa690e99ef07692151e`
 
 or just
 
->    `git checkout a240f92`
-
+> `git checkout a240f92`
 
 (Git is smart enough to figure out what commit you meant to type if you provide the first 8-10 characters of the hash.)
 
-If you open up the hello folder on your desktop, you’ll notice that it’s now in the state it was after you made your first commit. 
+If you open up the hello folder on your desktop, you'll notice that it's now in the state it was after you made your first commit.
 
-<span style="color: red;">**IMPORTANT WARNING**</span>: After you’ve finished inspecting a checkout, make sure you get back to where you started [the latest commit on the main branch] by typing:
+[**IMPORTANT WARNING**]{style="color: red;"}: After you've finished inspecting a checkout, make sure you get back to where you started [the latest commit on the main branch] by typing:
 
->    `git checkout main`
-
+> `git checkout main`
 
 To revert your files to the state they were in in an earlier commit, type (replacing `0766c053` with the first 8-10 characters of the hash you copied):
 
->    `git revert --no-commit 0766c053..HEAD`
+> `git revert --no-commit 0766c053..HEAD`
 
->    `git commit -m "revert all changes since first commit"`
+> `git commit -m "revert all changes since first commit"`
 
-
-This will essentially take all of the changes you made since this commit, undo them, and then save this as a new commit. (Your prior commits will still exist.) 
+This will essentially take all of the changes you made since this commit, undo them, and then save this as a new commit. (Your prior commits will still exist.)
 
 ```{marginfigure, echo = TRUE}
 For more info on undoing things in git, check:
 https://github.com/blog/2019-how-to-undo-almost-anything-with-git
 ```
 
-If you’d like to revert one specific commit (rather than all of the commits after a specific commit), type:
+If you'd like to revert one specific commit (rather than all of the commits after a specific commit), type:
 
->    `git revert --no-commit 0766c053`
+> `git revert --no-commit 0766c053`
 
->    `git commit -m "revert the commit where I did xyz..."`
+> `git commit -m "revert the commit where I did xyz..."`
 
+## 7. What not to put on git {.unnumbered}
 
-## 7. What not to put on git {-}
 There are some things you don't want on git:
 
-* output files (files that are deterministically generated by other files in the repo, e.g. generated PDFs in a LaTeX project repo)
+-   output files (files that are deterministically generated by other files in the repo, e.g. generated PDFs in a LaTeX project repo)
 
-* log files (like .RData and .Rhistory. You can't describe what "changes" were made to them and different people's .RData and .Rhistory files will always conflict.)
+-   log files (like .RData and .Rhistory. You can't describe what "changes" were made to them and different people's .RData and .Rhistory files will always conflict.)
 
-* sensitive data (like human subject data and passwords)
+-   sensitive data (like human subject data and passwords)
 
-* configuration files that have configurations specific to your computer (Important: If you are running stuff on Mechanical Turk, make sure your bin/mturk.properties file is NOT on git, because that file contains an access key to allow you to authenticate with Amazon.)
+-   configuration files that have configurations specific to your computer (Important: If you are running stuff on Mechanical Turk, make sure your bin/mturk.properties file is NOT on git, because that file contains an access key to allow you to authenticate with Amazon.)
 
+You can put these in a special .gitignore file so git won't suggest you add them and will even remind you not to add them if you try to. You can create this .gitignore file in a text editor like Sublime Text and update as needed.
 
-You can put these in a special .gitignore file so git won't suggest you add them and will even remind you not to add them if you try to. You can create this .gitignore file in a text editor like Sublime Text and update as needed. 
-
-Your .gitignore file might look like this (saved exactly as “.gitignore” without a file extension):
+Your .gitignore file might look like this (saved exactly as ".gitignore" without a file extension):
 
 ```{r echo = TRUE, eval=FALSE}
 # R created files
@@ -336,34 +318,30 @@ mturk-and-gmail.txt
 .Rproj.user
 ```
 
+## Further Resources {.unnumbered}
 
-## Further Resources {-}
+-   GitHub has many useful guides for learning about branches, pull requests, forking and more: <https://guides.github.com/> <https://help.github.com/articles/good-resources-for-learning-git-and-github/>
 
+-   Though the things we covered in this tutorial may seem overwhelming, there are really only a handful of commands that you need to know, which can be found (alongside some commands we didn't cover) on this handy [cheatsheet](http://rogerdudler.github.io/git-guide/files/git_cheat_sheet.pdf).
 
-* GitHub has many useful guides for learning about branches, pull requests, forking and more:
-  https://guides.github.com/
-  https://help.github.com/articles/good-resources-for-learning-git-and-github/
+-   Request a premium account at <https://education.github.com/> for free private repos.
 
-* Though the things we covered in this tutorial may seem overwhelming, there are really only a handful of commands that you need to know, which can be found (alongside some commands we didn’t cover) on this handy [cheatsheet](http://rogerdudler.github.io/git-guide/files/git_cheat_sheet.pdf). 
+-   To save some time, tell git to remember your GitHub username and password: <https://help.github.com/articles/caching-your-github-password-in-git/>
 
-* Request a premium account at https://education.github.com/  for free private repos.
+-   Or set up an SSH key to log in less often: <https://help.github.com/articles/generating-ssh-keys>
 
-* To save some time, tell git to remember your GitHub username and password: 
-  https://help.github.com/articles/caching-your-github-password-in-git/
+    **For Windows:**
 
-* Or set up an SSH key to log in less often:
-  https://help.github.com/articles/generating-ssh-keys
-
-  **For Windows:**
-
-  you need this code:
+    you need this code:
 
     eval `ssh-agent -s`
 
     ssh-add
 
-  and you need to run this part in GitBash 
+    and you need to run this part in GitBash
 
-* For students seeking deeper Git knowledge, ProGit is a thorough [open source book](https://git-scm.com/book) from Scott Chacon. It can be viewed online or downloaded in ePub, Mobi, or PDF formats.
+-   For students seeking deeper Git knowledge, ProGit is a thorough [open source book](https://git-scm.com/book) from Scott Chacon. It can be viewed online or downloaded in ePub, Mobi, or PDF formats.
 
 Acknowledgments: Thank you to Cayce Hook, Erin Bennett and Daniel Watson for creating the first version of this tutorial for Psych 251!
+
+<!-- ## NC: I really liked this tutorial, and I came away with a two major thoughts. First, is there any benefit to using Gitbash or the Terminal as opposed to the Github Desktop GUI or the Github browser? Second, do we have any concrete anecdotes that we can give students to convince them of the utility of Github? The benefits of Github are currently described in the introduction, but the reader has to take our word for it. If we spend more time demonstrating the value of the tool, it may help motivate the reader to go through the process of actually learning the tool.?-->
