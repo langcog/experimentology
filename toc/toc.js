@@ -1,9 +1,22 @@
 const hover = (target, element, property) => window.addEventListener('load', () => {
-	const [hide, show] = [0, element.getBoundingClientRect()[property]]
-	.map(value => () => element.style[property] = value + 'px')
+  let isShown = false;
+  const size = element.getBoundingClientRect()[property];
+  const hide = () => { 
+	  element.style[property] = '0px';
+    isShown = false;
+  }
+  const show = () => {
+    element.style[property] = size + 'px';
+    isShown = true;
+  }
+  const toggle = () => {isShown ? hide() : show()};
 
 	target.addEventListener('mouseenter', show);
 	target.addEventListener('mouseleave', hide);
+
+	// On mobile, let the user toggle the submenus individual on tap
+	// since hover doesn't work
+	target.addEventListener('touchstart', toggle)
 
 	hide();
 })
