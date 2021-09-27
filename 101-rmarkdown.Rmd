@@ -11,7 +11,7 @@
 
 This is a short tutorial on using RMarkdown to mix prose and code together for creating reproducible scientific documents.^[The current version of the tutorial is adapted from [a slightly longer tutorial](https://github.com/mcfrank/rmarkdown-workshop) that Mike Frank and Chris Hartgerink taught together at SIPS 2017.]
 
-In short: RMarkdown allows you to create documents that are compiled with code, producing your next scientific paper. This tutorial will help you learn the nuts and bolts of how to do this. This appendix -- actually this whole book -- is written in RMarkdown. It's a very flexible platform for writing nice looking documents.^[If you're interested in the source code for this tutorial, it's available [here](https://github.com/langcog/experimentology/blob/master/101-rmarkdown.Rmd).]
+In short: RMarkdown allows you to create documents that are compiled with code, producing your next scientific paper. This tutorial will help you learn the nuts and bolts of how to do this. This appendix -- actually this whole book -- is written in RMarkdown. It's a very flexible platform for writing nice looking documents.^[If you're interested in the source code for this tutorial, it's available [here](https://github.com/langcog/experimentology/blob/master/101-rmarkdown.Rmd). We use the amazing `bookdown` package to format multi-chapter manuscripts, and we use the `tufte` package (lightly customized) for style.]
 
 ## Why write reproducible papers?
 
@@ -195,16 +195,9 @@ To insert these stats inline I wrote e.g. `round(ts$parameter, 2)` inside an inl
 
 Note that rounding can occasionally get you in trouble here, because it's very easy to have an output of $p = 0$ when in fact $p$ can never be exactly equal to 0. Nonetheless, this can help you prevent the kinds of rounding errors that would get picked up by software like `statcheck`.
 
-
-## Collaboration 
-
-How do we collaborate using RMarkdown? There are lots of different workflows that people use. The way it works in my lab is that the first author typically makes a github repository with the markdown-formatted document in it. Sometimes we just collaborate through github or through writing comments on the rendered PDF and sending them back to the first author. (I like the dropbox PDF comment interface for this). 
-
-But, sometimes you want to do lots of line-editing or write collaboratively, especially with someone who doesn't like github and markdown and all that. For these cases, we often paste the intro into google docs or Word and edit until we converge, then the first author puts that back into the markdown. This is a little clunky, but not too bad. And critically, all the figures and numbers get rendered fresh when you re-knit, so nothing can get accidentally altered during the editing process.
-
 ## Writing APA-format papers
 
-The end-game of reproducible research is to knit your entire paper into a submittable APA-style writeup. Managing APA format is a pain in the best of times.^[Thanks to [Frederick Aust](http://github.com/crsh) for contributing much of the code in this section!] 
+The end-game of reproducible research is to knit your entire paper into a submittable APA-style writeup. Managing APA format is a pain in the best of times.^[Thanks to [Frederick Aust](http://github.com/crsh) for contributing much of the code in this section! For a bit more on `papaja`, check out [this guide](https://rpubs.com/YaRrr/papaja_guide).] 
 
 ### Technical requirements
 
@@ -239,16 +232,29 @@ If `figurelist`, `tablelist`, or `footnotelist` are set to `yes` a list of figur
 
 ### Bibiographic management
 
-It's also possible to include references using `bibtex`, by using `@ref` syntax. An option for managing references is [bibdesk](http://bibdesk.sourceforge.net/), which integrates with google scholar.^[But many other options are possible.] 
+Managing a bibliography by hand is a lot of work. Letting software do this for you is much easier. In RMarkdown it's  possible to include references using `bibtex`, by using `@ref` syntax. You can do this in `papaja` but it's also possible to o it in other packages that have some kind of bibliographic handling.
 
-With a bibtex file included, you can refer to papers. As an example, `@nuijten2016` results in the in text citation "@nuijten2016", or cite them parenthetically with `[@nuijten2016]` [@nuijten2016]. Take a look at the `papaja` APA example to see how this works. 
+It's simple. You put together a set of paper citations in a bibtex file -- then when you refer to them in text, the citations pop up formatted correctly, and they are also put in your bibliography. As an example, `@nuijten2016` results in the in text citation "@nuijten2016", or cite them parenthetically with `[@nuijten2016]` [@nuijten2016]. Take a look at the `papaja` APA example to see how this works. 
 
+How do you make your bibtex file? You can do it by hand but this is a pain. One option for managing references is [bibdesk](http://bibdesk.sourceforge.net/), which integrates with google scholar.^[Many other options are possible. For example, some of us use Zotero frequently as well.] 
 `citr` is an R package that provides an easy-to-use [RStudio addin](https://rstudio.github.io/rstudioaddins/) that facilitates inserting citations.
 The addin will automatically look up the Bib(La)TeX-file(s) specified in the YAML front matter.
 The references for the inserted citations are automatically added to the documents reference section. Once `citr` is installed (`install.packages("citr")`) and you have restarted your R session, the addin appears in the menus and you can define a [keyboard shortcut](https://rstudio.github.io/rstudioaddins/#keyboard-shorcuts) to call the addin.
 
-For a bit more on `papaja`, check out [this guide](https://rpubs.com/YaRrr/papaja_guide). 
+## Collaboration 
 
+How do we collaborate using RMarkdown? There are lots of different workflows that people use. Here are a few:
+
+* The lead author makes a github repository with the markdown-formatted document in it. Others read the PDF and send text comments or PDF annotations and the lead makes modifications accordingly.^[Dropbox has good PDF annotation tools for writing comments on specific lines of text.] This workflow works well when the lead author is relatively experienced and wants to keep control of the manuscript without too much line-by-line rewriting.
+* The lead author makes a repository as above, but co-authors collaborate either by pushing changes to master or by creating pull requests. This workflow works well when the authors are all fairly git-savvy, and can be great for quickly writing different parts in parallel because of git's automatic merging.^[We wrote this book using the all-github workflow, and it was pretty good, modulo some merge conflicts.]
+* The authors work collaboratively together in an editor like Google Docs, Word, or Overleaf. (We favor cloud platforms rather than emailing back and forth, for all the reasons discussed in Chapter \@ref(management)). Once the substantive text sections have converged, the lead author puts that text back into the markdown document and adds references. This workflow is good for very collaborative introduction writing when co-authors don't use git or markdown. This workflow is a little clunky, but not too bad. And critically, all the figures and numbers get rendered fresh when you re-knit, so nothing can get accidentally altered during the editing process.
+* The lead author renders the results section from markdown, then writes text in the resulting Word document (or uploads it to Google Docs). This workflow is closest to the "old way" that many people are used to, but runs the biggest risk of errors getting introduced and propagated forward, since it's not possible to rerender the whole document from scratch. If someone makes changes to the results section, it's critical to propagate these back to the markdown and keep the two in sync.
+
+In sum, there are lots of ways to collaborate -- the best thing is to talk with your co-authors to select one that works for the group. 
+
+## RMarkdown: Chapter Summary
+
+RMarkdown is a great way to write reproducible papers. It is not too tricky to learn, and once you master it you can save time by reformatting quickly and automatically, managing your bibliography automatically, and even creating nice web-compatible documents. 
 
 ::: {.exercise}
 Using the `mtcars` dataset, insert a table and a graph of your choice into your R Markdown template document. If you're feeling uninspired, try `hist(mtcars$mpg)`.
