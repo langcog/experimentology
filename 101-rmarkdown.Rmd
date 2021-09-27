@@ -1,42 +1,27 @@
 # R Markdown Tutorial {#rmarkdown}
 
-## Introduction
+::: {.learning-goals}
+🍎 Learning goals: 
 
-This is a short tutorial on using RMarkdown to mix prose and code together for creating reproducible scientific documents. If you find any errors and have a Github account, **[please suggest changes here](https://github.com/mcfrank/openscience_tutorial)**. This is adapted from [a slightly longer tutorial that Mike and Chris Hartgerink taught together at SIPS 2017](https://github.com/mcfrank/rmarkdown-workshop).
+* Explain what Markdown is and how the syntax works, 
+* Practice how to integrate code and data in RMarkdown, 
+* Understand the different output formats from RMarkdown and how to generate them
+* Know about generating APA format files with `papaja` and bibtex
+:::
 
-In short: RMarkdown allows you to create documents that are compiled with code, producing your next scientific paper.
+This is a short tutorial on using RMarkdown to mix prose and code together for creating reproducible scientific documents.^[The current version of the tutorial is adapted from [a slightly longer tutorial](https://github.com/mcfrank/rmarkdown-workshop) that Mike Frank and Chris Hartgerink taught together at SIPS 2017.]
 
-Now we're together trying to help spread the word, because it can make writing manuscripts so much easier! We wrote this handout in RMarkdown as well. [Take a look at the source.](https://github.com/mcfrank/openscience_tutorial/blob/master/rmarkdown_handout.Rmd)
+In short: RMarkdown allows you to create documents that are compiled with code, producing your next scientific paper. This tutorial will help you learn the nuts and bolts of how to do this. This appendix -- actually this whole book -- is written in RMarkdown. It's a very flexible platform for writing nice looking documents.^[If you're interested in the source code for this tutorial, it's available [here](https://github.com/langcog/experimentology/blob/master/101-rmarkdown.Rmd).]
 
-### Who is this aimed at?
+## Why write reproducible papers?
 
-We aim this document at anyone writing manuscripts and using R, including those who...
+There are three reasons to write reproducible papers. To be right, to be reproducible, and to be efficient. In more depth:
 
-1. ...collaborate with people who use Word
-2. ...want to write complex equations
-3. ...want to be able to change bibliography styles with less hassle
-4. ...want to spend more time actually doing research!
+1. **To avoid errors.** Using an automated method for scraping APA-formatted stats out of PDFs, @nuijten2016 found that over 10% of p-values in published papers were inconsistent with the reported details of the statistical test, and 1.6% were what they called "grossly" inconsistent, e.g. difference between the p-value and the test statistic meant that one implied statistical significance and the other did not. Nearly half of all papers had errors in them. 
 
-### Why write reproducible papers?
+2. **To promote computational reproducibility.** Computational reproducibility means that other people can take your data and get the same numbers that are in your paper. Even if you don't have errors, it can still be very hard to recover the numbers from published papers because of ambiguities in analysis. Creating a document that literally specifies where all the numbers come from in terms of code that operates over the data removes all this ambiguity.
 
-Cool, thanks for sticking with us and reading up through here!
-
-There are three reasons to write reproducible papers. To be right, to be reproducible, and to be efficient. There are more, but these are convincing to us. In more depth:
-
-1. To avoid errors. Using an automated method for scraping APA-formatted stats out of PDFs, @nuijten2016 found that over 10% of p-values in published papers were inconsistent with the reported details of the statistical test, and 1.6% were what they called "grossly" inconsistent, e.g. difference between the p-value and the test statistic meant that one implied statistical significance and the other did not. Nearly half of all papers had errors in them. 
-
-2. To promote computational reproducibility. Computational reproducibility means that other people can take your data and get the same numbers that are in your paper. Even if you don't have errors, it can still be very hard to recover the numbers from published papers because of ambiguities in analysis. Creating a document that literally specifies where all the numbers come from in terms of code that operates over the data removes all this ambiguity.
-
-3. To create spiffy documents that can be revised easily. This is actually a really big neglected one for us. At least one of us used to tweak tables and figures by hand constantly, leading to a major incentive *never to rerun analyses* because it would mean re-pasting and re-illustratoring all the numbers and figures in a paper. That's a bad thing! It means you have an incentive to be lazy and to avoid redoing your stuff. And you waste tons of time when you do. In contrast, with a reproducible document, you can just rerun with a tweak to the code. You can even specify what you want the figures and tables to look like before you're done with all the data collection (e.g., for purposes of preregistraion or a registered report). 
-
-### Learning goals
-
-By the end of this class you should:
-
-* Know what Markdown is and how the syntax works, 
-* See how to integrate code and data in RMarkdown, 
-* Understand the different output formats from RMarkdown and how to generate them, and
-* Know about generating APA format files with `papaja` and bibtex.
+3. **To create spiffy documents that can be revised easily.** This is actually a really big neglected one for us. At least one of us used to tweak tables and figures by hand constantly, leading to a major incentive *never to rerun analyses* because it would mean re-pasting and re-illustratoring all the numbers and figures in a paper. That's a bad thing! It means you have an incentive to be lazy and to avoid redoing your stuff. And you waste tons of time when you do. In contrast, with a reproducible document, you can just rerun with a tweak to the code. You can even specify what you want the figures and tables to look like before you're done with all the data collection (e.g., for purposes of preregistraion or a registered report). 
 
 ## Getting Started
 
@@ -124,7 +109,7 @@ Now recompile. Looks nice, right?^[Pro-tip: you can specify how deep the TOC sho
 
 3. Try adding another option: `toc_float: true`. Recompile -- super cool. There are plenty more great output options that you can modify. [Here is a link to the documentation.](http://rmarkdown.rstudio.com/html_document_format.html)
 
-##  Headers, Tables, and Graphs
+##Headers, Tables, and Graphs
 
 ### Headers 
 
@@ -158,7 +143,7 @@ opts_chunk$set(fig.width=8, fig.height=5,
 
 It's really easy to include graphs, like this one. (Using the `mtcars` dataset that comes with `ggplot2`).
 
-```{r}
+```{r rmarkdown-ex}
 qplot(hp, mpg, col = factor(cyl), data = mtcars)
 ```
 
@@ -208,11 +193,8 @@ ts <- with(mtcars,t.test(hp[cyl==4], hp[cyl==6]))
 
 To insert these stats inline I wrote e.g. `round(ts$parameter, 2)` inside an inline code block.^[APA would require omission of the leading zero. `papaja::printp()` will let you do that, see below.]
 
-Note that rounding can occasionally get you in trouble here, because it's very easy to have an output of $p = 0$ when in fact $p$ can never be exactly equal to 0. Nonetheless, this can help you prevent rounding errors and the wrath of `statcheck`.
+Note that rounding can occasionally get you in trouble here, because it's very easy to have an output of $p = 0$ when in fact $p$ can never be exactly equal to 0. Nonetheless, this can help you prevent the kinds of rounding errors that would get picked up by software like `statcheck`.
 
-### Exercises
-
-1. Using the `mtcars` dataset, insert a table and a graph of your choice into the document.^[If you're feeling uninspired, try `hist(mtcars$mpg)`.]
 
 ## Collaboration 
 
@@ -222,18 +204,15 @@ But, sometimes you want to do lots of line-editing or write collaboratively, esp
 
 ## Writing APA-format papers
 
-(Thanks to [Frederick Aust](http://github.com/crsh) for contributing this section!)
+The end-game of reproducible research is to knit your entire paper into a submittable APA-style writeup. Managing APA format is a pain in the best of times.^[Thanks to [Frederick Aust](http://github.com/crsh) for contributing much of the code in this section!] 
 
-The end-game of reproducible research is to knit your entire paper. We'll focus on APA-style writeups. Managing APA format is a pain in the best of times. Isn't it nice to get it done for you? 
+### Technical requirements
 
-We're going to use the `papaja` package. `papaja` is a R-package including a R Markdown template that can be used to produce documents that adhere to the American Psychological Association (APA) manuscript guidelines (6th Edition).
+We're going to use the `papaja` package. `papaja` is a R-package including a R Markdown template that can be used to produce documents that adhere to the American Psychological Association (APA) manuscript guidelines.
 
-### Software requirements
-
-To use `papaja`, make sure you are using the latest versions of R and RStudio. If you want to create PDF- in addition to DOCX-files you need **[TeX](http://de.wikipedia.org/wiki/TeX) 2013 or later**. Try [MikTeX](http://miktex.org/) for Windows, [MacTeX](https://tug.org/mactex/) for Mac, or [TeX Live](http://www.tug.org/texlive/) for Linux. Some Linux users may need a few additional TeX packages for the LaTeX document class `apa6` to work.^[For Ubuntu, we suggest running: `sudo apt-get install texlive texlive-publishers texlive-fonts-extra texlive-latex-extra texlive-humanities lmodern`.]
-
-
-### Installing `papaja`
+If you want to create PDF- in addition to DOCX-files you need **[TeX](http://de.wikipedia.org/wiki/TeX) 2013 or later**. One recent possibility is [TinyTEX](https://yihui.org/tinytex/). Or if you want a full install, try [MikTeX](http://miktex.org/) for Windows, [MacTeX](https://tug.org/mactex/) for Mac, or [TeX Live](http://www.tug.org/texlive/) for Linux.
+<!-- ^[Some Linux users may need a few additional TeX packages for the LaTeX document class `apa7` to work.] -->
+<!-- ^[For Ubuntu, we suggest running: `sudo apt-get install texlive texlive-publishers texlive-fonts-extra texlive-latex-extra texlive-humanities lmodern`.] -->
 
 `papaja` has not yet been released on CRAN but you can install it from GitHub.
 
@@ -247,17 +226,16 @@ devtools::install_github("crsh/papaja")
 
 ### Creating a document
 
-The APA manuscript template should now be available through the RStudio menus when creating a new R Markdown file.
+The APA manuscript template should now be available through the RStudio menus when creating a new R Markdown file. 
 
 When you click RStudio's *Knit* button `papaja`, `rmarkdown,` and `knitr` work together to create an APA conform manuscript that includes both your manuscript text and the results of any embedded R code.
 
-Note, if you don't have TeX installed on your computer, or if you would like to create a Word document replace `output: papaja::apa6_pdf` with `output: papaja::apa6_word` in the document YAML header.
+If you don't have TeX installed on your computer, or if you would like to create a Word document replace `output: papaja::apa6_pdf` with `output: papaja::apa6_word` in the document YAML header.
 
-`papaja` provides some rendering options that only work if you use `output: papaja::apa6_pdf`.
+`papaja` provides some rendering options that only work if you use `output: papaja::apa7_pdf`.
 `figsintext` indicates whether figures and tables should be included at the end of the document---as required by APA guidelines---or rendered in the body of the document.
 If `figurelist`, `tablelist`, or `footnotelist` are set to `yes` a list of figure captions, table captions, or footnotes is given following the reference section.
 `lineno` indicates whether lines should be continuously numbered through out the manuscript.
-
 
 ### Bibiographic management
 
@@ -267,18 +245,19 @@ With a bibtex file included, you can refer to papers. As an example, `@nuijten20
 
 `citr` is an R package that provides an easy-to-use [RStudio addin](https://rstudio.github.io/rstudioaddins/) that facilitates inserting citations.
 The addin will automatically look up the Bib(La)TeX-file(s) specified in the YAML front matter.
-The references for the inserted citations are automatically added to the documents reference section.
+The references for the inserted citations are automatically added to the documents reference section. Once `citr` is installed (`install.packages("citr")`) and you have restarted your R session, the addin appears in the menus and you can define a [keyboard shortcut](https://rstudio.github.io/rstudioaddins/#keyboard-shorcuts) to call the addin.
 
-<!-- # ```{r citr-gif, echo = FALSE, fig.align = "center", fig.cap = "Demonstration of the RStudio addin from the `citr` package that inserts R Markdown citations."} -->
-<!-- # knitr::include_graphics("figures/addin_demo.gif") -->
-<!-- # ``` -->
+For a bit more on `papaja`, check out [this guide](https://rpubs.com/YaRrr/papaja_guide). 
 
-Once `citr` is installed (`install.packages("citr")`) and you have restarted your R session, the addin appears in the menus and you can define a [keyboard shortcut](https://rstudio.github.io/rstudioaddins/#keyboard-shorcuts) to call the addin.
 
-### Exercise
+::: {.exercise}
+Using the `mtcars` dataset, insert a table and a graph of your choice into your R Markdown template document. If you're feeling uninspired, try `hist(mtcars$mpg)`.
+:::
 
-Make sure you've got `papaja`, then open a new template file. Compile this document, and look at how awesome it is. (To compile you need `texlive`, a library for compiling markdown to PDF, so you may need to wait and install this later if it's not working). 
+::: {.exercise}
+Make sure you've got `papaja`, then open a new APA template file. Compile this document, and look at how awesome it is.  Try pasting in your figure and table from your other RMarkdown (don't forget any libraries you need to make it compile). 
+:::
 
-Try pasting in your figure and table from your other RMarkdown (don't forget any libraries you need to make it compile). Presto, ready to submit!
 
-For a bit more on `papaja`, check out **[this guide](https://rpubs.com/YaRrr/papaja_guide)**. 
+
+
