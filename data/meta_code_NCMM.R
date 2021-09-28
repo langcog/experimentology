@@ -3,6 +3,32 @@ library(metafor)
 
 # TO-D0
 
+--------------------------------------------------------------------------------
+# Vote count studies that made it into the main meta-analysis
+--------------------------------------------------------------------------------
+DF <- read.csv("/data/Contact_quant_outcomes.csv")
+
+
+# remove supplemental studies (see Paluck et al. Supplement Section 1)
+DF <- DF[1:27, ]
+
+# determine whether d estimate was significant
+DF <- DF %>% 
+  
+  # calculate lower and upper bounds
+  mutate(lb = d - (1.96 * sqrt(var_d)),
+         ub = d + (1.96 * sqrt(var_d))) %>% 
+  
+  # determine significance
+  mutate(sig = if_else(
+    condition = lb > 0,
+    true = 1,
+    false = 0))
+
+# significane table
+sig.table <- table(DF$sig)
+
+
 # Effect size calculation for Fuegen 2014 ------------------------------------
 m1 = 4.50
 sd1 = 1.49
