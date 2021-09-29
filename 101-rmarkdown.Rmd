@@ -4,14 +4,14 @@
 🍎 Learning goals: 
 
 * Explain what Markdown is and how the syntax works, 
-* Practice how to integrate code and data in RMarkdown, 
-* Understand the different output formats from RMarkdown and how to generate them
+* Practice how to integrate code and data in R Markdown, 
+* Understand the different output formats from R Markdown and how to generate them
 * Know about generating APA format files with `papaja` and bibtex
 :::
 
-This is a short tutorial on using RMarkdown to mix prose and code together for creating reproducible scientific documents.^[The current version of the tutorial is adapted from [a slightly longer tutorial](https://github.com/mcfrank/rmarkdown-workshop) that Mike Frank and Chris Hartgerink taught together at SIPS 2017.]
+This is a short tutorial on using R Markdown to mix prose and code together for creating reproducible scientific documents.^[The current version is adapted from an earlier tutorial that Mike Frank and Chris Hartgerink taught together at SIPS 2017.]
 
-In short: RMarkdown allows you to create documents that are compiled with code, producing your next scientific paper. This tutorial will help you learn the nuts and bolts of how to do this. This appendix -- actually this whole book -- is written in RMarkdown. It's a very flexible platform for writing nice looking documents.^[If you're interested in the source code for this tutorial, it's available [here](https://github.com/langcog/experimentology/blob/master/101-rmarkdown.Rmd). We use the amazing `bookdown` package to format multi-chapter manuscripts, and we use the `tufte` package (lightly customized) for style.]
+In short: R Markdown allows you to create documents that are compiled with code, producing your next scientific paper. This tutorial will help you learn the nuts and bolts of how to do this. This appendix -- actually this whole book -- is written in R Markdown. It's a very flexible platform for writing nice looking documents.^[If you're interested in the source code for this tutorial, it's available [here](https://github.com/langcog/experimentology/blob/master/101-rmarkdown.Rmd). We use the amazing `bookdown` package to format multi-chapter manuscripts, and we use the `tufte` package (lightly customized) for style.]
 
 ## Why write reproducible papers?
 
@@ -25,19 +25,23 @@ There are three reasons to write reproducible papers. To be right, to be reprodu
 
 ## Getting Started
 
-Fire up Rstudio and create a new RMarkdown file. Don't worry about the settings, we'll get to that later.
+Fire up Rstudio and create a new R Markdown file. Don't worry about the settings, we'll get to that later.
 
-If you click on "Knit" (or hit `CTRL+SHIFT+K`) the RMarkdown file will run and generate all results and present you with a PDF file, HTML file, or a Word file. If RStudio requests you to install packages, click yes and see whether everything works to begin with. 
+If you click on "Knit" (or hit `CTRL+SHIFT+K`) the R Markdown file will run and generate all results and present you with a PDF file, HTML file, or a Word file. If RStudio requests you to install packages, click yes and see whether everything works to begin with. 
 
-We need that before we teach you more about RMarkdown. But you should feel good if you get here already, because honestly, you're about 80% of the way to being able to write basic RMarkdown files. It's _that_ easy.
+We need that before we teach you more about R Markdown. But you should feel good if you get here already, because honestly, you're about 80% of the way to being able to write basic R Markdown files. It's _that_ easy.
 
-## Structure of an RMarkdown file
+:::{.exercise}
+Knit the R Markdown template to Word and PDF to ensure that you can get this to work. Isn't it gratifying?
+:::
 
-An RMarkdown file contains several parts. Most essential are the header, the body text, and code chunks.
+## Structure of an R Markdown file
+
+An R Markdown file contains several parts. Most essential are the header, the body text, and code chunks. When you knit the resulting document, you will get the output -- text combined with the results of running the core -- in one of a number of output formats.
 
 ### Header
 
-Headers in RMarkdown files contain some metadata about your document, which you can customize to your liking. Below is a simple example that purely states the title, author name(s), date, and output format. 
+Headers in R Markdown files contain some metadata about your document, which you can customize to your liking. Below is a simple example that purely states the title, author name(s), date, and output format.^[The header is written in "YAML", which means "yet another markup language." You don't need to know that, and don't worry about it. Just make sure you are careful with indenting, as YAML does care about that.] 
 
 ```yaml
 ---
@@ -48,15 +52,13 @@ output: html_document
 ---
 ```
 
-> ProTip: The header is written in "YAML", which means "yet another markup language." You don't need to know that, and don't worry about it. Just make sure you are careful with indenting, as YAML does care about that. 
-
-For now, go ahead and set `html_document` to `word_document`, except if you have strong preferences for `HTML` or `PDF`.^[Note: to create PDF documents you also need a TeX installation. Don't know what that is? You probably don't have it then. More info below.]
+<!-- For now, go ahead and set `html_document` to `word_docCument`, except if you have strong preferences for `HTML` or `PDF`. -->
 
 ### Body text
 
 The body of the document is where you actually write your reports. This is primarily written in the Markdown format, which is explained in the [Markdown syntax](#markdown-syntax) section.
 
-The beauty of RMarkdown is, however, that you can evaluate `R` code right in the text. To do this, you start inline code with \`r, type the code you want to run, and close it again with a \`. Usually, this key is below the escape (`ESC`) key  or next to the left SHIFT button.
+The beauty of R Markdown is, however, that you can evaluate `R` code right in the text. To do this, you start inline code with \`r, type the code you want to run, and close it again with a \`. Usually, this key is below the escape (`ESC`) key  or next to the left SHIFT button.
 
 For example, if you want to have the result of 48 times 35 in your text, you type \` r 48-35\`, which returns `r 48 - 35`. Please note that if you return a value with many decimals, it will also print these depending on your settings (for example, `r pi`).
 
@@ -74,31 +76,38 @@ x <- 1 + 1
 
 If you do not want to have the contents of the code chunk to be put into your document, you include `echo=FALSE` at the start of the code chunk. We can now use the contents from the above code chunk to print results (e.g., $x=`r x`$).
 
-These code chunks can contain whatever you need, including tables, and figures (which we will go into more later). Note that all code chunks regard the location of the RMarkdown as the working directory, so when you try to read in data use the relative path in.
+These code chunks can contain whatever you need, including tables, and figures (which we will go into more later). Note that all code chunks regard the location of the R Markdown as the working directory, so when you try to read in data use the relative path in.
+
+### Output formats
+
+By default, R Markdown renders to HTML format, the standard format of web pages. These output files are visible in the RStudio viewer and in any web-browser. These files can be shared on the web and are a great way to provide the outputs of your research to collaborators (e.g., sharing intermediate analytic results).
+
+Through a program called pandoc, R Markdown can also render to Microsoft Word's DOCX format. This functionality can be very useful for sharing editable writeups with collaborators (see below).
+
+Finally, rendering to PDF is useful
+If you want to create PDFs from R Markdown you need a \LaTeX installation on your computer. (Latex, or tex for short, is a powerful typesetting package). Many tex installations are available. One recent possibility is [TinyTEX](https://yihui.org/tinytex/), a minimal tex installaction made for working with R Markdown. Or if you want a full install, try [MikTeX](http://miktex.org/) for Windows, [MacTeX](https://tug.org/mactex/) for Mac, or [TeX Live](http://www.tug.org/texlive/) for Linux.
 
 
 ## Markdown syntax
 
-Markdown is one of the simplest document languages around, that is an open standard and can be converted into `.tex`, `.docx`, `.html`, `.pdf`, etc. This is the main workhorse of RMarkdown and is very powerful. You can [learn Markdown in five (!) minutes](https://learnxinyminutes.com/docs/markdown/) Other resources include [http://rmarkdown.rstudio.com/authoring_basics.html](), and [this cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf). 
+Markdown is one of the simplest document languages around, that is an open standard and can be converted into `.tex`, `.docx`, `.html`, `.pdf`, etc. This is the main workhorse of R Markdown and is very powerful. You can [learn Markdown in five minutes](https://learnxinyminutes.com/docs/markdown/). Other resources include [this tutorial](http://rmarkdown.rstudio.com/authoring_basics.html), and [this cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf). 
 
-You can do some pretty cool tricks with Markdown, but these are the basics:
+These are the basics:
 
 * It's easy to get `*italic*` or `**bold**`. 
 * You can get headings using `# heading1` for first level, `## heading2` for second-level, and `### heading3` for third level. Make sure you leave a space after the `#`!
 * Lists are delimited with `*` for each entry.
 * You can write links by writing `[here's my link](http://foo.com)`.
 
-If you want a more extensive description of all the potential of Markdown, [this introduction to Markdown](https://daringfireball.net/projects/markdown/) is highly detailed.
+The great thing about Markdown is that it works almost everywhere! Github, OSF, slack, many wikis, and even in text documents it looks pretty good.
 
-The great thing about Markdown is that it works almost everywhere! Github, OSF, slack, many wikis, and even in text documents it looks pretty good. I find myself writing emails in markdown just because it's a clear and consistent way to format and outline. 
-
-## Headers, Tables, and Graphs
+## Headers, graphs, and tables
 
 ### Headers 
 
 We're going to want more libraries loaded (for now we're loading them inline). 
 
-```{r}
+```{r rmarkdown-libraries, echo=TRUE}
 library(knitr)
 library(ggplot2)
 library(broom)
@@ -107,20 +116,35 @@ library(devtools)
 
 We often also add `chunk options` to each code chunk so that, for example:
 
-- code does or doesn't display inline (`echo` setting)
-- figures are shown at various sizes (`fig.width` and `fig.height` settings)
-- warnings and messages are suppressed (`warning` and `message` settings)
-- computations are cached (`cache` setting)
+* code does or doesn't display inline (`echo` setting)
+* figures are shown at various sizes (`fig.width` and `fig.height` settings)
+* warnings and messages are suppressed (`warning` and `message` settings)
+* computations are cached (`cache` setting)
 
 There are many others available as well. Caching can be very helpful for large files, but can also cause problems when there are external dependencies that change. An example that is useful for manuscripts is:
 
-```{r eval=FALSE}
+```{r eval=FALSE, echo=TRUE}
 opts_chunk$set(fig.width=8, fig.height=5, 
                echo=TRUE, 
                warning=FALSE, message=FALSE, 
                cache=TRUE)
 ```
 
+
+:::{.exercise}
+Outlining using headings is a really great way to keep things organized! Try making a bunch of headings, and then recompiling your document. 
+:::
+
+
+:::{.exercise}
+To show off your headings from the previous exercise, add a table of contents. Go to the header of the document (the `YAML`), and add some options to the `html document` bit. You want it to look like this (indentation must to be correct):
+
+```yaml
+output: 
+  html_document:
+    toc: true
+```
+:::
 
 ### Graphs
 
@@ -134,65 +158,83 @@ All you have to do is make the plot and it will render straight into the text.
 
 External graphics can also be included, as follows:
 
-```{r eval = FALSE}
+```{r rmarkdown-graphics, eval = FALSE, echo=TRUE}
 knitr::include_graphics("path/to/file")
 ```
 
 ### Tables
 
-There are many ways to make good-looking tables using RMarkdown, depending on your display purpose. 
+There are many ways to make good-looking tables using R Markdown, depending on your display purpose. 
 
-- The `knitr` package (which powers RMarkdown) comes with the `kable` function. It's versatile and makes perfectly reasonable tables. It also has a `digits` argument for controlling rounding. 
-- For HTML tables, there is the `DT` package, which provides `datatable` -- these are pretty and interactive javascript-based tables that you can click on and search in. Not great for static documents though. 
+* The `knitr` package (which powers R Markdown) comes with the `kable` function. It's versatile and makes perfectly reasonable tables. It also has a `digits` argument for controlling rounding. 
+* For HTML tables, there is the `DT` package, which provides `datatable` -- these are pretty and interactive javascript-based tables that you can click on and search in. Not great for static documents though. 
 
-- For APA manuscripts, it can also be helpful to use the `xtable` package, which creates very flexible LaTeX tables. These can be tricky to get right but they are completely customizable provided you want to google around and learn a bit about tex. 
+* For APA manuscripts, it can also be helpful to use the `xtable` package, which creates very flexible LaTeX tables. These can be tricky to get right but they are completely customizable provided you want to google around and learn a bit about tex. 
 
-We recommend starting with `kable`:
+We recommend starting with `kable`. An expression like this:
 
-```{r}
+```{r rmarkdown-kable, echo=TRUE, eval=FALSE}
 kable(head(mtcars), digits = 1)
 ```
 
+Produces tabular output like this: 
+
+```{r rmarkdown-kable2, echo=FALSE}
+kable(head(mtcars), digits = 1)
+```
+
+
+::: {.exercise}
+Using the `mtcars` dataset, insert a table and a graph of your choice into your R Markdown template document. If you're feeling uninspired, try `hist(mtcars$mpg)`.
+:::
+
+
 ### Statistics
 
-It's also really easy to include statistical tests of various types. 
+It's also really easy to include statistical tests of various types. One option is to use the `broom` package, which formats the outputs of various tests really nicely. Paired with knitr's `kable` you can make very simple tables in just a few lines of code. This expression:
 
-For this, an option is the `broom` package, which formats the outputs of various tests really nicely. Paired with knitr's `kable` you can make very simple tables in just a few lines of code. 
-
-```{r}
+```{r rmarkdown-broom, echo=TRUE, eval=FALSE}
 mod <- lm(mpg ~ hp + cyl, data = mtcars)
 kable(tidy(mod), digits = 3)
 ```
 
-Of course, cleaning these up can take some work. For example, we'd need to rename a bunch of fields to make this table have the labels we wanted (e.g., to turn `hp` into `Horsepower`). 
+produces this output: 
 
-We often need APA-formatted statistics. We can compute them first, and then print them inline.
+```{r rmarkdown-broom2, echo=FALSE}
+mod <- lm(mpg ~ hp + cyl, data = mtcars)
+kable(tidy(mod), digits = 3)
+```
 
-```{r}
+
+Cleaning these tables up for publication can take some work. For example, we'd need to rename a bunch of fields to make this table have the labels we wanted (e.g., to turn `hp` into `Horsepower`).
+
+We often need APA-formatted statistics to be printed in text, though. A good approach is to compute them first, and then print them inline. First, we'd run something like this:
+
+```{r rmarkdown-t-test, echo=TRUE}
 ts <- with(mtcars,t.test(hp[cyl==4], hp[cyl==6]))
 ```
 
+Then we'd print this:
+
 > There's a statistically-significant difference in horsepower for 4- and 6-cylinder cars  ($t(`r round(ts$parameter,2)`) = `r round(ts$statistic,2)`$, $p = `r round(ts$p.value,3)`$). 
 
-To insert these stats inline I wrote e.g. `round(ts$parameter, 2)` inside an inline code block.^[APA would require omission of the leading zero. `papaja::printp()` will let you do that, see below.]
+We did this via an inline code block: `round(ts$parameter, 2)`.^[APA would require omission of the leading zero. `papaja::printp()` will let you do that, see below.]
 
-Note that rounding can occasionally get you in trouble here, because it's very easy to have an output of $p = 0$ when in fact $p$ can never be exactly equal to 0. Nonetheless, this can help you prevent the kinds of rounding errors that would get picked up by software like `statcheck`.
+Rounding $p$ values can occasionally get you in trouble. It's very easy to have an output of $p = 0$ when in fact $p$ can never be exactly equal to 0. Nonetheless, this can help you prevent the kinds of rounding errors that would get picked up by software like `statcheck`.
 
 ## Writing APA-format papers
 
-The end-game of reproducible research is to knit your entire paper into a submittable APA-style writeup. Managing APA format is a pain in the best of times.^[Thanks to [Frederick Aust](http://github.com/crsh) for contributing much of the code in this section! For a bit more on `papaja`, check out [this guide](https://rpubs.com/YaRrr/papaja_guide).] 
+The end-game of reproducible research is to knit your entire paper into a submittable APA-style writeup. Managing APA format is a pain in the best of times. The `papaja` package allows you to circumvent this task by rendering your manuscript directly from R Markdown.^[Thanks to [Frederick Aust](http://github.com/crsh) for contributing much of the code in this section! For a bit more on `papaja`, check out [this guide](https://rpubs.com/YaRrr/papaja_guide).] 
 
-### Technical requirements
+<!-- ### Technical requirements -->
 
-We're going to use the `papaja` package. `papaja` is a R-package including a R Markdown template that can be used to produce documents that adhere to the American Psychological Association (APA) manuscript guidelines.
-
-If you want to create PDF- in addition to DOCX-files you need **[TeX](http://de.wikipedia.org/wiki/TeX) 2013 or later**. One recent possibility is [TinyTEX](https://yihui.org/tinytex/). Or if you want a full install, try [MikTeX](http://miktex.org/) for Windows, [MacTeX](https://tug.org/mactex/) for Mac, or [TeX Live](http://www.tug.org/texlive/) for Linux.
+<!-- `papaja` is a R-package including a R Markdown template that can be used to produce documents that adhere to the American Psychological Association (APA) manuscript guidelines. -->
 <!-- ^[Some Linux users may need a few additional TeX packages for the LaTeX document class `apa7` to work.] -->
 <!-- ^[For Ubuntu, we suggest running: `sudo apt-get install texlive texlive-publishers texlive-fonts-extra texlive-latex-extra texlive-humanities lmodern`.] -->
 
 `papaja` has not yet been released on CRAN but you can install it from GitHub.
 
-```{r install_papapja, eval = FALSE}
+```{r install_papaja, eval = FALSE, echo=TRUE}
 # Install devtools package if necessary
 if(!"devtools" %in% rownames(installed.packages())) install.packages("devtools")
 
@@ -200,22 +242,25 @@ if(!"devtools" %in% rownames(installed.packages())) install.packages("devtools")
 devtools::install_github("crsh/papaja")
 ```
 
-### Creating a document
-
 The APA manuscript template should now be available through the RStudio menus when creating a new R Markdown file. 
 
 When you click RStudio's *Knit* button `papaja`, `rmarkdown,` and `knitr` work together to create an APA conform manuscript that includes both your manuscript text and the results of any embedded R code.
 
-If you don't have TeX installed on your computer, or if you would like to create a Word document replace `output: papaja::apa6_pdf` with `output: papaja::apa6_word` in the document YAML header.
+<!-- If you don't have TeX installed on your computer, or if you would like to create a Word document replace `output: papaja::apa6_pdf` with `output: papaja::apa6_word` in the document YAML header. -->
 
-`papaja` provides some rendering options that only work if you use `output: papaja::apa7_pdf`.
-`figsintext` indicates whether figures and tables should be included at the end of the document---as required by APA guidelines---or rendered in the body of the document.
-If `figurelist`, `tablelist`, or `footnotelist` are set to `yes` a list of figure captions, table captions, or footnotes is given following the reference section.
-`lineno` indicates whether lines should be continuously numbered through out the manuscript.
+<!-- `papaja` provides some rendering options that only work if you use `output: papaja::apa6_pdf`. -->
+<!-- `figsintext` indicates whether figures and tables should be included at the end of the document---as required by APA guidelines---or rendered in the body of the document. -->
+<!-- If `figurelist`, `tablelist`, or `footnotelist` are set to `yes` a list of figure captions, table captions, or footnotes is given following the reference section. -->
+<!-- `lineno` indicates whether lines should be continuously numbered through out the manuscript. -->
 
-### Bibiographic management
+::: {.exercise}
+Make sure you've got `papaja`, then open a new APA template file. Compile this document, and look at how awesome it is.  Try pasting in your figure and table from your other R Markdown (don't forget any libraries you need to make it compile). 
+:::
 
-Managing a bibliography by hand is a lot of work. Letting software do this for you is much easier. In RMarkdown it's  possible to include references using `bibtex`, by using `@ref` syntax. You can do this in `papaja` but it's also possible to o it in other packages that have some kind of bibliographic handling.
+
+## Bibiographic management
+
+Managing a bibliography by hand is a lot of work. Letting software do this for you is much easier. In R Markdown it's  possible to include references using `bibtex`, by using `@ref` syntax. You can do this in `papaja` but it's also possible to o it in other packages that have some kind of bibliographic handling.
 
 It's simple. You put together a set of paper citations in a bibtex file -- then when you refer to them in text, the citations pop up formatted correctly, and they are also put in your bibliography. As an example, `@nuijten2016` results in the in text citation "@nuijten2016", or cite them parenthetically with `[@nuijten2016]` [@nuijten2016]. Take a look at the `papaja` APA example to see how this works. 
 
@@ -226,7 +271,7 @@ The references for the inserted citations are automatically added to the documen
 
 ## Collaboration 
 
-How do we collaborate using RMarkdown? There are lots of different workflows that people use. Here are a few:
+How do we collaborate using R Markdown? There are lots of different workflows that people use. Here are a few:
 
 * The lead author makes a github repository with the markdown-formatted document in it. Others read the PDF and send text comments or PDF annotations and the lead makes modifications accordingly.^[Dropbox has good PDF annotation tools for writing comments on specific lines of text.] This workflow works well when the lead author is relatively experienced and wants to keep control of the manuscript without too much line-by-line rewriting.
 * The lead author makes a repository as above, but co-authors collaborate either by pushing changes to master or by creating pull requests. This workflow works well when the authors are all fairly git-savvy, and can be great for quickly writing different parts in parallel because of git's automatic merging.^[We wrote this book using the all-github workflow, and it was pretty good, modulo some merge conflicts.]
@@ -235,35 +280,14 @@ How do we collaborate using RMarkdown? There are lots of different workflows tha
 
 In sum, there are lots of ways to collaborate -- the best thing is to talk with your co-authors to select one that works for the group. 
 
-## RMarkdown: Chapter Summary
+## R Markdown: Chapter Summary
 
-RMarkdown is a great way to write reproducible papers. It is not too tricky to learn, and once you master it you can save time by reformatting quickly and automatically, managing your bibliography automatically, and even creating nice web-compatible documents. 
+R Markdown is a great way to write reproducible papers. It is not too tricky to learn, and once you master it you can save time by reformatting quickly and automatically, managing your bibliography automatically, and even creating nice web-compatible documents. 
 
-:::{.exercise}
-Outlining using headings is a really great way to keep things organized! Try making a bunch of headings, and then recompiling your document. 
-:::
 
-:::{.exercise}
-Add a table of contents. This will involve going to the header of the document (the `YAML`), and adding some options to the `html document` bit. You want it to look like this (indentation must to be correct):
-
-```yaml
-output: 
-  html_document:
-    toc: true
-```
-
-Now recompile. Looks nice, right?^[Pro-tip: you can specify how deep the TOC should go by adding `toc_depth: 2` to go two levels deep]
-:::
 
 <!-- 3. Try adding another option: `toc_float: true`. Recompile -- super cool. There are plenty more great output options that you can modify. [Here is a link to the documentation.](http://rmarkdown.rstudio.com/html_document_format.html) -->
 
-::: {.exercise}
-Using the `mtcars` dataset, insert a table and a graph of your choice into your R Markdown template document. If you're feeling uninspired, try `hist(mtcars$mpg)`.
-:::
-
-::: {.exercise}
-Make sure you've got `papaja`, then open a new APA template file. Compile this document, and look at how awesome it is.  Try pasting in your figure and table from your other RMarkdown (don't forget any libraries you need to make it compile). 
-:::
 
 
 

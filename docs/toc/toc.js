@@ -10,11 +10,12 @@ const hover = (target, element, property) => window.addEventListener('load', () 
     isShown = true;
   }
   const toggle = () => {isShown ? hide() : show()};
-  
+
 	target.addEventListener('mouseenter', show);
 	target.addEventListener('mouseleave', hide);
-	
-	// For mobile, let the user toggle the submenus on tap
+
+	// On mobile, let the user toggle the submenus individual on tap
+	// since hover doesn't work
 	target.addEventListener('touchstart', toggle)
 
 	hide();
@@ -37,8 +38,11 @@ header.append(nav);
 TOC.querySelectorAll('li')
 .forEach(({classList, firstChild: {textContent, href}}) => {
 //	const [title] = textContent.match(/(?<=\s).+/g);
+// this is a hack to split PART titles to create the title as their first word
     const [title] = textContent.match(/\s.+/g); // safari fix
 
+  // | classList.contains('appendix') 
+  // add this to parse appendix parts
 	if (classList.contains('part')) {
 		const [, first, rest] = title.match(/([A-z]+)(.*)/);
 

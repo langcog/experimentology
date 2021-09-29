@@ -38,8 +38,11 @@ header.append(nav);
 TOC.querySelectorAll('li')
 .forEach(({classList, firstChild: {textContent, href}}) => {
 //	const [title] = textContent.match(/(?<=\s).+/g);
+// this is a hack to split PART titles to create the title as their first word
     const [title] = textContent.match(/\s.+/g); // safari fix
 
+  // | classList.contains('appendix') 
+  // add this to parse appendix parts
 	if (classList.contains('part')) {
 		const [, first, rest] = title.match(/([A-z]+)(.*)/);
 
