@@ -34,12 +34,66 @@ The towel example is a good starting point but there is much more we can do with
 ## The basics of evidence synthesis
 
 ### How *not* to synthesize evidence
+```{r echo = F}
+#--------------------------------------------------------------------------------
+# Paluck et al. meta-analysis
+# Note: I cannot perfectly reproduce their results
+#--------------------------------------------------------------------------------
+library("tidyverse")
+library("metafor")
+  
+DF <- read.csv("data/Contact_quant_outcomes.csv")
 
-When considering evidence across multiple studies, most of us intuitively count how many studies supported vs. did not support the hypothesis under investigation. Such a count usually amounts to counting the number of studies with "significant" $p$-values, since (for better or for worse) "significance" is largely what drives studies' take-home conclusions [@mcshane2017statistical; @nelson1986interpretation]. This is often called *vote-counting* [@borenstein2021introduction]. For example, in the @paluck2019contact meta-analysis, 11 of 27 (EYEBALLED) studies were significant, all with positive point estimates. So, based on this vote-count, we would have the impression that most studies do not support the contact hypothesis.^[Many narrative reviews take essentially this vote-counting approach, albeit often not explicitly. If you see this kind of practice, your first instinct should be to say "why is there no quantitative meta-analysis?"]
+
+# remove supplemental studies (see Paluck et al. Supplement Section 1)
+DF <- DF[1:27, ]
+
+# calculate total n and determine whether d estimate was significant
+DF <- DF %>% 
+  
+  rowwise() %>% 
+  
+  # calculate total n
+  mutate(n_total = n_t + n_c) %>% 
+  
+  # determine whether d estimate was significant
+    ## calculate lower and upper bounds
+    mutate(lb = d - (1.96 * sqrt(var_d)),
+           ub = d + (1.96 * sqrt(var_d))) %>% 
+    
+    ## determine significance
+    mutate(sig = if_else(
+      condition = lb > 0,
+      true = 1,
+      false = 0)) %>% 
+  
+  ungroup() %>% 
+  
+  # sort by total sample size
+  arrange(n_total)
+
+# fixed effect meta
+fe.m <- rma(yi = d,
+            vi = var_d,
+            data = DF,
+            method = "FE")
+
+# random effect meta
+re.m <- rma(yi = d,
+            vi = var_d,
+            data = DF,
+            method = "REML")
+
+# package Paluck used
+#re.m <- metaplus(yi = d, sei = se_d, random = "normal", 
+#                 data = DF)
+```
+
+When considering evidence across multiple studies, most of us intuitively count how many studies supported vs. did not support the hypothesis under investigation. Such a count usually amounts to counting the number of studies with "significant" $p$-values, since (for better or for worse) "significance" is largely what drives studies' take-home conclusions [@mcshane2017statistical; @nelson1986interpretation]. This is often called *vote-counting* [@borenstein2021introduction]. For example, in the @paluck2019contact meta-analysis, all studies yielded positive effect sizes, but only approximately `r sum(DF$sig)` of `r nrow(DF)` were significant. So, based on this vote-count, we would have the impression that most studies do not support the contact hypothesis.^[Many narrative reviews take essentially this vote-counting approach, albeit often not explicitly. If you see this kind of practice, your first instinct should be to say "why is there no quantitative meta-analysis?"]
 
 Despite its intuitive appeal, vote-counting can be very misleading because this approach characterizes evidence solely in terms of dichotomized $p$-values, while entirely ignoring effect sizes. In Chapter \@ref(replication), we saw how this fetishism of statistical significance can mislead us when we consider individual studies. These problems propagate if we vote-count statistical significance across studies as well. For example, it could be the case that relatively few studies are significant (for example, in a literature of typically small studies), yet if the studies typically have large point estimates, then the consensus of evidence could actually be quite strong. Or inversely, it could be that nearly all studies are significant, but if they typically have small point estimates, then the consensus of evidence might still be rather weak. In these cases, vote-counting could lead us badly astray [@borenstein2021introduction].
 
-To avoid these pitfalls, a principled evidence synthesis needs to account for effect sizes themselves. How about if we just average the studies' estimates? For example, in Paluck et al.'s meta-analysis, the mean of the studies' estimates is XXX. This approach is perhaps a step in the right direction, but still has some important limitations. In particular, this approach gives equal weight to each study, such that a small study (like Hull et al., with a sample size of XXX \[note: this had the second-smallest RE weight\]) contributes as much to the mean effect size as a large study (like Boisjoly et al., with a sample size of XXX \[note: this had the highest RE weight\]). That doesn't make sense: larger studies should clearly carry more weight in the analysis. This brings us to our first principled approach to meta-analysis, namely fixed-effects meta-analysis.
+To avoid these pitfalls, a principled evidence synthesis needs to account for effect sizes themselves. How about if we just average the studies' estimates? For example, in Paluck et al.'s meta-analysis, the mean of the studies' estimates is `r mean(DF$d)` This approach is perhaps a step in the right direction, but still has some important limitations. In particular, this approach gives equal weight to each study, such that a small study (like Clunies-Ross and O'Meara, 1989, with a sample size of `r DF[1, ]$n_total`) contributes as much to the mean effect size as a large study (like Boisjoly et al., 2006, with a sample size of `r DF[27, ]$n_total`). That doesn't make sense: larger studies should clearly carry more weight in the analysis. This brings us to our first principled approach to meta-analysis, namely fixed-effects meta-analysis.
 
 ### Combining results across studies using fixed-effects meta-analysis
 
@@ -55,7 +109,7 @@ In Paluck et al.'s meta-analysis, we would calculate the fixed-effects estimate,
 
 > \[SHOW ARITHMETIC FOR THE FIRST FEW STUDIES\].
 
-We thus estimate that the effect size in this studies is a standardized mean difference of $\widehat{\mu} = XXX$; 95% confidence interval: \[XXX\]; $p=$XXX. That is, we estimated that intergroup contact was associated with a decrease in prejudice of XXX standard deviations.
+We thus estimate that the effect size in this studies is a standardized mean difference of $\widehat{\mu} = `r round(as.numeric(fe.m$b), 2)`$; 95% confidence interval [`r paste0(round(fe.m$ci.lb, 2), ", ", round(fe.m$ci.ub, 2))`]; $p=$ < .001. That is, we estimated that intergroup contact was associated with a decrease in prejudice of `r round(as.numeric(fe.m$b), 2)` standard deviations.
 
 ### Limitations of fixed-effects meta-analysis
 
@@ -83,7 +137,7 @@ Additionally, we estimated that the standard deviation of population effects was
 
 <!-- ### Applied example -->
 
-Conducting a random-effects meta-analysis of Paluck et al.'s dataset yields $\widehat{\mu} = XXX$; 95% confidence interval: \[XXX\]; $p=$XXX. That is, we estimated that, *on average across studies*, intergroup contact was associated with a decrease in prejudice of XXX standard deviations.
+Conducting a random-effects meta-analysis of Paluck et al.'s dataset yields $\widehat{\mu} = `r round(as.numeric(re.m$b), 2)`$; 95% confidence interval[`r paste0(round(re.m$ci.lb, 2), ", ", round(re.m$ci.ub, 2))`]; $p=$ < .001. That is, we estimated that, *on average across studies*, intergroup contact was associated with a decrease in prejudice of round(as.numeric(re.m$b), 2) standard deviations.
 
 <!-- > [COULD INCLUDE A NORMAL DENSITY TO ILLUSTRATE THE FITTED DISTRIBUTION - GOOD IDEA (MCF)] -->
 
