@@ -69,10 +69,6 @@ Second, we try to find the values of the population parameters that make our obs
 
 [^10]: estimation-10
 
-[^11]: You might wonder why we needed to posit a model to arrive at this seemingly obvious estimate. It turns out that there are distributions, like the Laplace distribution, for which the sample mean is actually *not* the maximum likelihood estimate. \[MM: Feel free to remove if this is too technical.\]
-
-[^11]: estimation-10
-
 ### Estimating variation in ratings
 
 Let's visualize our 24 milk-first tea ratings. Since ratings on our scale are discrete, Figure \@ref(fig:estimation-milk-hist) shows them as a histogram. Our estimate of the mean, $\widehat{\theta_{milk first}}$, is shown as a blue dashed line.
@@ -122,13 +118,13 @@ $$
 \color{purple}{p(\theta | d)} = \frac{\color{red}{p(d | \theta )} \color{blue}{p(\theta )}}{\color{black}{p(d)}}.
 $$
 
-\noindent Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(\theta |d)$) is called the **posterior probability** -- it tell us what we should believe about the participant's ability given the data we observed. We then break that down into two terms in the numerator.[^12]
+\noindent Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(\theta |d)$) is called the **posterior probability** -- it tell us what we should believe about the participant's ability given the data we observed. We then break that down into two terms in the numerator.[^11]
 
-[^12]: We're making the posterior `r colorize("purple","purple")` to indicate the combination of likelihood (`r colorize("red","red")`) and prior (`r colorize("blue","blue")`).
+[^11]: We're making the posterior `r colorize("purple","purple")` to indicate the combination of likelihood (`r colorize("red","red")`) and prior (`r colorize("blue","blue")`).
 
-The first part of the numerator is $p(d|h)$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.[^13] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the tea is of high quality (say $\theta = 6.5$) then the probability of a bunch of low accuracy observations will be fairly low.
+The first part of the numerator is $p(d|h)$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.[^12] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the tea is of high quality (say $\theta = 6.5$) then the probability of a bunch of low accuracy observations will be fairly low.
 
-[^13]: Speaking informally, "likelihood" is just a synonym for probability, but this is a technical meaning for the term, which can get a bit confusing.
+[^12]: Speaking informally, "likelihood" is just a synonym for probability, but this is a technical meaning for the term, which can get a bit confusing.
 
 The second term in the numerator, $p(\theta )$, is called the **prior**. This term encodes our beliefs about the likely distribution of tea quality. Intuitively, if we think that the tea is likely of high quality, we should require more evidence to convince us that it's bad. In contrast, if we think it's probably bad, a few examples of low ratings might serve to convince us.
 
@@ -164,33 +160,33 @@ The second term in the numerator, $p(\theta )$, is called the **prior**. This te
 
 # FIXME
 
-Figure \@ref(fig:inference-bayes-demo) gives an example of the combination of prior and data.[^14] For the sake of this example, we assume that we have run 12 tea discrimination trials and observed 9 successes and 3 failures. The evidence alone -- with no prior -- suggests a discrimination estimate of $9/12 = .75$ (the maximum likelihood estimate). When we use a flat prior, we get the same estimate of `r bayes$map[bayes$label == "Flat"][1]`.[^15] In contrast, if we go in assuming that discrimination is likely to be absent or weak, we are biased downward in our eventual estimate of `r bayes$map[bayes$label == "Prior: no discrimination"][1]`; if we go in assuming good discrimination, we end up biased upwards to `r bayes$map[bayes$label == "Prior: discrimination"][1]`.
+Figure \@ref(fig:inference-bayes-demo) gives an example of the combination of prior and data.[^13] For the sake of this example, we assume that we have run 12 tea discrimination trials and observed 9 successes and 3 failures. The evidence alone -- with no prior -- suggests a discrimination estimate of $9/12 = .75$ (the maximum likelihood estimate). When we use a flat prior, we get the same estimate of `r bayes$map[bayes$label == "Flat"][1]`.[^14] In contrast, if we go in assuming that discrimination is likely to be absent or weak, we are biased downward in our eventual estimate of `r bayes$map[bayes$label == "Prior: no discrimination"][1]`; if we go in assuming good discrimination, we end up biased upwards to `r bayes$map[bayes$label == "Prior: discrimination"][1]`.
 
-[^14]: The model we use for this example is called a **Beta-Binomial conjugate model** and is a very convenient model for working with count data representing successes and failures.
+[^13]: The model we use for this example is called a **Beta-Binomial conjugate model** and is a very convenient model for working with count data representing successes and failures.
 
-[^15]: In general, Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior or as you get infinite data ($n \to \infty$). Bayesian estimation is most important when you have strong beliefs and not a lot of data.
+[^14]: In general, Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior or as you get infinite data ($n \to \infty$). Bayesian estimation is most important when you have strong beliefs and not a lot of data.
 
 ### Estimating a treatment effect
 
-We've now covered estimating a single parameter (the mean in just the milk-first group) using both frequentist and Bayesian methods. But recall that what we really wanted to do was to estimate the causal effect[^16] we were interested in, namely the milk-first vs. tea-first effect. We could refer to this as our **treatment effect**, called $\Delta$. In practice, this is going to be a pretty straightforward extension.
+We've now covered estimating a single parameter (the mean in just the milk-first group) using both frequentist and Bayesian methods. But recall that what we really wanted to do was to estimate the causal effect[^15] we were interested in, namely the milk-first vs. tea-first effect. We could refer to this as our **treatment effect**, called $\Delta$. In practice, this is going to be a pretty straightforward extension.
 
-[^16]: I'd suggest framing this section as "estimating a between-group difference" rather than "estimating a treatment effect" since, as noted above, nothing in this chapter seems specific to causal inference.
+[^15]: I'd suggest framing this section as "estimating a between-group difference" rather than "estimating a treatment effect" since, as noted above, nothing in this chapter seems specific to causal inference.
 
 In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution, but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let's term the parameters for the tea-first group $\theta_{teafirst}$ and $\sigma_{teafirst}$. To estimate the treatment effect, we are positing a **model** in which the milk-first ratings are normal with mean $\theta_{milkfirst} = \theta_{teafirst} + \Delta$ with standard deviation $\sigma_{milkfirst}$. As in the one-sample case (i.e., estimating the mean of just the milk-first group), maximum likelihood estimation would then proceed by finding the value of $\Delta$ that makes the data most likely under the assumed model. As you'd probably expect, this estimate $\widehat{\Delta}$ turns out to be simply the difference in sample means, $\theta_{milkfirst} - \theta_{teafirst}$.
 
-In the Bayesian framework, we would again specify a prior, $p(\Delta )$, that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could again specify a flat prior, $p(\Delta ) \propto 1$. If we believe the treatment effect is likely to favor milk-first pouring ($\Delta>0$), we could specify a normal prior centered at some positive value (e.g., $\Delta=0.5$); the standard deviation of this prior would encode how certain we are about our prior beliefs. If we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at 0, which has the effect of "shrinking" the estimates closer to 0.[^17]
+In the Bayesian framework, we would again specify a prior, $p(\Delta )$, that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could again specify a flat prior, $p(\Delta ) \propto 1$. If we believe the treatment effect is likely to favor milk-first pouring ($\Delta>0$), we could specify a normal prior centered at some positive value (e.g., $\Delta=0.5$); the standard deviation of this prior would encode how certain we are about our prior beliefs. If we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at 0, which has the effect of "shrinking" the estimates closer to 0.[^16]
 
-[^17]: Note that the measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Of course, this is only one kind of uncertainty, and a more holistic view of the overall credibility of an estimate must also account for study design and bias, for example.
+[^16]: Note that the measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Of course, this is only one kind of uncertainty, and a more holistic view of the overall credibility of an estimate must also account for study design and bias, for example.
 
 ## Variability and Precision
 
 \[NC: I have a slight preference for calling this section Precision and Uncertainty\]
 
-In the previous section, we discussed how to estimate means and differences in means from our observed data.[^18] These so-called "point estimates" represent our best guesses about the population parameters given the data and possibly also given our prior beliefs. But on their own, point estimates do not say anything about how much statistical uncertainty is involved in these point estimates.[^19] If we were to repeat the tea-tasting experiment with 500 participants instead of 48, it's clear intuitively that we would have less uncertainty with 500 participants, even if the point estimates happened to be identical.
+In the previous section, we discussed how to estimate means and differences in means from our observed data.[^17] These so-called "point estimates" represent our best guesses about the population parameters given the data and possibly also given our prior beliefs. But on their own, point estimates do not say anything about how much statistical uncertainty is involved in these point estimates.[^18] If we were to repeat the tea-tasting experiment with 500 participants instead of 48, it's clear intuitively that we would have less uncertainty with 500 participants, even if the point estimates happened to be identical.
 
-[^18]: I'd suggest moving all of "Variability and Precision" to the inference chapter to maintain the clean conceptual distinction between estimation and inference.
+[^17]: I'd suggest moving all of "Variability and Precision" to the inference chapter to maintain the clean conceptual distinction between estimation and inference.
 
-[^19]: Note that the measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Of course, this is only one kind of uncertainty, and a more holistic view of the overall credibility of an estimate must also account for study design and bias, for example.
+[^18]: Note that the measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Of course, this is only one kind of uncertainty, and a more holistic view of the overall credibility of an estimate must also account for study design and bias, for example.
 
 Why is this so? To characterize the uncertainty in an estimate, it helps to picture what is called its **sampling distribution**, which is the distribution *of the estimate itself* across different, hypothetical samples. That is, let's imagine -- purely hypothetically -- that we conducted the tea experiment with $n=48$ not just once, but hundreds or even thousands of times. Each time, we use similar recruitment methods to recruit a new sample of participants, and we estimate $\widehat{\Delta}$ in that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability. If we plotted these estimates, $\widehat{\Delta}$, across thousands of samples, we would get the sampling distribution:
 
