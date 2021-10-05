@@ -57,6 +57,42 @@ Taking the sample mean as our estimate $\widehat{\theta}$ is an example of an es
 
 Second, we try to find the values of the population parameters that make our observed data as likely as possible. For example, if our sample mean is $\widehat{\theta_{milk first}} = 4.5$, what underlying value of $\theta_{milk first}$ would make these data most likely to occur? Well, suppose the underlying parameter were $\theta_{milk first}=2.5$. Then it would be pretty unlikely that our sample mean would be so much bigger. So $\theta_{milk first}=2.5$ is a poor guess for the population parameter based on these data. Conversely, if the parameter were $\theta_{milk first}=6.5$, it would be a bit unlikely that our sample mean would be so much *smaller*. The value of $\theta_{milk first}$ that makes these data most likely is just 4.5 itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate.
 
+### Estimating variation 
+
+Let's visualize our 24 milk-first tea ratings. Since ratings on our scale are discrete, Figure \@ref(fig:estimation-milk-hist) shows them as a histogram. Our estimate of the mean, $\widehat{\theta_{milk first}}$, is shown as a blue dashed line. 
+
+Our observations are clustered around the mean, but they also show some variation. Some are higher and some are lower. Variation of this type is a critical feature of every data set. This variation can be described via a **probability distribution**, a mathematical entity that describes the properties of possible datasets. The only probability distribution we'll discuss here is the ubiquitous **normal distribution** (also sometimes called a "gaussian distribution"). A normal distribution has two **parameters**, a mean and a **standard deviation**. These two parameters define the shape of the curve. The mean describes where its center goes, and the standard deviation describes how wide it is. 
+
+The blue curve shown in Figure \@ref(fig:estimation-milk-first) is the normal distribution that is closest to the data in our milk-first condition. Its mean is of course $\widehat{\theta_{milk first}}$, the parameter we just estimated. But to plot this curve, we also had to estimate the standard deviation. It turns out that the standard deviation is just exactly what its name says: the average deviation between the mean and any given observation. We won't discuss how to estimate the standard deviation for your sample here, since this would take us into statistical theory. What's important for now is just that the standard deviation gives us a way to describe the width of the normal distribution.
+
+```{r estimation-data}
+tea_data <- tibble(condition = c(rep("milk first", 24),
+                                 rep("tea first", 24)),
+                   rating = c(round(rnorm(24, mean = 5.5, sd = 1)), 
+                              round(rnorm(24, mean = 4.5, sd = 1)))) |>
+  mutate(rating = ifelse(rating > 7, 7, rating), #truncate
+         rating = ifelse(rating < 1, 1, rating))
+```
+
+```{r estimation-milk-hist, fig.cap="Ratings of the quality of milk-first tea, with the best fitting normal distribution shown in blue (mean shown by the dashed line)."}
+td <- filter(tea_data, condition == "milk first")
+ggplot(td, aes(x = rating)) + 
+  geom_histogram(aes(y = ..count..), binwidth = 1) + 
+  xlim(1,7) + 
+  geom_vline(xintercept = mean(td$rating), lty = 2, col = "blue") + 
+  stat_function(fun = function(x) 
+    {dnorm(x, mean = mean(td$rating), sd = sd(td$rating)) * 24}, 
+    col = "blue") +
+  ylab("Number of ratings") + 
+  xlab("Quality rating (1-7)")
+
+```
+
+
+Introduce normal distribution and standard deviation.
+
+
+
 ### Bayesian estimation
 
 Before we perform our tea experiment, we don't know exactly what $\theta$ will be, but it seems a bit unlikely that tea would be rated as either horrible or perfect. We have what you might call *weak prior expectations* about the kinds of ratings we'll receive. 
@@ -82,44 +118,54 @@ The first part of the numerator is $p(d|h)$, the probability of the data we obse
 The second term in the numerator, $p(\theta )$, is called the **prior**. This term encodes our beliefs about the likely distribution of tea quality. Intuitively, if we think that the tea is likely of high quality, we should require more evidence to convince us that it's bad. In contrast, if we think it's probably bad, a few examples of low ratings might serve to convince us.
 
 ```{r inference-bayes-demo, fig.cap="Examples of Bayesian inference about tea discrimination ability under three different priors (facets). Blue lines give the prior probability distribution, red lines give the likelihood of the data, and purple lines give the posterior distribution from combining likelihood and prior."}
-bayes <- expand_grid(x = seq(0,1,.01), a = c(1, 3, 6)) %>%
-  mutate(b = case_when(a == 1 ~ 1, 
-                       a == 3 ~ 3, 
-                       a == 6 ~ 2)) %>%
-  rowwise %>%
-  mutate(h = dbeta(x = x, shape1 = a, shape2 = b),
-         d_given_h = dbeta(x = x, shape1 = 9, shape2 = 3),
-         h_given_d = dbeta(x = x, shape1 = a + 9, shape2 = b + 3)) %>%
-  group_by(a,b) %>%
-  mutate(h_norm = h / sum(h), 
-         h_given_d_norm = h_given_d / sum(h_given_d), 
-         d_given_h_norm = d_given_h / sum(d_given_h), 
-         map = x[h_given_d == max(h_given_d)],
-         label = case_when(a == 1 ~ "Flat",
-                           a == 3 ~ "Prior: no discrimination",
-                           a == 6 ~ "Prior: discrimination"), 
-         label = fct_relevel(label, "Flat", "prior: no discrimination"))
-
-ggplot(bayes, aes(x = x, y = h_norm)) + 
-  geom_line(col = "blue") +
-  geom_line(aes(y = h_given_d_norm), col = "purple") +
-  geom_line(aes(y = d_given_h_norm), col = "red") +
-  geom_vline(xintercept = .5, lty = 2) + 
-  geom_vline(aes(xintercept = map), col = "purple", lty = 3) + 
-  facet_wrap(~label) + 
-  ylab("Normalized probability") +
-  xlab("Discrimination level")
+# FIXME
+# 
+# bayes <- expand_grid(x = seq(1,7,.1), 
+#                      mu = c(2.5, 4.5, 6.5)) |>
+#   rowwise() |>
+#   mutate(h = rnorm(x = x, mean = mu, sd = 1),
+#          d_given_h = rnorm(x = x, mean = mu, sd = 1,
+#          h_given_d = rnorm(x = x, mean = mu, sd = 1) %>%
+#   group_by(a,b) %>%
+#   mutate(h_norm = h / sum(h), 
+#          h_given_d_norm = h_given_d / sum(h_given_d), 
+#          d_given_h_norm = d_given_h / sum(d_given_h), 
+#          map = x[h_given_d == max(h_given_d)],
+#          label = case_when(a == 1 ~ "Flat",
+#                            a == 3 ~ "Prior: no discrimination",
+#                            a == 6 ~ "Prior: discrimination"), 
+#          label = fct_relevel(label, "Flat", "prior: no discrimination"))
+# 
+# ggplot(bayes, aes(x = x, y = h_norm)) + 
+#   geom_line(col = "blue") +
+#   geom_line(aes(y = h_given_d_norm), col = "purple") +
+#   geom_line(aes(y = d_given_h_norm), col = "red") +
+#   geom_vline(xintercept = .5, lty = 2) + 
+#   geom_vline(aes(xintercept = map), col = "purple", lty = 3) + 
+#   facet_wrap(~label) + 
+#   ylab("Normalized probability") +
+#   xlab("Discrimination level")
 ```
 
+# FIXME
 Figure \@ref(fig:inference-bayes-demo) gives an example of the combination of prior and data.[^estimation-8] For the sake of this example, we assume that we have run 12 tea discrimination trials and observed 9 successes and 3 failures. The evidence alone -- with no prior -- suggests a discrimination estimate of $9/12 = .75$ (the maximum likelihood estimate). When we use a flat prior, we get the same estimate of `r bayes$map[bayes$label == "Flat"][1]`.[^estimation-9] In contrast, if we go in assuming that discrimination is likely to be absent or weak, we are biased downward in our eventual estimate of `r bayes$map[bayes$label == "Prior: no discrimination"][1]`; if we go in assuming good discrimination, we end up biased upwards to `r bayes$map[bayes$label == "Prior: discrimination"][1]`.
 
 [^estimation-8]: The model we use for this example is called a **Beta-Binomial conjugate model** and is a very convenient model for working with count data representing successes and failures.
 
 [^estimation-9]: In general, Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior or as you get infinite data ($n \to \infty$). Bayesian estimation is most important when you have strong beliefs and not a lot of data.
 
+### Estimating a treatment effect
+
+We've now covered estimating a single parameter using both frequentist and Bayesian methods. But recall that what we really wanted to do was to estimate the causal effect we were interested in, namely the milk-first vs. tea-first effect. We could refer to this as our **treatment effect**. In practice, this is going to be a pretty straightforward extension.
+
+In the maximum likelihood framework, we need to ...
+
+In the Bayesian framework ...
+
+
 ## Variability and Precision
 
-<!-- NC: I THINK IT MAY MAKE SENSE TO TALK ABOUT VARIABILITY AND PRECISION BEFORE MEASURES OF EFFECT SIZE. TWO REASONS. ONE: BECUASE OUR RUNNING EXAMPLE IN THE EFFECT SIZE SECTION CURRENTLY DISCUSSES SD A LOT. TWO: BECAUSE THIS SECTION MAKES A DISTINCTION BETWEEN FREQ VS. BAYESIAN THAT ISN'T CURRENTLY MADE IN THE EFFECT SIZE SECTION-->
+In the previous section, we discussed how to estimate the mean and standard deviation of our observed data. These summary statistics are helpful for ...
 
 ### Standard error of the mean
 
