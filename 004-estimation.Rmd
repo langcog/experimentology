@@ -19,7 +19,7 @@
 
 <!-- * Idea of a sampling distribution (or could go in "Inference") -->
 
-In the first section of this book, our goal was to set up some of the theoretical ideas that motivate our approach to experimental design and planning. We introduced our key thesis, namely that experiments are about measuring causal effects. We also began to discuss some of our key themes, including precision of measurement, reduction of bias, and generalization across populations. In this next section of the book, treating statistical topics, we will integrate these ideas with an analytic toolkit for **estimating** causal effects, **quantifying the size and precision** of estimates (this chapter), making **inferences** about the evidence for such effects (Chapter \@ref(inference)), and making **models** for estimation and inference in more complex settings (Chapter \@ref(models)). Although this book is not a statistics text, we hope that these chapters provide some practical foundations for beginning the statistical analysis of your experimental data.
+In the first section of this book, our goal was to set up some of the theoretical ideas that motivate our approach to experimental design and planning. We introduced our key thesis, namely that experiments are about measuring causal effects. We also began to discuss some of our key themes, including precision of measurement, reduction of bias, and generalization across populations. In this next section of the book, treating statistical topics, we will integrate these ideas with an analytic toolkit for **estimating** causal effects[^MM-1], **quantifying the size and precision** of estimates (this chapter), making **inferences** about the evidence for such effects (Chapter \@ref(inference)), and making **models** for estimation and inference in more complex settings (Chapter \@ref(models)). Although this book is not a statistics text, we hope that these chapters provide some practical foundations for beginning the statistical analysis of your experimental data.
 
 ::: {.case-study}
 🔬 Case study: The Lady Tasting Tea
@@ -31,6 +31,8 @@ The basic schema of the experiment was that the lady would have to judge a set o
 One important element of the experiment that was unusual was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounders. Fisher recognized that this strategy was insufficient and that random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk). We discussed the causal power of random assignment in Chapter \@ref(intro) -- this experiment is a key touchstone in the popularization of randomized experiments![^estimation-3]
 :::
 
+[^MM-1]: Minor, but I don't think anything in this chapter is specific to **causal** effects.
+
 [^estimation-1]: An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed Social Darwinist who believed fervently in Eugenic legislation. These views are repugnant.
 
 [^estimation-2]: If you're interested in this history, we recommend @salsburg2001's delightful book, "The Lady Tasting Tea," about the origins of modern statistics.
@@ -41,11 +43,16 @@ One important element of the experiment that was unusual was its treatment of de
 
 If experiments are about estimating effects, how do we actually use our experimental data to make these estimates? With apologies to Fisher, for our example we'll design a slightly more modern version of his experiment using a forced-choice judgment measure and a between-participants design. Our causal theory is that the tea quality is affected by milk ordering, so we'll test that by rating tea quality both milk-first and tea-first. We'll do this as a field trial in a local cafe: when people order tea with milk, we'll randomly present it milk-first or tea-first and then elicit a rating on a Likert scale from 1 (terrible) to 7 (delicious). We'll do this for 48 customers and then take a look at the data.^[Right now we're going to assume that our ratings are just simple numerical values and not worry about the fact that they come from a rating scale. This is what people often do, though it can cause problems in certain cases. If you're curious about Likert scales, we'll talk a bit more about them in Chapter \@ref(measurement).]
 
-Eventually, we'll want to estimate the effect of milk-first preparation on quality ratings. But for now, our goal will be to estimate the quality of the tea when it is milk-first [the better way, according to some data; @kennedy2003]. More formally, we want to use our **sample** of 24 milk-first tea judgments to estimate a **population parameter** that we can't directly observe, namely the true perceived quality of all possible milk-first cups. Here we're looking at this simple estimation problem rather than the more familiar problem where we have a sample of different people from a population and we want to try and estimate the population parameter. In Chapter \@ref(models) we'll talk more about modeling variability across experimental participants from a population.
+Eventually, we'll want to estimate the effect of milk-first preparation on quality ratings. But for now, our goal will be to estimate the quality of the tea when it is milk-first [the better way, according to some data; @kennedy2003]. More formally, we want to use our **sample** of 24 milk-first tea judgments to estimate a **population parameter** that we can't directly observe, namely the true perceived quality of all possible milk-first cups. Here we're looking at this simple estimation problem rather than the more familiar problem where we have a sample of different people from a population and we want to try and estimate the population parameter.[^MM-2] In Chapter \@ref(models) we'll talk more about modeling variability across experimental participants from a population.
 
-We'll try to go easy on notation but some amount will make things clearer. We will use $\theta$ ("theta") to denote the parameter we want to estimate (the "estimand") and $\widehat{\theta}$ its sample estimate.[^estimation-4] This is the probability that the lady is correct in her judgment.
+
+We'll try to go easy on notation but some amount will make things clearer. We will use $\theta$ ("theta") to denote the parameter we want to estimate (the "estimand") and $\widehat{\theta}$ its sample estimate.[^estimation-4] This is the probability that the lady is correct in her judgment.[^MM-3]
 
 [^estimation-4]: Statisticians use "hats" like this to denote sample estimates. One way to remember this is that the "person in the hat" is wearing a hat to dress up as the actual quantity. Feel free to ignore this but it helps us.
+
+[^MM-2]: I don't think I understand the distinction. In the tea case, are we not estimating a population parameter (the causal effect of milk ordering) based on a sample?
+
+[^MM-3]: Out of date
 
 ### Maximum likelihood estimation
 
@@ -53,23 +60,26 @@ OK, you are probably saying, if we we want our estimate of milk-first quality, s
 
 Taking the sample mean as our estimate $\widehat{\theta}$ is an example of an estimation approach called **maximum likelihood estimation**. In general terms, maximum likelihood estimation is a two-step process. First, we assume a **model** for how the data were generated. This model is specified in terms of certain population parameters. In our example, the "model" is as simple as they come: we just assume there is some level of tea quality such that people's ratings are sampled from a normal distribution with mean $\theta_{milk first}$.[^estimation-5]
 
-[^estimation-5]: In other problems, like multi-variable regression, the model is more complicated, for example involving more than one regression coefficient -- that's what we'll get to in Chapter \@ref(models).
+[^estimation-5]: In other problems, like multivariable regression, the model is more complicated, for example involving more than one regression coefficient -- that's what we'll get to in Chapter \@ref(models).
 
-Second, we try to find the values of the population parameters that make our observed data as likely as possible. For example, if our sample mean is $\widehat{\theta_{milk first}} = 4.5$, what underlying value of $\theta_{milk first}$ would make these data most likely to occur? Well, suppose the underlying parameter were $\theta_{milk first}=2.5$. Then it would be pretty unlikely that our sample mean would be so much bigger. So $\theta_{milk first}=2.5$ is a poor guess for the population parameter based on these data. Conversely, if the parameter were $\theta_{milk first}=6.5$, it would be a bit unlikely that our sample mean would be so much *smaller*. The value of $\theta_{milk first}$ that makes these data most likely is just 4.5 itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate.
 
-### Estimating variation 
+Second, we try to find the values of the population parameters that make our observed data as likely as possible. For example, if our sample mean is $\widehat{\theta_{milk first}} = 4.5$, what underlying value of $\theta_{milk first}$ would make these data most likely to occur? Well, suppose the underlying parameter were $\theta_{milk first}=2.5$. Then it would be pretty unlikely that our sample mean would be so much bigger. So $\theta_{milk first}=2.5$ is a poor guess for the population parameter based on these data. Conversely, if the parameter were $\theta_{milk first}=6.5$, it would be a bit unlikely that our sample mean would be so much *smaller*. The value of $\theta_{milk first}$ that makes these data most likely is just 4.5 itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate.^[estimation-10]
+
+^[estimation-10]: You might wonder why we needed to posit a model to arrive at this seemingly obvious estimate. It turns out that there are distributions, like the Laplace distribution, for which the sample mean is actually *not* the maximum likelihood estimate. [MM: Feel free to remove if this is too technical]
+
+### Estimating variation in ratings
 
 Let's visualize our 24 milk-first tea ratings. Since ratings on our scale are discrete, Figure \@ref(fig:estimation-milk-hist) shows them as a histogram. Our estimate of the mean, $\widehat{\theta_{milk first}}$, is shown as a blue dashed line. 
 
-Our observations are clustered around the mean, but they also show some variation. Some are higher and some are lower. Variation of this type is a critical feature of every data set. This variation can be described via a **probability distribution**, a mathematical entity that describes the properties of possible datasets. The only probability distribution we'll discuss here is the ubiquitous **normal distribution** (also sometimes called a "gaussian distribution"). A normal distribution has two **parameters**, a mean and a **standard deviation**. These two parameters define the shape of the curve. The mean describes where its center goes, and the standard deviation describes how wide it is. 
+Our observations are clustered around the mean, but they also show some variation. Some are higher and some are lower. Variation of this type is a critical feature of every data set. This variation can be described via a **probability distribution**, a mathematical entity that describes the properties of possible datasets. The only probability distribution we'll discuss here is the ubiquitous **normal distribution** (also sometimes called a "Gaussian distribution"). A normal distribution has two **parameters**, a mean and a **standard deviation**. These two parameters define the shape of the curve. The mean describes where its center goes, and the standard deviation describes how wide it is. 
 
-The blue curve shown in Figure \@ref(fig:estimation-milk-first) is the normal distribution that is closest to the data in our milk-first condition. Its mean is of course $\widehat{\theta_{milk first}}$, the parameter we just estimated. But to plot this curve, we also had to estimate the standard deviation. It turns out that the standard deviation is just exactly what its name says: the average deviation between the mean and any given observation. We won't discuss how to estimate the standard deviation for your sample here, since this would take us into statistical theory. What's important for now is just that the standard deviation gives us a way to describe the width of the normal distribution.
+The blue curve shown in Figure \@ref(fig:estimation-milk-first) is the normal distribution that is closest to the data in our milk-first condition. Its mean is of course $\widehat{\theta_{milk first}}$, the parameter we just estimated. But to plot this curve, we also had to estimate the standard deviation. It turns out that the standard deviation is just exactly what its name says: the average deviation between the mean and any given observation. We won't discuss how to estimate the standard deviation for your sample here, since this would take us into statistical theory. What's important for now is just that the standard deviation gives us a way to describe the width of the normal distribution.[^MM-]
 
 ```{r estimation-data}
 tea_data <- tibble(condition = c(rep("milk first", 24),
                                  rep("tea first", 24)),
                    rating = c(round(rnorm(24, mean = 5.5, sd = 1)), 
-                              round(rnorm(24, mean = 4.5, sd = 1)))) |>
+                              round(rnorm(24, mean = 4.5, sd = 1))) ) %>%
   mutate(rating = ifelse(rating > 7, 7, rating), #truncate
          rating = ifelse(rating < 1, 1, rating))
 ```
@@ -91,6 +101,7 @@ ggplot(td, aes(x = rating)) +
 
 Introduce normal distribution and standard deviation.
 
+[^MM-5]: Seems strange to use a misspecified model for the opening example (i.e., assuming normal density when data are truncated normal). Seems better to generate from a distribution closer to normal, e.g., by reducing SD until there's not much truncation.
 
 
 ### Bayesian estimation
@@ -156,20 +167,54 @@ Figure \@ref(fig:inference-bayes-demo) gives an example of the combination of pr
 
 ### Estimating a treatment effect
 
-We've now covered estimating a single parameter using both frequentist and Bayesian methods. But recall that what we really wanted to do was to estimate the causal effect we were interested in, namely the milk-first vs. tea-first effect. We could refer to this as our **treatment effect**. In practice, this is going to be a pretty straightforward extension.
+We've now covered estimating a single parameter (the mean in just the milk-first group) using both frequentist and Bayesian methods. But recall that what we really wanted to do was to estimate the causal effect[^MM-6] we were interested in, namely the milk-first vs. tea-first effect. We could refer to this as our **treatment effect**, called $\Delta$. In practice, this is going to be a pretty straightforward extension. 
 
-In the maximum likelihood framework, we need to ...
+In the maximum likelihood framework, we could posit that ratings in each (milk-first and tea-first) follow a normal distribution, but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let's term the parameters for the tea-first group $\theta_{teafirst}$ and $\sigma_{teafirst}$. To estimate the treatment effect, we are positing a **model** in which the milk-first ratings are normal with mean $\theta_{milkfirst} = \theta_{teafirst} + \Delta$ with standard deviation $\sigma_{milkfirst}$. As in the one-sample case (i.e., estimating the mean of just the milk-first group), maximum likelihood estimation would then proceed by finding the value of $\Delta$ that makes the data most likely under the assumed model. As you'd probably expect, this estimate $\widehat{\Delta}$ turns out to be simply the difference in sample means, $\theta_{milkfirst} - \theta_{teafirst}$.
 
-In the Bayesian framework ...
+In the Bayesian framework, we would again specify a prior, $p(\Delta )$, that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could again specify a flat prior, $p(\Delta ) \propto 1$. If we belive the treatment effect is likely to favor milk-first pouring ($\Delta>0$), we could specify a normal prior centered at some positive value (e.g., $\Delta=0.5$); the standard deviation of this prior would encode how certain we are about our prior beliefs. If we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at 0, which has the effect of "shrinking" the estimates closer to 0.[^estimation-11]
+
+[^MM-6]: I'd suggest framing this section as "estimating a between-group difference" rather than "estimating a treatment effect" since, as noted above, nothing in this chapter seems specific to causal inference.
 
 
 ## Variability and Precision
 
-In the previous section, we discussed how to estimate the mean and standard deviation of our observed data. These summary statistics are helpful for ...
+In the previous section, we discussed how to estimate means and differences in means from our observed data.[^MM-7] These so-called "point estimates" represent our best guesses about the population parameters given the data and possibly also given our prior beliefs. But on their own, point estimates do not say anything about how much statistical uncertainty is involved in these point estimates.[^estimation-11] If we were to repeat the tea-tasting experiment with 500 participants instead of 48, it's clear intuitively that we would have less uncertainty with 500 participants, even if the point estimates happened to be identical.
 
-### Standard error of the mean
+Why is this so? To characterize the uncertainty in an estimate, it helps to picture what is called its **sampling distribution**, which is the distribution *of the estimate itself* across different, hypothetical samples. That is, let's imagine -- purely hypothetically -- that we conducted the tea experiment with $n=48$ not just once, but hundreds or even thousands of times. Each time, we use similar recruitment methods to recruit a new sample of participants, and we estimate $\widehat{\Delta}$ in that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability. If we plotted these estimates, $\widehat{\Delta}$, across thousands of samples, we would get the sampling distribution:
 
-Talk about standard error with respect to SD of sampling distribution
+[PLOT SAMPLING DISTRIBUTION AT N=48]
+
+Now imagine we also did thousands of repetitions of the experiment with $n=500$ instead of $n=48$. Here is what the sampling distribution would look like:
+
+[PLOT SAMPLING DISTRIBUTION AT N=500]
+
+Notice how much narrower the sampling distribution becomes when we increase the sample size, again reflecting decreased uncertainty. More formally, the standard deviation of the sampling distribution itself, called the **standard error**, decreases as the sample size increases.
+
+It is critical to note that the sampling distribution is not at all the same thing as the distribution of tea ratings in a single sample. The sampling distribution is a distribution of *estimates across samples of a given size*, not a distribution of tea ratings across participants in a single sample. Internalizing this distinction is a crucial component to understanding all statistical models and tests. If we were in the classroom with you, we would pound our fist on the lecture podium for emphasis.
+
+An amazing thing about sampling distributions for many kinds of estimates, and for all maximum likelihood estimates, is that they become normal as the sample size gets larger and larger. The amazing part is that this holds even for estimates that are not even remotely normal in small samples. For example, say we have a possibly biased coin, and we want to estimate the probability that it lands heads ($p_H$). If we draw samples each consisting of only $n=2$ coin flips, here is the sampling distribution of the estimates $\widehat{p}_H$:
+
+[COIN FLIP SAMPLING DISTRIBUTION AT N=2]
+
+Of course, this isn't at all normal because $\widehat{p}_H$ can only take on the values 0, 0.5, or 1 in a sample of only 2 coin flips. But look what happens as we draw increasingly larger samples:
+
+[COIN FLIP SAMPLING DISTRIBUTION WITH INCREASING N'S]
+
+We get a normal distribution! This tendency of sampling distributions to become normal as $n$ becomes very large reflects a deep and elegant mathematical law called the **Central Limit Theorem**. Aesthetic swooning aside, the practical upshot is that the Central Limit Theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\sigma/\sqrt{n}$. That is why the sampling distribution becomes narrower as the sample size increases.
+
+[Next up: On to confidence intervals]
+
+
+
+- Put an exercise about sampling distribution versus distribution in sample
+
+
+
+[^estimation-11]: Note that the measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Of course, this is only one kind of uncertainty, and a more holistic view of the overall credibility of an estimate must also account for study design and bias, for example. 
+
+[^MM-7]: I'd suggest moving all of "Variability and Precision" to the inference chapter to maintain the clean conceptual distinction between estimation and inference.
+
+
 
 ### Confidence intervals
 
