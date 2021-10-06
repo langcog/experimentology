@@ -89,8 +89,105 @@ Something very important is missing from this analytic strategy. If we think bac
 
 Fisher's original framework for significance testing focused only on the **null hypothesis** of no discrimination. In contrast, the Bayesian estimation method here focuses on the magnitude of accuracy.^[If you're reading carefully, you might have noticed that we *could* have discovered that the estimate of accuracy was very similar to chance -- more about this below and in the next chapter.] The intuition we'd like you to get is that, if you are an experimentalist who cares about the magnitude of causal relationships (and we hope you are), then Fisher's statistical approach isn't ideally suited to your goals.[\^MM: Yes, I like this framing in the final sentence much better.]
 
+## Precision and Uncertainty
 
-## Inference
+<!-- \[NC: I have a slight preference for calling this section Precision and Uncertainty\] -->
+
+In the previous section, we discussed how to estimate means and differences in means from our observed data.[^17] These so-called "point estimates" represent our best guesses about the population parameters given the data and possibly also given our prior beliefs. But on their own, point estimates do not say anything about how much statistical uncertainty is involved in these point estimates.[^18] If we were to repeat the tea-tasting experiment with 500 participants instead of 48, it's clear intuitively that we would have less uncertainty with 500 participants, even if the point estimates happened to be identical.
+
+<!-- [^17]: I'd suggest moving all of "Variability and Precision" to the inference chapter to maintain the clean conceptual distinction between estimation and inference. -->
+
+[^18]: Note that the measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Of course, this is only one kind of uncertainty, and a more holistic view of the overall credibility of an estimate must also account for study design and bias, for example.
+
+Why is this so? To characterize the uncertainty in an estimate, it helps to picture what is called its **sampling distribution**, which is the distribution *of the estimate itself* across different, hypothetical samples. That is, let's imagine -- purely hypothetically -- that we conducted the tea experiment with $n=48$ not just once, but hundreds or even thousands of times. Each time, we use similar recruitment methods to recruit a new sample of participants, and we estimate $\widehat{\Delta}$ in that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability. If we plotted these estimates, $\widehat{\Delta}$, across thousands of samples, we would get the sampling distribution:
+
+```{r}
+make_tea_data <- function(n_total = 48, sigma = 1.25) {
+  
+tibble(condition = c(rep("milk first", n_total/2),
+                                 rep("tea first", n_total/2)),
+                   rating = c(round(rnorm(n_total/2, mean = 4.5, sd = sigma)), 
+                              round(rnorm(n_total/2, mean = 3.5, sd = sigma))) ) %>%
+  mutate(rating = ifelse(rating > 10, 10, rating), #truncate
+         rating = ifelse(rating < 1, 1, rating))
+}
+samps <- tibble(sim = 1:1000) |>
+  mutate(data = map(sim, ~make_tea_data())) |>
+  unnest(cols = "data")
+
+tea_summary_48 <- samps |>
+  group_by(sim) |>
+  summarise(delta = mean(rating[condition == "milk first"]) - 
+              mean(rating[condition == "tea first"]))
+
+ggplot(tea_summary_48, 
+       aes(x = delta)) + 
+  geom_histogram()
+```
+
+
+Now imagine we also did thousands of repetitions of the experiment with $n=500$ instead of $n=48$. Here is what the sampling distribution would look like:
+
+```{r}
+samps_500 <- tibble(sim = 1:1000) |>
+  mutate(data = map(sim, ~make_tea_data(n_total = 500))) |>
+  unnest(cols = "data")
+
+tea_summary_500 <- samps_500 |>
+  group_by(sim) |>
+  summarise(delta = mean(rating[condition == "milk first"]) - 
+              mean(rating[condition == "tea first"]))
+
+ggplot(tea_summary_500, 
+       aes(x = delta)) + 
+  geom_histogram()
+```
+
+
+Notice how much narrower the sampling distribution becomes when we increase the sample size, again reflecting decreased uncertainty. More formally, the standard deviation of the sampling distribution itself, called the **standard error**, decreases as the sample size increases.
+
+It is critical to note that the sampling distribution is not at all the same thing as the distribution of tea ratings in a single sample. The sampling distribution is a distribution of *estimates across samples of a given size*, not a distribution of tea ratings across participants in a single sample. Internalizing this distinction is a crucial component to understanding all statistical models and tests. If we were in the classroom with you, we would pound our fist on the lecture podium for emphasis.
+
+An amazing thing about sampling distributions for many kinds of estimates, and for all maximum likelihood estimates, is that they become normal as the sample size gets larger and larger. The amazing part is that this holds even for estimates that are not even remotely normal in small samples. For example, say we have a possibly biased coin, and we want to estimate the probability that it lands heads ($p_H$). If we draw samples each consisting of only $n=2$ coin flips, here is the sampling distribution of the estimates $\widehat{p}_H$:
+
+\[COIN FLIP SAMPLING DISTRIBUTION AT N=2\]
+
+Of course, this isn't at all normal because $\widehat{p}_H$ can only take on the values 0, 0.5, or 1 in a sample of only 2 coin flips. But look what happens as we draw increasingly larger samples:
+
+\[COIN FLIP SAMPLING DISTRIBUTION WITH INCREASING N'S\]
+
+We get a normal distribution! This tendency of sampling distributions to become normal as $n$ becomes very large reflects a deep and elegant mathematical law called the **Central Limit Theorem**. Aesthetic swooning aside, the practical upshot is that the Central Limit Theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\sigma/\sqrt{n}$. That is why the sampling distribution becomes narrower as the sample size increases.
+
+\[Next up: On to confidence intervals\]
+
+-   Put an exercise about sampling distribution versus distribution in sample
+
+### Confidence intervals
+
+CIs for inference
+
+Confidence intervals: 95% of these regions will contain the TRUE parameter Remember frequentists - there is a TRUE parameter
+
+<https://istats.shinyapps.io/ExploreCoverage/>
+
+But this is not our typical interpretation, which is that 95% chance parameter is in this interval That's the BAYESIAN interpretation
+
+Bayesian Estimation
+
+Find the posterior distribution of the parameter of interest You can take its mean Its HPD (highest posterior density)
+
+Confidence in confidence intervals: <https://link.springer.com/article/10.3758/s13423-015-0947-8>
+
+### Visualizing variability
+
+Error bar: - standard deviation (why is this bad)? - SEM - CI
+
+<!-- ::: {.interactive} -->
+
+<!-- ⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance -->
+
+<!-- ::: -->
+## Summary: Inference
 
 We just finished arguing that an estimation strategy is more aligned with the default goal of an experimentalist. But that's not always the case. Sometimes you do want to make an inference, in the sense of making some kind of rule-based decision about your data. The clearest case of this is in the context of an experiment that evaluates an intervention -- say a curriculum manipulation to improve an educational outcome. In this kind of case, we might primarily want a clear answer: does this intervention "work" -- meaning, improve our outcome relative to control -- or not. In this kind of context, perhaps the magnitude of the effect is going to be so dependent on the specifics of implementation that we don't really have a lot of predictions about the magnitude. 
 

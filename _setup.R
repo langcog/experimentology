@@ -2,6 +2,7 @@ library(tidyverse)
 library(glue)
 library(knitr)
 library(shiny)
+library(metafor)
 
 opts_chunk$set(
   message = FALSE,
