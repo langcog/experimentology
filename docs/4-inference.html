@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="Chapter 4 Inference | Experimentology" />
+<meta property="og:type" content="book" />
+
+
+
+
+
+<meta name="author" content="Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke, Robert Hawkins, Maya Mathur, and Rondeline Williams" />
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<meta name="description" content="Chapter 4 Inference | Experimentology">
+
+<title>Chapter 4 Inference | Experimentology</title>
+
+<script src="libs/header-attrs-2.9/header-attrs.js"></script>
+<link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
+
+
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+<link rel="stylesheet" href="toc/toc.css" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul>
+<li class="part"><span><b>I Preliminaries</b></span></li>
+<li><a href="1-intro.html#intro"><span class="toc-section-number">1</span> Experiments and theories</a></li>
+<li><a href="2-replication.html#replication"><span class="toc-section-number">2</span> Replication and reproducibility</a></li>
+<li><a href="3-ethics.html#ethics"><span class="toc-section-number">3</span> Ethics</a></li>
+<li class="part"><span><b>II Statistics</b></span></li>
+<li><a href="4-inference.html#inference"><span class="toc-section-number">4</span> Inference</a></li>
+<li><a href="5-models.html#models"><span class="toc-section-number">5</span> Models</a></li>
+<li class="part"><span><b>III Design and Planning</b></span></li>
+<li><a href="6-measurement.html#measurement"><span class="toc-section-number">6</span> Measurement</a></li>
+<li><a href="7-design.html#design"><span class="toc-section-number">7</span> Design of experiments</a></li>
+<li><a href="8-sampling.html#sampling"><span class="toc-section-number">8</span> Sampling</a></li>
+<li><a href="9-prereg.html#prereg"><span class="toc-section-number">9</span> Preregistration</a></li>
+<li class="part"><span><b>IV Execution</b></span></li>
+<li><a href="10-selection.html#selection"><span class="toc-section-number">10</span> Experimental strategy</a></li>
+<li><a href="11-collection.html#collection"><span class="toc-section-number">11</span> Data collection</a></li>
+<li><a href="12-management.html#management"><span class="toc-section-number">12</span> Project management</a></li>
+<li class="part"><span><b>V Analysis and Reporting</b></span></li>
+<li><a href="13-viz.html#viz"><span class="toc-section-number">13</span> Visualization</a></li>
+<li><a href="14-eda.html#eda"><span class="toc-section-number">14</span> Exploratory data analysis</a></li>
+<li><a href="15-writing.html#writing"><span class="toc-section-number">15</span> Reproducible writing</a></li>
+<li><a href="16-meta.html#meta"><span class="toc-section-number">16</span> Meta-analysis</a></li>
+<li><a href="17-conclusions.html#conclusions"><span class="toc-section-number">17</span> Conclusions</a></li>
+<li class="part"><span><b>VI Appendices</b></span></li>
+<li><a href="18-rmarkdown.html#rmarkdown"><span class="toc-section-number">18</span> R Markdown Tutorial</a></li>
+<li><a href="19-tidyverse.html#tidyverse"><span class="toc-section-number">19</span> Tidyverse Tutorial</a></li>
+<li><a href="20-ggplot.html#ggplot"><span class="toc-section-number">20</span> ggplot Tutorial</a></li>
+<li><a href="21-instructors.html#instructors"><span class="toc-section-number">21</span> Instructor’s guide</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="inference" class="section level1" number="4">
+<h1><span class="header-section-number">Chapter 4</span> Inference</h1>
+<!-- TODO: -->
+<!-- * Connections to Karl Popper -->
+<div class="learning-goals">
+<p>🍎 Learning goals:</p>
+<ul>
+<li>Discuss the function of statistical inference</li>
+<li>Contrast inference and estimation as two goals of statistical analysis</li>
+<li>Define <span class="math inline">\(p\)</span>-values and Bayes Factors</li>
+<li>Consider the fallacies of inference (especially for <span class="math inline">\(p\)</span>-values)</li>
+</ul>
+</div>
+<p>We’ve been arguing that experiments are about measuring effects. You might ask then, why does this book even need a chapter about statistical inference? Why can’t we just report our estimates and be done? The answer is that we are not typically interested in the characteristics of our sample specifically. <strong>Statistical inference</strong> is the process of going beyond the specific characteristics of the sample that you measured to make generalizations about the broader population.</p>
+<p>Inference methods allow us to ask questions like:</p>
+<ol style="list-style-type: decimal">
+<li>How likely is it that this pattern of measurements was produced by chance variation?</li>
+<li>Do these data provide more support for one hypothesis or another?</li>
+<li>How big is the effect of a manipulation, and how precise is our estimate of that effect?</li>
+<li>What portion of the variation in the data is due to a particular manipulation (as opposed to variation between participants, stimulus items, or other manipulations)?</li>
+</ol>
+<p>Question (1) is associated with one particular type of statistical inference method – <strong>null hypothesis significance testing</strong> (NHST) in the <strong>frequentist</strong> statistical tradition. NHST has become synonymous with data analysis, such that in the vast majority of research papers (and research methods courses), all of the reported analyses are tests of this type. Yet the equivalence of NHST – in particular, the dichotomous inference that something is “significant” or not – and the idea of data analysis more generally has been quite problematic.</p>
+<p>The instinct to “go test for significance” before visualizing your data and trying to understand sources of variation (participants, items, manipulations, etc.) is one of the most unhelpful things an experimenter can do. Whether <span class="math inline">\(p &lt; .05\)</span> or not, a test of this sort gives you literally <em>one bit</em> of information about your data.<label for="tufte-sn-1" class="margin-toggle sidenote-number">1</label><input type="checkbox" id="tufte-sn-1" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">1</span> In the information theoretic sense, as well as the common sense!</span> The kinds of visualizations we advocate in Chapter <a href="13-viz.html#viz">13</a> give you a much richer sense of what happened in your experiment!</p>
+<p>In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. All practicing experimentalists need to understand NHST, both to read the literature and also to apply this method in appropriate situations. For example, NHST is a reasonable tool for testing whether an intervention leads to a difference between a treatment condition and an appropriate control, although it still doesn’t tell you about the size of the intervention effect! But we will also try to contextualize NHST as a very special case of a broader set of strategies around modeling and inference. Further, we will continue to flesh out our account of how some of the pathologies of NHST have been a driver of the replication crisis.</p>
+<p><label for="tufte-mn-1" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-1" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/inference/krushke.png"/> Clarifying the distinctions between Bayesian and Frequentist paradigms and the ways that they approach inference and estimation. For many settings, we think the estimation mindset is more useful. From Kruschke and Liddell (2018).</span></span></p>
+<p>What should replace NHST? There has been a recent move towards the use of Bayes Factors to quantify the evidence in support of a hypothesis. Bayes Factors can help answer questions like (2). We introduce these tools, and believe that they have broader applicability than the NHST framework and should be known by students. On the other hand, Bayes Factors are not a panacea. They have the same problems as NHST when they are applied dichotomously.</p>
+<p>Instead of dichotomous inference, we advocate for <strong>estimation</strong> and <strong>modeling</strong> strategies, which are more suited towards questions (3) and (4) <span class="citation">(<a href="#ref-cumming2014" role="doc-biblioref">Cumming, 2014</a>; <a href="#ref-kruschke2018" role="doc-biblioref">J. K. Kruschke &amp; Liddell, 2018</a>)</span>. The goal of these strategies is to yield an accurate and precise estimate of the relationships underlying observed variation in the data. Critically, one of these estimates is the causal effect of the experimental manipulation(s). That explains our affection for these approaches: if a good theory predicts these kinds of causal effects, it makes sense that we’d want to estimate them precisely!</p>
+<p>Estimating one quantity in isolation is not maximally effective, though, since often there will be variation in the estimate that has to do with other known sources. Imagine the Stroop effect, which has a fairly consistent effect on both fast and slow readers <span class="citation">(<a href="#ref-haaf2017" role="doc-biblioref">Haaf &amp; Rouder, 2017</a>)</span>. But estimates of this effect will be more precise if we take into account that some readers are slower or faster, rather than just averaging across all this variation. That’s why we need models that take into account different sources of variation.</p>
+<p>This isn’t a statistics book and we won’t attempt to teach the full array of important statistical concepts that will allow students to build good models of a broad array of datasets. (Sorry!).<label for="tufte-sn-2" class="margin-toggle sidenote-number">2</label><input type="checkbox" id="tufte-sn-2" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">2</span> If you’re interested in going deeper, here are two books that have been really influential for us. The first is <span class="citation"><a href="#ref-gelman2006" role="doc-biblioref">Gelman &amp; Hill</a> (<a href="#ref-gelman2006" role="doc-biblioref">2006</a>)</span>, which teaches regression and multi-level modeling from the perspective of data description and modeling. The second is <span class="citation"><a href="#ref-mcelreath2018" role="doc-biblioref">McElreath</a> (<a href="#ref-mcelreath2018" role="doc-biblioref">2018</a>)</span>, a course on building Bayesian models of the causal structure of your data. Honestly, neither is an easy book to sit down and read (unless you are the kind of person who reads stats books on the subway for fun) but both really reward detailed study. We encourage you to get together a reading group and go through the exercises together. It’ll be well worth while in its impact on your statistical and scientific thinking.</span> But we do want you to be able to reason about inference and modeling. In this chapter, we’ll start by looking at a case study that established modern statistical inference, using this example to build up intuitions about inference and estimation. Then in Chapter <a href="5-models.html#models">5</a>, we’ll focus on the case where there is a manipulation (experimental treatment vs. control) and we want to estimate its effect.</p>
+<!-- ::: {.case-study} -->
+<!-- 🔬 Case study: The lady tasting tea -->
+<div id="the-lady-tasting-tea" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> The lady tasting tea</h2>
+<!-- The birth of modern statistical inference came from a single, epochal act of mansplaining.^[An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed Social Darwinist who believed fervently in Eugenic legislation. These views are repugnant.] Sir Ronald Fisher was apparently at a party when a lady declared that she could tell the difference between cups when the tea was added to the milk vs. the milk to the tea. Rather than taking her at her word, Fisher devised an experimental and data analysis procedure to test her claim.^[If you're interested in this history, we recommend @salsburg2001's delightful book, "The Lady Tasting Tea," about the origins of modern statistics.] -->
+<!-- The basic schema of the experiment was that the lady would have to judge a set of new cups of tea and sort them into milk-first vs. tea-first sets. Her data would then be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, in fact this is one of those touchstones that feels unremarkable because it literally established the way science was done for the next century.  -->
+<!-- The first element of the experiment that was unusual was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounders. Fisher recognized that this strategy was insufficient and that random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk).^[We discussed the causal power of random assignment in Chapter \@ref(intro) but here's where this idea originates!]^[MM: Minor, but there were written records of RCTs well before this (e.g., to investigate scurvy treatments in the 18th c.).] -->
+<p>The second innovation was the idea of creating a model of what might happen during the experiment: specifically, a <strong>null model</strong> in which the nameless lady chose cups by chance rather than because of some tea sensitivity. The goal of Fisher’s analysis strategy was then to compute the probability of the lady’s choices under this null model. Fisher then declared that it is “usual and convenient for experimenters to take 5 percent as a standard level of convenience,” establishing the .05 cutoff that has become gospel throughout the sciences.<label for="tufte-sn-3" class="margin-toggle sidenote-number">3</label><input type="checkbox" id="tufte-sn-3" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">3</span> Actually, right after establishing .05 as a cutoff, Fisher then writes that “in the statistical sense, we thereby admit that no isolated experiment, however significant in itself, can suffice for the experimental demonstration of any natural phenomenon… in order to assert that a natural phenomenon is experimentally demonstrable we need, not an isolated record, but a reliable method of procedure. In relation to the test of significance, we may say that a phenomenon is experimentally demonstrable when we know how to conduct an experiment which will rarely fail to give us a statistically significant result.” In other words, Fisher was all for replication!</span></p>
+<p>With apologies to Fisher, for our example, we’ll design a slightly more modern version of his experiment using a forced-choice judgmeent measure. We present participants with a series of cups of tea (in random order, of course). Half are prepared milk-first, half tea-first. Then the participant must give an independent judgement about each. The null model is based on the idea that, if the participant knows nothing then they should choose at random between the two possibilities. Hence, we can use a simple binomial distribution to show expected chance performance for different sets of trials.<label for="tufte-sn-4" class="margin-toggle sidenote-number">4</label><input type="checkbox" id="tufte-sn-4" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">4</span> We quantify our measure as the proportion of correct trials, since trials here are interchangeable.</span></p>
+<p>These null distributions are shown in Figure <a href="4-inference.html#fig:inference-null-model">4.1</a>.[^MM: The concept of a “null distribution” probably needs more scaffolding. In my experience with accidentally driving students crazy, I find that I have to go extremely slowly the first time I discuss sampling distributions.] We show cases with 6, 12, 24, and 48 trials, and highlight the .05 significance threshold – the threshold above which you would fall only 5% of the time if you were guessing by chance.<label for="tufte-sn-5" class="margin-toggle sidenote-number">5</label><input type="checkbox" id="tufte-sn-5" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">5</span> Note that we are effectively doing a “one-tailed” test here, since we’re attending only to the right hand side of each plot and ignoring cases where the participant is exactly flipped in their judgments.</span> Conventionally, if you cross this threshold, you can say you “reject the null.”</p>
+<div class="figure"><span id="fig:inference-null-model"></span>
+<p class="caption marginnote shownote">
+Figure 4.1: Probability of observing a particular number of trials correct under the null model of no sensitivity to tea preparation order. Each facet gives a different number of trials. The red line indicates a significance threshold above which data have less than a 5% chance of appearing.
+</p>
+<img src="experimentology_files/figure-html/inference-null-model-1.png" alt="Probability of observing a particular number of trials correct under the null model of no sensitivity to tea preparation order. Each facet gives a different number of trials. The red line indicates a significance threshold above which data have less than a 5\% chance of appearing." width="\linewidth"  />
+</div>
+<p>The more trials a participant completes, the lower the accuracy threshold for significance becomes. With 6 trials, you need to get all 5 correct for that result to have a probability of less than 5% probable under the null model. With 12, you need to observe 10 (83%) or more. With 24 and 48, you need 17 (71%) and 31 (65%) respectively.<label for="tufte-sn-6" class="margin-toggle sidenote-number">6</label><input type="checkbox" id="tufte-sn-6" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">6</span> You can calculate these numbers by looking at what’s called the <strong>quantile function</strong> of the binomial binomial: the function that tells you how many correct trials out of the total number corresponds to a particular probability.</span> With greater numbers of trials, the expectation based on chance becomes more precise and so we are able to reject then null based on smaller deviations.</p>
+<p>Even here in the original case of null hypothesis significance testing, it is clear that our goals matter. If we’re merely testing a hypothesis informally at a garden party, perhaps we don’t want to subject our friend to dozens of trials. But if the stakes were higher and a more precise estimate was necessary, maybe we’d want to do a more extensive experiment!</p>
+<p>Something very important is missing from this analytic strategy. If we think back to our goals as experimentalists, we are hoping to use the logic of random assignment to measure causal effects of interest. Here, the effect we’re measuring is something like the effect of tea preparation on taste perception (maybe not the most consequential question, but…). Yet our statistical paradigm is misaligned with this goal! All of this talk of significance and rejecting the null doesn’t tell us about either how big the effect is, or how precisely we have measured it! That’s why we are going to be advocating throughout for estimation as the key goal for our statistical analysis, with the varieties of inference (significance testing included) as a secondary goal.[^MM: This confuses me. Confidence intervals, continuous p-values, and continuous BFs are varieties of inference as well. To me the critical distinction is between dichotomized inference and continuous inference, not between estimation and inference.]</p>
+<p>Fisher’s original framework for significance testing focused only on the <strong>null hypothesis</strong> of no discrimination. In contrast, the Bayesian estimation method here focuses on the magnitude of accuracy.<label for="tufte-sn-7" class="margin-toggle sidenote-number">7</label><input type="checkbox" id="tufte-sn-7" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">7</span> If you’re reading carefully, you might have noticed that we <em>could</em> have discovered that the estimate of accuracy was very similar to chance – more about this below and in the next chapter.</span> The intuition we’d like you to get is that, if you are an experimentalist who cares about the magnitude of causal relationships (and we hope you are), then Fisher’s statistical approach isn’t ideally suited to your goals.[^MM: Yes, I like this framing in the final sentence much better.]</p>
+</div>
+<div id="precision-and-uncertainty" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Precision and Uncertainty</h2>
+<!-- \[NC: I have a slight preference for calling this section Precision and Uncertainty\] -->
+<p>In the previous section, we discussed how to estimate means and differences in means from our observed data.[^17] These so-called “point estimates” represent our best guesses about the population parameters given the data and possibly also given our prior beliefs. But on their own, point estimates do not say anything about how much statistical uncertainty is involved in these point estimates.<label for="tufte-sn-8" class="margin-toggle sidenote-number">8</label><input type="checkbox" id="tufte-sn-8" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">8</span> Note that the measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Of course, this is only one kind of uncertainty, and a more holistic view of the overall credibility of an estimate must also account for study design and bias, for example.</span> If we were to repeat the tea-tasting experiment with 500 participants instead of 48, it’s clear intuitively that we would have less uncertainty with 500 participants, even if the point estimates happened to be identical.</p>
+<!-- [^17]: I'd suggest moving all of "Variability and Precision" to the inference chapter to maintain the clean conceptual distinction between estimation and inference. -->
+<p>Why is this so? To characterize the uncertainty in an estimate, it helps to picture what is called its <strong>sampling distribution</strong>, which is the distribution <em>of the estimate itself</em> across different, hypothetical samples. That is, let’s imagine – purely hypothetically – that we conducted the tea experiment with <span class="math inline">\(n=48\)</span> not just once, but hundreds or even thousands of times. Each time, we use similar recruitment methods to recruit a new sample of participants, and we estimate <span class="math inline">\(\widehat{\Delta}\)</span> in that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability. If we plotted these estimates, <span class="math inline">\(\widehat{\Delta}\)</span>, across thousands of samples, we would get the sampling distribution:</p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-3-1.png" width="\linewidth"  /></p>
+<p>Now imagine we also did thousands of repetitions of the experiment with <span class="math inline">\(n=500\)</span> instead of <span class="math inline">\(n=48\)</span>. Here is what the sampling distribution would look like:</p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-4-1.png" width="\linewidth"  /></p>
+<p>Notice how much narrower the sampling distribution becomes when we increase the sample size, again reflecting decreased uncertainty. More formally, the standard deviation of the sampling distribution itself, called the <strong>standard error</strong>, decreases as the sample size increases.</p>
+<p>It is critical to note that the sampling distribution is not at all the same thing as the distribution of tea ratings in a single sample. The sampling distribution is a distribution of <em>estimates across samples of a given size</em>, not a distribution of tea ratings across participants in a single sample. Internalizing this distinction is a crucial component to understanding all statistical models and tests. If we were in the classroom with you, we would pound our fist on the lecture podium for emphasis.</p>
+<p>An amazing thing about sampling distributions for many kinds of estimates, and for all maximum likelihood estimates, is that they become normal as the sample size gets larger and larger. The amazing part is that this holds even for estimates that are not even remotely normal in small samples. For example, say we have a possibly biased coin, and we want to estimate the probability that it lands heads (<span class="math inline">\(p_H\)</span>). If we draw samples each consisting of only <span class="math inline">\(n=2\)</span> coin flips, here is the sampling distribution of the estimates <span class="math inline">\(\widehat{p}_H\)</span>:</p>
+<p><span class="math display">\[COIN FLIP SAMPLING DISTRIBUTION AT N=2\]</span></p>
+<p>Of course, this isn’t at all normal because <span class="math inline">\(\widehat{p}_H\)</span> can only take on the values 0, 0.5, or 1 in a sample of only 2 coin flips. But look what happens as we draw increasingly larger samples:</p>
+<p><span class="math display">\[COIN FLIP SAMPLING DISTRIBUTION WITH INCREASING N&#39;S\]</span></p>
+<p>We get a normal distribution! This tendency of sampling distributions to become normal as <span class="math inline">\(n\)</span> becomes very large reflects a deep and elegant mathematical law called the <strong>Central Limit Theorem</strong>. Aesthetic swooning aside, the practical upshot is that the Central Limit Theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately <span class="math inline">\(n&gt;30\)</span> in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately <span class="math inline">\(\sigma/\sqrt{n}\)</span>. That is why the sampling distribution becomes narrower as the sample size increases.</p>
+<p><span class="math display">\[Next up: On to confidence intervals\]</span></p>
+<ul>
+<li>Put an exercise about sampling distribution versus distribution in sample</li>
+</ul>
+<div id="confidence-intervals" class="section level3" number="4.2.1">
+<h3><span class="header-section-number">4.2.1</span> Confidence intervals</h3>
+<p>CIs for inference</p>
+<p>Confidence intervals: 95% of these regions will contain the TRUE parameter Remember frequentists - there is a TRUE parameter</p>
+<p><a href="https://istats.shinyapps.io/ExploreCoverage/" class="uri">https://istats.shinyapps.io/ExploreCoverage/</a></p>
+<p>But this is not our typical interpretation, which is that 95% chance parameter is in this interval That’s the BAYESIAN interpretation</p>
+<p>Bayesian Estimation</p>
+<p>Find the posterior distribution of the parameter of interest You can take its mean Its HPD (highest posterior density)</p>
+<p>Confidence in confidence intervals: <a href="https://link.springer.com/article/10.3758/s13423-015-0947-8" class="uri">https://link.springer.com/article/10.3758/s13423-015-0947-8</a></p>
+</div>
+<div id="visualizing-variability" class="section level3" number="4.2.2">
+<h3><span class="header-section-number">4.2.2</span> Visualizing variability</h3>
+<p>Error bar: - standard deviation (why is this bad)? - SEM - CI</p>
+<!-- ::: {.interactive} -->
+<!-- ⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance -->
+<!-- ::: -->
+</div>
+</div>
+<div id="summary-inference" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Summary: Inference</h2>
+<p>We just finished arguing that an estimation strategy is more aligned with the default goal of an experimentalist. But that’s not always the case. Sometimes you do want to make an inference, in the sense of making some kind of rule-based decision about your data. The clearest case of this is in the context of an experiment that evaluates an intervention – say a curriculum manipulation to improve an educational outcome. In this kind of case, we might primarily want a clear answer: does this intervention “work” – meaning, improve our outcome relative to control – or not. In this kind of context, perhaps the magnitude of the effect is going to be so dependent on the specifics of implementation that we don’t really have a lot of predictions about the magnitude.</p>
+<p>So, how do we decide whether our data support a positive conclusion? There are at least two different common ways to set up this kind of inference. One of these is Fisher’s way: null hypothesis significance testing. The second is via a technique called the <strong>Bayes Factor</strong>. Since we’ve already talked about NHST a bit, we’ll introduce the Bayes Factor first. Then we can see how NHST relates.</p>
+<div id="bayes-factors" class="section level3" number="4.3.1">
+<h3><span class="header-section-number">4.3.1</span> Bayes Factors</h3>
+<p>Bayes Factors are a method for quantifying the support for one hypothesis over another, based on an observed dataset. Informally, we’ve now talked about two different distinct hypotheses about the tea situation: our participant could have <em>no</em> tea discrimination ability – leading to chance performance. We call this <span class="math inline">\(H_0\)</span>. Or they could have some non-zero ability – leading to greater than chance perfomance. We call this <span class="math inline">\(H_1\)</span>. The Bayes Factor is simply the likelihood of the data (in the technical sense used above) under <span class="math inline">\(H_1\)</span> vs. under <span class="math inline">\(H_0\)</span>:</p>
+<p><span class="math display">\[
+BF = \frac{\color{red}{p(d | H_1)}}{\color{red}{p(d | H_0)}}.
+\]</span>
+The Bayes Factor is a ratio, so if it is greater than 1, the data are more likely under <span class="math inline">\(H_1\)</span> than they are under <span class="math inline">\(H_0\)</span> – and vice versa for values between 1 and 0. A BF of 3 means there is three times as much evidence for <span class="math inline">\(H_1\)</span> than <span class="math inline">\(H_0\)</span>, or equivalently 1/3 as much evidence for <span class="math inline">\(H_0\)</span> as <span class="math inline">\(H_1\)</span>.<label for="tufte-sn-9" class="margin-toggle sidenote-number">9</label><input type="checkbox" id="tufte-sn-9" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">9</span> Sometimes people refer to the BF in favor of <span class="math inline">\(H_1\)</span> as the <span class="math inline">\(BF_{10}\)</span> and the BF in favor of <span class="math inline">\(H_0\)</span> as the <span class="math inline">\(BF_{01}\)</span>. This notation strikes us as a bit confusing because a reader might wonder what the 10 in the subscript means.</span> There are no hard and fast rules for Bayes Factor interpretation, but many people follow guidelines from <span class="citation"><a href="#ref-jeffreys1998" role="doc-biblioref">Jeffreys</a> (<a href="#ref-jeffreys1998" role="doc-biblioref">1998</a>)</span>, shown in the margin.[^MM: This table with BF cutoffs is a prime example of my concern above. Reporting inference in terms of, e.g., BF &gt; 3 or &lt; 3 (a distressing trend in psych papers these days) is really no better than reporting <span class="math inline">\(p&lt;0.05\)</span> or <span class="math inline">\(p\ge0.05\)</span>.]</p>
+<p><!--
+<caption>--><span class="marginnote shownote"><span id="tab:jeffreys">Table 4.1: </span>Jeffreys’ (1961/1998) interpretation guidelines for Bayes Factors.</span><!--</caption>--></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">BF range</th>
+<th align="left">Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">&lt; 1</td>
+<td align="left">Negative evidence (supports H0)</td>
+</tr>
+<tr class="even">
+<td align="left">1 – 3</td>
+<td align="left">Barely worth mentioning</td>
+</tr>
+<tr class="odd">
+<td align="left">3 – 10</td>
+<td align="left">Substantial</td>
+</tr>
+<tr class="even">
+<td align="left">10 – 30</td>
+<td align="left">Strong</td>
+</tr>
+<tr class="odd">
+<td align="left">30 – 100</td>
+<td align="left">Very strong</td>
+</tr>
+<tr class="even">
+<td align="left">&gt; 100</td>
+<td align="left">Decisive</td>
+</tr>
+</tbody>
+</table>
+<p>There are a couple of things to notice about the Bayes Factor. The first is that it is a continous measure. You can dichotomize decisions based on the Bayes Factor by declaring a cutoff (say, BF &gt; 3 or BF &gt; 10), there is no intrinsic threshold at which you would say the evidence is “significant.”<label for="tufte-sn-10" class="margin-toggle sidenote-number">10</label><input type="checkbox" id="tufte-sn-10" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">10</span> Of course this is true for <span class="math inline">\(p\)</span>-values too, but the <span class="math inline">\(p &lt; .05\)</span> criterion is so culturally ingrained in most scientists that it’s hard to get away from. MM: This symmetry is <em>crucial</em>! This deserves to be in the main text.</span> Second, it doesn’t depend on our prior probability of <span class="math inline">\(H_1\)</span> vs. <span class="math inline">\(H_0\)</span>. We might think of <span class="math inline">\(H_1\)</span> as very implausible. But the BF is independent of that prior belief. So that means it’s a measure of how much the evidence should shift our beliefs away from our prior. One nice way to think about this is that the Bayes Factor computes how much our beliefs – whatever they are – should be changed by the data <span class="citation">(<a href="#ref-morey2011" role="doc-biblioref">Morey &amp; Rouder, 2011</a>)</span>.</p>
+<p>In practice, the thing that is both tricky and good about Bayes Factors is that you need to define an actual model of what <span class="math inline">\(H_0\)</span> and <span class="math inline">\(H_1\)</span> are. That process involves making some assumptions explicit. We won’t go into how to make these models here – this is a big topic that is covered extensively in books on Bayesian data analysis.<label for="tufte-sn-11" class="margin-toggle sidenote-number">11</label><input type="checkbox" id="tufte-sn-11" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">11</span> Two good ones are <span class="citation"><a href="#ref-gelman1995" role="doc-biblioref">Gelman et al.</a> (<a href="#ref-gelman1995" role="doc-biblioref">1995</a>)</span> (a bit more statistical) and <span class="citation"><a href="#ref-kruschke2014" role="doc-biblioref">J. Kruschke</a> (<a href="#ref-kruschke2014" role="doc-biblioref">2014</a>)</span> (a bit more focused on psychological data analysis). An <a href="https://vasishth.github.io/bayescogsci/book/">in-prep web-book by Nicenboim et al.</a> also looks great.</span> Below and in Chapter <a href="5-models.html#models">5</a> we will provide some guidance for how to compute Bayes Factors for simple experimental designs. The goal here is just to give a sense of how they work.</p>
+<p>To continue our tea-tasting example, let’s continue to assume our participant gets 9 of 12 trials right. Now to compute a Bayes Factor, we will have to define our hypotheses. Defining the null is pretty simple – it should just be that choices are random coin flips. But to define our <span class="math inline">\(H_1\)</span> things get a bit more complex. We could just assume that the participant should get 75% percent of trials correct, but this could be a problematic choice! For example, what if our participant got 550 / 1000 trials correct? That would give us a strong sense that they had some tea ability, but would actually be more consistent with the <span class="math inline">\(H_0\)</span> of 50% accuracy than the <span class="math inline">\(H_1\)</span> of 75% accuracy! In practice, what we need to do is define a distribution over possible accuracies and then average across these – so we assign some probability to 75% accuracy but also some probability to 55% accuracy and even 50% accuracy.<label for="tufte-sn-12" class="margin-toggle sidenote-number">12</label><input type="checkbox" id="tufte-sn-12" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">12</span> You might wonder how we can compare a <span class="math inline">\(H_0\)</span> that assumes 50% accuracy and a <span class="math inline">\(H_1\)</span> that <em>includes</em> 50% accuracy in it as well. The key here is that <span class="math inline">\(H_1\)</span> is more complex because it includes a range of values.</span>. The details don’t matter here, but just for simplicity we adopt the discrimination prior shown in Figure <a href="#fig:inference-bayes-demo"><strong>??</strong></a>.</p>
+<p>Once we set up our models, we can compute the relative likelihood of the data under each. The resulting BF is 2.96, somewhere between anecdotal and substantial evidence. On the other hand, if we doubled the size of the experiment and found the same pattern – 18/24 trials correct – the BF goes up to 11.17, which we could classify as strong evidence.</p>
+</div>
+<div id="p-values" class="section level3" number="4.3.2">
+<h3><span class="header-section-number">4.3.2</span> <em>p</em>-values</h3>
+<p>We already have a working definition of what a <span class="math inline">\(p\)</span>-value is from our discussion above: it’s the <strong>probability of the data (or any data that would be more extreme) under the null hypothesis</strong>. How is this quantity related to either our Bayesian estimate or the BF? Well, the first thing to notice is that the <span class="math inline">\(p\)</span>-value is very close (but not identical to) the likelihood itself[^MM: Suggesting rewording to avoid suggesting that the Bayesian likelihood is different from the frequentist likelihood], which is the probability of the data but doesn’t include any more extreme data. So for example, the probability of getting 9 out of 12 tea-tasting trials correct under the null hypothesis is 0.05, meaning there’s a 5% chance of observing exactly this many successes. But the p-value is given by the summed probability of 9, 10, 11, <em>and</em> 12 successes, which is 0.07. In Table <a href="4-inference.html#tab:p-bf-comparison">4.2</a>, you can see how <span class="math inline">\(p\)</span>-values (from a one-tailed exact binomial test) compare to our Bayes Factors. In general BFs tend to be a bit more conservative than <span class="math inline">\(p\)</span>-values, such that <span class="math inline">\(p&lt;.05\)</span> generally translates to a BF of 3 or less <span class="citation">(<a href="#ref-benjamin2018" role="doc-biblioref">Benjamin et al., 2018</a>)</span>.</p>
+<p><!--
+<caption>--><span class="marginnote shownote"><span id="tab:p-bf-comparison">Table 4.2: </span>Comparison of p-value and BF for several different tea-tasting scenarios. p-values are one-tailed. Note that BF is heavily dependent on the specific prior on tasting successes that we assign.</span><!--</caption>--></p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">Successes</th>
+<th align="right">Total trials</th>
+<th align="right">% accuracy</th>
+<th align="right">p value</th>
+<th align="right">BF</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">3</td>
+<td align="right">1.00</td>
+<td align="right">0.125</td>
+<td align="right">3.732</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="right">6</td>
+<td align="right">1.00</td>
+<td align="right">0.016</td>
+<td align="right">17.214</td>
+</tr>
+<tr class="odd">
+<td align="right">12</td>
+<td align="right">12</td>
+<td align="right">1.00</td>
+<td align="right">0.000</td>
+<td align="right">501.764</td>
+</tr>
+<tr class="even">
+<td align="right">9</td>
+<td align="right">12</td>
+<td align="right">0.75</td>
+<td align="right">0.073</td>
+<td align="right">2.960</td>
+</tr>
+<tr class="odd">
+<td align="right">18</td>
+<td align="right">24</td>
+<td align="right">0.75</td>
+<td align="right">0.011</td>
+<td align="right">11.169</td>
+</tr>
+<tr class="even">
+<td align="right">36</td>
+<td align="right">48</td>
+<td align="right">0.75</td>
+<td align="right">0.000</td>
+<td align="right">194.031</td>
+</tr>
+<tr class="odd">
+<td align="right">55</td>
+<td align="right">100</td>
+<td align="right">0.55</td>
+<td align="right">0.184</td>
+<td align="right">0.199</td>
+</tr>
+<tr class="even">
+<td align="right">550</td>
+<td align="right">1000</td>
+<td align="right">0.55</td>
+<td align="right">0.001</td>
+<td align="right">5.626</td>
+</tr>
+</tbody>
+</table>
+<p>The critical thing about <span class="math inline">\(p\)</span>-values is not just that they are a specific kind of data likelihoods, it is that they are used in a specific inferential procedure The logic of NHST is that we make a binary decision about the presence of an effect. If <span class="math inline">\(p &lt; .05\)</span>, the null hypothesis is rejected; otherwise not. As <span class="citation"><a href="#ref-fisher1949" role="doc-biblioref">Fisher</a> (<a href="#ref-fisher1949" role="doc-biblioref">1949</a>)</span> wrote,</p>
+<blockquote>
+<p>It should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis. (p. 19)</p>
+</blockquote>
+<p>This logic relates to the falsificationist logic of Popper that we touched on briefly in <a href="1-intro.html#intro">1</a>. Under NHST, null hypotheses can be rejected (essentially, falsified) but positive hypotheses cannot be supported. As we said then, this logic doesn’t appear either optimal from a normative statistical perspective – and as we’ll discuss below, it doesn’t really fit with a descriptive view of how scientists (and people more generally) reason about their hypotheses.</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:inference-power-alpha"></span>
+<img src="images/inference/power-alpha.png" alt="Standard decision matrix for NHST." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 4.2: Standard decision matrix for NHST.<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>One way to “patch” NHST is to introduce a decision-theoretic view, shown in Figure <a href="4-inference.html#fig:inference-power-alpha">4.2</a>.<label for="tufte-sn-13" class="margin-toggle sidenote-number">13</label><input type="checkbox" id="tufte-sn-13" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">13</span> A little bit of useful history here is given in <span class="citation"><a href="#ref-cohen1990" role="doc-biblioref">Cohen</a> (<a href="#ref-cohen1990" role="doc-biblioref">1990</a>)</span>.</span> On this view, there is a real <span class="math inline">\(H_1\)</span>, albeit one that is not specified. Then the true state of the world could be that <span class="math inline">\(H_0\)</span> is true or <span class="math inline">\(H_1\)</span> is true. The <span class="math inline">\(p&lt;.05\)</span> criterion is the threshold at which we are willing to reject the null, and so this constitutes our <strong>false positive</strong> rate <span class="math inline">\(\alpha\)</span>. But we also need to define a <strong>false negative</strong> rate, which is conventionally (and unhelpfully) called <span class="math inline">\(\beta\)</span>. Setting these rates is a decision problem: If you are too conservative in your criteria for the intervention having an effect, however, then you risk a false negative, where you incorrectly conclude that it doesn’t work. And if you’re too liberal in your assessment of the evidence, then you riks a false positive.<label for="tufte-sn-14" class="margin-toggle sidenote-number">14</label><input type="checkbox" id="tufte-sn-14" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">14</span> To make really rational decisions, you could couple this chart to some kind of utility function that assessed the costs of different outcomes. For example, you might think it’s worse to proceed with an intervention that doesn’t work than to stay with business as usual. In that case, you’d assign a higher cost to a false positive and accordingly try to adopt a more conservative criterion. We won’t cover this kind of decision analysis here, but <span class="citation"><a href="#ref-pratt1995" role="doc-biblioref">Pratt et al.</a> (<a href="#ref-pratt1995" role="doc-biblioref">1995</a>)</span> is a classic textbook on statistical decision theory if you’re interested.</span> In practice, however, mostly people leave <span class="math inline">\(\alpha\)</span> at .05 and try to control their false negative rate by increasing their sample size. As we saw in Figure <a href="4-inference.html#fig:inference-null-model">4.1</a>, the greater the sample, the better your chance of rejecting the null for any given non-null effect. This model gives rise to the idea of classical power analysis, which we cover in Chapter <a href="8-sampling.html#sampling">8</a>.</p>
+<!-- TODO: check this book rec -->
+<!-- https://commons.wikimedia.org/wiki/File:ConfusionMatrixRedBlue.png -- CC -->
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:inference-power-alpha2"></span>
+<img src="images/inference/power-alpha.png" alt="Standard decision matrix for NHST." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 4.3: Standard decision matrix for NHST.<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>One way to “patch” NHST is to introduce a decision-theoretic view, shown in Figure <a href="4-inference.html#fig:inference-power-alpha">4.2</a>.<label for="tufte-sn-15" class="margin-toggle sidenote-number">15</label><input type="checkbox" id="tufte-sn-15" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">15</span> A little bit of useful history here is given in <span class="citation"><a href="#ref-cohen1990" role="doc-biblioref">Cohen</a> (<a href="#ref-cohen1990" role="doc-biblioref">1990</a>)</span>.</span> On this view, there is a real <span class="math inline">\(H_1\)</span>, albeit one that is not specified. Then the true state of the world could be that <span class="math inline">\(H_0\)</span> is true or <span class="math inline">\(H_1\)</span> is true. The <span class="math inline">\(p&lt;.05\)</span> criterion is the threshold at which we are willing to reject the null, and so this constitutes our <strong>false positive</strong> rate <span class="math inline">\(\alpha\)</span>. But we also need to define a <strong>false negative</strong> rate, which is conventionally (and unhelpfully) called <span class="math inline">\(\beta\)</span>. Setting these rates is a decision problem: If you are too conservative in your criteria for the intervention having an effect, however, then you risk a false negative, where you incorrectly conclude that it doesn’t work. And if you’re too liberal in your assessment of the evidence, then you riks a false positive.<label for="tufte-sn-16" class="margin-toggle sidenote-number">16</label><input type="checkbox" id="tufte-sn-16" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">16</span> To make really rational decisions, you could couple this chart to some kind of utility function that assessed the costs of different outcomes. For example, you might think it’s worse to proceed with an intervention that doesn’t work than to stay with business as usual. In that case, you’d assign a higher cost to a false positive and accordingly try to adopt a more conservative criterion. We won’t cover this kind of decision analysis here, but <span class="citation"><a href="#ref-pratt1995" role="doc-biblioref">Pratt et al.</a> (<a href="#ref-pratt1995" role="doc-biblioref">1995</a>)</span> is a classic textbook on statistical decision theory if you’re interested.</span> In practice, however, mostly people leave <span class="math inline">\(\alpha\)</span> at .05 and try to control their false negative rate by increasing their sample size. As we saw in Figure <a href="4-inference.html#fig:inference-null-model">4.1</a>, the greater the sample, the better your chance of rejecting the null for any given non-null effect. This model gives rise to the idea of classical power analysis, which we cover in Chapter <a href="8-sampling.html#sampling">8</a>.</p>
+<!-- TODO: check this book rec -->
+</div>
+</div>
+<div id="inference-fallacies" class="section level2" number="4.4">
+<h2><span class="header-section-number">4.4</span> Inference fallacies</h2>
+<p><span class="math inline">\(p\)</span>-values are basically likelihoods. The likelihood of the data under the null hypothesis is a critical number to know – for computing the Bayes Factor among other reasoms. But it doesn’t tell us a lot of things that we might like to know! For example, it doesn’t tell us the probability of the data under any positive hypothesis that we might be interested in – that’s the posterior probability <span class="math inline">\(p(H_1 | d)\)</span>. Lots of folks mistake these two for one another, e.g. that the probability of the data given the null is the probability of the null given the data.</p>
+<p>Another <span class="math inline">\(p\)</span>-value problem that comes up frequently is what to conclude when <span class="math inline">\(p&gt;.05\)</span>. According to the classical logic of NHST, the answer is “nothing!” That is, a failure to reject the null does not mean that you can <em>accept</em> the null. Even if the probability of the data (or some more extreme data) under <span class="math inline">\(H_0\)</span> is high, their probability might be just as high or higher under <span class="math inline">\(H_1\)</span>.<label for="tufte-sn-17" class="margin-toggle sidenote-number">17</label><input type="checkbox" id="tufte-sn-17" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">17</span> Of course, weighing these two against one another brings you back to the Bayes Factor.</span> But many practicing researchers make this mistake. <span class="citation"><a href="#ref-aczel2018" role="doc-biblioref">Aczel et al.</a> (<a href="#ref-aczel2018" role="doc-biblioref">2018</a>)</span> coded a sample of articles from 2015 and found that 72% of negative statements were inconsistent with the logic of their statistical paradigm of choice – most were cases where researchers said that an effect was not present when they had simply failed to reject the null.</p>
+<p>These are not the only issues with <span class="math inline">\(p\)</span>-values. In fact, people have so much trouble understanding what <span class="math inline">\(p\)</span>-values <em>do</em> say that there are whole articles written about these misconceptions. Table <a href="4-inference.html#tab:dirty-dozen">4.3</a> shows a set of misconceptions documented and refuted by <span class="citation"><a href="#ref-goodman2008" role="doc-biblioref">S. Goodman</a> (<a href="#ref-goodman2008" role="doc-biblioref">2008</a>)</span>.</p>
+<p><!--
+<caption>--><span class="marginnote shownote"><span id="tab:dirty-dozen">Table 4.3: </span>A “dirty dozen” <em>p</em> value misconceptions. Adapted from Goodman (2008).</span><!--</caption>--></p>
+<table>
+<colgroup>
+<col width="2%" />
+<col width="97%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right"></th>
+<th align="left">Misconception</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">If <em>p</em> = .05, the null hypothesis has only a 5% chance of being true.</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">A nonsignificant difference (eg, <em>p</em> ≥.05) means there is no difference between groups.</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">A statistically significant finding is clinically important.</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">Studies with <em>p</em> values on opposite sides of .05 are conflicting.</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">Studies with the same <em>p</em> value provide the same evidence against the null hypothesis.</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left"><em>p</em> = .05 means that we have observed data that would occur only 5% of the time under the null hypothesis.</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="left"><em>p</em> = .05 and <em>p</em> ≤.05 mean the same thing.</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="left"><em>p</em> values are properly written as inequalities (eg, '<em>p</em> ≤.02' when <em>p</em> = .015)</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="left"><em>p</em> = .05 means that if you reject the null hypothesis, the probability of a false positive error is only 5%.</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="left">With a <em>p</em> = .05 threshold for significance, the chance of a false positive error will be 5%.</td>
+</tr>
+<tr class="odd">
+<td align="right">11</td>
+<td align="left">You should use a one-sided <em>p</em> value when you don’t care about a result in one direction, or a difference in that direction is impossible.</td>
+</tr>
+<tr class="even">
+<td align="right">12</td>
+<td align="left">A scientific conclusion or treatment policy should be based on whether or not the <em>p</em> value is significant.</td>
+</tr>
+</tbody>
+</table>
+<p>Further, the <span class="math inline">\(p\)</span>-value is a probability of a certain set of events happening (corresponding to the observed data or any “more extreme” data, that is to say, data further from the null). Since <span class="math inline">\(p\)</span>-values are probabilities, we can combine them together across different events. If we run a null experiment – an experiment where we know the expected effect is zero – the probability of a dataset with <span class="math inline">\(p &lt; .05\)</span> is of course .05. But if we run two such experiments, we can get <span class="math inline">\(p &lt; .05\)</span> with probability 0.1. By the time we run 20 experiments, we have an 0.64 chance of getting a positive result.</p>
+<p>It would obviously be a major mistake to run 20 null experiments and then report only the positive ones (which, by design, are false positives) as though these still were “statistically significant.” The same thing applies to doing 20 different statistical tests within a single experiment. There are many statistical corrections that can be made to adjust for this problem.<label for="tufte-sn-18" class="margin-toggle sidenote-number">18</label><input type="checkbox" id="tufte-sn-18" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">18</span> The simplest one, the Bonferroni correction, just divides .05 (or technically, whatever your threshold is) by the number of comparisons you are making. Using that correction, if you do 20 null experiments, you would have a 0 chance of a false positive, which is actually a little conservative.</span> But the the broader issue is one of transparency: unless you <em>know</em> what the appropriate set of experiments or tests is, it’s not possible to implement one of these corrections!<label for="tufte-sn-19" class="margin-toggle sidenote-number">19</label><input type="checkbox" id="tufte-sn-19" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">19</span> This issue is especially problematic with <span class="math inline">\(p\)</span>-values because they are so often presented as an independent set of tests, but the problem of multiple comparisons comes up when you compute a lot of independent Bayes Factors as well. “Posterior hacking” via selective reporting of Bayes Factors is perfectly possible <span class="citation">(<a href="#ref-simonsohn2014" role="doc-biblioref">Simonsohn, 2014</a>)</span>.</span></p>
+<!-- P goes to 0 as data goes to infinity. -->
+<div class="accident-report">
+<p>⚠️ Accident report: Do extraordinary claims require extraordinary evidence?</p>
+<p>In a blockbuster paper that inadvertently kicked off the replication crisis, <span class="citation"><a href="#ref-bem2011" role="doc-biblioref">Bem</a> (<a href="#ref-bem2011" role="doc-biblioref">2011</a>)</span> presented nine experiments showing evidence for precognition – that is, sensing the future. In the first of these experiments, Bem showed each of a group of 100 undergraduates 36 two-alternative forced choice trials in which they had to guess which of two locations on a screen would reveal a picture immediately before the picture was revealed. By chance, participants should choose the correct side 50% of the time of course. Bem found that, specifically for erotic pictures, participants’ guesses were 53.1% correct. This rate of guessing was unexpected under the null hypothesis of chance guessing (<span class="math inline">\(p = .01\)</span>). Eight other studies with a total of more than 1,000 participants yielded apparently supportive evidence, with particpants appearing to show a variety of psychological effects even before the stimuli were shown! On this basis, should we conclude that precognition exists?</p>
+<p>Probably not. <span class="citation"><a href="#ref-wagenmakers2011" role="doc-biblioref">Wagenmakers et al.</a> (<a href="#ref-wagenmakers2011" role="doc-biblioref">2011</a>)</span> gave an influential critique of Bem’s findings, arguing that 1) Bem’s experiments were exploratory in nature, 2) that Bem’s conclusions were a priori unlikely, and 3) that the level of statistical evidence from his experiments was quite low. We find each of these arguments alone compelling; together they present a knockdown case.</p>
+<p>First, we’ve already discussed the need to be skeptical about situations where experimenters have the opportunity for analytic flexibility in their choice of measures, manipulations, samples, and analyses. Flexibility leads to the possibility of cherry-picking those set of decisions from the “garden of forking paths” that lead to a positive outcome for the researcher’s favored hypothesis. And there is plenty of flexibility on display even in Experiment 1 of Bem’s paper. Although there were 100 participants in the study, they may have been combined post hoc from two distinct samples of 40 and 60, each of which saw different conditions. The 40 made guesses about the location of erotic, negative, and neutral pictures; the 60 saw erotic, positive non-romantic, and positive romantic pictures. The means of each of these conditions was presumably tested against chance (at least 6 comparisons, for a false positive rate of 0.26), and had positive romantic pictures been found significant, an interpretation would have been available about this condition.</p>
+<p>Second, as we discussed, a <span class="math inline">\(p\)</span>-value close to .05 does not necessarily provide strong evidence against the null hypothesis. Wagenmakers et al. computed the Bayes Factor for each of experiments in Bem’s paper and found that, in many cases, the amount of evidence for <span class="math inline">\(H_1\)</span> was quite modest under a default Bayesian <span class="math inline">\(t\)</span>-test. Experiment 1 was no exception: the BF was 1.64, giving “anecdotal” support for the hypothesis of some non-zero effect, even before the multiple-comparisons problem mentioned above.</p>
+<p>Finally, since precognition is not attested by any compelling prior scientific evidence – and many researchers have tried to provide this evidence – perhaps we should assign a low prior probability to Bem’s <span class="math inline">\(H_1\)</span>, a non-zero precognition effect. Taking a strong Bayesian position, Wagenmakers et al. suggest that we might do well to adopt a prior reflecting how unlikely precognition is, say <span class="math inline">\(p(H_1) = 10^{-20}\)</span>. And if we adopt this prior, even a very well-designed, highly informative experiment (with a Bayes factor conveying substantial or even decisive evidence) would still lead to a very low posterior probability of precognition.</p>
+<p>Wagenmakers et al. concluded that, rather than suppporting precognition, the conclusion from Bem’s paper should be psychologists should revise how they think about analyzing their data!<label for="tufte-sn-20" class="margin-toggle sidenote-number">20</label><input type="checkbox" id="tufte-sn-20" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">20</span> If you are intrigued by this set of issues, you might enjoy Slate Star Codex’s post <a href="https://slatestarcodex.com/2014/04/28/the-control-group-is-out-of-control/">“The Control Group is Out of Control”</a> – we don’t agree with everything in it, but it’s definitely thought-provoking and contains many interesting links.</span></p>
+</div>
+<div id="philosophical-and-empirical-views-of-probability" class="section level3" number="4.4.1">
+<h3><span class="header-section-number">4.4.1</span> Philosophical (and empirical) views of probability</h3>
+<p>Up until now we’ve presented Bayesian and frequentist tools as two different sets of computations. But in fact, these different tools derive from fundamentally different interpretations of what a probability even is. Very roughly, frequentist approaches tend to believe that probabilities quantify the long-run frequencies of certain events. So, if we say that some outcome of an event has probability .5, we’re saying that if that event happened thousands of times, the long run frequency of the outcome would be 50% of the total events. In contrast, the Bayesian viewpoint doesn’t depend on this sense that events could be exactly repeated. Instead, the <strong>subjective Bayesian</strong> interpretation of probability is that it quantifies the person’s degree of belief in a particular outcome.<label for="tufte-sn-21" class="margin-toggle sidenote-number">21</label><input type="checkbox" id="tufte-sn-21" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">21</span> This is really a very rough description. If you’re interested in learning more about this philosophical background, we recommend the Stanford Encyclopedia of Philosophy entry on “interpretations of probability”: <a href="https://plato.stanford.edu/entries/probability-interpret/" class="uri">https://plato.stanford.edu/entries/probability-interpret/</a>.</span></p>
+<p>You don’t have to take sides in this deep philosophical debate about what probability is. But it’s helpful to know that people actually seem to reason about the world in ways that are well described by the subjective Bayesian view of probability. Recent cognitive science research has made a lot of headway in describing reasoning as a process of Bayesian inference (for review, see <span class="citation"><a href="#ref-probmods2" role="doc-biblioref">N. D. Goodman et al.</a> (<a href="#ref-probmods2" role="doc-biblioref">2016</a>)</span>) where probabilities describe degrees of belief in different hypotheses. These hypotheses in turn are a lot like the theories we described in Chapter <a href="1-intro.html#intro">1</a>: they describe ways that different abstract entities connect with one another <span class="citation">(<a href="#ref-tenenbaum2011" role="doc-biblioref">Tenenbaum et al., 2011</a>)</span>. You might think that scientists are different from lay-people in this regard, but one of the striking findings from the literature on probabilistic reasoning and judgment is that expertise doesn’t matter that much. Statistically-trained scientists make many of the same reasoning mistakes as their un-trained students <span class="citation">(<a href="#ref-kahneman1979" role="doc-biblioref">Kahneman &amp; Tversky, 1979</a>)</span>. Even children seem to reason intuitively in a way that looks a bit like creating probabilistic models <span class="citation">(<a href="#ref-gopnik2012" role="doc-biblioref">Gopnik, 2012</a>)</span>.</p>
+<p>These cognitive science findings help to explain some of the problems that people (scientists included) have reasoning about <span class="math inline">\(p\)</span>-values. If you are an intuitively Bayesian reasoner, the quantity that you’re probably tracking is how much you believe in your hypothesis (its posterior probability). So, many people treat the <span class="math inline">\(p\)</span>-value as the posterior probability of the null hypothesis.<label for="tufte-sn-22" class="margin-toggle sidenote-number">22</label><input type="checkbox" id="tufte-sn-22" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">22</span> <span class="citation"><a href="#ref-cohen1994" role="doc-biblioref">Cohen</a> (<a href="#ref-cohen1994" role="doc-biblioref">1994</a>)</span> is a great treatment of this issue.</span> That’s exactly what fallacy #1 – “If <em>p</em> = .05, the null hypothesis has only a 5% chance of being true.” – states. It’s not. Written in math, <span class="math inline">\(p(d | H_0)\)</span> (the likelihood that lets us compute the p-value) is not the same thing as <span class="math inline">\(p(H_0 | d)\)</span> (the posterior that we want). Pulling from our accident report above, even if the probability of the data given the null hypothesis of ESP is low, that doesn’t mean that the probability of ESP is high.</p>
+</div>
+</div>
+<div id="summary-when-inference-is-and-isnt-appropriate" class="section level2" number="4.5">
+<h2><span class="header-section-number">4.5</span> Summary: When inference is and isn’t appropriate</h2>
+<p>Inferences like the ones we’ve discussed here are important for projects where there is a key binary hypothesis being tested.[^MM: Back to my earlier comments about the definition of “inference,” this statement worries me a bit. It sounds like CIs and continuous inference metrics could be at stake here as well, even though I don’t think that’s the intention.] Did the intervention produce an effect? Were the two groups different from one another? These are questions that inference methods help us answer. But they are also only a subset of the interesting questions to be asked about an experiment.</p>
+<p>More generally, the problem with inference as a method for thinking about experimental effects is that it creates a fragile scientific ecosystem. By the logic of statistical significance, either an experiment “worked” or it didn’t. Because everyone would usually rather have an experiment that worked than one that didn’t, inference criteria like p-values often become a target for selection, as we discussed in Chapter <a href="2-replication.html#replication">2</a>.<label for="tufte-sn-23" class="margin-toggle sidenote-number">23</label><input type="checkbox" id="tufte-sn-23" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">23</span> More generally, this is probably an example of Goodhart’s law, which states that when a measure becomes a target, it ceases to be a good measure <span class="citation">(<a href="#ref-strathern1997" role="doc-biblioref">Strathern, 1997</a>)</span>. Once the outcomes of statistical inference procedures become targets for publication, they are subject to selection biases that make them less meaningful.</span></p>
+<!-- So that means we get phenomena like $p$-hacking, where  -->
+<!-- Inference strategies -- especially $p$-values but Bayes Factors as well to a lesser extent --  -->
+<!-- : because they are the single (often binary -->
+<!-- First discussion of overfitting. See Chapter \@ref(prereg).  -->
+<p>We made the case here that, if you want to make inferences, Bayes Factors tend to make a bit more sense than <span class="math inline">\(p\)</span>-values.[^MM: I don’t really agree with this, but I acknowledge that there is a healthy debate about this with cogent arguments on both sides. I might soften this statement to something like “if you want to make inferences, it is worth considering whether Bayes Factors better address your questions than p-values.” But of course it’s up to you.] In practice, <span class="math inline">\(p\)</span>-values are hard to understand and many people misuse them.[^And likewise for BFs, as we’re seeing in the psych literature these days! ;)] Despite the reasons to be worried about p-values, for many practicing scientists (at least at time of writing) there is no one right answer as to whether to reject <span class="math inline">\(p\)</span>-values. Even if we’d like to be Bayesian all the time, there are a number of obstacles. First, though new computational tools make fitting Bayesian models and extracting Bayes Factors much easier than before (more about this below and in the next chapter), it’s still on average quite a bit harder to fit a Bayesian model than it is a frequentist one. Second, because Bayesian analyses are less familiar, it may be an uphill battle to convince advisors, reviewers, and funders to use them. So as a group, we are still mostly Bayesian when we can be – and frequentist when it’s not practical.[^MM: Here, too, I may be the odd one out. I go frequentist by default unless specific considerations seem to warrant Bayes, such as sequential analyses or to resolve certain estimation issues.] But one reason we don’t feel so bad about this stance is that, a lot of them time we’re not so worried about making binary inferences, whether they are at <span class="math inline">\(p &lt; .05\)</span> or <span class="math inline">\(BF &gt; 3\)</span> or whatever the threshold is.</p>
+<p>More generally, we hope we’ve convinced you that inference – in the sense of trying to derive a particular decision on the basis of your data[^Here, too, the definition of “inference” seems to change from those given at the outset.] – isn’t the only strategy. We think that the estimation strategy is often much more helpful as a building block for theory. Towards this goal, the next chapter provides some tools for how to estimate causal effects from simple experimental manipulations.</p>
+<div class="exercise">
+<p><span id="exr:unlabeled-div-1" class="exercise"><strong>Exercise 4.1  </strong></span>Exercises:</p>
+<ol style="list-style-type: decimal">
+<li>Step away from the computer. Can you write the definition of a <span class="math inline">\(p\)</span>-value and a Bayes Factor?</li>
+<li>Take three of Goodman’s (2008) “dirty dozen” in Table <a href="4-inference.html#tab:dirty-dozen">4.3</a> and write a description of why each is a misconception. (These can be checked against the original article, which gives a nice discussion).</li>
+</ol>
+</div>
+<!-- Philosophy -->
+<!-- Bayes: Data are the data, what can we infer? (subjective) -->
+<!-- Frequentist: Do the same thing again and again, what happens (objective truth) -->
+<!-- Prior information -->
+<!-- Bayes theorem -->
+<!-- “Data fixed” vs. “model fixed” -->
+<!-- Bayesians don’t have to care about optional stopping -->
+<!-- Differences in philosophy -->
+<!-- Bayesian stats are good for: -->
+<!-- Cases where you have a lot of prior knowledge -->
+<!-- E.g., statistics for voter prediction in elections -->
+<!-- Cases where you want to deal with uncertainty in a principled way -->
+<!-- E.g., integrating knowledge about measurement error into your model -->
+<!-- Null models -->
+<!-- Cases where you want to decide in favor of null -->
+<!-- (though you can do this in frequentist perspectives) -->
+<!-- Small N data -->
+<!-- Many frequentist tests are based on guarantees in the limit. Guarantees don’t hold at N=3 or 5 or even 10.  -->
+<!-- Frequentist good for: -->
+<!-- Decision theory (cf. bayesian decision theory) -->
+<!-- Absence of assumptions (“more objective”) -->
+<!-- Often easier to state and solve models -->
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-aczel2018" class="csl-entry">
+Aczel, B., Palfi, B., Szollosi, A., Kovacs, M., Szaszi, B., Szecsi, P., Zrubka, M., Gronau, Q. F., Bergh, D. van den, &amp; Wagenmakers, E.-J. (2018). Quantifying support for the null hypothesis in psychology: An empirical investigation. <em>Advances in Methods and Practices in Psychological Science</em>, <em>1</em>(3), 357–366.
+</div>
+<div id="ref-bem2011" class="csl-entry">
+Bem, D. J. (2011). Feeling the future: Experimental evidence for anomalous retroactive influences on cognition and affect. <em>Journal of Personality and Social Psychology</em>, <em>100</em>(3), 407.
+</div>
+<div id="ref-benjamin2018" class="csl-entry">
+Benjamin, D. J., Berger, J. O., Johannesson, M., Nosek, B. A., Wagenmakers, E.-J., Berk, R., Bollen, K. A., Brembs, B., Brown, L., Camerer, C., &amp; others. (2018). Redefine statistical significance. <em>Nature Human Behaviour</em>, <em>2</em>(1), 6–10.
+</div>
+<div id="ref-cohen1990" class="csl-entry">
+Cohen, J. (1990). Things i have learned (so far). <em>American Psychologist</em>, <em>45</em>, 1304–1312.
+</div>
+<div id="ref-cohen1994" class="csl-entry">
+Cohen, J. (1994). The earth is round (p&lt;. 05). <em>American Psychologist</em>, <em>49</em>(12), 997.
+</div>
+<div id="ref-cumming2014" class="csl-entry">
+Cumming, G. (2014). The new statistics: Why and how. <em>Psychol. Sci.</em>, <em>25</em>(1), 7–29.
+</div>
+<div id="ref-fisher1949" class="csl-entry">
+Fisher, R. A. (1949). <em>The design of experiments</em>.
+</div>
+<div id="ref-gelman1995" class="csl-entry">
+Gelman, A., Carlin, J. B., Stern, H. S., &amp; Rubin, D. B. (1995). <em>Bayesian data analysis</em>. Chapman; Hall/CRC.
+</div>
+<div id="ref-gelman2006" class="csl-entry">
+Gelman, A., &amp; Hill, J. (2006). <em>Data analysis using regression and multilevel/hierarchical models</em>. Cambridge university press.
+</div>
+<div id="ref-probmods2" class="csl-entry">
+Goodman, N. D., Tenenbaum, J. B., &amp; Contributors, T. P. (2016). <em><span class="nocase">Probabilistic Models of Cognition</span></em> (Second). <a href="http://probmods.org/v2">http://probmods.org/v2</a>.
+</div>
+<div id="ref-goodman2008" class="csl-entry">
+Goodman, S. (2008). A dirty dozen: Twelve p-value misconceptions. <em>Seminars in Hematology</em>, <em>45</em>, 135–140.
+</div>
+<div id="ref-gopnik2012" class="csl-entry">
+Gopnik, A. (2012). Scientific thinking in young children: Theoretical advances, empirical research, and policy implications. <em>Science</em>, <em>337</em>(6102), 1623–1627.
+</div>
+<div id="ref-haaf2017" class="csl-entry">
+Haaf, J. M., &amp; Rouder, J. N. (2017). Developing constraint in bayesian mixed models. <em>Psychological Methods</em>, <em>22</em>(4), 779.
+</div>
+<div id="ref-jeffreys1998" class="csl-entry">
+Jeffreys, H. (1998). <em>The theory of probability</em>. OUP Oxford.
+</div>
+<div id="ref-kahneman1979" class="csl-entry">
+Kahneman, D., &amp; Tversky, A. (1979). Prospect theory: An analysis of decision under risk. <em>Econometrica</em>, <em>47</em>(2), 363–391.
+</div>
+<div id="ref-kruschke2014" class="csl-entry">
+Kruschke, J. (2014). <em>Doing bayesian data analysis: A tutorial with r, JAGS, and stan</em>. Academic Press.
+</div>
+<div id="ref-kruschke2018" class="csl-entry">
+Kruschke, J. K., &amp; Liddell, T. M. (2018). The bayesian new statistics: Hypothesis testing, estimation, meta-analysis, and power analysis from a bayesian perspective. <em>Psychon. Bull. Rev.</em>, <em>25</em>(1), 178–206.
+</div>
+<div id="ref-mcelreath2018" class="csl-entry">
+McElreath, R. (2018). <em>Statistical rethinking: A bayesian course with examples in r and stan</em>. Chapman; Hall/CRC.
+</div>
+<div id="ref-morey2011" class="csl-entry">
+Morey, R. D., &amp; Rouder, J. N. (2011). Bayes factor approaches for testing interval null hypotheses. <em>Psychological Methods</em>, <em>16</em>(4), 406.
+</div>
+<div id="ref-pratt1995" class="csl-entry">
+Pratt, J. W., Raiffa, H., Schlaifer, R., &amp; others. (1995). <em>Introduction to statistical decision theory</em>. MIT press.
+</div>
+<div id="ref-simonsohn2014" class="csl-entry">
+Simonsohn, U. (2014). Posterior-hacking: Selective reporting invalidates bayesian results also. <em>Available at SSRN 2374040</em>.
+</div>
+<div id="ref-strathern1997" class="csl-entry">
+Strathern, M. (1997). <span>‘Improving ratings’</span>: Audit in the british university system. <em>European Review</em>, <em>5</em>(3), 305–321.
+</div>
+<div id="ref-tenenbaum2011" class="csl-entry">
+Tenenbaum, J. B., Kemp, C., Griffiths, T. L., &amp; Goodman, N. D. (2011). How to grow a mind: Statistics, structure, and abstraction. <em>Science</em>, <em>331</em>(6022), 1279–1285.
+</div>
+<div id="ref-wagenmakers2011" class="csl-entry">
+Wagenmakers, E.-J., Wetzels, R., Borsboom, D., &amp; Van Der Maas, H. L. (2011). <em>Why psychologists must change the way they analyze their data: The case of psi: Comment on bem (2011).</em>
+</div>
+</div>
+<p style="text-align: center;">
+<a href="3-ethics.html"><button class="btn btn-default">Previous</button></a>
+<a href="5-models.html"><button class="btn btn-default">Next</button></a>
+</p>
+</div>
+</div>
+
+<script src="toc/toc.js"></script>
+
+
+</body>
+</html>
