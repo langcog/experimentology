@@ -1,0 +1,780 @@
+--- 
+title: "Experimentology"
+subtitle: "An Open Science Approach to Experimental Psychology Methods"
+author: "Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke, Robert Hawkins, Maya Mathur, and Rondeline Williams"
+
+site: bookdown::bookdown_site
+documentclass: book
+classoption: twoside,symmetric
+
+bibliography: experimentology.bib
+csl: apa.csl
+link-citations: yes
+---
+
+# {.unlisted .unnumbered}
+
+Placeholder
+
+
+## Introduction {-}
+## What this book is and isn't about {-}
+## How to use this book
+## Themes {-}
+## Why Open Science? 
+## The software toolkit of the behavioral researcher (and of this book) {-}
+
+<!--chapter:end:index.Rmd-->
+
+
+# (PART) Preliminaries {-}
+# Experiments and theories {#intro}
+
+Placeholder
+
+
+## What is an experiment, and why would you do one?
+### Causal inference
+### Randomization
+## What is a theory? 
+### Psychological theories
+### Theory testing: Popper, Kuhn, and Lakatos, oh my!
+### Models and theories 
+## Theory testing in psychology
+### "Risky tests" 
+### Theories, frameworks, and paradigms
+## Experiments and Theories: Chapter Summary
+
+<!--chapter:end:001-intro.Rmd-->
+
+
+# Replication and reproducibility  {#replication}
+
+Placeholder
+
+
+## Reproducibility
+## Replication
+### Conceptual frameworks for replication
+### The meta-science of replication
+## Causes of replication failure
+### Context, moderators, and expertise
+### P-hacking and publication bias
+## Replication and theory building
+### Reciprocity between replication and theory
+### Necessary but not sufficient
+### A "replication crisis"?
+
+<!--chapter:end:002-replication.Rmd-->
+
+
+# Ethics {#ethics}
+
+Placeholder
+
+
+## Ethical Frameworks
+### The Deontological Approach
+### The Utilitarian Approach
+### The Virtue Approach
+### Optimal Ethical Framework for Human Subjects Research
+## Experimental Ethics
+### The IRB
+### Debriefing Participants
+### Special Considerations for Vulnerable Populations 
+## Publication Ethics
+### Authorship
+### Disclosures
+### Generalizability Statements
+### Post-publication Errors
+### Intellectual Humility
+## The Ethical Duty for Transparency
+### The negatives of openness
+### Individuals should consider openness as a default
+### Institutions can mitigate the risks and costs of openness
+### Conclusion
+
+<!--chapter:end:003-ethics.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+library(tidyverse)
+library(glue)
+library(knitr)
+library(shiny)
+
+opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  error = FALSE,
+  comment = "#>",
+  collapse = TRUE,
+  cache = TRUE,
+  echo = FALSE,
+  cache.lazy = FALSE,
+  dev = "png",
+  dpi = 300,
+  out.width = "\\linewidth"
+)
+kable <- function(...) knitr::kable(..., booktabs = TRUE, linesep = "")
+
+set.seed(42)
+
+.font <- "Source Sans Pro"
+theme_set(theme_bw(base_size = 14, base_family = .font))
+theme_update(panel.grid = ggplot2::element_blank(),
+             strip.background = ggplot2::element_blank(),
+             legend.key = ggplot2::element_blank(),
+             panel.border = ggplot2::element_blank(),
+             axis.line = ggplot2::element_line(),
+             strip.text = ggplot2::element_text(face = "bold"))
+.grey <- "grey70"
+.refline <- "dotted"
+.coef_line <- element_line(colour = .grey, size = 0.1)
+
+.pal <- ggthemes::ptol_pal
+.scale_colour_discrete <- ggthemes::scale_colour_ptol
+.scale_color_discrete <- .scale_colour_discrete
+.scale_fill_discrete <- ggthemes::scale_fill_ptol
+
+.scale_colour_continuous <- viridis::scale_colour_viridis
+.scale_color_continuous <- .scale_colour_continuous
+.scale_fill_continuous <- viridis::scale_fill_viridis
+
+.scale_colour_numerous <- scale_colour_discrete
+.scale_color_numerous <- .scale_colour_numerous
+.scale_fill_numerous <- scale_fill_discrete
+
+# from https://bookdown.org/yihui/rmarkdown-cookbook/font-color.html
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color,
+            x)
+  } else x
+}
+```
+# (PART) Statistics {.unnumbered}
+
+# Estimation {#estimation}
+
+::: {.learning-goals}
+🍎 Learning goals:
+
+-   Contrast inference and estimation as two goals of statistical analysis
+-   Discuss differences between frequentist and Bayesian perspectives
+-   Visualize and interpret measures of estimate variability (including confidence intervals)
+-   Reason about standardized effect sizes and their strengths and weaknesses
+:::
+
+<!-- ## Meta-notes -->
+
+<!-- NC: this chapter currently has multiple running examples. Part of the reason for this is because the first part focuses on a dichotomous outcome and the second part focuses on a continous outcome. If we switch the first part to a continous outcome (e.g., subjective pleasantness ratings), I can probably make the second part use a consistent study design (e.g., we could compare mean liking ratings between children vs. adults) -->
+
+<!-- ### Topics to cover (not yet incorporated) -->
+
+<!-- * Idea of a sampling distribution (or could go in "Inference") -->
+
+In the first section of this book, our goal was to set up some of the theoretical ideas that motivate our approach to experimental design and planning. We introduced our key thesis, namely that experiments are about measuring causal effects. We also began to discuss some of our key themes, including precision of measurement, reduction of bias, and generalization across populations. In this next section of the book, treating statistical topics, we will integrate these ideas with an analytic toolkit for **estimating** causal effects, **quantifying the size and precision** of estimates (this chapter), making **inferences** about the evidence for such effects (Chapter \@ref(inference)), and making **models** for estimation and inference in more complex settings (Chapter \@ref(models)). Although this book is not a statistics text, we hope that these chapters provide some practical foundations for beginning the statistical analysis of your experimental data.
+
+::: {.case-study}
+🔬 Case study: The Lady Tasting Tea
+
+The birth of modern statistical inference came from a single, epochal act of mansplaining.[^estimation-1] Sir Ronald Fisher was apparently at a party when a lady declared that she could tell the difference between cups when the tea was added to the milk vs. the milk to the tea. Rather than taking her at her word, Fisher devised an experimental and data analysis procedure to test her claim.[^estimation-2]
+
+The basic schema of the experiment was that the lady would have to judge a set of new cups of tea and sort them into milk-first vs. tea-first sets. Her data would then be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, in fact this is one of those touchstones that feels unremarkable because it literally established the way science was done for the next century.
+
+One important element of the experiment that was unusual was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounders. Fisher recognized that this strategy was insufficient and that random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk). We discussed the causal power of random assignment in Chapter \@ref(intro) -- this experiment is a key touchstone in the popularization of randomized experiments![^estimation-3]
+:::
+
+[^estimation-1]: An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed Social Darwinist who believed fervently in Eugenic legislation. These views are repugnant.
+
+[^estimation-2]: If you're interested in this history, we recommend @salsburg2001's delightful book, "The Lady Tasting Tea," about the origins of modern statistics.
+
+[^estimation-3]: Randomized experiments were not invented by Fisher. Perhaps the earliest example of a (somewhat) randomized experiment was a trial of scurvey treatments in the 1700s [@dunn1997]. @peirce1884 also report a strikingly modern use of randomized stimulus presentation (via shuffling cards). Nevertheless, Fisher's statistical work popularized randomized experiments throughout the sciences, in part by integrating them with a set of analytic methods.
+
+## Estimating an effect
+
+If experiments are about estimating effects, how do we actually use our experimental data to make these estimates? With apologies to Fisher, for our example we'll design a slightly more modern version of his experiment using a forced-choice judgment measure and a between-participants design. Our causal theory is that the tea quality is affected by milk ordering, so we'll test that by rating tea quality both milk-first and tea-first. We'll do this as a field trial in a local cafe: when people order tea with milk, we'll randomly present it milk-first or tea-first and then elicit a rating on a Likert scale from 1 (terrible) to 7 (delicious). We'll do this for 48 customers and then take a look at the data.^[Right now we're going to assume that our ratings are just simple numerical values and not worry about the fact that they come from a rating scale. This is what people often do, though it can cause problems in certain cases. If you're curious about Likert scales, we'll talk a bit more about them in Chapter \@ref(measurement).]
+
+Eventually, we'll want to estimate the effect of milk-first preparation on quality ratings. But for now, our goal will be to estimate the quality of the tea when it is milk-first [the better way, according to some data; @kennedy2003]. More formally, we want to use our **sample** of 24 milk-first tea judgments to estimate a **population parameter** that we can't directly observe, namely the true perceived quality of all possible milk-first cups. Here we're looking at this simple estimation problem rather than the more familiar problem where we have a sample of different people from a population and we want to try and estimate the population parameter. In Chapter \@ref(models) we'll talk more about modeling variability across experimental participants from a population.
+
+We'll try to go easy on notation but some amount will make things clearer. We will use $\theta$ ("theta") to denote the parameter we want to estimate (the "estimand") and $\widehat{\theta}$ its sample estimate.[^estimation-4] This is the probability that the lady is correct in her judgment.
+
+[^estimation-4]: Statisticians use "hats" like this to denote sample estimates. One way to remember this is that the "person in the hat" is wearing a hat to dress up as the actual quantity. Feel free to ignore this but it helps us.
+
+### Maximum likelihood estimation
+
+OK, you are probably saying, if we we want our estimate of milk-first quality, shouldn't we just take the average rating across the 24 cups of milk-first tea? The answer is yes, but let's unpack that choice for just a moment.
+
+Taking the sample mean as our estimate $\widehat{\theta}$ is an example of an estimation approach called **maximum likelihood estimation**. In general terms, maximum likelihood estimation is a two-step process. First, we assume a **model** for how the data were generated. This model is specified in terms of certain population parameters. In our example, the "model" is as simple as they come: we just assume there is some level of tea quality such that people's ratings are sampled from a normal distribution with mean $\theta_{milk first}$.[^estimation-5]
+
+[^estimation-5]: In other problems, like multi-variable regression, the model is more complicated, for example involving more than one regression coefficient -- that's what we'll get to in Chapter \@ref(models).
+
+Second, we try to find the values of the population parameters that make our observed data as likely as possible. For example, if our sample mean is $\widehat{\theta_{milk first}} = 4.5$, what underlying value of $\theta_{milk first}$ would make these data most likely to occur? Well, suppose the underlying parameter were $\theta_{milk first}=2.5$. Then it would be pretty unlikely that our sample mean would be so much bigger. So $\theta_{milk first}=2.5$ is a poor guess for the population parameter based on these data. Conversely, if the parameter were $\theta_{milk first}=6.5$, it would be a bit unlikely that our sample mean would be so much *smaller*. The value of $\theta_{milk first}$ that makes these data most likely is just 4.5 itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate.
+
+### Estimating variation 
+
+Let's visualize our 24 milk-first tea ratings. Since ratings on our scale are discrete, Figure \@ref(fig:estimation-milk-hist) shows them as a histogram. Our estimate of the mean, $\widehat{\theta_{milk first}}$, is shown as a blue dashed line. 
+
+Our observations are clustered around the mean, but they also show some variation. Some are higher and some are lower. Variation of this type is a critical feature of every data set. This variation can be described via a **probability distribution**, a mathematical entity that describes the properties of possible datasets. The only probability distribution we'll discuss here is the ubiquitous **normal distribution** (also sometimes called a "gaussian distribution"). A normal distribution has two **parameters**, a mean and a **standard deviation**. These two parameters define the shape of the curve. The mean describes where its center goes, and the standard deviation describes how wide it is. 
+
+The blue curve shown in Figure \@ref(fig:estimation-milk-first) is the normal distribution that is closest to the data in our milk-first condition. Its mean is of course $\widehat{\theta_{milk first}}$, the parameter we just estimated. But to plot this curve, we also had to estimate the standard deviation. It turns out that the standard deviation is just exactly what its name says: the average deviation between the mean and any given observation. We won't discuss how to estimate the standard deviation for your sample here, since this would take us into statistical theory. What's important for now is just that the standard deviation gives us a way to describe the width of the normal distribution.
+
+```{r estimation-data}
+tea_data <- tibble(condition = c(rep("milk first", 24),
+                                 rep("tea first", 24)),
+                   rating = c(round(rnorm(24, mean = 5.5, sd = 1)), 
+                              round(rnorm(24, mean = 4.5, sd = 1)))) |>
+  mutate(rating = ifelse(rating > 7, 7, rating), #truncate
+         rating = ifelse(rating < 1, 1, rating))
+```
+
+```{r estimation-milk-hist, fig.cap="Ratings of the quality of milk-first tea, with the best fitting normal distribution shown in blue (mean shown by the dashed line)."}
+td <- filter(tea_data, condition == "milk first")
+ggplot(td, aes(x = rating)) + 
+  geom_histogram(aes(y = ..count..), binwidth = 1) + 
+  xlim(1,7) + 
+  geom_vline(xintercept = mean(td$rating), lty = 2, col = "blue") + 
+  stat_function(fun = function(x) 
+    {dnorm(x, mean = mean(td$rating), sd = sd(td$rating)) * 24}, 
+    col = "blue") +
+  ylab("Number of ratings") + 
+  xlab("Quality rating (1-7)")
+
+```
+
+
+Introduce normal distribution and standard deviation.
+
+
+
+### Bayesian estimation
+
+Before we perform our tea experiment, we don't know exactly what $\theta$ will be, but it seems a bit unlikely that tea would be rated as either horrible or perfect. We have what you might call *weak prior expectations* about the kinds of ratings we'll receive. 
+
+These kind of expectations are most useful when we have a very small amount of data. For example, if our very first participant in the experiment rated their tea as terrible, we wouldn't want to jump to the conclusion that the tea was actually bad. Instead, we might speculate that the participant was having a bad day. On the other hand, if all of our participants gave bad ratings to their tea, we might want to tell the cafe that they are serving sub-standard tea. With a little data, our prior expectations might moderate our conclusions; as we get more data, we should probably put more weight on the data. 
+
+How do we quantify this tradeoff between prior expectations and current observations? We can do this via **Bayesian estimation** of $\theta_{milkfirst}$. Bayesian estimation provides a principled framework for integrating prior beliefs and data. These estimation techniques can be very helpful in cases where data are sparse or prior beliefs are strong. 
+
+In Bayesian estimation, we observe some data $d$, consisting of the set of correct and incorrect responses in the experiment. Now we can use **Bayes' rule**, a tool from basic probability theory, to estimate this number. Bayes' rule says:
+
+$$
+\color{purple}{p(\theta | d)} = \frac{\color{red}{p(d | \theta )} \color{blue}{p(\theta )}}{\color{black}{p(d)}}.
+$$
+
+\noindent Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(\theta |d)$) is called the **posterior probability** -- it tell us what we should believe about the participant's ability given the data we observed. We then break that down into two terms in the numerator.[^estimation-6]
+
+[^estimation-6]: We're making the posterior `r colorize("purple","purple")` to indicate the combination of likelihood (`r colorize("red","red")`) and prior (`r colorize("blue","blue")`).
+
+The first part of the numerator is $p(d|h)$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.[^estimation-7] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the tea is of high quality (say $\theta = 6.5$) then the probability of a bunch of low accuracy observations will be fairly low.
+
+[^estimation-7]: Speaking informally, "likelihood" is just a synonym for probability, but this is a technical meaning for the term, which can get a bit confusing.
+
+The second term in the numerator, $p(\theta )$, is called the **prior**. This term encodes our beliefs about the likely distribution of tea quality. Intuitively, if we think that the tea is likely of high quality, we should require more evidence to convince us that it's bad. In contrast, if we think it's probably bad, a few examples of low ratings might serve to convince us.
+
+```{r inference-bayes-demo, fig.cap="Examples of Bayesian inference about tea discrimination ability under three different priors (facets). Blue lines give the prior probability distribution, red lines give the likelihood of the data, and purple lines give the posterior distribution from combining likelihood and prior."}
+# FIXME
+# 
+# bayes <- expand_grid(x = seq(1,7,.1), 
+#                      mu = c(2.5, 4.5, 6.5)) |>
+#   rowwise() |>
+#   mutate(h = rnorm(x = x, mean = mu, sd = 1),
+#          d_given_h = rnorm(x = x, mean = mu, sd = 1,
+#          h_given_d = rnorm(x = x, mean = mu, sd = 1) %>%
+#   group_by(a,b) %>%
+#   mutate(h_norm = h / sum(h), 
+#          h_given_d_norm = h_given_d / sum(h_given_d), 
+#          d_given_h_norm = d_given_h / sum(d_given_h), 
+#          map = x[h_given_d == max(h_given_d)],
+#          label = case_when(a == 1 ~ "Flat",
+#                            a == 3 ~ "Prior: no discrimination",
+#                            a == 6 ~ "Prior: discrimination"), 
+#          label = fct_relevel(label, "Flat", "prior: no discrimination"))
+# 
+# ggplot(bayes, aes(x = x, y = h_norm)) + 
+#   geom_line(col = "blue") +
+#   geom_line(aes(y = h_given_d_norm), col = "purple") +
+#   geom_line(aes(y = d_given_h_norm), col = "red") +
+#   geom_vline(xintercept = .5, lty = 2) + 
+#   geom_vline(aes(xintercept = map), col = "purple", lty = 3) + 
+#   facet_wrap(~label) + 
+#   ylab("Normalized probability") +
+#   xlab("Discrimination level")
+```
+
+# FIXME
+Figure \@ref(fig:inference-bayes-demo) gives an example of the combination of prior and data.[^estimation-8] For the sake of this example, we assume that we have run 12 tea discrimination trials and observed 9 successes and 3 failures. The evidence alone -- with no prior -- suggests a discrimination estimate of $9/12 = .75$ (the maximum likelihood estimate). When we use a flat prior, we get the same estimate of `r bayes$map[bayes$label == "Flat"][1]`.[^estimation-9] In contrast, if we go in assuming that discrimination is likely to be absent or weak, we are biased downward in our eventual estimate of `r bayes$map[bayes$label == "Prior: no discrimination"][1]`; if we go in assuming good discrimination, we end up biased upwards to `r bayes$map[bayes$label == "Prior: discrimination"][1]`.
+
+[^estimation-8]: The model we use for this example is called a **Beta-Binomial conjugate model** and is a very convenient model for working with count data representing successes and failures.
+
+[^estimation-9]: In general, Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior or as you get infinite data ($n \to \infty$). Bayesian estimation is most important when you have strong beliefs and not a lot of data.
+
+### Estimating a treatment effect
+
+We've now covered estimating a single parameter using both frequentist and Bayesian methods. But recall that what we really wanted to do was to estimate the causal effect we were interested in, namely the milk-first vs. tea-first effect. We could refer to this as our **treatment effect**. In practice, this is going to be a pretty straightforward extension.
+
+In the maximum likelihood framework, we need to ...
+
+In the Bayesian framework ...
+
+
+## Variability and Precision
+
+In the previous section, we discussed how to estimate the mean and standard deviation of our observed data. These summary statistics are helpful for ...
+
+### Standard error of the mean
+
+Talk about standard error with respect to SD of sampling distribution
+
+### Confidence intervals
+
+CIs for inference
+
+Confidence intervals: 95% of these regions will contain the TRUE parameter Remember frequentists - there is a TRUE parameter
+
+<https://istats.shinyapps.io/ExploreCoverage/>
+
+But this is not our typical interpretation, which is that 95% chance parameter is in this interval That's the BAYESIAN interpretation
+
+Bayesian Estimation
+
+Find the posterior distribution of the parameter of interest You can take its mean Its HPD (highest posterior density)
+
+Confidence in confidence intervals: <https://link.springer.com/article/10.3758/s13423-015-0947-8>
+
+### Visualizing variability
+
+Error bar: - standard deviation (why is this bad)? - SEM - CI
+
+<!-- ::: {.interactive} -->
+
+<!-- ⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance -->
+
+<!-- ::: -->
+
+<!-- TODO: HERE WOULD BE A GREAT PLACE FOR AN INTERACTIVE -->
+
+## Measures of effect size
+
+Once we have measured something, we need to make a decision about how to describe this relationship to the world. Sometimes we are working with fairly intuitive relationships that are easy to describe. A researcher might say, for example, that children who drank espresso ran, on average, around the playground for 20 more minutes than children who drank milk. We all have a shared understanding of what 20 minutes mean, so people will likely not have much trouble understanding this estimated effect. But what if something less intuitive was measured, such as how excited the children reported feeling on a 10-point Likert-type scale (1 being "not at all excited"; 10 being "extremely excited")? What does it mean, for example, to say that children who drank espresso on average rated their excitement as a 5 and children who drank milk on average rated their excitement as a 4? And how is this comparable to, for instance, a 1-point change on a 100-point excitement scale (1 being "not at all excited"; 100 being "extremely excited"?
+
+To provide a common language for describing these relationships, some researchers use *standardized effect sizes.* A common standardized effect size is Cohen's *d*, which provides a standardized estimate of the difference between two means. There are many different ways to calculate Cohen's *d* (Lakens, 2013), but all approaches are usually some variant of the following formula:
+
+$$d = \frac{M_1- M_2}{SD}$$
+
+Let's start with the children-espresso-drinking study that used a 10-point excitement scale. $M_1$ refers to the mean excitement ratings of children who were drank espresso (a 5 out of 10), $M_2$ refers to the mean excitement ratings of children who drank milk (a 4 out of 10), and $SD$ refers to the standard deviation of all the children in the study (let's assume this is 2). This leaves us with:
+
+$${d_{children.study}} = \frac{M_1- M_2}{SD} = \frac{5- 4}{2} = \frac{1}{2} = 0.5$$
+
+A Cohen's *d* of 0.50 means that children who drank espresso had excitement scores that were, on average, 0.50 standard deviations higher than children who drank milk. It may not be a very intuitive way of thinking about difference scores (see Pros and cons of standardization), but it allows us to compare the size of the effect to studies using different measures.
+
+For instance, let's say that we ran a conceptual replication of the study with two changes: (1) we studied adults instead of children, and (2) we used a 100-point excitement scale instead of a 10-point scale. And imagine that, just as we found that espresso-drinking children were rated as 1-point higher on a 7-point excitement measure, espresso-drinking adults were rated 1-point higher on a *100-point* excitement scale. Intuitively, it is obvious that these effects are different. And, statistically, this becomes clear when we describe the effect in terms of standardized mean differences.
+
+For the study with adults, let's imagine that adults who drank espresso on average rated their excitement as a 50 ($M_1$) out of 100 and adults who drank milk on average rated their excitement as a 49 ($M_2$). To keep things simple, let's also assume that variability in adults excitement levels are equal to that of children. If this is the case, a standard deviation of 2 in the children's ratings on the 10-point scale is equivalent to a standard deviation of 20 in the adults' ratings on the 100-point scale ($SD = 20$). Using the same formula as above, we would find:
+
+$${d_{adult.study}} = \frac{M_1- M_2}{SD} = \frac{50- 49}{20} = \frac{1}{20} =  0.05$$
+
+A Cohen's *d* of .05 means that adults who drank espresso had excitement scores that were, on average .05 standard deviations higher than the adults who drank milk. This is much smaller than the .50 difference in standard deviation observed among children. Indeed, social scientists often consider *d* = 0.50 to be a *large effect*, and a *d* = 0.05 to be negligible. These effect size interpretation norms are somewhat arbitrary and there are many exceptions, but you get the point: standardizing the measure of differences in excitement levels allowed us to communicate that the effect of espresso on children's excitement levels larger than the effects on adults.
+
+Cohen's *d* is one of many standardized effect sizes that researchers can use. Just as Cohen's *d* standardizes differences in group means, there are also ways of standardizing relationships between categorical variables (e.g., Odds Ratio), how well a predictor variable explains an outcome variable (e.g., Pearson's *r*, R^2^, and $\eta^2$), and more! For a review, see Fritz, Morris, and Richler (2012).
+
+### Pros and cons of standardizing effect sizes
+
+By now, you're probably realizing that there are some pros and cons of standardizing effect sizes. Sure, it helps communicate that a 1-point change on a 10-point scale is not the same as a 1-point change on a 100-point scale. But, is it any better to say that the first change represents a 0.50 standard deviation difference and the second a 0.05 standard deviation difference? It's a good question--one that researchers have argued about for a long time!
+
+Proponents of effect size standardization argue that doing so allows us to more easily compare results across studies. Across studies, researchers use different measures; different study designs; and different populations. Standardization allows us to use a common language to describe estimated relationships in these varied contexts. This is helpful when we want to aggregate and compare effects across studies (via meta-analysis, see Chapter 17). And it is also helpful when planning new studies. When trying to figure out how many participants to run in a study, almost all programs use standardized effect sizes to determine, for example, how much data would be needed to reliably detect a specific standardized effect size.
+
+<!-- NC NOTE: ITS NICE TO BRING UP POWER ANALYSIS, BUT I'M NOT SURE HOW MUCH BACKGROUND THE READER WILL HAVE AT THIS POINT.-->
+
+<!-- [STILL VERBATIM FROM MRM]  NC FOLLOW-UP: WHICH PART IS VERBATIM? -->
+
+Standardizing effect sizes, though, has limitations. For example, if two interventions produce the same absolute change in the same outcome measure, but are studied in different populations in which the variability on the outcome differs substantially, the interventions would produce different standardized mean differences.
+
+<!-- NC: I THINK THE ABOVE TEXT IS A BIT ABSTRACT. ADDING AN EXAMPLE BELOW. IF WE REALLY WANT TO DRIVE THE POINT HOME, A FIGURE COULD BE HELPFUL -->
+
+For example, let's assume that espresso leads to the same absolute changes in feelings of excitement in adults and children. Furthermore, imagine that adults generally have more consistent excitement levels than children (e.g., that a randomly selected adults would generally be consistently calm, but that a randomly selected sample of children would consist of some kids nodding off and other kids bouncing off the walls with excitement). Quantitatively, this would often lead us to observe a smaller standard deviation in excitement levels in adults (e.g., let's assume $SD_{adults} = 1$ ) vs. children (e.g., let's assume $SD_{children} = 2$). In this scenario, even if the espresso led to the same 1-point absolute change in feelings of excitement among adults and children, the standardized effect size would look quite different.
+
+$${d_{adult.study}} = \frac{M_1- M_2}{SD} = \frac{5- 4}{1} = \frac{1}{1} =  1$$
+
+$${d_{children.study}} = \frac{M_1- M_2}{SD} = \frac{5- 4}{2} = \frac{1}{2} =  0.50$$
+
+This example highlights some of the challenges with standardization. If we focused on the fact that both adults and children experienced a 1-point change in excitement levels, we would conclude that espresso leads to equal changes in excitement among adults and children. If we focused on the standardized effect sizes, however, we would conclude that the effect of espresso is twice as big for adults vs. children.
+
+So which is better: describing raw scores or standardized scores? In general our response is "Why not both?". But if you wanted to pick one or the other, we recommend focusing on raw scores when working with measures that are (a) intuitive to understand (e.g., temperature), and/or used fairly consistently across studies (e.g., measuring blood pressure in terms of mmHg). When, however, working with measures that are (a) relatively unintuitive to understand (e.g. changes on an arbitrary 7-point Likert-type scale) or (b) used inconsistently across studies (e.g., measuring excitement with a 10-point scale in one study and a 100-point scale in a different study), we recommend standardized effect sizes.
+
+<!--chapter:end:004-estimation.Rmd-->
+
+
+# Inference {#inference}
+
+Placeholder
+
+
+## The lady tasting tea
+## Inference
+### Bayes Factors 
+### *p*-values
+## Inference fallacies
+### Philosophical (and empirical) views of probability
+## Summary: When inference is and isn't appropriate
+
+<!--chapter:end:005-inference.Rmd-->
+
+
+# Models {#models} 
+
+Placeholder
+
+
+## Inference and estimation for two-group designs
+### Simple models of between-group differences
+## Covariates
+
+<!--chapter:end:006-models.Rmd-->
+
+
+# (PART) Design and Planning {-}
+# Measurement {#measurement}
+
+Placeholder
+
+
+## Reliability
+### Measurement scales
+### Paradoxes in reliability
+### Practical advice for computing reliability
+## Validity
+## How to select a good measure?
+### What to measure? 
+### Survey measures
+## The temptation to measure lots of things
+## Chapter summary
+
+<!--chapter:end:007-measurement.Rmd-->
+
+
+# Design of experiments {#design}
+
+Placeholder
+
+
+## Manipulation validity
+### Threats to manipulation validity
+### Confounding
+### Removing nuisance confounds
+## How to design a manipulation to test a theory.
+### Design concepts
+### Connecting with theory
+
+<!--chapter:end:008-design.Rmd-->
+
+
+# Sampling {#sampling}
+
+Placeholder
+
+
+
+<!--chapter:end:009-sampling.Rmd-->
+
+
+# Preregistration {#prereg}
+
+Placeholder
+
+
+
+<!--chapter:end:010-prereg.Rmd-->
+
+
+# (PART) Execution {-}
+# Experimental strategy {#selection}
+
+Placeholder
+
+
+
+<!--chapter:end:011-selection.Rmd-->
+
+
+# Data collection {#collection}
+
+Placeholder
+
+
+## The critical importance of piloting
+## Data integrity checking
+## Data collection online
+## Manipulation checks
+## Experimental practices, beliefs, and superstitions
+
+<!--chapter:end:012-collection.Rmd-->
+
+
+# Project management {#management}
+
+Placeholder
+
+
+## Project Management
+### Organizing your project
+### Versioning
+### File names
+## Data Management
+### Save your raw data
+### Document your data collection process
+### Organize your data for later analysis (spreadsheet version)
+### Organize your data for later analysis (software version)
+### Document the format of your data
+## Sharing Research Products
+### What you can and can't share
+### Where and how to share ("If you like it then you've gotta put a license on it")
+## Chapter summary
+
+<!--chapter:end:013-manangement.Rmd-->
+
+
+# (PART) Analysis and Reporting {-}
+# Visualization {#viz}
+
+Placeholder
+
+
+## Basic principles of visualization
+### Show the design
+### Facilitate comparison
+### Maximize information, minimize ink
+### ``Fix the axis labels''
+## Exploratory visualization
+
+<!--chapter:end:014-viz.Rmd-->
+
+
+# Exploratory data analysis {#eda}
+
+Placeholder
+
+
+## Sensitivity Analysis
+## Data exploration
+## Exploratory modeling and theory-building
+
+<!--chapter:end:015-eda.Rmd-->
+
+
+# Reproducible writing {#writing}
+
+Placeholder
+
+
+## Writing 
+## Reproducible manuscripts
+
+<!--chapter:end:016-writing.Rmd-->
+
+
+# Meta-analysis {#meta}
+
+Placeholder
+
+
+## The basics of evidence synthesis
+### How *not* to synthesize evidence
+### Combining results across studies using fixed-effects meta-analysis
+### Limitations of fixed-effects meta-analysis
+### Random-effects meta-analysis
+## Bias in meta-analysis
+### Within-study biases
+### Across-study biases
+
+<!--chapter:end:017-meta.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+library(tidyverse)
+library(glue)
+library(knitr)
+library(shiny)
+
+opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  error = FALSE,
+  comment = "#>",
+  collapse = TRUE,
+  cache = TRUE,
+  echo = FALSE,
+  cache.lazy = FALSE,
+  dev = "png",
+  dpi = 300,
+  out.width = "\\linewidth"
+)
+kable <- function(...) knitr::kable(..., booktabs = TRUE, linesep = "")
+
+set.seed(42)
+
+.font <- "Source Sans Pro"
+theme_set(theme_bw(base_size = 14, base_family = .font))
+theme_update(panel.grid = ggplot2::element_blank(),
+             strip.background = ggplot2::element_blank(),
+             legend.key = ggplot2::element_blank(),
+             panel.border = ggplot2::element_blank(),
+             axis.line = ggplot2::element_line(),
+             strip.text = ggplot2::element_text(face = "bold"))
+.grey <- "grey70"
+.refline <- "dotted"
+.coef_line <- element_line(colour = .grey, size = 0.1)
+
+.pal <- ggthemes::ptol_pal
+.scale_colour_discrete <- ggthemes::scale_colour_ptol
+.scale_color_discrete <- .scale_colour_discrete
+.scale_fill_discrete <- ggthemes::scale_fill_ptol
+
+.scale_colour_continuous <- viridis::scale_colour_viridis
+.scale_color_continuous <- .scale_colour_continuous
+.scale_fill_continuous <- viridis::scale_fill_viridis
+
+.scale_colour_numerous <- scale_colour_discrete
+.scale_color_numerous <- .scale_colour_numerous
+.scale_fill_numerous <- scale_fill_discrete
+
+# from https://bookdown.org/yihui/rmarkdown-cookbook/font-color.html
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color,
+            x)
+  } else x
+}
+```
+# Conclusions {#conclusions}
+
+::: {.learning-goals}
+🍎 Learning goals: Synthesize and extend lessons from previous chapters.
+:::
+
+::: {.case-study}
+🔬 Case study: How to run a study that doesn’t replicate, and how to design a study that doesn’t contribute to our knowledge. We report new empirical analysis of aggregate data from 10 years of Psych 251 (>100 replication projects), discussing empirical predictors of (non-)replicability
+:::
+
+Revisiting themes of precision, transparency, generalizability, bias-reduction
+
+- Discuss the “crisis” narrative and reframe as one way into seeing the set of interlocking issues that keep behavioral research from contributing to cumulative theory.
+- Collaboration as a way forward. Spotlight the Psychological Science Accelerator (Moshontz et al. 2018).
+
+Concrete suggestions for building a cumulative research program
+
+- This was a big book, and incorporating all of this advice into your research program may seem difficult or overwhelming.
+- Start simple, and repeat: for building an empirical research program, you want to measure one thing well and then build on that measurement. 
+- Internal replication as a critical way to check your own work. 
+- Cumulativity as a key principle that you can model in your own work. 
+
+<!--chapter:end:018-conclusions.Rmd-->
+
+
+# (PART) Appendices {.unnumbered}
+
+Placeholder
+
+
+## Introduction {.unnumbered}
+## 0. Review basic terminal commands {.unnumbered}
+## 1. Install git {.unnumbered}
+### 1.1 Did you successfully install? {.unnumbered}
+### 1.2 Other versions {.unnumbered}
+### 1.3 Set your name and email address {.unnumbered}
+## 2. Make a repo on GitHub, clone it to your computer {.unnumbered}
+## 3. Make some commits {.unnumbered}
+### 3.1 Update your README file {.unnumbered}
+### 3.2 Add and commit changes to git {.unnumbered}
+### 3.3 Add another file to the repo + commit it {.unnumbered}
+## 4. Push your changes to GitHub {.unnumbered}
+## 5. Make more changes to the repo {.unnumbered}
+## 6. Rolling back to previous versions {.unnumbered}
+## 7. What not to put on git {.unnumbered}
+## Further Resources {.unnumbered}
+
+<!--chapter:end:100-github.Rmd-->
+
+
+# R Markdown Tutorial {#rmarkdown}
+
+Placeholder
+
+
+## Why write reproducible papers?
+## Getting Started
+## Structure of an R Markdown file
+### Header
+### Body text
+### Code chunks
+### Output formats
+## Markdown syntax
+## Headers, graphs, and tables
+### Headers 
+### Graphs
+### Tables
+### Statistics
+## Writing APA-format papers
+## Bibiographic management
+## Collaboration 
+## R Markdown: Chapter Summary
+
+<!--chapter:end:101-rmarkdown.Rmd-->
+
+
+# Tidyverse Tutorial {#tidyverse}
+
+Placeholder
+
+
+## Functions and Pipes
+## Tidy data analysis
+### Exploring and characterizing the dataset
+### Filtering and mutating
+### Standard descriptives using `summarise` and `group_by`
+### More advanced combos
+## Getting your data tidy
+## Tidyverse: Chapter sumamry
+
+<!--chapter:end:102-tidyverse.Rmd-->
+
+
+# ggplot Tutorial {#ggplot}
+
+Placeholder
+
+
+## Exploring ggplot2 using `qplot`
+## More complex with `ggplot`
+## Facets
+## Geoms
+## Themes and plot cleanup
+## Plot inheritance example
+## Advanced plot exploration exercise
+### Variable exploration
+### Hypothesis-related exploration
+
+<!--chapter:end:103-ggplot.Rmd-->
+
+
+# Instructor's guide {#instructors}
+
+Placeholder
+
+
+## Introduction 
+## Why Teach a Project-Based Course?
+## Scenarios for different course layouts
+### Student Level:
+### Course Resources:
+#### Teaching Assistants (or lack thereof)
+#### Course Funding (or lack thereof)
+## Logistics
+### Course budget
+### Course-related Institutional Review Board application
+### Sample syllabus for a 10-week and 16-week version of the course
+
+<!--chapter:end:104-instructors.Rmd-->
+
