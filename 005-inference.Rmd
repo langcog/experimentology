@@ -2,6 +2,8 @@
 
 <!-- TODO: -->
 <!-- * Connections to Karl Popper -->
+<!-- "needs a pass to make coherent/consistent with example in estimation" -->
+<!-- "we still need CIs and visualizing variability" -->
 
 ::: {.learning-goals}
 🍎 Learning goals: 
@@ -55,7 +57,12 @@ This isn't a statistics book and we won't attempt to teach the full array of imp
 
 The second innovation was the idea of creating a model of what might happen during the experiment: specifically, a **null model** in which the nameless lady chose cups by chance rather than because of some tea sensitivity. The goal of Fisher's analysis strategy was then to compute the probability of the lady's choices under this null model. Fisher then declared that it is "usual and convenient for experimenters to take 5 percent as a standard level of convenience," establishing the .05 cutoff that has become gospel throughout the sciences.^[Actually, right after establishing .05 as a cutoff, Fisher then writes that "in the statistical sense, we thereby admit that no isolated experiment, however significant in itself, can suffice for the experimental demonstration of any natural phenomenon... in order to assert that a natural phenomenon is experimentally demonstrable we need, not an isolated record, but a reliable method of procedure. In relation to the test of significance, we may say that a phenomenon is experimentally demonstrable when we know how to conduct an experiment which will rarely fail to give us a statistically significant result." In other words, Fisher was all for replication!]
 
-With apologies to Fisher, for our example, we'll design a slightly more modern version of his experiment using a forced-choice judgmeent measure. We present participants with a series of cups of tea (in random order, of course). Half are prepared milk-first, half tea-first. Then the participant must give an independent judgement about each. The null model is based on the idea that, if the participant knows nothing then they should choose at random between the two possibilities. Hence, we can use a simple binomial distribution to show expected chance performance for different sets of trials.^[We quantify our measure as the proportion of correct trials, since trials here are interchangeable.] 
+As in Chapter \@ref(estimation), we'll consider a between-subjects design in which 48 participants are randomly assigned to drink a milk-first or a tea-first cup, and then rate the tea on a Likert scale from 1 (terrible) to 7 (delicious)
+
+
+With apologies to Fisher, for our example we'll design a slightly more modern version of his experiment using a Likert scale (1--7 ratings) and a between-participants design (so each participant gets only one cup of tea). Each of these elements will be discussed in more detail in future chapters. The null model is based on the idea that, if milk ordering had no effect on tea quality, then the means of the milk-first and tea-first ratings should be the same.
+
+\[MM: Did not update figures\]
 
 These null distributions are shown in Figure \@ref(fig:inference-null-model).[^MM: The concept of a "null distribution" probably needs more scaffolding. In my experience with accidentally driving students crazy, I find that I have to go extremely slowly the first time I discuss sampling distributions.] We show cases with 6, 12, 24, and 48 trials, and highlight the .05 significance threshold -- the threshold above which you would fall only 5% of the time if you were guessing by chance.^[Note that we are effectively doing a "one-tailed" test here, since we're attending only to the right hand side of each plot and ignoring cases where the participant is exactly flipped in their judgments.] Conventionally, if you cross this threshold, you can say you "reject the null."
 
@@ -99,7 +106,7 @@ In the previous section, we discussed how to estimate means and differences in m
 
 [^18]: Note that the measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Of course, this is only one kind of uncertainty, and a more holistic view of the overall credibility of an estimate must also account for study design and bias, for example.
 
-Why is this so? To characterize the uncertainty in an estimate, it helps to picture what is called its **sampling distribution**, which is the distribution *of the estimate itself* across different, hypothetical samples. That is, let's imagine -- purely hypothetically -- that we conducted the tea experiment with $n=48$ not just once, but hundreds or even thousands of times. Each time, we use similar recruitment methods to recruit a new sample of participants, and we estimate $\widehat{\Delta}$ in that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability. If we plotted these estimates, $\widehat{\Delta}$, across thousands of samples, we would get the sampling distribution:
+Why is this so? To characterize the uncertainty in an estimate, it helps to picture what is called its **sampling distribution**, which is the distribution *of the estimate itself* across different, hypothetical samples. That is, let's imagine -- purely hypothetically -- that we conducted the tea experiment with $n=48$ not just once, but hundreds or even thousands of times. This idea is often called **repeated sampling** as a shorthand. For each hypothetical sample, we use similar recruitment methods to recruit a new sample of participants, and we estimate $\widehat{\Delta}$ in that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability. If we plotted these estimates, $\widehat{\Delta}$, across thousands of samples, we would get the sampling distribution:
 
 ```{r}
 make_tea_data <- function(n_total = 48, sigma = 1.25) {
@@ -156,27 +163,31 @@ Of course, this isn't at all normal because $\widehat{p}_H$ can only take on the
 
 \[COIN FLIP SAMPLING DISTRIBUTION WITH INCREASING N'S\]
 
-We get a normal distribution! This tendency of sampling distributions to become normal as $n$ becomes very large reflects a deep and elegant mathematical law called the **Central Limit Theorem**. Aesthetic swooning aside, the practical upshot is that the Central Limit Theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\sigma/\sqrt{n}$. That is why the sampling distribution becomes narrower as the sample size increases.
+We get a normal distribution! This tendency of sampling distributions to become normal as $n$ becomes very large reflects a deep and elegant mathematical law called the **Central Limit Theorem**. Aesthetic swooning aside, the practical upshot is that the Central Limit Theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\widehat{SE} = \sigma/\sqrt{n}$. That is why the sampling distribution becomes narrower as the sample size increases.
 
-\[Next up: On to confidence intervals\]
-
--   Put an exercise about sampling distribution versus distribution in sample
 
 ### Confidence intervals
 
-CIs for inference
+A convenient frequentist way to summarize the variability of the sampling distribution -- and hence how uncertain we are about the point estimate -- is a **confidence interval**, which heuristically represents a range of possible values for the parameter of interest that are plausible given the data. More formally, a 95% confidence interval for some estimate (call it $\widehat{\Delta}$, as in the tea example) is defined as a range of possible values for $\Delta$ such that, if we did repeated sampling, 95% of the intervals generated by those samples would contain the true parameter, $\Delta$. Here's an example. As we will calculate below, the 95% confidence interval for the milk ordering effect is XXX. If we were to conduct the experiment 100 times and calculate a confidence interval each time, we should expect 95 of the intervals to contain the true $\Delta$, whereas we would expect the remaining 5 to not contain $\Delta$.
+^[In case you don't have enough tea to do the experiment 100 times to confirm this, you can do it virtually [here](https://istats.shinyapps.io/ExploreCoverage/).] Confidence intervals are like betting on the inferences drawn from your sample. The sample you drew is like one pull of a slot machine that will pay off (i.e., have the confidence interval contain the true parameter) 95% of the time.
 
-Confidence intervals: 95% of these regions will contain the TRUE parameter Remember frequentists - there is a TRUE parameter
+The repeated-sampling definition of a confidence interval is rigorous and clear, but it's a bit of a mouthful for everyday use. People often think about confidence intervals more heuristically as, for example, "We are 95% confident that the milk-ordering effect is between XXX and XXX". This kind of interpretation can lull us into the misconception that the confidence interval is saying that there is a 95% "chance" that the true parameter is in the interval. But in the frequentist framework, there is only true value of the parameter, and the variability captured in confidence intervals is about the *samples*, not the parameter itself.^[In contrast, Bayesians do think of parameters themselves as variable rather than fixed.] Whether or not you choose to think of confidence intervals heuristically as "We are 95% confident that the milk-ordering effect is between XXX and XXX", the critical point is to remember the more rigorous repeated-sampling definition that's under the hood, and hence what kind of uncertainty is really being summarized.
 
-<https://istats.shinyapps.io/ExploreCoverage/>
+In practice, confidence intervals are constructed by estimating the middle 95% of the sampling distribution of $\widehat{\Delta}$. Because of our hero, the Central Limit Theorem, we can treat the sampling distribution as normal for reasonably large samples. Given this, it's common to construct a 95% confidence interval[^This is called a "Wald" confidence interval.] as $\widehat{\Delta} \pm 1.96 \widehat{SE}$. For the tea example, we had $\widehat{SE} = \sigma/\sqrt{n} = XXX$, yielding the confidence interval: XXX.
 
-But this is not our typical interpretation, which is that 95% chance parameter is in this interval That's the BAYESIAN interpretation
 
-Bayesian Estimation
+### Credible intervals
 
-Find the posterior distribution of the parameter of interest You can take its mean Its HPD (highest posterior density)
+The Bayesian analog to a confidence interval is a **credible interval**. Recall that for Bayesians, parameters themselves are considered probabilistic (i.e., subject to random variation), not fixed. A 95% credible interval for an estimate, $\widehat{\Delta}$, represents a range of possible values for $\Delta$ such that there is a 95% probability that $\Delta$ falls inside the interval. Because we are now wearing our Bayesian hats, we are "allowed" to talk about $\Delta$ as if it were probabilistic rather than fixed. 
+
+In practice, credible intervals are constructed by finding the posterior distribution of $\Delta$, as in Chapter \@ref(estimation), and then taking the middle 95%, for example. For the tea example, XXX. 
+
+
+
+### Homeless
 
 Confidence in confidence intervals: <https://link.springer.com/article/10.3758/s13423-015-0947-8>
+
 
 ### Visualizing variability
 
@@ -367,7 +378,9 @@ Exercises:
 
 1. Step away from the computer. Can you write the definition of a $p$-value and a Bayes Factor? 
 2. Take three of Goodman's (2008) "dirty dozen" in Table \@ref(tab:dirty-dozen) and write a description of why each is a misconception. (These can be checked against the original article, which gives a nice discussion). 
+3. True or false? If we conducted the tea experiment with 500 participants instead of 48, then all else equal, we would expect tea ratings to cluster more closely around the sample mean.
 ::: 
+
 
 
 
