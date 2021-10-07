@@ -8,28 +8,19 @@
 
 -   Contrast inference and estimation as two goals of statistical analysis
 -   Discuss differences between frequentist and Bayesian perspectives
--   Visualize and interpret measures of estimate variability (including confidence intervals)
 -   Reason about standardized effect sizes and their strengths and weaknesses
 :::
 
-<!-- ## Meta-notes -->
-
-<!-- NC: For the effect-size chapter, it is easier -->
-
-<!-- ### Topics to cover (not yet incorporated) -->
-
-<!-- * Idea of a sampling distribution (or could go in "Inference") -->
-
-In the first section of this book, our goal was to set up some of the theoretical ideas that motivate our approach to experimental design and planning. We introduced our key thesis, namely that experiments are about measuring causal effects. We also began to discuss some of our key themes, including precision of measurement, reduction of bias, and generalization across populations. In this next section of the book--treating statistical topics--we will integrate these ideas with an analytic toolkit for **estimating** effects, **quantifying the size and precision** of these estimates (this chapter), making **inferences** about the evidence for such effects (Chapter \@ref(inference)), and making **models** for estimation and inference in more complex settings (Chapter \@ref(models)). Although this book is not a statistics text, we hope that these chapters provide some practical foundations for beginning the statistical analysis of your experimental data.
+In the first section of this book, our goal was to set up some of the theoretical ideas that motivate our approach to experimental design and planning. We introduced our key thesis, namely that experiments are about measuring causal effects. We also began to discuss some of our key themes, including precision of measurement, reduction of bias, and generalization across populations. In this next section of the book -- treating statistical topics -- we will integrate these ideas with an analytic toolkit for **estimating** effects, **quantifying the size and precision** of these estimates (this chapter), making **inferences** about the evidence for such effects (Chapter \@ref(inference)), and making **models** for estimation and inference in more complex settings (Chapter \@ref(models)). Although this book is not a statistics text, we hope that these chapters provide some practical foundations for beginning the statistical analysis of your experimental data.
 
 ::: case-study
 🔬 Case study: The Lady Tasting Tea
 
 The birth of modern statistical inference came from a single, epochal act of mansplaining.[^2] Sir Ronald Fisher was apparently at a party when a lady declared that she could tell the difference between cups when the tea was added to the milk vs. the milk to the tea. Rather than taking her at her word, Fisher devised an experimental and data analysis procedure to test her claim.[^3]
 
-The basic schema of the experiment was that the lady would have to judge a set of new cups of tea and sort them into milk-first vs. tea-first sets. Her data would then be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, in fact this is one of those touchstones that feels unremarkable because it literally established the way science was done for the next century.
+The basic schema of the experiment was that the lady would have to judge a set of new cups of tea and sort them into milk-first vs. tea-first sets. Her data would then be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, it seems unremarkable only because it literally established the way science was done for the next century.
 
-One important element of the experiment that was unusual was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounders. Fisher recognized that this strategy was insufficient and that random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk). We discussed the causal power of random assignment in Chapter \@ref(intro) -- this experiment is a key touchstone in the popularization of randomized experiments![^4]
+One important and unusual element of the experiment was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounders. Fisher recognized that this strategy was insufficient. Random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk). We discussed the causal power of random assignment in Chapter \@ref(intro) -- this experiment is a key touchstone in the popularization of randomized experiments![^4]
 :::
 
 [^2]: An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed Social Darwinist who believed fervently in Eugenic legislation. These views are repugnant.
@@ -38,20 +29,19 @@ One important element of the experiment that was unusual was its treatment of de
 
 [^4]: Randomized experiments were not invented by Fisher. Perhaps the earliest example of a (somewhat) randomized experiment was a trial of scurvey treatments in the 1700s [@dunn1997]. @peirce1884 also report a strikingly modern use of randomized stimulus presentation (via shuffling cards). Nevertheless, Fisher's statistical work popularized randomized experiments throughout the sciences, in part by integrating them with a set of analytic methods.
 
-## Estimating an effect
+## Estimating a quantity
 
-If experiments are about estimating effects, how do we actually use our experimental data to make these estimates? With apologies to Fisher, for our example we'll design a slightly more modern version of his experiment using a Likert scale and a between-participants design. Our causal theory is that the tea quality is affected by milk ordering, so we'll test that by rating tea quality both milk-first and tea-first. We'll do this as a field trial in an English tea cafe: when people order tea with milk, we'll randomly present it milk-first or tea-first and then elicit a rating on a Likert scale from 1 (terrible) to 10 (delicious). We'll do this for 48 customers and then take a look at the data.[^5]
+If experiments are about estimating effects, how do we actually use our experimental data to make these estimates? With apologies to Fisher, for our example we'll design a slightly more modern version of his experiment using a Likert scale (1--7 ratings) and a between-participants design (so each participant gets only one cup of tea). Each of these elements will be discussed in more detail in future chapters. 
+
+Our causal theory is that the tea quality is affected by milk ordering, so we'll test that by rating tea quality both milk-first and tea-first. We'll do this as a field trial in an English tea cafe: when people order tea with milk, we'll randomly present it milk-first or tea-first and then elicit a rating on a Likert scale from 1 (terrible) to 7 (delicious). We'll do this for 48 customers and then take a look at the data.[^5]
 
 [^5]: Right now we're going to assume that our ratings are just simple numerical values and not worry about the fact that they come from a rating scale. This is what people often do, though it can cause problems in certain cases. If you're curious about Likert scales, we'll talk a bit more about them in Chapter \@ref(measurement).
 
-Eventually, we'll want to estimate the effect of milk-first preparation on quality ratings. But for now, our goal will be to estimate the quality of the tea when it is milk-first [the better way, according to some data; @kennedy2003]. More formally, we want to use our **sample** of 24 milk-first tea judgments to estimate a **population parameter** that we can't directly observe, namely the true perceived quality of all possible milk-first cups. 
-<!-- Here we're looking at this simple estimation problem rather than the more familiar problem where we have a sample of different people from a population and we want to try and estimate the population parameter.[^6] In Chapter \@ref(models) we'll talk more about modeling variability across experimental participants from a population. -->
+Eventually, we'll want to estimate the effect of milk-first preparation on quality ratings (our effect of interest). But for now, our goal will be to estimate the quality of the tea when it is milk-first [the better way, according to some data; @kennedy2003]. More formally, we want to use our **sample** of 24 milk-first tea judgments to estimate a **population parameter** that we can't directly observe, namely the true perceived quality of all possible milk-first cups. 
 
-<!-- [^6]: I don't think I understand the distinction. In the tea case, are we not estimating a population parameter (the causal effect of milk ordering) based on a sample? -->
+We'll try to go easy on notation but some amount will make things clearer. We will use $\theta$ ("theta") to denote the parameter we want to estimate (the **population parameter** or "estimand", though we will try not to say that word too much) and $\widehat{\theta}$, its **sample estimate**.[^7] 
 
-We'll try to go easy on notation but some amount will make things clearer. We will use $\theta$ ("theta") to denote the parameter we want to estimate (the "estimand") and $\widehat{\theta}$ its sample estimate.[^7] 
-
-[^7]: Statisticians use "hats" like this to denote sample estimates. One way to remember this is that the "person in the hat" is wearing a hat to dress up as the actual quantity. Feel free to ignore this but it helps us.
+[^7]: Statisticians use "hats" like this to denote sample estimates. One way to remember this is that the "person in the hat" is wearing a hat to dress up as the actual quantity. Feel free to ignore this mnemonic; it helps us.
 
 <!-- [^8]: Out of date -->
 
@@ -59,21 +49,19 @@ We'll try to go easy on notation but some amount will make things clearer. We wi
 
 ### Maximum likelihood estimation
 
-OK, you are probably saying, if we we want our estimate of milk-first quality, shouldn't we just take the average rating across the 24 cups of milk-first tea? The answer is yes, but let's unpack that choice for just a moment.
+OK, you are probably saying, if we we want our estimate of milk-first quality, shouldn't we just take the average rating across the 24 cups of milk-first tea? The answer is yes. But let's unpack that choice: taking the sample mean as our estimate $\widehat{\theta}$ is an example of an estimation approach called **maximum likelihood estimation**. In general terms, maximum likelihood estimation is a two-step process.
 
-Taking the sample mean as our estimate $\widehat{\theta}$ is an example of an estimation approach called **maximum likelihood estimation**. In general terms, maximum likelihood estimation is a two-step process. First, we assume a **model** for how the data were generated. This model is specified in terms of certain population parameters. In our example, the "model" is as simple as they come: we just assume there is some level of tea quality such that people's ratings are sampled from a normal distribution with mean $\theta_{milk first}$.[^9]
+First, we assume a **model** for how the data were generated. This model is specified in terms of certain population parameters. In our example, the "model" is as simple as they come: we just assume there is some average level of tea quality and that the measurements vary around it.
 
-[^9]: In other problems, like multivariable regression, the model is more complicated, for example involving more than one regression coefficient -- that's what we'll get to in Chapter \@ref(models).
+<!-- [^9] -->
+
+<!-- [^9]: In other problems, like multivariable regression, the model is more complicated, for example involving more than one regression coefficient -- that's what we'll get to in Chapter \@ref(models). -->
 
 Second, we try to find the values of the population parameters that make our observed data as likely as possible. For example, if our sample mean is $\widehat{\theta_{milk first}} = 4.5$, what underlying value of $\theta_{milk first}$ would make these data most likely to occur? Well, suppose the underlying parameter were $\theta_{milk first}=2.5$. Then it would be pretty unlikely that our sample mean would be so much bigger. So $\theta_{milk first}=2.5$ is a poor guess for the population parameter based on these data. Conversely, if the parameter were $\theta_{milk first}=6.5$, it would be a bit unlikely that our sample mean would be so much *smaller*. The value of $\theta_{milk first}$ that makes these data most likely is just 4.5 itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate.
 
 ### Estimating variation in ratings
 
 Let's visualize our 24 milk-first tea ratings. Since ratings on our scale are discrete, Figure \@ref(fig:estimation-milk-first) shows them as a histogram. Our estimate of the mean, $\widehat{\theta_{milk first}}$, is shown as a blue dashed line.
-
-Our observations are clustered around the mean, but they also show some variation. Some are higher and some are lower. Variation of this type is a critical feature of every data set. This variation can be described via a **probability distribution**, a mathematical entity that describes the properties of possible datasets. The only probability distribution we'll discuss here is the ubiquitous **normal distribution** (also sometimes called a "Gaussian distribution"). A normal distribution has two **parameters**, a mean and a **standard deviation**. These two parameters define the shape of the curve. The mean describes where its center goes, and the standard deviation describes how wide it is.
-
-The blue curve shown in Figure \@ref(fig:estimation-milk-first) is the normal distribution that is closest to the data in our milk-first condition. Its mean is of course $\widehat{\theta_{milk first}}$, the parameter we just estimated. But to plot this curve, we also had to estimate the standard deviation. It turns out that the standard deviation is just exactly what its name says: the average deviation between the mean and any given observation. We won't discuss how to estimate the standard deviation for your sample here, since this would take us into statistical theory. What's important for now is just that the standard deviation gives us a way to describe the width of the normal distribution.
 
 ```{r estimation-data}
 sigma <- 1.25
@@ -85,7 +73,7 @@ tibble(condition = c(rep("milk first", n_total/2),
                                  rep("tea first", n_total/2)),
                    rating = c(round(rnorm(n_total/2, mean = 4.5, sd = sigma)), 
                               round(rnorm(n_total/2, mean = 3.5, sd = sigma))) ) %>%
-  mutate(rating = ifelse(rating > 10, 10, rating), #truncate
+  mutate(rating = ifelse(rating > 7, 7, rating), #truncate
          rating = ifelse(rating < 1, 1, rating))
 }
 
@@ -102,19 +90,21 @@ ggplot(td, aes(x = rating)) +
     {dnorm(x, mean = mean(td$rating), sd = sd(td$rating)) * 24}, 
     col = "blue") +
   ylab("Number of ratings") + 
-  xlab("Quality rating (1-10)")
+  xlab("Quality rating (1-7)")
 
 ```
 
+Our observations are clustered around the mean, but they also show some variation. Some are higher and some are lower. Variation of this type is a feature of every data set. This variation can be summarized via a **probability distribution**, a mathematical entity that describes the properties of possible datasets. The only probability distribution we'll discuss here is the ubiquitous **normal distribution** (also sometimes called a "Gaussian distribution"). A normal distribution has two **parameters**, a **mean** and a **standard deviation**. These two parameters define the shape of the curve. The mean describes where its center goes, and the standard deviation describes how wide it is.
 
+The blue curve shown in Figure \@ref(fig:estimation-milk-first) is the normal distribution that is closest to the data in our milk-first condition. Its mean is of course $\widehat{\theta_{milk first}}$, the parameter we just estimated. But to plot this curve, we also had to estimate the standard deviation. It turns out that the standard deviation is just exactly what its name says: the average deviation between the mean and any given observation. We won't discuss how to estimate the standard deviation for your sample here; you can do this computation easily in any software package. What's important for now is just that the standard deviation gives us a way to describe the width of the normal distribution.
 
 ### Bayesian estimation
 
-The above examples describes a common approach to estimating values, where the researcher completely puts aside their prior expectations about what these values might be. Often this approach makes sense, especially when we have  no prior expectations about the values we are estimating. But sometimes we *do* have relevant beliefs about the value. For example, before we perform our tea experiment, we don't know exactly what $\theta$ will be, but it seems a bit unlikely that tea would be rated as either horrible or perfect. We have what you might call *weak prior expectations* about the kinds of ratings we'll receive.
+The  maximum likelihood estimation example above describes a common approach to estimating values, where the researcher completely puts aside their prior expectations about what these values might be. Often this approach makes sense, especially when we have no prior expectations about the values we are estimating. But sometimes we *do* have relevant beliefs about the value. For example, before we perform our tea experiment, we don't know exactly what $\theta$ will be, but it seems a bit unlikely that tea would be consistently rated as either horrible (1) or perfect (7). We have what you might call *weak prior expectations* about the kinds of ratings we'll receive.
 
-These kind of expectations are most useful when we have a very small amount of data. For example, if our very first participant in the experiment rated their tea as terrible, we wouldn't want to jump to the conclusion that the tea was actually bad. Instead, we might speculate that the participant was having a bad day. On the other hand, if all of our participants gave bad ratings to their tea, we might want to tell the cafe that they are serving sub-standard tea. With a little data, our prior expectations might moderate our conclusions; as we get more data, we should probably put more weight on the data.
+These kind of expectations are most useful when we have a very small amount of data. For example, if our very first participant in the experiment rated their tea as terrible, we wouldn't want to jump to the conclusion that the tea was actually bad. Instead, we might speculate that the participant was having a bad day or just brushed their teeth. On the other hand, if all of our participants gave bad ratings to their tea, the data would be more persuasive; in that case, we might want to tell the cafe that they are serving substandard tea. With a little data, our prior expectations should moderate our conclusions; as we get more, we should put greater weight on the data.
 
-How do we quantify this tradeoff between prior expectations and current observations? We can do this via **Bayesian estimation** of $\theta_{milkfirst}$. Bayesian estimation provides a principled framework for integrating prior beliefs and data. These estimation techniques can be very helpful in cases where data are sparse or prior beliefs are strong.
+How do we quantify this tradeoff between our prior expectations and our current observations? We can do this via **Bayesian estimation** of $\theta_{milkfirst}$. Bayesian estimation provides a principled framework for integrating prior beliefs and data. These estimation techniques can be very helpful in cases where data are sparse or prior beliefs are strong.
 
 In Bayesian estimation, we observe some data $d$, consisting of the set of correct and incorrect responses in the experiment. Now we can use **Bayes' rule**, a tool from basic probability theory, to estimate this number. Bayes' rule says:
 
@@ -122,7 +112,7 @@ $$
 \color{purple}{p(\theta | d)} = \frac{\color{red}{p(d | \theta )} \color{blue}{p(\theta )}}{\color{black}{p(d)}}.
 $$
 
-\noindent Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(\theta |d)$) is called the **posterior probability** -- it tell us what we should believe about the participant's ability given the data we observed. We then break that down into two terms in the numerator.[^11]
+\noindent Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(\theta |d)$) is called the **posterior probability** -- it tell us what we should believe about the population parameter on tea quality, given the data we observed.[^11]
 
 [^11]: We're making the posterior `r colorize("purple","purple")` to indicate the combination of likelihood (`r colorize("red","red")`) and prior (`r colorize("blue","blue")`).
 
@@ -132,7 +122,7 @@ The first part of the numerator is $p(d|h)$, the probability of the data we obse
 
 The second term in the numerator, $p(\theta )$, is called the **prior**. This term encodes our beliefs about the likely distribution of tea quality. Intuitively, if we think that the tea is likely of high quality, we should require more evidence to convince us that it's bad. In contrast, if we think it's probably bad, a few examples of low ratings might serve to convince us.
 
-```{r inference-bayes-demo, fig.cap="Examples of Bayesian inference about tea ratings under three different priors (facets) and just a little bit of data. Blue lines give the prior probability distribution, red lines give the likelihood of the data, and purple lines give the posterior distribution from combining likelihood and prior."}
+```{r inference-bayes-demo, fig.cap="Examples of Bayesian inference about tea ratings under two different priors (facets) and just a little bit of data. Blue lines give the prior probability distribution, red lines give the likelihood of the data, and purple lines give the posterior distribution from combining likelihood and prior."}
 
 # example follows math here: https://people.eecs.berkeley.edu/~jordan/courses/260-spring10/lectures/lecture5.pdf
 
@@ -147,7 +137,7 @@ sigma2_post <- 1 /  (1/sigma2_0 + n/sigma2)
 sigma_post <- sqrt(sigma2_post)
 
 bayes <- expand_grid(x = seq(1,7,.1),
-                     mu0 = c(2.5, 4.5, 6.5)) |>
+                     mu0 = c(2.5, 6.5)) |>
   rowwise() |>
   mutate(h = dnorm(x = x, mean = mu0, sd = sqrt(sigma2_0)),
          d_given_h = dnorm(x = x, mean = mu_hat, sd = sigma),
@@ -159,8 +149,7 @@ bayes <- expand_grid(x = seq(1,7,.1),
          h_given_d_norm = h_given_d / sum(h_given_d),
          d_given_h_norm = d_given_h / sum(d_given_h),
          map = x[h_given_d == max(h_given_d)],
-         label = case_when(mu0 == 4.5 ~ "Flat",
-                           mu0 == 2.5 ~ "Prior: low rating",
+         label = case_when(mu0 == 2.5 ~ "Prior: low rating",
                            mu0 == 6.5 ~ "Prior: high rating"),
          label = fct_relevel(label, "Flat", "Prior: low rating"))
 
@@ -175,13 +164,10 @@ ggplot(bayes, aes(x = x, y = h_norm)) +
   xlab("Rating level")
 ```
 
-<!-- # FIXME -->
 
-Figure \@ref(fig:inference-bayes-demo) gives an example of the combination of prior and data.[^13] In this example, we look at what difference the prior makes after observing `r n` ratings.  When we use a flat prior, we get the same estimate of `r bayes$map[bayes$label == "Flat"][1]`.[^14] In contrast, if we go in assuming that the tea is likely to be bad, we are biased downward in our eventual estimate of `r bayes$map[bayes$label == "Prior: low rating"][1]`; if we go in assuming good discrimination, we end up biased upwards to `r bayes$map[bayes$label == "Prior: high rating"][1]`.
+Figure \@ref(fig:inference-bayes-demo) gives an example of the combination of prior and data. In this example, we look at what difference the prior makes after observing `r n` ratings.  If we go in assuming that the tea is likely to be bad, we are biased downward in our highest posterior probability estimate of `r bayes$map[bayes$label == "Prior: low rating"][1]`; if we go in assuming good discrimination, we end up biased upwards to `r bayes$map[bayes$label == "Prior: high rating"][1]`.
 
-```{r inference-bayes-demo2, fig.cap="Bayesian inference about tea ratings under three different priors with the full dataset."}
-
-# example follows math here: https://people.eecs.berkeley.edu/~jordan/courses/260-spring10/lectures/lecture5.pdf
+```{r inference-bayes-demo2, fig.cap="Bayesian inference about tea ratings under two different priors with the full dataset."}
 
 n <- length(td$rating)
 mu_hat <- mean(td$rating)
@@ -189,8 +175,8 @@ mu_hat <- mean(td$rating)
 sigma2_post <- 1 /  (1/sigma2_0 + n/sigma2)
 sigma_post <- sqrt(sigma2_post)
 
-bayes <- expand_grid(x = seq(1,7,.1),
-                     mu0 = c(2.5, 4.5, 6.5)) |>
+bayes_full <- expand_grid(x = seq(1,7,.1),
+                     mu0 = c(2.5, 6.5)) |>
   rowwise() |>
   mutate(h = dnorm(x = x, mean = mu0, sd = sqrt(sigma2_0)),
          d_given_h = dnorm(x = x, mean = mu_hat, sd = sigma),
@@ -202,12 +188,11 @@ bayes <- expand_grid(x = seq(1,7,.1),
          h_given_d_norm = h_given_d / sum(h_given_d),
          d_given_h_norm = d_given_h / sum(d_given_h),
          map = x[h_given_d == max(h_given_d)],
-         label = case_when(mu0 == 4.5 ~ "Flat",
-                           mu0 == 2.5 ~ "Prior: low rating",
+         label = case_when(mu0 == 2.5 ~ "Prior: low rating",
                            mu0 == 6.5 ~ "Prior: high rating"),
          label = fct_relevel(label, "Flat", "Prior: low rating"))
 
-ggplot(bayes, aes(x = x, y = h_norm)) +
+ggplot(bayes_full, aes(x = x, y = h_norm)) +
   geom_line(col = "blue") +
   geom_line(aes(y = h_given_d_norm), col = "purple") +
   geom_line(aes(y = d_given_h_norm), col = "red") +
@@ -218,53 +203,64 @@ ggplot(bayes, aes(x = x, y = h_norm)) +
   xlab("Rating level")
 ```
 
-In general, Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior or as you get infinite data ($n \to \infty$). Take a look at Figure \@ref(fig:inference-bayes-demo2) to see what happens when we include all the data. There is some bias in the estimates based on the prior, but it's much less extreme and the posterior distribution is sharply peaked pretty close to the mean of the data. 
+Contrast that figure with Figure \@ref(fig:inference-bayes-demo2), which runs the same Bayesian estimation but with the full dataset of `r n` observations. Now the posterior distribution is much more peaked. The prior also makes much less difference to our highest-probability estimates. With the low prior, our estimate is `r bayes_full$map[bayes_full$label == "Prior: low rating"][1]`; with the high prior it is `r bayes_full$map[bayes_full$label == "Prior: high rating"][1]` also! 
 
-Bayesian estimation is most important when you have strong beliefs and not a lot of data! That can be a case where you have just a few participants in your experiment, but it's also good -- and perhaps more common -- to use Bayesian methods when you have a lot of data, but maybe not that much data about particular units that you care about. For example, you might have a large dataset about the effects of an educational intervention but not that much data about how it affects a particular subgroup.  
+Bayesian estimation is most important when you have strong beliefs and not a lot of data. That can be a case where you have just a few participants in your experiment, but it's also good -- and perhaps more common -- to use Bayesian methods when you have a lot of data, but maybe not that much data about particular units that you care about. For example, you might have a large dataset about the effects of an educational intervention but not that much data about how it affects a particular subgroup. In general, though, Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior or as you get infinite data. 
 
 ## Estimating and comparing effects
 
-We've now covered estimating a single parameter (the mean in just the milk-first group) using both frequentist and Bayesian methods. But recall that what we really wanted to do was to estimate the causal effect we were interested in, namely the milk-first vs. tea-first effect.^[This doesn't have to be a causal effect, it can just be any between-group difference. It just happens to be causal because our experiment uses random assignment.] 
+We've now covered estimating a single parameter (the mean in just the milk-first group) using both frequentist and Bayesian methods. But recall that what we really wanted to do was to estimate the causal effect we were interested in, namely the milk-first vs. tea-first effect.^[This method doesn't have to be used only with a causal effect, it can be any between-group difference. Currently this effect just happens to be causal because our experiment uses random assignment.] In this section, we'll discuss how to estimate the effect, and then how to use **effect size** measures to compare effects across experiments (as well as some of the pros and cons of doing so). 
 
 ### Estimating the treatment effect 
 
 Let's refer to the causal effect we care about as our **treatment effect**, called. In practice, estimating $\Delta$ is going to be a pretty straightforward extension to what we did before.
 
-<!-- [^15]: I'd suggest framing this section as "estimating a between-group difference" rather than "estimating a treatment effect" since, as noted above, nothing in this chapter seems specific to causal inference.MCF: I caveated, but the whole framing of the book is kind of about causal inference in experiments, so I think it's ok.-->
+In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution, but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let's term the parameters for the tea-first group $\theta_{teafirst}$ and $\sigma_{teafirst}$. To estimate the treatment effect, we are positing a **model** in which the milk-first ratings are normally distributed with mean $\theta_{milkfirst} = \theta_{teafirst} + \Delta$ and with standard deviation $\sigma_{milkfirst}$. 
 
-In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution, but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let's term the parameters for the tea-first group $\theta_{teafirst}$ and $\sigma_{teafirst}$. To estimate the treatment effect, we are positing a **model** in which the milk-first ratings are normal with mean $\theta_{milkfirst} = \theta_{teafirst} + \Delta$ with standard deviation $\sigma_{milkfirst}$. As in the one-sample case (i.e., estimating the mean of just the milk-first group), maximum likelihood estimation would then proceed by finding the value of $\Delta$ that makes the data most likely under the assumed model. As you'd probably expect, this estimate $\widehat{\Delta}$ turns out to be simply the difference in sample means, $\theta_{milkfirst} - \theta_{teafirst}$.
+As in the one-sample case (i.e., estimating the mean of just the milk-first group), maximum likelihood estimation would then proceed by finding the value of $\Delta$ that makes the data most likely under the assumed model. As you'd probably expect, this estimate $\widehat{\Delta}$ turns out to be simply the difference in sample means, $\theta_{milkfirst} - \theta_{teafirst}$.
 
-In the Bayesian framework, we would again specify a prior, $p(\Delta )$, that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could again specify a flat prior, $p(\Delta ) \propto 1$. If we believe the treatment effect is likely to favor milk-first pouring ($\Delta>0$), we could specify a normal prior centered at some positive value (e.g., $\Delta=0.5$); the standard deviation of this prior would encode how certain we are about our prior beliefs. If we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at 0, which has the effect of "shrinking" the estimates closer to 0.[^16]
+In the Bayesian framework, we would again specify a prior $p(\Delta )$ that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could  specify a flat prior, $p(\Delta ) \propto 1$. If we believe the treatment effect is likely to favor milk-first pouring ($\Delta>0$), we could specify a normal prior centered at some positive value (e.g., $\Delta=0.5$); the standard deviation of this prior would encode how certain we are about our prior beliefs. And if we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at 0, which has the effect of "shrinking" the estimates closer to 0.[^16] 
 
-[^16]: The measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Of course, this is only one kind of uncertainty, and a more holistic view of the overall credibility of an estimate must also account for study design and bias, for example.
+[^16]: The measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Of course, this is only one kind of uncertainty! A more holistic view of the overall credibility of an estimate should also account for other things outside of the model, like study design issues and bias.
+
+As in our example above, maximum likelihood estimates and Bayesian estimates are going to be pretty similar if we have a lot of data. They will only diverge when we have strong priors or relatively little data. The reason we are setting up these two different frameworks, however, is that they will provide very different inferential tools in the next chapter.
 
 ### Measures of effect size
 
-Once we have measured something, we need to make a decision about how to describe this relationship to the world. Sometimes we are working with fairly intuitive relationships that are easy to describe. A researcher might say, for example, that people who received milk-first tea drank the tea, on average, 5 minutes quicker than people who received tea-first tea (i.e., that $\widehat{\Delta}_{time} = 5$). We all have a shared understanding of what 5 minutes mean, so people will likely not have much trouble understanding this estimated effect. But what about our participants' ratings of tea quality, which were provided on a 10-point scale (1 being "terrible"; 10 being "delicious")? What does it mean to that participants who drank milk-first tea rated it 1 point higher on a 10-point scale than participants who drank tea-first tea (i.e., that $\widehat{\Delta}_{rating} = 1$)? And how is this comparable to, for instance, a 1-point change on a scale that has similar anchors but uses a 100-point rating system (1 being "terrible"; 100 being "delicious")?
+Once we have measured something, we need to make a decision about how to describe this effect to the world. Sometimes we are working with fairly intuitive relationships that are easy to describe. A researcher might say, for example, that people who received milk-first tea drank the tea, on average, 5 minutes quicker than people who received tea-first tea (i.e., that $\widehat{\Delta}_{time} = 5$). Time is measured in units like minutes and seconds and so we all have a shared understanding of what 5 minutes means.
 
-To provide a common language for describing these relationships, some researchers use *standardized effect sizes.* A common standardized effect size is Cohen's *d*, which provides a standardized estimate of the difference between two means. There are many different ways to calculate Cohen's *d* (Lakens, 2013), but all approaches are usually some variant of the following formula:
+But what about our participants' ratings of tea quality, which were provided on an arbitrary 7-point rating scale that we devised? What does it mean to that participants who drank milk-first tea rated it 1 point higher than participants who drank tea-first tea (i.e., that $\widehat{\Delta}_{rating} = 1$)? And how is this difference comparable to, for instance, a 1-point change on a scale that has similar anchors ("terrible" and "delicious") but uses a 100-point rating system?
 
-$$d = \frac{M_1- M_2}{SD}$$
+To provide a common language for describing these relationships, some researchers use *standardized effect sizes.* A common standardized effect size is Cohen's *d*, which provides a standardized estimate of the difference between two means. There are many different ways to calculate Cohen's *d* [@lakens2013], but all approaches are usually some variant of the following formula:
 
-Let's start with our tea-drinking study that used a 10-point excitement scale. $M_1$ refers to the mean quality ratings of people who drank milk-first tea (a 4.5 out of 10), $M_2$ refers to the mean mean quality ratings of people who drank tea-first tea (a 3.5 out of 10), and $SD$ refers to the standard deviation of all the people in the study (let's assume this is 1.25). This leaves us with:
+$$d = \frac{\theta_1 - \theta_2}{\sigma_{pooled}}$$
 
-$${d_{children.study}} = \frac{M_1- M_2}{SD} = \frac{5- 4}{1} = \frac{1}{1.25} = 0.80$$
+\noindent where the difference between means ($\theta_1$ and $\theta_2$) is divided by the pooled standard deviation $\sigma_{pooled}$.^[We're dropping the hats here because we're now working with a whole bunch of estimates, so everything would have a hat!] Intuitively, what you're doing is taking the study effect ($\Delta$) and dividing it -- scaling it -- by the variation we saw between individuals in the study. 
 
-We previously said that people who drank milk-first tea had quality ratings that were, on average, 1 point higher on a 10-point scale ($\widehat{\Delta}_{rating} = 1$). This Cohen's *d* translates this in terms of standard deviations, saying that people who drank milk-first tea had quality ratings that were, on average, 0.80 standard deviation higher than the people who drank tea-first tea. You may find yourself wondering: "but why on Earth would I ever describe things in terms of standard deviations!?" Hold our tea, because we'll next show you how doing so allows us to compare the size of the effect to studies using different measures!
+Let's compute this measure for our tea-drinking study. We can just plug in the estimates we made earlier in the chapter and compute the standard deviation of our observed data:
 
-Let's say that we ran a conceptual replication of the study with two changes: (1) we studied patrons in a U.S. cafe instead of a English tea cafe, and (2) we used a 100-point quality rating scale instead of a 10-point scale. And imagine that, just as we found that patron in our English tea cafe rated the milk-first tea 1-point higher on a 10-point quality scale, that U.S. cafe patrons rated the milk-free tea 1-point higher on a *100-point* quality scale. Intuitively, it is obvious that these effects are different. And, statistically, this becomes clear when we describe the effect in terms of standardized mean differences.
+$${d} = \frac{\theta_1 - \theta_2}{\sigma_{pooled}} = \frac{4.5- 3.5}{1.25} = \frac{1}{1.25} = 0.80$$
+\noindent In other words, the effect size of the difference between the two conditions is .8 standard deviations. 
 
-For the cross-cultural replication in the U.S. cafe, let's imagine that (a) patrons who drank milk-first tea rated the quality of the tea, on average, as a 50 ($M_1$) out of 100, and (b) patrons who drank tea-first tea rated it, on average, a 49 ($M_2$). To keep things simple, let's also assume that variability in the U.S cafe patrons ratings are equal to those in the English tea cafe. If this is the case, a standard deviation of 1.25 on a 10-point scale is equivalent to a standard deviation of 12.50 on the 100-point scale ($SD = 12.50$). Using the same formula as above, we would find:
+We previously said that people who drank milk-first tea had quality ratings that were, on average, 1 point higher on a 7-point scale ($\widehat{\Delta} = 1$). Cohen's *d* translates the arbitrary units of our rating scale into a **unit-less** effect size that is measured in terms of the variation in the data. You may find yourself wondering: "why would I ever describe things in terms of standard deviations?" The key benefit is that it allows us to compare the size of the effect to studies that use different measures.
 
-$${d_{adult.study}} = \frac{M_1- M_2}{SD} = \frac{50- 49}{12.50} = \frac{1}{12.50} =  0.08$$
+Let's say that we ran a replication of our tea study with two changes: (1) we studied patrons in a US cafe instead of a UK cafe, and (2) we used a 100-point quality rating scale instead of a 7-point scale. Imagine that, just as we found that participants in the UK rated the milk-first tea 1-point higher on a 7-point quality scale, US participants rated the milk-first tea 1-point higher on a *100-point* quality scale. It seems clear that these effects are different because of the difference in scale. But how different? 
 
-A Cohen's *d* of .08 means that U.S cafe patrons rated their tea .08 standard deviations higher when it contained milk-first as opposed to tea-first. This is much smaller than the .80 standard deviation difference observed among English cafe patrons. Indeed, social scientists often consider *d* = 0.80 to be a large effect, and a *d* = 0.08 to be negligible. These effect size interpretation norms are somewhat arbitrary and there are many exceptions, but you get the point: even though the U.S. and English patrons had the same raw score change in quality ratings ($\widehat{\Delta} = 1$), standardizing the differences allowed us to communicate that the difference was much larger among the English patrons.
+It might at first seem reasonable just to normalize by the length of the scale. So maybe the UK experimental participants showed a 1/7 rating effect and the US participants showed a 1/100 rating effect. The trouble with this move is that it presupposes that participants from two different populations are using two different scales in exactly the same way! For example, maybe US participants made very clumpy judgments that were mostly centered around 50 (perhaps because of a lack of milk tea experience). Standardized effect sizes get around this kind of issue by scaling according to the variability of the data.
 
-Cohen's *d* is one of many standardized effect sizes that researchers can use. Just as Cohen's *d* standardizes differences in group means, there are also ways of standardizing relationships between categorical variables (e.g., Odds Ratio), how well a predictor variable explains an outcome variable (e.g., Pearson's *r*, R^2^, and $\eta^2$), and more! For a review, see Fritz, Morris, and Richler (2012).
+Let's compute the effect size for the cross-cultural replication. We'll imagine that participants who drank milk-first tea gave an average rating of 50/100 and participants who drank tea-first tea rated it 49 on average. But if their variabilty was also relatively lower, perhaps the standard deviation of their ratings was only 5. Using the formula above, we find 
+
+$${d_{US}} = \frac{\theta_1 - \theta_2}{\sigma_{pooled}} = \frac{50 - 49}{5} = \frac{1}{5}=  0.2$$
+
+\noindent A Cohen's *d* of .2 means that US cafe patrons rated their tea .2 standard deviations higher when it was milk-first, much smaller than the .8 standard deviation difference in the UK patrons. 
+
+There are no hard and fast rules for interpreting what makes a big effect or a small effect, but people often refer back to standard suggested by @cohen1992. On those standards, $d = 0.8$ is a "large effect", and $d = 0.2$ is a "small effect." But these effect size interpretation norms are somewhat arbitrary. More broadly, though US and UK patrons had the same raw score change in quality ratings ($\widehat{\Delta} = 1$), standardizing the differences allowed us to communicate that the difference was much larger among the UK patrons.
+
+Cohen's *d* is one of many standardized effect sizes that researchers can use. Just as Cohen's *d* standardizes differences in group means, there are also ways of standardizing relationships between categorical variables (e.g., odds ratio), how well a predictor variable explains an outcome variable (e.g., Pearson's *r*, $r^2$, or $\eta^2$), and more! For a review, see Fritz, Morris, and Richler (2012).
 
 ### Pros and cons of standardizing effect sizes
 
-By now, you're probably realizing that there are some pros and cons of standardizing effect sizes. Sure, it helps communicate that a 1-point change on a 10-point scale is not the same as a 1-point change on a 100-point scale. But, is it any better to say that the first change represents a 0.80 standard deviation difference and the second a 0.08 standard deviation difference? It's a good question--one that researchers have argued about for a long time!
+By now, you're probably realizing that there are some pros and cons of standardizing effect sizes. Sure, it helps communicate that a 1-point change on a 7-point scale is not the same as a 1-point change on a 100-point scale. But, is it any better to say that the first change represents a 0.80 standard deviation difference and the second a 0.08 standard deviation difference? It's a good question--one that researchers have argued about for a long time!
 
 Proponents of effect size standardization argue that doing so allows us to more easily compare results across studies. Across studies, researchers use different measures; different study designs; and different populations. Standardization allows us to use a common language to describe estimated relationships in these varied contexts. This is helpful when we want to aggregate and compare effects across studies (via meta-analysis, see Chapter \@ref(meta)). And it is also helpful when planning new studies. When trying to figure out how many participants to run in a study, almost all programs use standardized effect sizes to determine, for example, how much data would be needed to reliably detect a specific standardized effect size.
 
@@ -284,7 +280,7 @@ $${d_{children.study}} = \frac{M_1- M_2}{SD} = \frac{5- 4}{2} = \frac{1}{2} =  0
 
 This example highlights some of the challenges with standardization. If we focused on the fact that both adults and children experienced a 1-point change in excitement levels ($\widehat{\Delta} = 1$), we would conclude that espresso leads to equal changes in excitement among adults and children. If we focused on the standardized effect sizes, however, we would conclude that the effect of tea is twice as big for adults vs. children.
 
-So which is better: describing raw scores or standardized scores? In general our response is "Why not both?". But if you wanted to pick one or the other, we recommend focusing on raw scores when working with measures that are (a) intuitive to understand (e.g., temperature), and/or used fairly consistently across studies (e.g., measuring blood pressure in terms of mmHg). When, however, working with measures that are (a) relatively unintuitive to understand (e.g. changes on an arbitrary 7-point Likert-type scale) or (b) used inconsistently across studies (e.g., measuring excitement with a 10-point scale in one study and a 100-point scale in a different study), we recommend standardized effect sizes.
+So which is better: describing raw scores or standardized scores? In general our response is "Why not both?". But if you wanted to pick one or the other, we recommend focusing on raw scores when working with measures that are (a) intuitive to understand (e.g., temperature), and/or used fairly consistently across studies (e.g., measuring blood pressure in terms of mmHg). When, however, working with measures that are (a) relatively unintuitive to understand (e.g. changes on an arbitrary 7-point Likert-type scale) or (b) used inconsistently across studies (e.g., measuring excitement with a 7-point scale in one study and a 100-point scale in a different study), we recommend standardized effect sizes.
 
 ## Summary: Estimation
 
