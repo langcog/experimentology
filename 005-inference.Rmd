@@ -94,6 +94,11 @@ Even here in the original case of null hypothesis significance testing, it is cl
 Fisher's original framework for significance testing focused only on the **null hypothesis** of no discrimination. In contrast, the Bayesian estimation method here focuses on the magnitude of accuracy.^[If you're reading carefully, you might have noticed that we *could* have discovered that the estimate of accuracy was very similar to chance -- more about this below and in the next chapter.] The intuition we'd like you to get is that, if you are an experimentalist who cares about the magnitude of causal relationships (and we hope you are), then Fisher's statistical approach isn't ideally suited to your goals. In the next section 
 
 
+
+
+
+
+
 ## Precision and Uncertainty
 
 <!-- \[NC: I have a slight preference for calling this section Precision and Uncertainty\] -->
@@ -207,17 +212,87 @@ The Bayesian analog to a confidence interval is a **credible interval**. Recall 
 
 In practice, credible intervals are constructed by finding the posterior distribution of $\Delta$, as in Chapter \@ref(estimation), and then taking the middle 95%, for example. For the tea example, XXX.
 
-<!-- ### Homeless -->
+### Visualizing variability 
 
-<!-- Confidence in confidence intervals: <https://link.springer.com/article/10.3758/s13423-015-0947-8> -->
+
+
 
 <!-- ### Visualizing variability -->
 
 <!-- Error bar: - standard deviation (why is this bad)? - SEM - CI -->
 
-<!-- ::: {.interactive} -->
+
+
+
+
+
+<!-- ### Homeless -->
+
+<!-- Confidence in confidence intervals: <https://link.springer.com/article/10.3758/s13423-015-0947-8> -->
+
 
 <!-- ⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance -->
+
+
+::: {.interactive}
+⌨️ Interactive: Nonparameteric resampling under the null
+
+As we've seen above, hypothesis testing hinges on approximating the null distribution of the statistical estimate. In the examples above, it was easy to use statistical theory to work out the null distribution: for example, in Figure \@ref(fig:inference-null-model), we knew that the null distribution must be binomial since we had a binary outcome, and the binomial distribution parameter $p$ must be 0.5, because that is what the null says. 
+
+But sometimes we don't know what the null distribution would look like. Suppose we want to estimate group differences in a highly skewed continuous outcome, like salary, but we had a small sample size (e.g., $n=10$ per group):
+
+```{r permutation-1}
+print(d)
+
+set.seed(451)
+n.per.group = 10
+d = data.frame( Y = c( rexp( n = n.per.group, rate = 4 ),
+                       rexp( n = n.per.group, rate = 4 ) + 0.3 ),
+                Group = c( rep( "Control", n.per.group ),
+                           rep ( "Treatment", n.per.group ) ) )
+
+colors = c("black", "orange")
+ggplot( data = d,
+        aes(x = Y, group = Group ) ) +
+  
+  #geom_histogram( aes(fill = Group), alpha = 0.4 ) +
+  geom_dotplot( aes( fill=Group ), alpha=0.4, binwidth = .05 ) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  
+  theme_bw() + xlab("Y") +
+  ylab("") 
+```
+
+We can't proceed with a t-test in good conscience because, with only $n=20$, we can't necessarily trust that the Central Limit Theorem has "kicked in" sufficiently for the test to work despite the skewness. Stated otherwise, we can't be sure that the null distribution is normal in this case. 
+
+When we can't rely on theory, another way to approximate a null distribution is through nonparameteric resampling. "Resampling" means that we're going to cleverly draw new samples *from our existing sample*, and "nonparametric" means that we will do this in a way that obviates assumptions about the shape of the null distribution (in contrast to parameteric approaches that do rely on such assumptions).
+
+The central idea is that, if the treatment truly had no effect on the outcome, then the observations would be *exchangeable* between the treatment and control groups. That is, there would not be systematic differences between the treatment and control groups. This may or may not be true in our observed sample (after all, that's why we're doing a hypothesis test in the first place), but we could draw new samples from our existing sample in a manner that forces exchangeability. In this case, we could randomly permute the column of outcomes in our dataset while leaving the column of treatment assignments fixed:
+
+```{r permutation-2}
+# show construction of a single permuted dataset
+# library(modelr)
+# library(purrr)
+perm.reps = 100
+perms = permute(data = d, n = perm.reps, Y)
+
+# show the first permuted dataset
+print( perms$perm[[1]]$data )
+
+#@WHY ARE THESE ALL THE SAME??
+cbind( perms$perm[[1]]$data$Y, perms$perm[[2]]$data$Y )
+# c.f. package example for debugging
+perms2 <- permute(mtcars,  1000, mpg)
+cbind( perms2$perm[[1]]$data$mpg, perms2$perm[[2]]$data$mpg )
+# also the same?? 
+
+# get group mean differences for each permutation via OLS
+ols = map(perms$perm, ~ lm(Y ~ 1, data = .))
+ATEs = lapply( ols, function(.ols) as.numeric( coef(.ols)["(Intercept)"] ) )
+```
+
+i:::
+
 
 <!-- ::: -->
 
