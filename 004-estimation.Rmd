@@ -64,18 +64,10 @@ Second, we try to find the values of the population parameters that make our obs
 Let's visualize our 24 milk-first tea ratings. Since ratings on our scale are discrete, Figure \@ref(fig:estimation-milk-first) shows them as a histogram. Our estimate of the mean, $\widehat{\theta_{milk first}}$, is shown as a blue dashed line.
 
 ```{r estimation-data}
+source("helper/tea_helper.R")
+
 sigma <- 1.25
 n_total <- 48
-
-make_tea_data <- function(n_total = 48, sigma = 1.25) {
-  
-tibble(condition = c(rep("milk first", n_total/2),
-                                 rep("tea first", n_total/2)),
-                   rating = c(round(rnorm(n_total/2, mean = 4.5, sd = sigma)), 
-                              round(rnorm(n_total/2, mean = 3.5, sd = sigma))) ) %>%
-  mutate(rating = ifelse(rating > 7, 7, rating), #truncate
-         rating = ifelse(rating < 1, 1, rating))
-}
 
 tea_data <- make_tea_data(n_total, sigma)
 ```
