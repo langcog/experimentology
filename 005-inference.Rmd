@@ -49,63 +49,88 @@ This isn't a statistics book and we won't attempt to teach the full array of imp
 
 In Chapter \@ref(estimation) we discussed Fisher's tea-tasting experiment. The first innovation of that experiment was the use of randomization to recover an estimate of the causal effect of milk ordering. But there was more to Fisher's analysis than we described. 
 
-The second innovation of the tea-tasting experiment was the idea of creating a model of what might happen during the experiment. Specifically, Fisher described a **null model** in which the nameless lady chose cups by chance rather than because of some tea sensitivity. The goal of Fisher's analysis strategy was then to compute the probability of the lady's choices under this null model. Fisher declared that it is "usual and convenient for experimenters to take 5 percent as a standard level of convenience," establishing the .05 cutoff that has become gospel throughout the sciences.^[Actually, right after establishing .05 as a cutoff, Fisher then writes that "in the statistical sense, we thereby admit that no isolated experiment, however significant in itself, can suffice for the experimental demonstration of any natural phenomenon... in order to assert that a natural phenomenon is experimentally demonstrable we need, not an isolated record, but a reliable method of procedure. In relation to the test of significance, we may say that a phenomenon is experimentally demonstrable when we know how to conduct an experiment which will rarely fail to give us a statistically significant result." In other words, Fisher was all for replication!]
+The second innovation of the tea-tasting experiment was the idea of creating a model of what might happen during the experiment. Specifically, Fisher described a **null model** in which the nameless lady chose cups by chance rather than because of some tea sensitivity. In our tea-rating experiment, the null model describes what happens when there is no difference in ratings between tea-first and milk-first cups. Under the null model, the treatment effect ($\Delta$) is zero. 
 
-<!-- FIXME FIXME [\^MM: The concept of a "null distribution" probably needs more scaffolding. In my experience with accidentally driving students crazy, I find that I have to go extremely slowly the first time I discuss sampling distributions.]  -->
+Even with an actual treatment effect of zero, in any given experiment we should see some variation in $\hat{\Delta}$, our *estimate* of the treatment effect. Sometimes we'll get a small positive effect, sometimes a small negative one. Occasionally just by chance we'll get a big effect. Fisher's innovation was to quantify the probability of observing various values of $\hat{\Delta}$, given the null model. Then, if the observed data were very low probability under the null model, we could declare that the null was rejected. 
 
-These null distributions are shown in Figure \@ref(fig:inference-null-model). We show cases with 12, 24, 48, and 96 participants, and highlight the .05 significance threshold -- the threshold above which you would fall only 5% of the time if you were guessing by chance. Conventionally, if you cross this threshold, you can say you "reject the null."
+How low probability must the observed data be, in order to reject the null? Fisher declared that it is "usual and convenient for experimenters to take 5 percent as a standard level of convenience," establishing the .05 cutoff that has become gospel throughout the sciences.^[Actually, right after establishing .05 as a cutoff, Fisher then writes that "in the statistical sense, we thereby admit that no isolated experiment, however significant in itself, can suffice for the experimental demonstration of any natural phenomenon... in order to assert that a natural phenomenon is experimentally demonstrable we need, not an isolated record, but a reliable method of procedure. In relation to the test of significance, we may say that a phenomenon is experimentally demonstrable when we know how to conduct an experiment which will rarely fail to give us a statistically significant result." In other words, Fisher was all for replication!]
+
+Let's take a look at what the null model might look like. In Figure \@ref(fig:inference-null-model), we imagine doing our tea-tasting experiment 10,000 separate times. We also assume that the **null hypothesis** of no treatment effect is true -- this assumption gives us our null model. The histogram shows the distribution of treatment effects $\hat{\Delta}$ we observe: some a little negative, some a little positive, and a few substantially positive or negative. 
+
+Let's apply Fisher's standard. If our observation has less than a 5% probability under the null model, then the null model is likely wrong. The red dashed lines on Figure \@ref(fig:inference-null-model) show the point below which only 2.5% of the data are found and the point above which only 2.5% of the data are found. These are called the **tails** of the distribution. Because we'd be equally willing to accept milk-first tea or tea-first tea being better, we consider both positive and negative observations as possible.^[Because we're looking at both tails of the distribution, this is called a "two-tailed" test.]
 
 ```{r inference-helper}
 source("helper/tea_helper.R")
 ```
 
-```{r inference-null-model, fig.cap="Probability of observing a particular number of trials correct under the null model of no sensitivity to tea preparation order. Each facet gives a different number of trials. The red lines indicates a significance threshold above which data have less than a 5\\% chance of appearing."}
-
+```{r inference-null-model, fig.margin = TRUE, fig.cap="Distribution of treatment effects under the null model of no difference in tea preparation order. The red lines indicate the threshold outside of which less than 5\\% of observations fall."}
 
 n_sims <- 10000
 
 null_model <- expand_grid(sim = 1:n_sims, 
-                          n = c(12,24,48,96)) |>
+                          n = 48) |>
   rowwise() |>
-  mutate(data = map(n, ~make_tea_data(n_total = n, delta = 0))) |>
+  mutate(data = map(n, ~make_tea_data(n_total = n, sigma = 1.25, delta = 0))) |>
   unnest(cols = c(data))
-
 
 null_model_summary <- null_model |>
   group_by(n, sim) |>
   summarise(delta = mean(rating[condition == "milk first"]) - 
               mean(rating[condition == "tea first"]))
 
-
-
 ggplot(null_model_summary, aes(x =delta)) + 
-  geom_histogram(aes(y = ..density..), binwidth = .25) +
-  facet_wrap(~n) +
-  ylab("Probability") + xlab("Difference in rating)")
+  geom_histogram(binwidth = .125) +
+  geom_vline(xintercept = quantile(null_model_summary$delta, c(.025, .975)), 
+             lty = 2, col = "red") + 
+  ylab("Frequency") + xlab("Difference in rating)")
 
 ```
 
-The more trials a participant completes, the lower the accuracy threshold for significance becomes. With 6 trials, you need to get all `r qbinom(.95, size = 6, prob = .5, lower.tail = TRUE)` correct for that result to have a probability of less than 5% probable under the null model. With 12, you need to observe `r qbinom(.95, size = 12, prob = .5)+1` (`r round((qbinom(.95, size = 12, prob = .5)+1)*100 / 12)`%) or more. With 24 and 48, you need `r qbinom(.95, size = 24, prob = .5)+1` (`r round((qbinom(.95, size = 24, prob = .5)+1)*100 / 24)`%) and `r qbinom(.95, size = 48, prob = .5)+1` (`r round((qbinom(.95, size = 48, prob = .5)+1)*100 / 48)`%) respectively.[^inference-5] With greater numbers of trials, the expectation based on chance becomes more precise and so we are able to reject then null based on smaller deviations.
+That's the logic of Fisherian NHST: if the observed data fall in the region that has a probability of less than .05 under the null model, then we reject the null. So then when we observe some particular treatment efect $\hat{\Delta}$ in a single (real) instance of our experiment, we can compute the probability of these data or any data more extreme than ours under the null model. This probability is our $p$-value, and if it is small, it gives us license to conclude that the null is false.
 
-[^inference-5]: You can calculate these numbers by looking at what's called the **quantile function** of the binomial binomial: the function that tells you how many correct trials out of the total number corresponds to a particular probability.
+Not all experiments are equal in terms of their ability to reject the null, however. Let's take a look at experiments with 12, 24, 48, and 96 participants. Figure \@ref(fig:inference-null-model2) shows the expected null distributions in each of these, again with the 5% boundaries shown in red. 
 
-<!-- END FIXME -->
+```{r inference-null-model2, fig.cap="Distribution of treatment effects under the null model for different numbers of participants (facets). Red lines indicate the p < .05 threshold."}
 
+n_sims <- 10000
 
-Even here in the original case of null hypothesis significance testing, it is clear that our goals matter. If we're merely testing a hypothesis out of curiosity, perhaps we don't want to measure too many cups of tea. But if we were designing the tea strategy for a major cafe chain, the stakes would be higher and a more precise estimate might necessary; in that case, maybe we'd want to do a more extensive experiment! We'll return to this point in Chapter \@ref(sampling).
+null_model_multin <- expand_grid(sim = 1:n_sims, 
+                          n = c(12,24,48,96)) |>
+  rowwise() |>
+  mutate(data = map(n, ~make_tea_data(n_total = n, sigma = 1.25, delta = 0))) |>
+  unnest(cols = c(data))
 
-<!-- Something very important is missing from this analytic strategy. If we think back to our goals as experimentalists, we are hoping to use the logic of random assignment to measure causal effects of interest. Here, the effect we're measuring is something like the effect of tea preparation on taste perception (maybe not the most consequential question, but...). Yet our statistical paradigm is misaligned with this goal! All of this talk of significance and rejecting the null doesn't tell us about either how big the effect is, or how precisely we have measured it! That's why we are going to be advocating throughout for estimation as the key goal for our statistical analysis, with the varieties of inference (significance testing included) as a secondary goal. -->
-<!-- [^MM: This confuses me. Confidence intervals, continuous p-values, and continuous BFs are varieties of inference as well. To me the critical distinction is between dichotomized inference and continuous inference, not between estimation and inference.]  -->
+null_model_summary_multin <- null_model_multin |>
+  group_by(n, sim) |>
+  summarise(delta = mean(rating[condition == "milk first"]) - 
+              mean(rating[condition == "tea first"]))
 
+null_model_quantiles_multin <- null_model_summary_multin |>
+  group_by(n) |>
+  summarise(q25 = quantile(delta, .025), 
+            q975 = quantile(delta, .975)) 
 
-<!-- Fisher's original framework for significance testing focused only on the **null hypothesis** of no discrimination. In contrast, the Bayesian estimation method here focuses on the magnitude of accuracy.^[If you're reading carefully, you might have noticed that we *could* have discovered that the estimate of accuracy was very similar to chance -- more about this below and in the next chapter.] The intuition we'd like you to get is that, if you are an experimentalist who cares about the magnitude of causal relationships (and we hope you are), then Fisher's statistical approach isn't ideally suited to your goals.  -->
+ggplot(null_model_summary_multin, aes(x =delta)) + 
+  geom_histogram(binwidth = .25) +
+  geom_vline(data = null_model_quantiles_multin, 
+             aes(xintercept = q25), col = "red", lty = 2) + 
+  geom_vline(data = null_model_quantiles_multin, 
+             aes(xintercept = q975), col = "red", lty = 2) + 
+  facet_wrap(~n) +
+  xlim(-2.5, 2.5) + 
+  ylab("Frequency") + xlab("Difference in rating)")
+
+```
+
+The more participants in the experiment, the tighter the null distribution becomes, and hence the smaller the region in which we should expect a null treatment effect to fall. Because our expectation based on the null becomes more precise, we will be able to reject then null based on smaller treatment effects. In inference of this type, as with estimation, our goals matter. If we're merely testing a hypothesis out of curiosity, perhaps we don't want to measure too many cups of tea. But if we were designing the tea strategy for a major cafe chain, the stakes would be higher and a more precise estimate might necessary; in that case, maybe we'd want to do a more extensive experiment! 
+
+One last note: You might notice an interesting parallel between Fisher's paradigm for NHST and Popper's falsificationist philosophy (introduced in Chapter \@ref(theory)). In both cases, you never get to accept the actual hypothesis of interest. The only thing you can do is observe evidence that is inconsistent. The added limitation of NHST is that the only hypothesis you can falsify is the null!
 
 ## Making inferences
 
-<!-- We just finished arguing that an estimation strategy is more aligned with the default goal of an experimentalist. But that's not always the case.  -->
-In the tea-tasting example we were just considering, we were trying to make an inference from our sample to the broader population. In particular, we were trying to test whether milk-first tea was rated as better than tea-first tea. Our inferential goal was something like a clear, binary answer: is milk-first tea better?
+In the tea-tasting example we were just considering, we were trying to make an inference from our sample to the broader population. In particular, we were trying to test whether milk-first tea was rated as better than tea-first tea. Our inferential goal was a clear, binary answer: is milk-first tea better? 
 
-How do we decide whether our data support a positive conclusion? There are at least two different common ways to set up this kind of inference. One of these is Fisher's way: null hypothesis significance testing. The second is via a technique called the **Bayes Factor**. Since we've already talked about NHST a bit, we'll introduce the Bayes Factor first. Then we can see how NHST relates.
+By defining a $p$-value, we got one procedure for giving this answer. If $p < .05$, we reject the null. Then we can look at the direction of the difference and, if it's positive, declare that milk-first tea is "significantly" better. Let's compare this procedure to a different process that builds on the Bayesian estimation ideas we described in the previous chapter. We can then come back to NHST in light of that framework. 
 
 ### Bayes Factors
 
@@ -117,11 +142,11 @@ $$
 BF = \frac{\color{red}{p(d | H_1)}}{\color{red}{p(d | H_0)}}.
 $$ 
 
-The Bayes Factor is a ratio, so if it is greater than 1, the data are more likely under $H_1$ than they are under $H_0$ -- and vice versa for values between 1 and 0. A BF of 3 means there is three times as much evidence for $H_1$ than $H_0$, or equivalently 1/3 as much evidence for $H_0$ as $H_1$.[^inference-10] There are no hard and fast rules for Bayes Factor interpretation, but many people follow guidelines from @jeffreys1998, shown in the margin.[\^MM: This table with BF cutoffs is a prime example of my concern above. Reporting inference in terms of, e.g., BF \> 3 or \< 3 (a distressing trend in psych papers these days) is really no better than reporting $p<0.05$ or $p\ge0.05$.]
+The Bayes Factor is a ratio, so if it is greater than 1, the data are more likely under $H_1$ than they are under $H_0$ -- and vice versa for values between 1 and 0. A BF of 3 means there is three times as much evidence for $H_1$ than $H_0$, or equivalently 1/3 as much evidence for $H_0$ as $H_1$.[^inference-10] 
 
 [^inference-10]: Sometimes people refer to the BF in favor of $H_1$ as the $BF_{10}$ and the BF in favor of $H_0$ as the $BF_{01}$. This notation strikes us as a bit confusing because a reader might wonder what the 10 in the subscript means.
 
-```{r jeffreys, fig.margin=TRUE}
+```{r inference-jeffreys, fig.margin=TRUE}
 jeffreys <- tribble(~`BF range`, ~`Interpretation`,
                     "< 1", "Negative evidence (supports H0)",
                     "1 -- 3", "Barely worth mentioning",
@@ -134,7 +159,9 @@ kable(jeffreys, booktabs = TRUE,
       caption = "Jeffreys' (1961/1998) interpretation guidelines for Bayes Factors.")
 ```
 
-There are a couple of things to notice about the Bayes Factor. The first is that it is a continous measure. You can dichotomize decisions based on the Bayes Factor by declaring a cutoff (say, BF \> 3 or BF \> 10), there is no intrinsic threshold at which you would say the evidence is "significant." Of course this is true for $p$-values too, but the $p < .05$ criterion is so culturally ingrained in most scientists that it's hard to get away from. Second, it doesn't depend on our prior probability of $H_1$ vs. $H_0$. We might think of $H_1$ as very implausible. But the BF is independent of that prior belief. So that means it's a measure of how much the evidence should shift our beliefs away from our prior. One nice way to think about this is that the Bayes Factor computes how much our beliefs -- whatever they are -- should be changed by the data [@morey2011].
+There are a couple of things to notice about the Bayes Factor. The first is that it is a continous measure. You can dichotomize decisions based on the Bayes Factor by declaring a cutoff (say, BF \> 3 or BF \> 10), there is no intrinsic threshold at which you would say the evidence is "significant." Many people follow guidelines from @jeffreys1998, shown in Table \@ref(tab:inference-jeffreys). On the other hand, cutoffs like BF > 3 or $p < .05$ are not very informative. So although we provide this table to guide interpretation, we caution that you should always report and interpret the actual Bayes Factor, not whether it is above or below some cutoff. 
+
+The second thing to notice about the Bayes Factor is that it doesn't depend on our prior probability of $H_1$ vs. $H_0$. We might think of $H_1$ as very implausible. But the BF is independent of that prior belief. So that means it's a measure of how much the evidence should shift our beliefs away from our prior. One nice way to think about this is that the Bayes Factor computes how much our beliefs -- whatever they are -- should be changed by the data [@morey2011].
 
 In practice, the thing that is both tricky and good about Bayes Factors is that you need to define an actual model of what $H_0$ and $H_1$ are. That process involves making some assumptions explicit. We won't go into how to make these models here -- this is a big topic that is covered extensively in books on Bayesian data analysis.[^inference-12] Below and in Chapter \@ref(models) we will provide some guidance for how to compute Bayes Factors for simple experimental designs. The goal here is just to give a sense of how they work.
 
