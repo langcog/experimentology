@@ -53,18 +53,16 @@ The second innovation of the tea-tasting experiment was the idea of creating a m
 
 <!-- FIXME FIXME [\^MM: The concept of a "null distribution" probably needs more scaffolding. In my experience with accidentally driving students crazy, I find that I have to go extremely slowly the first time I discuss sampling distributions.]  -->
 
-These null distributions are shown in Figure \@ref(fig:inference-null-model). We show cases with 6, 12, 24, and 48 trials, and highlight the .05 significance threshold -- the threshold above which you would fall only 5% of the time if you were guessing by chance.[^inference-4] Conventionally, if you cross this threshold, you can say you "reject the null."
-
-[^inference-4]: Note that we are effectively doing a "one-tailed" test here, since we're attending only to the right hand side of each plot and ignoring cases where the participant is exactly flipped in their judgments.
+These null distributions are shown in Figure \@ref(fig:inference-null-model). We show cases with 12, 24, 48, and 96 participants, and highlight the .05 significance threshold -- the threshold above which you would fall only 5% of the time if you were guessing by chance. Conventionally, if you cross this threshold, you can say you "reject the null."
 
 ```{r inference-helper}
 source("helper/tea_helper.R")
 ```
 
-```{r inference-null-model, fig.cap="Probability of observing a particular number of trials correct under the null model of no sensitivity to tea preparation order. Each facet gives a different number of trials. The red line indicates a significance threshold above which data have less than a 5\\% chance of appearing."}
+```{r inference-null-model, fig.cap="Probability of observing a particular number of trials correct under the null model of no sensitivity to tea preparation order. Each facet gives a different number of trials. The red lines indicates a significance threshold above which data have less than a 5\\% chance of appearing."}
 
 
-n_sims <- 1000
+n_sims <- 10000
 
 null_model <- expand_grid(sim = 1:n_sims, 
                           n = c(12,24,48,96)) |>
@@ -78,8 +76,10 @@ null_model_summary <- null_model |>
   summarise(delta = mean(rating[condition == "milk first"]) - 
               mean(rating[condition == "tea first"]))
 
+
+
 ggplot(null_model_summary, aes(x =delta)) + 
-  geom_histogram(aes(y = ..density..)) +
+  geom_histogram(aes(y = ..density..), binwidth = .25) +
   facet_wrap(~n) +
   ylab("Probability") + xlab("Difference in rating)")
 
