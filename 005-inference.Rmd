@@ -6,8 +6,6 @@
 
 <!-- "needs a pass to make coherent/consistent with example in estimation" -->
 
-<!-- "we still need CIs and visualizing variability" -->
-
 ::: {.learning-goals}
 🍎 Learning goals:
 
@@ -59,25 +57,32 @@ These null distributions are shown in Figure \@ref(fig:inference-null-model). We
 
 [^inference-4]: Note that we are effectively doing a "one-tailed" test here, since we're attending only to the right hand side of each plot and ignoring cases where the participant is exactly flipped in their judgments.
 
-```{r inference-null-model, fig.cap="Probability of observing a particular number of trials correct under the null model of no sensitivity to tea preparation order. Each facet gives a different number of trials. The red line indicates a significance threshold above which data have less than a 5\\% chance of appearing."}
-n_sims <- 10000
-null_model <- expand_grid(n = c(6,12,24,48),
-                          sim = 1:n_sims) %>%
-  group_by(n) %>%
-  mutate(correct = rbinom(n = n_sims, size = n, prob = .5)/n, 
-         cutoff = quantile(correct, .95)) %>%
-  group_by(n, correct) %>%
-  summarise(n_correct = n(), 
-            cutoff = cutoff[1]) %>%
-  group_by(n) %>%
-  mutate(prop_correct = n_correct / sum(n_correct))
+```{r inference-helper}
+source("helper/tea_helper.R")
+```
 
-ggplot(null_model, aes(x = correct, y = prop_correct)) + 
-  geom_bar(stat = "identity") + 
-  facet_wrap(~n) + 
-  geom_vline(aes(xintercept = cutoff + .01), col = "red", lty = 2) + 
-  ylab("Probability") + xlab("Proportion correct responses")
-# dbinom(x = 8, size = 8, prob = .5)
+```{r inference-null-model, fig.cap="Probability of observing a particular number of trials correct under the null model of no sensitivity to tea preparation order. Each facet gives a different number of trials. The red line indicates a significance threshold above which data have less than a 5\\% chance of appearing."}
+
+
+n_sims <- 1000
+
+null_model <- expand_grid(sim = 1:n_sims, 
+                          n = c(12,24,48,96)) |>
+  rowwise() |>
+  mutate(data = map(n, ~make_tea_data(n_total = n, delta = 0))) |>
+  unnest(cols = c(data))
+
+
+null_model_summary <- null_model |>
+  group_by(n, sim) |>
+  summarise(delta = mean(rating[condition == "milk first"]) - 
+              mean(rating[condition == "tea first"]))
+
+ggplot(null_model_summary, aes(x =delta)) + 
+  geom_histogram(aes(y = ..density..)) +
+  facet_wrap(~n) +
+  ylab("Probability") + xlab("Difference in rating)")
+
 ```
 
 The more trials a participant completes, the lower the accuracy threshold for significance becomes. With 6 trials, you need to get all `r qbinom(.95, size = 6, prob = .5, lower.tail = TRUE)` correct for that result to have a probability of less than 5% probable under the null model. With 12, you need to observe `r qbinom(.95, size = 12, prob = .5)+1` (`r round((qbinom(.95, size = 12, prob = .5)+1)*100 / 12)`%) or more. With 24 and 48, you need `r qbinom(.95, size = 24, prob = .5)+1` (`r round((qbinom(.95, size = 24, prob = .5)+1)*100 / 24)`%) and `r qbinom(.95, size = 48, prob = .5)+1` (`r round((qbinom(.95, size = 48, prob = .5)+1)*100 / 48)`%) respectively.[^inference-5] With greater numbers of trials, the expectation based on chance becomes more precise and so we are able to reject then null based on smaller deviations.
@@ -277,15 +282,6 @@ In the previous section, we discussed how to estimate means and differences in m
 Why is this so? To characterize the uncertainty in an estimate, it helps to picture what is called its **sampling distribution**, which is the distribution *of the estimate itself* across different, hypothetical samples. That is, let's imagine -- purely hypothetically -- that we conducted the tea experiment with $n=48$ not just once, but hundreds or even thousands of times. This idea is often called **repeated sampling** as a shorthand. For each hypothetical sample, we use similar recruitment methods to recruit a new sample of participants, and we estimate $\widehat{\Delta}$ in that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability. If we plotted these estimates, $\widehat{\Delta}$, across thousands of samples, we would get the sampling distribution:
 
 ```{r}
-make_tea_data <- function(n_total = 48, sigma = 1.25) {
-  
-tibble(condition = c(rep("milk first", n_total/2),
-                                 rep("tea first", n_total/2)),
-                   rating = c(round(rnorm(n_total/2, mean = 4.5, sd = sigma)), 
-                              round(rnorm(n_total/2, mean = 3.5, sd = sigma))) ) %>%
-  mutate(rating = ifelse(rating > 10, 10, rating), #truncate
-         rating = ifelse(rating < 1, 1, rating))
-}
 samps <- tibble(sim = 1:1000) |>
   mutate(data = map(sim, ~make_tea_data())) |>
   unnest(cols = "data")
