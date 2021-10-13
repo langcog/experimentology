@@ -356,9 +356,71 @@ An amazing thing about sampling distributions for many kinds of estimates, and f
 
 <!-- $$COIN FLIP SAMPLING DISTRIBUTION AT N=2$$ -->
 
+```{r}
+# Note from NC: this is clunky first attempt and I haven't checked its accuracy...
+# Also, because we repeat this, we should write a simulation function
+# Also, to simulate
+
+# define number of iterations
+n = 10000
+
+# create empty vector of ps
+sample_p = rep(NA, n)
+
+# fill empty vector with means
+for(i in 1 : n){
+  sample_p[i] = sample(x = c(0, 1),
+                       size = 2,
+                       replace = T,
+                       prob = c(.70, .30)) %>% #  assume unfair coin
+    mean()
+}
+
+# transform to dataframe
+sample_p <- data.frame(x = sample_p)
+
+ggplot(sample_p,
+       aes(x = x)) +
+  geom_histogram()
+
+rm(n, i, sample_p)
+```
+
+
 Of course, this isn't at all normal because $\widehat{p}_H$ can only take on the values 0, 0.5, or 1 in a sample of only 2 coin flips. But look what happens as we draw increasingly larger samples:
 
 <!-- $$COIN FLIP SAMPLING DISTRIBUTION WITH INCREASING N'S$$ -->
+
+```{r}
+# Note from NC: this is clunky and SLOW first attempt and I haven't checked its accuracy...
+# Also, because we repeat this, we should write a simulation function
+
+# create empty vector of ps at n = 2, n = 30, n = 60
+sim.DF <- data.frame(n = numeric(), 
+                     p.est = numeric())
+
+for (n in c(2, 15, 30, 60)){
+  for (i in 1 : 1000){ #  1000 iterations
+    p.est = sample(x = c(0, 1),
+                   size = n,
+                   replace = T,
+                   prob = c(.70, .30)) %>% 
+      mean()
+    
+    sim.DF <- rbind(sim.DF,
+                    cbind(n = n,
+                          p.est = p.est))
+  }
+}
+
+ggplot(sim.DF,
+       aes(x = p.est)) +
+  geom_histogram() +
+  facet_grid(cols = vars(n))
+
+rm(p.est, i, n, sim.DF)
+```
+
 
 We get a normal distribution! This tendency of sampling distributions to become normal as $n$ becomes very large reflects a deep and elegant mathematical law called the **Central Limit Theorem**. Aesthetic swooning aside, the practical upshot is that the Central Limit Theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\widehat{SE} = \sigma/\sqrt{n}$. That is why the sampling distribution becomes narrower as the sample size increases.
 
