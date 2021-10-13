@@ -1,3 +1,183 @@
+--- 
+title: "Experimentology"
+subtitle: "An Open Science Approach to Experimental Psychology Methods"
+author: "Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke, Robert Hawkins, Maya Mathur, and Rondeline Williams"
+
+site: bookdown::bookdown_site
+documentclass: book
+classoption: twoside,symmetric
+
+bibliography: experimentology.bib
+csl: apa.csl
+link-citations: yes
+---
+
+# {.unlisted .unnumbered}
+
+Placeholder
+
+
+## Introduction {-}
+## What this book is and isn't about {-}
+## How to use this book {-}
+## Themes {-}
+## The software toolkit of the behavioral researcher (and of this book) {-}
+
+<!--chapter:end:index.Rmd-->
+
+
+# (PART) Preliminaries {-}
+# Experiments and theories {#intro}
+
+Placeholder
+
+
+## What is an experiment, and why would you do one?
+### Causal inference
+### Randomization
+## What is a theory? 
+### Psychological theories
+### Theory testing: Popper, Kuhn, and Lakatos, oh my!
+### Models and theories 
+## Theory testing in psychology
+### "Risky" and informative tests
+### Theories, frameworks, and paradigms
+## Experiments and Theories: Chapter Summary
+
+<!--chapter:end:001-intro.Rmd-->
+
+
+# Replication and reproducibility  {#replication}
+
+Placeholder
+
+
+## Reproducibility
+## Replication
+### Conceptual frameworks for replication
+### The meta-science of replication
+## Causes of replication failure
+### Context, moderators, and expertise
+### P-hacking and publication bias
+## Replication and theory building
+### Reciprocity between replication and theory
+### Necessary but not sufficient
+### A "replication crisis"?
+
+<!--chapter:end:002-replication.Rmd-->
+
+
+# Ethics {#ethics}
+
+Placeholder
+
+
+## Ethical Frameworks
+### The Deontological Approach
+### The Utilitarian Approach
+### The Virtue Approach
+### Optimal Ethical Framework for Human Subjects Research
+## Experimental Ethics
+### The IRB
+### Debriefing Participants
+#### Participation Gratitude
+#### Discussion of Goals
+#### Explanation of Deception
+#### Questions and Clarification
+#### A Note on Debriefing in Online Studies
+### Special Considerations for Vulnerable Populations
+## Publication Ethics
+### Authorship
+### Disclosures
+### Generalizability Statements
+### Post-publication Errors
+### Intellectual Humility
+## The Ethical Duty for Transparency
+### The negatives of openness
+### Individuals should consider openness as a default
+### Institutions can mitigate the risks and costs of openness
+### Conclusion
+
+<!--chapter:end:003-ethics.Rmd-->
+
+
+# (PART) Statistics {-}
+# Estimation {#estimation}
+
+Placeholder
+
+
+## Estimating a quantity
+### Maximum likelihood estimation
+### Estimating variation in ratings
+### Bayesian estimation
+## Estimating and comparing effects
+### Estimating the treatment effect 
+### Measures of effect size
+### Pros and cons of standardizing effect sizes
+## Summary: Estimation
+
+<!--chapter:end:004-estimation.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+library(tidyverse)
+library(glue)
+library(knitr)
+library(shiny)
+library(metafor)
+
+opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  error = FALSE,
+  comment = "#>",
+  collapse = TRUE,
+  cache = TRUE,
+  echo = FALSE,
+  cache.lazy = FALSE,
+  dev = "png",
+  dpi = 300,
+  out.width = "\\linewidth"
+)
+kable <- function(...) knitr::kable(..., booktabs = TRUE, linesep = "")
+
+set.seed(42)
+
+.font <- "Source Sans Pro"
+theme_set(theme_bw(base_size = 14, base_family = .font))
+theme_update(panel.grid = ggplot2::element_blank(),
+             strip.background = ggplot2::element_blank(),
+             legend.key = ggplot2::element_blank(),
+             panel.border = ggplot2::element_blank(),
+             axis.line = ggplot2::element_line(),
+             strip.text = ggplot2::element_text(face = "bold"))
+.grey <- "grey70"
+.refline <- "dotted"
+.coef_line <- element_line(colour = .grey, size = 0.1)
+
+.pal <- ggthemes::ptol_pal
+.scale_colour_discrete <- ggthemes::scale_colour_ptol
+.scale_color_discrete <- .scale_colour_discrete
+.scale_fill_discrete <- ggthemes::scale_fill_ptol
+
+.scale_colour_continuous <- viridis::scale_colour_viridis
+.scale_color_continuous <- .scale_colour_continuous
+.scale_fill_continuous <- viridis::scale_fill_viridis
+
+.scale_colour_numerous <- scale_colour_discrete
+.scale_color_numerous <- .scale_colour_numerous
+.scale_fill_numerous <- scale_fill_discrete
+
+# from https://bookdown.org/yihui/rmarkdown-cookbook/font-color.html
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color,
+            x)
+  } else x
+}
+```
 # Inference {#inference}
 
 <!-- TODO: -->
@@ -9,10 +189,10 @@
 ::: {.learning-goals}
 🍎 Learning goals:
 
--   Discuss the purpose of statistical inference
+-   Discuss the function of statistical inference
 -   Visualize and interpret measures of estimate variability (including confidence intervals)
 -   Define $p$-values and Bayes Factors
--   Consider common fallacies about inference (especially for $p$-values)
+-   Consider the fallacies of inference (especially for $p$-values)
 :::
 
 We've been arguing that experiments are about measuring effects. You might ask then, why does this book even need a chapter about statistical inference? Why can't we just report our estimates and be done? The answer is that we are not typically interested in the characteristics of our sample specifically. **Statistical inference** is the process of going beyond the specific characteristics of the sample that you measured to make generalizations about the broader **population**. 
@@ -26,11 +206,11 @@ Inference methods allow us to ask questions like:
 
 Question (1) is associated with one particular type of statistical inference method -- **null hypothesis significance testing** (NHST) in the **frequentist** statistical tradition. NHST has become synonymous with data analysis, such that in the vast majority of research papers (and research methods courses), all of the reported analyses are tests of this type. Yet the equivalence of NHST -- in particular, the dichotomous inference that something is "significant" or not -- and the idea of data analysis more generally has been quite problematic.
 
-The instinct to "go test for significance" before visualizing your data and trying to understand sources of variation (participants, items, manipulations, etc.) is one of the most unhelpful things an experimenter can do. Whether $p < .05$ or not, a test of this sort gives you literally *one bit* of information about your data.[^inference-1] Considering effect sizes and their variation more holistically, including using the kinds of visualizations we advocate in Chapter \@ref(viz), gives you a much richer sense of what happened in your experiment!
+The instinct to "go test for significance" before visualizing your data and trying to understand sources of variation (participants, items, manipulations, etc.) is one of the most unhelpful things an experimenter can do. Whether $p < .05$ or not, a test of this sort gives you literally *one bit* of information about your data.[^inference-1] The kinds of visualizations we advocate in Chapter \@ref(viz) give you a much richer sense of what happened in your experiment!
 
 [^inference-1]: In the information theoretic sense, as well as the common sense!
 
-In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. All practicing experimentalists need to understand NHST, both to read the literature and also to apply this method in appropriate situations. For example, NHST may be a reasonable tool for testing whether an intervention leads to a difference between a treatment condition and an appropriate control, although it still doesn't tell you about the size of the intervention effect! But we will also try to contextualize NHST as a very special case of a broader set of strategies around modeling and inference. Further, we will continue to flesh out our account of how some of the pathologies of NHST have been a driver of the replication crisis.
+In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. All practicing experimentalists need to understand NHST, both to read the literature and also to apply this method in appropriate situations. For example, NHST is a reasonable tool for testing whether an intervention leads to a difference between a treatment condition and an appropriate control, although it still doesn't tell you about the size of the intervention effect! But we will also try to contextualize NHST as a very special case of a broader set of strategies around modeling and inference. Further, we will continue to flesh out our account of how some of the pathologies of NHST have been a driver of the replication crisis.
 
 ```{marginfigure, echo=TRUE}
 <img src="images/inference/krushke.png"/>
@@ -39,9 +219,9 @@ Clarifying the distinctions between Bayesian and Frequentist paradigms and the w
 
 What should replace NHST? There has been a recent move towards the use of Bayes Factors to quantify the evidence in support of a hypothesis. Bayes Factors can help answer questions like (2). We introduce these tools, and believe that they have broader applicability than the NHST framework and should be known by students. On the other hand, Bayes Factors are not a panacea. They have the same problems as NHST when they are applied dichotomously.
 
-Instead of dichotomous frequentist or Bayesian inference, we advocate for **estimation** and **modeling** strategies, which are more suited towards questions (3) and (4) [@cumming2014;@kruschke2018]. The goal of these strategies is to yield an accurate and precise estimate of the relationships underlying observed variation in the data. One of these estimates is the causal effect of the experimental manipulation(s), which we introduced in the last chapter. That explains our affection for these approaches: if a good theory predicts these kinds of causal effects, it makes sense that we'd want to estimate them precisely! What we'll do in this chapter is build on that estimation strategy to understand what we learn about the population we're trying to measure from our sample estimate. 
+Instead of dichotomous inference, we advocate for **estimation** and **modeling** strategies, which are more suited towards questions (3) and (4) [@cumming2014;@kruschke2018]. The goal of these strategies is to yield an accurate and precise estimate of the relationships underlying observed variation in the data. One of these estimates is the causal effect of the experimental manipulation(s), which we introduced in the last chapter. That explains our affection for these approaches: if a good theory predicts these kinds of causal effects, it makes sense that we'd want to estimate them precisely! What we'll do in this chapter is build on that estimation strategy to understand what we learn about the population we're trying to measure from our sample estimate. 
 
-Estimating one quantity in isolation is often not the best thing to do. In almost any experiment, there will be variation in the estimate that has to do with other known sources. Imagine the Stroop effect, which has a fairly consistent effect on both fast and slow readers [@haaf2017]. But estimates of this effect will be more precise if we take into account that some readers are slower or faster, rather than just averaging across all this variation. That's why we need models that take into account different sources of variation. [MM: Opening 2 sentences here are a bit mysterious, and the rest of this paragraph seems too specialized for the otherwise very strong and compelling opening section. I'd suggest moving these ideas about "other sources of variation" to the coverage of models for repeated-measures data.]
+Estimating one quantity in isolation is often not the best thing to do.  In almost any experiment, there will be variation in the estimate that has to do with other known sources. Imagine the Stroop effect, which has a fairly consistent effect on both fast and slow readers [@haaf2017]. But estimates of this effect will be more precise if we take into account that some readers are slower or faster, rather than just averaging across all this variation. That's why we need models that take into account different sources of variation.
 
 This isn't a statistics book and we won't attempt to teach the full array of important statistical concepts that will allow students to build good models of a broad array of datasets. (Sorry!).^[If you're interested in going deeper, here are two books that have been really influential for us. The first is @gelman2006, which teaches regression and multi-level modeling from the perspective of data description and modeling. The second is @mcelreath2018, a course on building Bayesian models of the causal structure of your data. Honestly, neither is an easy book to sit down and read (unless you are the kind of person who reads stats books on the subway for fun) but both really reward detailed study. We encourage you to get together a reading group and go through the exercises together. It'll be well worth while in its impact on your statistical and scientific thinking.] But we do want you to be able to reason about inference and modeling. In this chapter, we'll start by doing some inferences about our tea-tasting example from the last chapter, using this example to build up intuitions about inference and estimation. Then in Chapter \@ref(models), we'll start to look at more sophisticated models.
 
@@ -49,11 +229,11 @@ This isn't a statistics book and we won't attempt to teach the full array of imp
 
 In Chapter \@ref(estimation) we discussed Fisher's tea-tasting experiment. The first innovation of that experiment was the use of randomization to recover an estimate of the causal effect of milk ordering. But there was more to Fisher's analysis than we described. 
 
-The second innovation of the tea-tasting experiment was the idea of creating a model of what might happen during the experiment. Specifically, Fisher described a hypothetical **null model** that would arise if the nameless lady had chosen cups by chance rather than because of some tea sensitivity. In our tea-rating experiment, the null model describes what happens when there is no difference in ratings between tea-first and milk-first cups. Under the null model, the treatment effect ($\Delta$) is zero. 
+The second innovation of the tea-tasting experiment was the idea of creating a model of what might happen during the experiment. Specifically, Fisher described a **null model** in which the nameless lady chose cups by chance rather than because of some tea sensitivity. In our tea-rating experiment, the null model describes what happens when there is no difference in ratings between tea-first and milk-first cups. Under the null model, the treatment effect ($\Delta$) is zero. 
 
-Even with an actual treatment effect of zero, across repeated sampling, we should see some variation in $\hat{\Delta}$, our *estimate* of the treatment effect. Sometimes we'll get a small positive effect, sometimes a small negative one. Occasionally just by chance we'll get a big effect. Fisher's innovation was to quantify the probability of observing various values of $\hat{\Delta}$, given the null model. Then, if the observed data were very low probability under the null model, we could declare that the null was rejected. [MM: If describing repeated sampling here, maybe more later definition of this concept up to here as well. Overall, I wonder if all the material on sampling distributions should come immediately after the first section?]
+Even with an actual treatment effect of zero, in any given experiment we should see some variation in $\hat{\Delta}$, our *estimate* of the treatment effect. Sometimes we'll get a small positive effect, sometimes a small negative one. Occasionally just by chance we'll get a big effect. Fisher's innovation was to quantify the probability of observing various values of $\hat{\Delta}$, given the null model. Then, if the observed data were very low probability under the null model, we could declare that the null was rejected. 
 
-How unlikely must the observed data be, in order to reject the null? Fisher declared that it is "usual and convenient for experimenters to take 5 percent as a standard level of convenience," establishing the .05 cutoff that has become gospel throughout the sciences.^[Actually, right after establishing .05 as a cutoff, Fisher then writes that "in the statistical sense, we thereby admit that no isolated experiment, however significant in itself, can suffice for the experimental demonstration of any natural phenomenon... in order to assert that a natural phenomenon is experimentally demonstrable we need, not an isolated record, but a reliable method of procedure. In relation to the test of significance, we may say that a phenomenon is experimentally demonstrable when we know how to conduct an experiment which will rarely fail to give us a statistically significant result." In other words, Fisher was all for replication!]
+How low probability must the observed data be, in order to reject the null? Fisher declared that it is "usual and convenient for experimenters to take 5 percent as a standard level of convenience," establishing the .05 cutoff that has become gospel throughout the sciences.^[Actually, right after establishing .05 as a cutoff, Fisher then writes that "in the statistical sense, we thereby admit that no isolated experiment, however significant in itself, can suffice for the experimental demonstration of any natural phenomenon... in order to assert that a natural phenomenon is experimentally demonstrable we need, not an isolated record, but a reliable method of procedure. In relation to the test of significance, we may say that a phenomenon is experimentally demonstrable when we know how to conduct an experiment which will rarely fail to give us a statistically significant result." In other words, Fisher was all for replication!]
 
 Let's take a look at what the null model might look like. In Figure \@ref(fig:inference-null-model), we imagine doing our tea-tasting experiment 10,000 separate times. We also assume that the **null hypothesis** of no treatment effect is true -- this assumption gives us our null model. The histogram shows the distribution of treatment effects $\hat{\Delta}$ we observe: some a little negative, some a little positive, and a few substantially positive or negative. 
 
@@ -121,7 +301,7 @@ ggplot(null_model_summary_multin, aes(x =delta)) +
   ylab("Frequency") + xlab("Difference in rating)")
 ```
 
-The more participants in the experiment, the tighter the null distribution becomes, and hence the smaller the region in which we should expect a null treatment effect to fall. Because our expectation based on the null becomes more precise, we will be able to reject then null based on smaller treatment effects. In inference of this type, as with estimation, our goals matter. If we're merely testing a hypothesis out of curiosity, perhaps we don't want to measure too many cups of tea. But if we were designing the tea strategy for a major cafe chain, the stakes would be higher and a more precise estimate might necessary; in that case, maybe we'd want to do a more extensive experiment! [MM: Opening sentence about the changing shape of the sampling distribution also seems like it would benefit from having sampling distribution section first.]
+The more participants in the experiment, the tighter the null distribution becomes, and hence the smaller the region in which we should expect a null treatment effect to fall. Because our expectation based on the null becomes more precise, we will be able to reject then null based on smaller treatment effects. In inference of this type, as with estimation, our goals matter. If we're merely testing a hypothesis out of curiosity, perhaps we don't want to measure too many cups of tea. But if we were designing the tea strategy for a major cafe chain, the stakes would be higher and a more precise estimate might necessary; in that case, maybe we'd want to do a more extensive experiment! 
 
 One last note: You might notice an interesting parallel between Fisher's paradigm for NHST and Popper's falsificationist philosophy (introduced in Chapter \@ref(theory)). In both cases, you never get to accept the actual hypothesis of interest. The only thing you can do is observe evidence that is inconsistent. The added limitation of NHST is that the only hypothesis you can falsify is the null!
 
@@ -158,7 +338,7 @@ kable(jeffreys, booktabs = TRUE,
       caption = "Jeffreys' (1961/1998) interpretation guidelines for Bayes Factors.")
 ```
 
-There are a couple of things to notice about the Bayes Factor. The first is that, like a p-value, it is inherently a continuous measure. You can artificially dichotomize decisions based on the Bayes Factor by declaring a cutoff (say, BF \> 3 or BF \> 10), there is no intrinsic threshold at which you would say the evidence is "significant." Many people follow guidelines from @jeffreys1998, shown in Table \@ref(tab:inference-jeffreys). On the other hand, cutoffs like BF > 3 or $p < .05$ are not very informative. So although we provide this table to guide interpretation, we caution that you should always report and interpret the actual Bayes Factor, not whether it is above or below some cutoff. 
+There are a couple of things to notice about the Bayes Factor. The first is that it is a continous measure. You can dichotomize decisions based on the Bayes Factor by declaring a cutoff (say, BF \> 3 or BF \> 10), there is no intrinsic threshold at which you would say the evidence is "significant." Many people follow guidelines from @jeffreys1998, shown in Table \@ref(tab:inference-jeffreys). On the other hand, cutoffs like BF > 3 or $p < .05$ are not very informative. So although we provide this table to guide interpretation, we caution that you should always report and interpret the actual Bayes Factor, not whether it is above or below some cutoff. 
 
 The second thing to notice about the Bayes Factor is that it doesn't depend on our prior probability of $H_1$ vs. $H_0$. We might think of $H_1$ as very implausible. But the BF is independent of that prior belief. So that means it's a measure of how much the evidence should shift our beliefs away from our prior. One nice way to think about this is that the Bayes Factor computes how much our beliefs -- whatever they are -- should be changed by the data [@morey2011].
 
@@ -207,7 +387,7 @@ tibble(`Successes` = c(3,6,12,9,18,36,55,550),
   kable(booktabs = TRUE, digits = 3, caption = "Comparison of p-value and BF for several different tea-tasting scenarios. p-values are one-tailed. Note that BF is heavily dependent on the specific prior on tasting successes that we assign.")
 ```
 
-The critical thing about $p$-values is not just that they are a specific kind of data likelihoods, it is that they are used in a specific inferential procedure. The logic of NHST is that we make a binary decision about the presence of an effect. If $p < .05$, the null hypothesis is rejected; otherwise not. As @fisher1949 wrote,
+The critical thing about $p$-values is not just that they are a specific kind of data likelihoods, it is that they are used in a specific inferential procedure The logic of NHST is that we make a binary decision about the presence of an effect. If $p < .05$, the null hypothesis is rejected; otherwise not. As @fisher1949 wrote,
 
 > It should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis. (p. 19)
 
@@ -229,7 +409,7 @@ One way to "patch" NHST is to introduce a decision-theoretic view, shown in Figu
 
 <!-- MM: Should the p-value misinterpretations be integrated into p-value section above, similarly to how the new CI misinterpretations are integrated with that section? -->
 
-$p$-values are basically likelihoods. The likelihood of the data under the null hypothesis is a critical number to know -- for computing the Bayes Factor among other reasons. But it doesn't tell us a lot of things that we might like to know! For example, it doesn't tell us the probability of the data under any positive hypothesis that we might be interested in -- that's the posterior probability $p(H_1 | d)$. Lots of folks mistake these two for one another, e.g. that the probability of the data given the null is the probability of the null given the data.
+$p$-values are basically likelihoods. The likelihood of the data under the null hypothesis is a critical number to know -- for computing the Bayes Factor among other reasoms. But it doesn't tell us a lot of things that we might like to know! For example, it doesn't tell us the probability of the data under any positive hypothesis that we might be interested in -- that's the posterior probability $p(H_1 | d)$. Lots of folks mistake these two for one another, e.g. that the probability of the data given the null is the probability of the null given the data.
 
 Another $p$-value problem that comes up frequently is what to conclude when $p>.05$. According to the classical logic of NHST, the answer is "nothing"! That is, a failure to reject the null does not mean that you can *accept* the null. Even if the probability of the data (or some more extreme data) under $H_0$ is high, their probability might be just as high or higher under $H_1$.[^inference-18] But many practicing researchers make this mistake. @aczel2018 coded a sample of articles from 2015 and found that 72% of negative statements were inconsistent with the logic of their statistical paradigm of choice -- most were cases where researchers said that an effect was not present when they had simply failed to reject the null.
 
@@ -260,13 +440,13 @@ knitr::kable(dozen,
 ```
 
 
-<!-- NC: The dirty dozen table doesn't seem that useful if we do not explain why these things are incorrect. MM agrees. We can probably discuss the fallacies for one or the other and then just invoke the CI-p-value duality for why the other set of fallacies is also wrong. Mika and I discuss the CI fallacies below. -->
+<!-- NC: The dirty dozen table doesn't seem that useful if we do not explain why these things are incorrect. -->
 
-Further, the $p$-value is a probability of a certain set of events happening (corresponding to the observed data or any "more extreme" data, that is to say, data further from the null). Since $p$-values are probabilities, we can combine them together across different events. If we run a null experiment -- an experiment where the expected effect is zero -- the probability of a dataset with $p < .05$ is of course .05. But if we run two such experiments, we can get $p < .05$ with probability `r round(2*.05 - .05*.05,2)`. By the time we run 20 experiments, we have an `r round(1 - .95^20,2)` chance of getting a positive result.
+Further, the $p$-value is a probability of a certain set of events happening (corresponding to the observed data or any "more extreme" data, that is to say, data further from the null). Since $p$-values are probabilities, we can combine them together across different events. If we run a null experiment -- an experiment where we know the expected effect is zero -- the probability of a dataset with $p < .05$ is of course .05. But if we run two such experiments, we can get $p < .05$ with probability `r round(2*.05 - .05*.05,2)`. By the time we run 20 experiments, we have an `r round(1 - .95^20,2)` chance of getting a positive result.
 
 It would obviously be a major mistake to run 20 null experiments and then report only the positive ones (which, by design, are false positives) as though these still were "statistically significant." The same thing applies to doing 20 different statistical tests within a single experiment. There are many statistical corrections that can be made to adjust for this problem.[^inference-19] But the the broader issue is one of transparency: unless you *know* what the appropriate set of experiments or tests is, it's not possible to implement one of these corrections![^inference-20]
 
-[^inference-19]: The simplest and most versatile one, the Bonferroni correction, just divides .05 (or technically, whatever your threshold is) by the number of comparisons you are making. Using that correction, if you do 20 null experiments, you would have a `r round((1 - .95^20)/20)` chance of a false positive, which is actually a little conservative.
+[^inference-19]: The simplest one, the Bonferroni correction, just divides .05 (or technically, whatever your threshold is) by the number of comparisons you are making. Using that correction, if you do 20 null experiments, you would have a `r round((1 - .95^20)/20)` chance of a false positive, which is actually a little conservative.
 
 [^inference-20]: This issue is especially problematic with $p$-values because they are so often presented as an independent set of tests, but the problem of multiple comparisons comes up when you compute a lot of independent Bayes Factors as well. "Posterior hacking" via selective reporting of Bayes Factors is perfectly possible [@simonsohn2014].
 
@@ -303,8 +483,6 @@ These cognitive science findings help to explain some of the problems that peopl
 [^inference-23]: @cohen1994 is a great treatment of this issue.
 
 ## Precision and Uncertainty
-
-<!-- MM: This is the section (up to "Confidence Intervals") that I'd suggest moving to after the opening section. --> 
 
 In the previous section, we discussed how to estimate means and differences in means from our observed data. These so-called "point estimates" represent our best guesses about the population parameters given the data and possibly also given our prior beliefs. But on their own, point estimates do not say anything about how much statistical uncertainty is involved in these point estimates.[^inference-7] If we were to repeat the tea-tasting experiment with 500 participants instead of 48, it's clear intuitively that we would have less uncertainty with 500 participants, even if the point estimates happened to be identical.
 
@@ -421,7 +599,6 @@ rm(p.est, i, n, sim.DF)
 We get a normal distribution! This tendency of sampling distributions to become normal as $n$ becomes very large reflects a deep and elegant mathematical law called the **Central Limit Theorem**. Aesthetic swooning aside, the practical upshot is that the Central Limit Theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\widehat{SE} = \sigma/\sqrt{n}$. That is why the sampling distribution becomes narrower as the sample size increases.
 
 <!-- \^[MB: isn't it more accurate to say that standard error is an **estimate** of that standard deviation of the sampling distribution? and then that makes it more clear why larger n improves the estimate. more generally we might want to be more explicit/clear about the distinctions among the sd of the population, the sd of the sample, the sd of the sampling distribution, and the se] -->
-<!-- MM: Maybe we can use "SE/standard error" vs "\widehat{SE}/estimated standard error" throughout. I wouldn't want to lose the idea that there really is a true standard error out there. It depends on n, but not because it's an estimate. -->
 
 ### Confidence intervals
 
@@ -585,7 +762,7 @@ Take three of Goodman's (2008) "dirty dozen" in Table \@ref(tab:dirty-dozen) and
 :::
 
 ::: {.exercise}
-True or false? If we conducted the tea experiment with 500 participants instead of 48, then all else equal, we would expect tea ratings to cluster more closely around the sample mean in the experiment with 500 participants.
+True or false? If we conducted the tea experiment with 500 participants instead of 48, then all else equal, we would expect tea ratings to cluster more closely around the sample mean.
 ::: 
 
 
@@ -632,3 +809,365 @@ True or false? If we conducted the tea experiment with 500 participants instead 
 <!-- Absence of assumptions (“more objective”) -->
 
 <!-- Often easier to state and solve models -->
+
+<!--chapter:end:005-inference.Rmd-->
+
+
+# Models {#models} 
+
+Placeholder
+
+
+## Inference and estimation for two-group designs
+### Simple models of between-group differences
+## Covariates
+
+<!--chapter:end:006-models.Rmd-->
+
+
+# (PART) Design and Planning {-}
+# Measurement {#measurement}
+
+Placeholder
+
+
+## Reliability
+### Measurement scales
+### Reliability is relative
+### Practical advice for computing reliability
+## Validity
+## How to select a good measure?
+### What to measure? 
+### Survey measures
+## The temptation to measure lots of things
+## Chapter summary
+
+<!--chapter:end:007-measurement.Rmd-->
+
+
+# Design of experiments {#design}
+
+Placeholder
+
+
+## Manipulation validity
+### Threats to manipulation validity
+### Confounding
+### Removing nuisance confounds
+## How to design a manipulation to test a theory.
+### Design concepts
+### Connecting with theory
+
+<!--chapter:end:008-design.Rmd-->
+
+
+# Sampling {#sampling}
+
+Placeholder
+
+
+
+<!--chapter:end:009-sampling.Rmd-->
+
+
+# Preregistration {#prereg}
+
+Placeholder
+
+
+
+<!--chapter:end:010-prereg.Rmd-->
+
+
+# (PART) Execution {-}
+# Experimental strategy {#selection}
+
+Placeholder
+
+
+
+<!--chapter:end:011-selection.Rmd-->
+
+
+# Data collection {#collection}
+
+Placeholder
+
+
+## The critical importance of piloting
+## Data integrity checking
+## Data collection online
+## Manipulation checks
+## Experimental practices, beliefs, and superstitions
+
+<!--chapter:end:012-collection.Rmd-->
+
+
+# Project management {#management}
+
+Placeholder
+
+
+## Project Management
+### Organizing your project
+### Versioning
+### File names
+## Data Management
+### Save your raw data
+### Document your data collection process
+### Organize your data for later analysis (spreadsheet version)
+### Organize your data for later analysis (software version)
+### Document the format of your data
+## Sharing Research Products
+### What you can and can't share
+### Where and how to share ("If you like it then you've gotta put a license on it")
+## Chapter summary
+
+<!--chapter:end:013-manangement.Rmd-->
+
+
+# (PART) Analysis and Reporting {-}
+# Visualization {#viz}
+
+Placeholder
+
+
+## Basic principles of visualization
+### Show the design
+### Facilitate comparison
+### Maximize information, minimize ink
+### ``Fix the axis labels''
+## Exploratory visualization
+
+<!--chapter:end:014-viz.Rmd-->
+
+
+# Exploratory data analysis {#eda}
+
+Placeholder
+
+
+## Sensitivity Analysis
+## Data exploration
+## Exploratory modeling and theory-building
+
+<!--chapter:end:015-eda.Rmd-->
+
+
+# Reproducible writing {#writing}
+
+Placeholder
+
+
+## Writing 
+## Reproducible manuscripts
+
+<!--chapter:end:016-writing.Rmd-->
+
+
+# Meta-analysis {#meta}
+
+Placeholder
+
+
+## The basics of evidence synthesis
+### How *not* to synthesize evidence
+### Combining results across studies using fixed-effects meta-analysis
+### Limitations of fixed-effects meta-analysis
+### Random-effects meta-analysis
+## Bias in meta-analysis
+### Within-study biases
+### Across-study biases
+
+<!--chapter:end:017-meta.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+library(tidyverse)
+library(glue)
+library(knitr)
+library(shiny)
+library(metafor)
+
+opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  error = FALSE,
+  comment = "#>",
+  collapse = TRUE,
+  cache = TRUE,
+  echo = FALSE,
+  cache.lazy = FALSE,
+  dev = "png",
+  dpi = 300,
+  out.width = "\\linewidth"
+)
+kable <- function(...) knitr::kable(..., booktabs = TRUE, linesep = "")
+
+set.seed(42)
+
+.font <- "Source Sans Pro"
+theme_set(theme_bw(base_size = 14, base_family = .font))
+theme_update(panel.grid = ggplot2::element_blank(),
+             strip.background = ggplot2::element_blank(),
+             legend.key = ggplot2::element_blank(),
+             panel.border = ggplot2::element_blank(),
+             axis.line = ggplot2::element_line(),
+             strip.text = ggplot2::element_text(face = "bold"))
+.grey <- "grey70"
+.refline <- "dotted"
+.coef_line <- element_line(colour = .grey, size = 0.1)
+
+.pal <- ggthemes::ptol_pal
+.scale_colour_discrete <- ggthemes::scale_colour_ptol
+.scale_color_discrete <- .scale_colour_discrete
+.scale_fill_discrete <- ggthemes::scale_fill_ptol
+
+.scale_colour_continuous <- viridis::scale_colour_viridis
+.scale_color_continuous <- .scale_colour_continuous
+.scale_fill_continuous <- viridis::scale_fill_viridis
+
+.scale_colour_numerous <- scale_colour_discrete
+.scale_color_numerous <- .scale_colour_numerous
+.scale_fill_numerous <- scale_fill_discrete
+
+# from https://bookdown.org/yihui/rmarkdown-cookbook/font-color.html
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color,
+            x)
+  } else x
+}
+```
+# Conclusions {#conclusions}
+
+::: {.learning-goals}
+🍎 Learning goals: Synthesize and extend lessons from previous chapters.
+:::
+
+::: {.case-study}
+🔬 Case study: How to run a study that doesn’t replicate, and how to design a study that doesn’t contribute to our knowledge. We report new empirical analysis of aggregate data from 10 years of Psych 251 (>100 replication projects), discussing empirical predictors of (non-)replicability
+:::
+
+Revisiting themes of precision, transparency, generalizability, bias-reduction
+
+- Discuss the “crisis” narrative and reframe as one way into seeing the set of interlocking issues that keep behavioral research from contributing to cumulative theory.
+- Collaboration as a way forward. Spotlight the Psychological Science Accelerator (Moshontz et al. 2018).
+
+Concrete suggestions for building a cumulative research program
+
+- This was a big book, and incorporating all of this advice into your research program may seem difficult or overwhelming.
+- Start simple, and repeat: for building an empirical research program, you want to measure one thing well and then build on that measurement. 
+- Internal replication as a critical way to check your own work. 
+- Cumulativity as a key principle that you can model in your own work. 
+
+<!--chapter:end:018-conclusions.Rmd-->
+
+
+# (PART) Appendices {-}
+# GitHub Tutorial {#git}
+
+Placeholder
+
+
+## Introduction {.unnumbered}
+## 0. Review basic terminal commands {-}
+## 1. Install git {.unnumbered}
+### 1.1 Did you successfully install? {.unnumbered}
+### 1.2 Other versions {.unnumbered}
+### 1.3 Set your name and email address {.unnumbered}
+## 2. Make a repo on GitHub, clone it to your computer {.unnumbered}
+## 3. Make some commits {.unnumbered}
+### 3.1 Update your README file {.unnumbered}
+### 3.2 Add and commit changes to git {.unnumbered}
+### 3.3 Add another file to the repo + commit it {.unnumbered}
+## 4. Push your changes to GitHub {.unnumbered}
+## 5. Make more changes to the repo {.unnumbered}
+## 6. Rolling back to previous versions {.unnumbered}
+## 7. What not to put on git {.unnumbered}
+## Further Resources {.unnumbered}
+
+<!--chapter:end:100-github.Rmd-->
+
+
+# R Markdown Tutorial {#rmarkdown}
+
+Placeholder
+
+
+## Why write reproducible papers?
+## Getting Started
+## Structure of an R Markdown file
+### Header
+### Body text
+### Code chunks
+### Output formats
+## Markdown syntax
+## Headers, graphs, and tables
+### Headers 
+### Graphs
+### Tables
+### Statistics
+## Writing APA-format papers
+## Bibiographic management
+## Collaboration 
+## R Markdown: Chapter Summary
+
+<!--chapter:end:101-rmarkdown.Rmd-->
+
+
+# Tidyverse Tutorial {#tidyverse}
+
+Placeholder
+
+
+## Functions and Pipes
+## Tidy data analysis
+### Exploring and characterizing the dataset
+### Filtering and mutating
+### Standard descriptives using `summarise` and `group_by`
+### More advanced combos
+## Getting your data tidy
+## Tidyverse: Chapter sumamry
+
+<!--chapter:end:102-tidyverse.Rmd-->
+
+
+# ggplot Tutorial {#ggplot}
+
+Placeholder
+
+
+## Exploring ggplot2 using `qplot`
+## More complex with `ggplot`
+## Facets
+## Geoms
+## Themes and plot cleanup
+## Plot inheritance example
+## Advanced plot exploration exercise
+### Variable exploration
+### Hypothesis-related exploration
+
+<!--chapter:end:103-ggplot.Rmd-->
+
+
+# Instructor's guide {#instructors}
+
+Placeholder
+
+
+## Introduction 
+## Why Teach a Project-Based Course?
+## Scenarios for different course layouts
+### Student Level:
+### Course Resources:
+#### Teaching Assistants (or lack thereof)
+#### Course Funding (or lack thereof)
+## Logistics
+### Course budget
+### Course-related Institutional Review Board application
+### Sample syllabus for a 10-week and 16-week version of the course
+
+<!--chapter:end:104-instructors.Rmd-->
+
