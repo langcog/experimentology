@@ -123,7 +123,7 @@ ggplot(null_model_summary_multin, aes(x =delta)) +
 
 The more participants in the experiment, the tighter the null distribution becomes, and hence the smaller the region in which we should expect a null treatment effect to fall. Because our expectation based on the null becomes more precise, we will be able to reject then null based on smaller treatment effects. In inference of this type, as with estimation, our goals matter. If we're merely testing a hypothesis out of curiosity, perhaps we don't want to measure too many cups of tea. But if we were designing the tea strategy for a major cafe chain, the stakes would be higher and a more precise estimate might necessary; in that case, maybe we'd want to do a more extensive experiment! [MM: Opening sentence about the changing shape of the sampling distribution also seems like it would benefit from having sampling distribution section first.]
 
-One last note: You might notice an interesting parallel between Fisher's paradigm for NHST and Popper's falsificationist philosophy (introduced in Chapter \@ref(theory)). In both cases, you never get to accept the actual hypothesis of interest. The only thing you can do is observe evidence that is inconsistent. The added limitation of NHST is that the only hypothesis you can falsify is the null!
+One last note: You might notice an interesting parallel between Fisher's paradigm for NHST and Popper's falsificationist philosophy (introduced in Chapter \@ref(intro)). In both cases, you never get to accept the actual hypothesis of interest. The only thing you can do is observe evidence that is inconsistent. The added limitation of NHST is that the only hypothesis you can falsify is the null!
 
 ## Making inferences
 
@@ -132,8 +132,6 @@ In the tea-tasting example we were just considering, we were trying to make an i
 By defining a $p$-value, we got one procedure for giving this answer. If $p < .05$, we reject the null. Then we can look at the direction of the difference and, if it's positive, declare that milk-first tea is "significantly" better. Let's compare this procedure to a different process that builds on the Bayesian estimation ideas we described in the previous chapter. We can then come back to NHST in light of that framework. 
 
 ### Bayes Factors
-
-<!-- FIXME - EXAMPLE CONSISTENCY -->
 
 Bayes Factors are a method for quantifying the support for one hypothesis over another, based on an observed dataset. Informally, we've now talked about two different distinct hypotheses about the tea situation: our participant could have *no* tea discrimination ability -- leading to chance performance. We call this $H_0$. Or they could have some non-zero ability -- leading to greater than chance perfomance. We call this $H_1$. The Bayes Factor is simply the likelihood of the data (in the technical sense used above) under $H_1$ vs. under $H_0$:
 
@@ -166,68 +164,109 @@ In practice, the thing that is both tricky and good about Bayes Factors is that 
 
 [^inference-12]: Two good ones are @gelman1995 (a bit more statistical) and @kruschke2014 (a bit more focused on psychological data analysis). An [in-prep web-book by Nicenboim et al.](https://vasishth.github.io/bayescogsci/book/) also looks great.
 
-To continue our tea-tasting example, let's continue to assume our participant gets 9 of 12 trials right. Now to compute a Bayes Factor, we will have to define our hypotheses. Defining the null is pretty simple -- it should just be that choices are random coin flips. But to define our $H_1$ things get a bit more complex. We could just assume that the participant should get 75% percent of trials correct, but this could be a problematic choice! For example, what if our participant got 550 / 1000 trials correct? That would give us a strong sense that they had some tea ability, but would actually be more consistent with the $H_0$ of 50% accuracy than the $H_1$ of 75% accuracy! In practice, what we need to do is define a distribution over possible accuracies and then average across these -- so we assign some probability to 75% accuracy but also some probability to 55% accuracy and even 50% accuracy.[^inference-13]. The details don't matter here, but just for simplicity we adopt the discrimination prior shown in Figure \@ref(fig:inference-bayes-demo).
+```{r inference-milk-first, fig.cap="Ratings of the quality of milk-first tea, with the best fitting normal distribution shown in blue (mean shown by the dashed line)."}
+sigma <- 1.25
+n_total <- 48
 
-[^inference-13]: You might wonder how we can compare a $H_0$ that assumes 50% accuracy and a $H_1$ that *includes* 50% accuracy in it as well. The key here is that $H_1$ is more complex because it includes a range of values.
+tea_data <- make_tea_data(n_total, sigma)
 
-```{r inference-tea-tasting-bf}
-compute_tea_bf <- function(h, n, a = 6, b = 2) {
-  theta <- seq(.1,.99,.01)
-  
-  h0_likelihood <- dbinom(h, n, rep(.5, length(theta)))
-  h1_likelihood <- dbinom(h, n, theta)
-  
-  likelihood_ratio <- h1_likelihood / h0_likelihood
-  
-  h1_prior_weights <- dbeta(theta, shape1 = a, shape2 = b)
-  h1_prior_weights <- h1_prior_weights / sum(h1_prior_weights)
-  
-  BF <- sum(h1_prior_weights * likelihood_ratio)
-}
+ggplot(tea_data, aes(x = rating, fill = condition)) + 
+  geom_dotplot(position = position_dodge(), 
+               aes(y = ..count..)) + 
+  xlim(1,7) + 
+  ylab("Number of ratings") + 
+  xlab("Quality rating (1-7)") + 
+  theme(axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
 
-BF_12trials <- compute_tea_bf(9, 12) 
-BF_24trials <- compute_tea_bf(18, 24)
+tea_bf <- BayesFactor::ttestBF(x = tea_data$rating[tea_data$condition == "milk first"],
+                               y = tea_data$rating[tea_data$condition == "tea first"], 
+                               paired = FALSE)
+
+tea_data_large <- make_tea_data(n_total *2, sigma)
+tea_bf_large <- BayesFactor::ttestBF(x = tea_data_large$rating[tea_data_large$condition == "milk first"],
+                               y = tea_data_large$rating[tea_data_large$condition == "tea first"], 
+                               paired = FALSE)
 ```
 
-Once we set up our models, we can compute the relative likelihood of the data under each. The resulting BF is `r round(BF_12trials,2)`, somewhere between anecdotal and substantial evidence. On the other hand, if we doubled the size of the experiment and found the same pattern -- 18/24 trials correct -- the BF goes up to `r round(BF_24trials,2)`, which we could classify as strong evidence.
+
+Figure \@ref(fig:inference-milk-first) shows one example dataset. Once we set up our models, we can compute the relative likelihood of the data under each.^[In this case, we use the "default Bayesian $t$-test provided by the `BayesFactor` pacakge.] The resulting BF is `r round(extractBF(tea_bf)$bf, 2)`, somewhere between anecdotal and substantial evidence. On the other hand, if we double the size of the experiment to 96 participants, the BF goes up to `r round(extractBF(tea_bf_large)$bf, 2)`, which is quite strong evidence.
 
 That's the Bayes Factor. Now let's turn back to NHST and the $p$-value.
 
 ### *p*-values
 
-We already have a working definition of what a $p$-value is from our discussion above: it's the **probability of the data (or any data that would be more extreme) under the null hypothesis**. How is this quantity related to either our Bayesian estimate or the BF? Well, the first thing to notice is that the $p$-value is very close (but not identical to) the likelihood itself.^[The likelihood -- for both Bayesians and frequentists --  is the probability of the data, just like the $p$-value. But unlike the $p$-value, it doesn't include the probability of more extreme data as well.] So for example, the probability of getting 9 out of 12 tea-tasting trials correct under the null hypothesis is `r round(dbinom(9,12,.5),2)`, meaning there's a `r round(dbinom(9,12,.5),2)*100`% chance of observing exactly this many successes. But the p-value is given by the summed probability of 9, 10, 11, *and* 12 successes, which is `r round(sum(dbinom(9:12,12,.5)),2)`. In Table \@ref(tab:p-bf-comparison), you can see how $p$-values (from a one-tailed exact binomial test) compare to our Bayes Factors. In general BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ generally translates to a BF of 3 or less [@benjamin2018].
+We already have a working definition of what a $p$-value is from our discussion above: it's the **probability of the data (or any data that would be more extreme) under the null hypothesis**. How is this quantity related to either our Bayesian estimate or the BF? Well, the first thing to notice is that the $p$-value is very close (but not identical to) the likelihood itself.^[The likelihood -- for both Bayesians and frequentists --  is the probability of the data, just like the $p$-value. But unlike the $p$-value, it doesn't include the probability of more extreme data as well.] 
 
-```{r p-bf-comparison, fig.margin=TRUE }
-tibble(`Successes` = c(3,6,12,9,18,36,55,550),
-       `Total trials` = c(3,6,12,12,24,48,100,1000)) %>%
-  rowwise %>%
-  mutate(`% accuracy` = `Successes`/`Total trials`,
-         `p value` = binom.test(`Successes`,`Total trials`,alternative = "greater")$p.value,
-         BF = compute_tea_bf(`Successes`, `Total trials`)) %>%
-  kable(booktabs = TRUE, digits = 3, caption = "Comparison of p-value and BF for several different tea-tasting scenarios. p-values are one-tailed. Note that BF is heavily dependent on the specific prior on tasting successes that we assign.")
+```{r inference-t-test}
+tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
+                               y = tea_data$rating[tea_data$condition == "tea first"], 
+                               paired = FALSE, var.equal = TRUE)
+
 ```
 
+<<<<<<< HEAD
 The critical thing about $p$-values is not just that they are a specific kind of data likelihoods, it is that they are used in a specific inferential procedure. The logic of NHST is that we make a binary decision about the presence of an effect. If $p < .05$, the null hypothesis is rejected; otherwise not. As @fisher1949 wrote,
+=======
+Next we can use a simple statistical test, a $t$-test, to compute $p$-values for our experiment. In case you haven't encountered one, a $t$-test is a procedure for computing a $p$-value by comparing the distribution of two variables using the null hypothesis that there is no difference between them.^[$t$-tests can also be used in cases where one sample is being compared to some baseline.] The $t$-test uses the data to compute a **test statistic** whose distribution under the null hypothesis is known. Then the value of this statistic can be converted to $p$-values for making an inference. 
+
+When we conduct a $t$-test on our experimental results, we see that the difference between the two groups is statistically significant at $p<.05$: `r papaja::apa_print(tea_t)$statistic`. Here we've given a standard American Psychological Association report of a $t$-test. The first part of this report on the test gives the $t$ value, qualified by the **degrees of freedom** for the test. We won't focus much on the idea of degrees of freedom here, but for now it's enough to know that this number quanifies the amount of information given by the data, in this case 48 datapoints minus the two means (one for each of the samples).  
+
+Let's compare $p$ values and default Bayes Factors for a couple of different conditions. In Table \@ref(tab:p-bf-comparison), you can see a set of simulated experiments with varying total numbers of participants and varying average treatment effects. Both $p$ and BF go up with more participants and larger effects. But in general BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ can sometimes translate to a BF of less than 3 [@benjamin2018]. 
+
+```{r p-bf-comparison}
+expand_grid(N = c(12,24,48,96), 
+       Delta = c(.5, 1, 1.5)) |>
+  rowwise() |>
+  mutate(data = map2(N, Delta, 
+                     ~make_tea_data(n_total = N, delta = Delta))) |>
+  unnest(cols = c(data)) |>
+  group_by(N, Delta) |>
+  summarise(`p value` = t.test(x = rating[condition == "milk first"],
+                             y = rating[condition == "tea first"], 
+                             paired = FALSE, 
+                             var.equal = TRUE)$p.value,
+         BF = extractBF(
+           BayesFactor::ttestBF(x = rating[condition == "milk first"],
+                               y = rating[condition == "tea first"], 
+                               paired = FALSE))$bf) %>%
+  kable(booktabs = TRUE, digits = 3, caption = "Comparison of p-value and BF for several different tea-tasting scenarios.")
+```
+
+The critical thing about $p$-values, though, is not just that they are a specific kind of data likelihoods. It is that they are used in a specific inferential procedure. The logic of NHST is that we make a binary decision about the presence of an effect. If $p < .05$, the null hypothesis is rejected; otherwise not. As @fisher1949 wrote,
+>>>>>>> e85f0732b18b7c707a17aa381a835a010b2dd2a1
 
 > It should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis. (p. 19)
 
-This logic relates to the falsificationist logic of Popper that we touched on briefly in \@ref(intro). Under NHST, null hypotheses can be rejected (essentially, falsified) but positive hypotheses cannot be supported. As we said then, this logic doesn't appear either optimal from a normative statistical perspective -- and as we'll discuss below, it doesn't really fit with a descriptive view of how scientists (and people more generally) reason about their hypotheses.
+As we mentioned, though, we are usually interested in not just rejecting the null hypothesis but also in the evidence for the alternative (the one we are interested in). The Bayes Factor is one approach to quantifying positive evidence. This issue with the Fisher approach to $p$-values has been known for a long time, though, and so there is an alternative use of $p$-values that we introduce here. 
+
+### The Neyman-Pearson approach
 
 ```{r inference-power-alpha, fig.cap="Standard decision matrix for NHST.", fig.margin=TRUE}
 knitr::include_graphics("images/inference/power-alpha.png")
 ## TODO - RIGHTS ISSUE, NEEDS REMAKING
 ```
 
-One way to "patch" NHST is to introduce a decision-theoretic view, shown in Figure \@ref(fig:inference-power-alpha).[^inference-16] On this view, there is a real $H_1$, albeit one that is not specified. Then the true state of the world could be that $H_0$ is true or $H_1$ is true. The $p<.05$ criterion is the threshold at which we are willing to reject the null, and so this constitutes our **false positive** rate $\alpha$. But we also need to define a **false negative** rate, which is conventionally (and unhelpfully) called $\beta$. Setting these rates is a decision problem: If you are too conservative in your criteria for the intervention having an effect, however, then you risk a false negative, where you incorrectly conclude that it doesn't work. And if you're too liberal in your assessment of the evidence, then you risk a false positive.[^inference-17] In practice, however, mostly people leave $\alpha$ at .05 and try to control their false negative rate by increasing their sample size. As we saw in Figure \@ref(fig:inference-null-model), the greater the sample, the better your chance of rejecting the null for any given non-null effect. This model gives rise to the idea of classical power analysis, which we cover in Chapter \@ref(sampling).
+One way to "patch" NHST is to introduce a decision-theoretic view, shown in Figure \@ref(fig:inference-power-alpha).[^inference-16] On this view, there is a real $H_1$, albeit one that is not specified. Then the true state of the world could be that $H_0$ is true or $H_1$ is true. The $p<.05$ criterion is the threshold at which we are willing to reject the null, and so this constitutes our **false positive** rate $\alpha$. But we also need to define a **false negative** rate, which is conventionally called $\beta$. 
+
+Setting these rates is a decision problem: If you are too conservative in your criteria for the intervention having an effect, however, then you risk a false negative, where you incorrectly conclude that it doesn't work. And if you're too liberal in your assessment of the evidence, then you risk a false positive.[^inference-17] In practice, however, mostly people leave $\alpha$ at .05 and try to control their false negative rate by increasing their sample size. 
+
+As we saw in Figure \@ref(fig:inference-null-model), the greater the sample, the better your chance of rejecting the null for any given non-null effect. But these chances will depend also on the effect size you are using. This formulation gives rise to the idea of classical power analysis, which we cover in Chapter \@ref(sampling). 
+
+<!-- FINAL COMMENT ON NEYMAN PEARSON  -->
 
 [^inference-16]: A little bit of useful history here is given in @cohen1990.
 
 [^inference-17]: To make really rational decisions, you could couple this chart to some kind of utility function that assessed the costs of different outcomes. For example, you might think it's worse to proceed with an intervention that doesn't work than to stay with business as usual. In that case, you'd assign a higher cost to a false positive and accordingly try to adopt a more conservative criterion. We won't cover this kind of decision analysis here, but @pratt1995 is a classic textbook on statistical decision theory if you're interested.
 
 
-## Inference fallacies
+## Inference and its discontents
 
-<!-- MM: Should the p-value misinterpretations be integrated into p-value section above, similarly to how the new CI misinterpretations are integrated with that section? -->
+In the prior sections of this chapter, we reviewed NHST and Bayesian approaches to inference. Now it's time to step back and think about some of the ways that inference practices -- especially those related to NHST -- have been problematic for psychology research. We'll being with some issues surrounding $p$-values and then give a specific accident report related to the process of "$p$-hacking." We end by discussing the foundations for thinking about probability in light of these issues.
+
+<!-- MM: Should the p-value misinterpretations be integrated into p-value section above, similarly to how the new CI misinterpretations are integrated with that section? MCF: I think no, because it's such a big section.  -->
+
+### Problems with the interpretation of *p*
 
 $p$-values are basically likelihoods. The likelihood of the data under the null hypothesis is a critical number to know -- for computing the Bayes Factor among other reasons. But it doesn't tell us a lot of things that we might like to know! For example, it doesn't tell us the probability of the data under any positive hypothesis that we might be interested in -- that's the posterior probability $p(H_1 | d)$. Lots of folks mistake these two for one another, e.g. that the probability of the data given the null is the probability of the null given the data.
 
@@ -288,7 +327,7 @@ Finally, since precognition is not attested by any compelling prior scientific e
 Wagenmakers et al. concluded that, rather than suppporting precognition, the conclusion from Bem's paper should be psychologists should revise how they think about analyzing their data![^inference-21]
 :::
 
-[^inference-21]: If you are intrigued by this set of issues, you might enjoy Slate Star Codex's post ["The Control Group is Out of Control"](https://slatestarcodex.com/2014/04/28/the-control-group-is-out-of-control/) -- we don't agree with everything in it, but it's definitely thought-provoking and contains many interesting links.
+[^inference-21]: If you are intrigued by this set of issues, you might enjoy Slate Star Codex's post on ESP research, ["The Control Group is Out of Control"](https://slatestarcodex.com/2014/04/28/the-control-group-is-out-of-control/). We don't agree with everything in it, but it's definitely thought-provoking and contains many interesting links.
 
 ### Philosophical (and empirical) views of probability
 
