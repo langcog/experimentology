@@ -123,7 +123,7 @@ ggplot(null_model_summary_multin, aes(x =delta)) +
 
 The more participants in the experiment, the tighter the null distribution becomes, and hence the smaller the region in which we should expect a null treatment effect to fall. Because our expectation based on the null becomes more precise, we will be able to reject then null based on smaller treatment effects. In inference of this type, as with estimation, our goals matter. If we're merely testing a hypothesis out of curiosity, perhaps we don't want to measure too many cups of tea. But if we were designing the tea strategy for a major cafe chain, the stakes would be higher and a more precise estimate might necessary; in that case, maybe we'd want to do a more extensive experiment! 
 
-One last note: You might notice an interesting parallel between Fisher's paradigm for NHST and Popper's falsificationist philosophy (introduced in Chapter \@ref(theory)). In both cases, you never get to accept the actual hypothesis of interest. The only thing you can do is observe evidence that is inconsistent. The added limitation of NHST is that the only hypothesis you can falsify is the null!
+One last note: You might notice an interesting parallel between Fisher's paradigm for NHST and Popper's falsificationist philosophy (introduced in Chapter \@ref(intro)). In both cases, you never get to accept the actual hypothesis of interest. The only thing you can do is observe evidence that is inconsistent. The added limitation of NHST is that the only hypothesis you can falsify is the null!
 
 ## Making inferences
 
@@ -166,36 +166,42 @@ In practice, the thing that is both tricky and good about Bayes Factors is that 
 
 [^inference-12]: Two good ones are @gelman1995 (a bit more statistical) and @kruschke2014 (a bit more focused on psychological data analysis). An [in-prep web-book by Nicenboim et al.](https://vasishth.github.io/bayescogsci/book/) also looks great.
 
-To continue our tea-tasting example, let's continue to assume our participant gets 9 of 12 trials right. Now to compute a Bayes Factor, we will have to define our hypotheses. Defining the null is pretty simple -- it should just be that choices are random coin flips. But to define our $H_1$ things get a bit more complex. We could just assume that the participant should get 75% percent of trials correct, but this could be a problematic choice! For example, what if our participant got 550 / 1000 trials correct? That would give us a strong sense that they had some tea ability, but would actually be more consistent with the $H_0$ of 50% accuracy than the $H_1$ of 75% accuracy! In practice, what we need to do is define a distribution over possible accuracies and then average across these -- so we assign some probability to 75% accuracy but also some probability to 55% accuracy and even 50% accuracy.[^inference-13]. The details don't matter here, but just for simplicity we adopt the discrimination prior shown in Figure \@ref(fig:inference-bayes-demo).
+```{r inference-milk-first, fig.cap="Ratings of the quality of milk-first tea, with the best fitting normal distribution shown in blue (mean shown by the dashed line)."}
+sigma <- 1.25
+n_total <- 48
 
-[^inference-13]: You might wonder how we can compare a $H_0$ that assumes 50% accuracy and a $H_1$ that *includes* 50% accuracy in it as well. The key here is that $H_1$ is more complex because it includes a range of values.
+tea_data <- make_tea_data(n_total, sigma)
 
-```{r inference-tea-tasting-bf}
-compute_tea_bf <- function(h, n, a = 6, b = 2) {
-  theta <- seq(.1,.99,.01)
-  
-  h0_likelihood <- dbinom(h, n, rep(.5, length(theta)))
-  h1_likelihood <- dbinom(h, n, theta)
-  
-  likelihood_ratio <- h1_likelihood / h0_likelihood
-  
-  h1_prior_weights <- dbeta(theta, shape1 = a, shape2 = b)
-  h1_prior_weights <- h1_prior_weights / sum(h1_prior_weights)
-  
-  BF <- sum(h1_prior_weights * likelihood_ratio)
-}
+ggplot(tea_data, aes(x = rating, fill = condition)) + 
+  geom_dotplot(position = position_dodge(), 
+               aes(y = ..count..)) + 
+  xlim(1,7) + 
+  ylab("Number of ratings") + 
+  xlab("Quality rating (1-7)") + 
+  theme(axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
 
-BF_12trials <- compute_tea_bf(9, 12) 
-BF_24trials <- compute_tea_bf(18, 24)
+tea_bf <- BayesFactor::ttestBF(x = tea_data$rating[tea_data$condition == "milk first"],
+                               y = tea_data$rating[tea_data$condition == "tea first"], 
+                               paired = FALSE)
+
+tea_data_large <- make_tea_data(n_total *2, sigma)
+tea_bf_large <- BayesFactor::ttestBF(x = tea_data_large$rating[tea_data_large$condition == "milk first"],
+                               y = tea_data_large$rating[tea_data_large$condition == "tea first"], 
+                               paired = FALSE)
 ```
 
-Once we set up our models, we can compute the relative likelihood of the data under each. The resulting BF is `r round(BF_12trials,2)`, somewhere between anecdotal and substantial evidence. On the other hand, if we doubled the size of the experiment and found the same pattern -- 18/24 trials correct -- the BF goes up to `r round(BF_24trials,2)`, which we could classify as strong evidence.
+
+Figure \@ref(fig:inference-milk-first) shows one example dataset. Once we set up our models, we can compute the relative likelihood of the data under each.^[In this case, we use the "default Bayesian $t$-test provided by the `BayesFactor` pacakge.] The resulting BF is `r round(extractBF(tea_bf)$bf, 2)`, somewhere between anecdotal and substantial evidence. On the other hand, if we double the size of the experiment to 96 participants, the BF goes up to `r round(extractBF(tea_bf_large)$bf, 2)`, which is quite strong evidence.
 
 That's the Bayes Factor. Now let's turn back to NHST and the $p$-value.
 
 ### *p*-values
 
-We already have a working definition of what a $p$-value is from our discussion above: it's the **probability of the data (or any data that would be more extreme) under the null hypothesis**. How is this quantity related to either our Bayesian estimate or the BF? Well, the first thing to notice is that the $p$-value is very close (but not identical to) the likelihood itself.^[The likelihood -- for both Bayesians and frequentists --  is the probability of the data, just like the $p$-value. But unlike the $p$-value, it doesn't include the probability of more extreme data as well.] So for example, the probability of getting 9 out of 12 tea-tasting trials correct under the null hypothesis is `r round(dbinom(9,12,.5),2)`, meaning there's a `r round(dbinom(9,12,.5),2)*100`% chance of observing exactly this many successes. But the p-value is given by the summed probability of 9, 10, 11, *and* 12 successes, which is `r round(sum(dbinom(9:12,12,.5)),2)`. In Table \@ref(tab:p-bf-comparison), you can see how $p$-values (from a one-tailed exact binomial test) compare to our Bayes Factors. In general BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ generally translates to a BF of 3 or less [@benjamin2018].
+We already have a working definition of what a $p$-value is from our discussion above: it's the **probability of the data (or any data that would be more extreme) under the null hypothesis**. How is this quantity related to either our Bayesian estimate or the BF? Well, the first thing to notice is that the $p$-value is very close (but not identical to) the likelihood itself.^[The likelihood -- for both Bayesians and frequentists --  is the probability of the data, just like the $p$-value. But unlike the $p$-value, it doesn't include the probability of more extreme data as well.] 
+
+
+So for example, the probability of getting 9 out of 12 tea-tasting trials correct under the null hypothesis is `r round(dbinom(9,12,.5),2)`, meaning there's a `r round(dbinom(9,12,.5),2)*100`% chance of observing exactly this many successes. But the p-value is given by the summed probability of 9, 10, 11, *and* 12 successes, which is `r round(sum(dbinom(9:12,12,.5)),2)`. In Table \@ref(tab:p-bf-comparison), you can see how $p$-values (from a one-tailed exact binomial test) compare to our Bayes Factors. In general BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ generally translates to a BF of 3 or less [@benjamin2018].
 
 ```{r p-bf-comparison, fig.margin=TRUE }
 tibble(`Successes` = c(3,6,12,9,18,36,55,550),

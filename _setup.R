@@ -3,6 +3,7 @@ library(glue)
 library(knitr)
 library(shiny)
 library(metafor)
+library(BayesFactor)
 
 opts_chunk$set(
   message = FALSE,
