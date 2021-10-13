@@ -133,8 +133,6 @@ By defining a $p$-value, we got one procedure for giving this answer. If $p < .0
 
 ### Bayes Factors
 
-<!-- FIXME - EXAMPLE CONSISTENCY -->
-
 Bayes Factors are a method for quantifying the support for one hypothesis over another, based on an observed dataset. Informally, we've now talked about two different distinct hypotheses about the tea situation: our participant could have *no* tea discrimination ability -- leading to chance performance. We call this $H_0$. Or they could have some non-zero ability -- leading to greater than chance perfomance. We call this $H_1$. The Bayes Factor is simply the likelihood of the data (in the technical sense used above) under $H_1$ vs. under $H_0$:
 
 $$
@@ -200,31 +198,58 @@ That's the Bayes Factor. Now let's turn back to NHST and the $p$-value.
 
 We already have a working definition of what a $p$-value is from our discussion above: it's the **probability of the data (or any data that would be more extreme) under the null hypothesis**. How is this quantity related to either our Bayesian estimate or the BF? Well, the first thing to notice is that the $p$-value is very close (but not identical to) the likelihood itself.^[The likelihood -- for both Bayesians and frequentists --  is the probability of the data, just like the $p$-value. But unlike the $p$-value, it doesn't include the probability of more extreme data as well.] 
 
+```{r inference-t-test}
+tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
+                               y = tea_data$rating[tea_data$condition == "tea first"], 
+                               paired = FALSE, var.equal = TRUE)
 
-So for example, the probability of getting 9 out of 12 tea-tasting trials correct under the null hypothesis is `r round(dbinom(9,12,.5),2)`, meaning there's a `r round(dbinom(9,12,.5),2)*100`% chance of observing exactly this many successes. But the p-value is given by the summed probability of 9, 10, 11, *and* 12 successes, which is `r round(sum(dbinom(9:12,12,.5)),2)`. In Table \@ref(tab:p-bf-comparison), you can see how $p$-values (from a one-tailed exact binomial test) compare to our Bayes Factors. In general BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ generally translates to a BF of 3 or less [@benjamin2018].
-
-```{r p-bf-comparison, fig.margin=TRUE }
-tibble(`Successes` = c(3,6,12,9,18,36,55,550),
-       `Total trials` = c(3,6,12,12,24,48,100,1000)) %>%
-  rowwise %>%
-  mutate(`% accuracy` = `Successes`/`Total trials`,
-         `p value` = binom.test(`Successes`,`Total trials`,alternative = "greater")$p.value,
-         BF = compute_tea_bf(`Successes`, `Total trials`)) %>%
-  kable(booktabs = TRUE, digits = 3, caption = "Comparison of p-value and BF for several different tea-tasting scenarios. p-values are one-tailed. Note that BF is heavily dependent on the specific prior on tasting successes that we assign.")
 ```
 
-The critical thing about $p$-values is not just that they are a specific kind of data likelihoods, it is that they are used in a specific inferential procedure The logic of NHST is that we make a binary decision about the presence of an effect. If $p < .05$, the null hypothesis is rejected; otherwise not. As @fisher1949 wrote,
+Next we can use a simple statistical test, a $t$-test, to compute $p$-values for our experiment. In case you haven't encountered one, a $t$-test is a procedure for computing a $p$-value by comparing the distribution of two variables using the null hypothesis that there is no difference between them.^[$t$-tests can also be used in cases where one sample is being compared to some baseline.] The $t$-test uses the data to compute a **test statistic** whose distribution under the null hypothesis is known. Then the value of this statistic can be converted to $p$-values for making an inference. 
+
+When we conduct a $t$-test on our experimental results, we see that the difference between the two groups is statistically significant at $p<.05$: `r papaja::apa_print(tea_t)$statistic`. Here we've given a standard American Psychological Association report of a $t$-test. The first part of this report on the test gives the $t$ value, qualified by the **degrees of freedom** for the test. We won't focus much on the idea of degrees of freedom here, but for now it's enough to know that this number quanifies the amount of information given by the data, in this case 48 datapoints minus the two means (one for each of the samples).  
+
+Let's compare $p$ values and default Bayes Factors for a couple of different conditions. In Table \@ref(tab:p-bf-comparison), you can see a set of simulated experiments with varying total numbers of participants and varying average treatment effects. Both $p$ and BF go up with more participants and larger effects. But in general BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ can sometimes translate to a BF of less than 3 [@benjamin2018]. 
+
+```{r p-bf-comparison}
+expand_grid(N = c(12,24,48,96), 
+       Delta = c(.5, 1, 1.5)) |>
+  rowwise() |>
+  mutate(data = map2(N, Delta, 
+                     ~make_tea_data(n_total = N, delta = Delta))) |>
+  unnest(cols = c(data)) |>
+  group_by(N, Delta) |>
+  summarise(`p value` = t.test(x = rating[condition == "milk first"],
+                             y = rating[condition == "tea first"], 
+                             paired = FALSE, 
+                             var.equal = TRUE)$p.value,
+         BF = extractBF(
+           BayesFactor::ttestBF(x = rating[condition == "milk first"],
+                               y = rating[condition == "tea first"], 
+                               paired = FALSE))$bf) %>%
+  kable(booktabs = TRUE, digits = 3, caption = "Comparison of p-value and BF for several different tea-tasting scenarios.")
+```
+
+The critical thing about $p$-values, though, is not just that they are a specific kind of data likelihoods. It is that they are used in a specific inferential procedure. The logic of NHST is that we make a binary decision about the presence of an effect. If $p < .05$, the null hypothesis is rejected; otherwise not. As @fisher1949 wrote,
 
 > It should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis. (p. 19)
 
-This logic relates to the falsificationist logic of Popper that we touched on briefly in \@ref(intro). Under NHST, null hypotheses can be rejected (essentially, falsified) but positive hypotheses cannot be supported. As we said then, this logic doesn't appear either optimal from a normative statistical perspective -- and as we'll discuss below, it doesn't really fit with a descriptive view of how scientists (and people more generally) reason about their hypotheses.
+As we mentioned, though, we are usually interested in not just rejecting the null hypothesis but also in the evidence for the alternative (the one we are interested in). The Bayes Factor is one approach to quantifying positive evidence. This issue with the Fisher approach to $p$-values has been known for a long time, though, and so there is an alternative use of $p$-values that we introduce here. 
+
+### The Neyman-Pearson approach
 
 ```{r inference-power-alpha, fig.cap="Standard decision matrix for NHST.", fig.margin=TRUE}
 knitr::include_graphics("images/inference/power-alpha.png")
 ## TODO - RIGHTS ISSUE, NEEDS REMAKING
 ```
 
-One way to "patch" NHST is to introduce a decision-theoretic view, shown in Figure \@ref(fig:inference-power-alpha).[^inference-16] On this view, there is a real $H_1$, albeit one that is not specified. Then the true state of the world could be that $H_0$ is true or $H_1$ is true. The $p<.05$ criterion is the threshold at which we are willing to reject the null, and so this constitutes our **false positive** rate $\alpha$. But we also need to define a **false negative** rate, which is conventionally (and unhelpfully) called $\beta$. Setting these rates is a decision problem: If you are too conservative in your criteria for the intervention having an effect, however, then you risk a false negative, where you incorrectly conclude that it doesn't work. And if you're too liberal in your assessment of the evidence, then you risk a false positive.[^inference-17] In practice, however, mostly people leave $\alpha$ at .05 and try to control their false negative rate by increasing their sample size. As we saw in Figure \@ref(fig:inference-null-model), the greater the sample, the better your chance of rejecting the null for any given non-null effect. This model gives rise to the idea of classical power analysis, which we cover in Chapter \@ref(sampling).
+One way to "patch" NHST is to introduce a decision-theoretic view, shown in Figure \@ref(fig:inference-power-alpha).[^inference-16] On this view, there is a real $H_1$, albeit one that is not specified. Then the true state of the world could be that $H_0$ is true or $H_1$ is true. The $p<.05$ criterion is the threshold at which we are willing to reject the null, and so this constitutes our **false positive** rate $\alpha$. But we also need to define a **false negative** rate, which is conventionally called $\beta$. 
+
+Setting these rates is a decision problem: If you are too conservative in your criteria for the intervention having an effect, however, then you risk a false negative, where you incorrectly conclude that it doesn't work. And if you're too liberal in your assessment of the evidence, then you risk a false positive.[^inference-17] In practice, however, mostly people leave $\alpha$ at .05 and try to control their false negative rate by increasing their sample size. 
+
+As we saw in Figure \@ref(fig:inference-null-model), the greater the sample, the better your chance of rejecting the null for any given non-null effect. But these chances will depend also on the effect size you are using. This formulation gives rise to the idea of classical power analysis, which we cover in Chapter \@ref(sampling). 
+
+<!-- FINAL COMMENT ON NEYMAN PEARSON  -->
 
 [^inference-16]: A little bit of useful history here is given in @cohen1990.
 

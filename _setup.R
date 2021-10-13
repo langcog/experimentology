@@ -3,7 +3,8 @@ library(glue)
 library(knitr)
 library(shiny)
 library(metafor)
-library(BayesFactor)
+require(BayesFactor)
+require(papaja)
 
 opts_chunk$set(
   message = FALSE,
