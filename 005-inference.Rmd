@@ -74,7 +74,7 @@ ggplot(tea_summary_48,
   xlim(-.5,2.5)
 ```
 
-Now imagine we also did thousands of repetitions of the experiment with $n=500$ instead of $n=48$. Figure \@ref(inference-sampling-500) shows what the sampling distribution might look like. Notice how much narrower the sampling distribution becomes when we increase the sample size, showing our decreased uncertainty. More formally, the standard deviation of the sampling distribution itself, called the **standard error**, decreases as the sample size increases.
+Now imagine we also did thousands of repetitions of the experiment with $n=500$ instead of $n=48$. Figure \@ref(fig:inference-sampling-500) shows what the sampling distribution might look like. Notice how much narrower the sampling distribution becomes when we increase the sample size, showing our decreased uncertainty. More formally, the standard deviation of the sampling distribution itself, called the **standard error**, decreases as the sample size increases.
 
 ```{r inference-sampling-500, fig.margin = TRUE, fig.cap= "Sampling distribution for the treatment effect as above, but now with N=500."}
 samps_500 <- tibble(sim = 1:1000) |>
@@ -340,7 +340,6 @@ As we saw in Figure \@ref(fig:inference-null-model), the greater the sample, the
 
 [^inference-17]: To make really rational decisions, you could couple this chart to some kind of utility function that assessed the costs of different outcomes. For example, you might think it's worse to proceed with an intervention that doesn't work than to stay with business as usual. In that case, you'd assign a higher cost to a false positive and accordingly try to adopt a more conservative criterion. We won't cover this kind of decision analysis here, but @pratt1995 is a classic textbook on statistical decision theory if you're interested.
 
-
 ## Inference and its discontents
 
 In the prior sections of this chapter, we reviewed NHST and Bayesian approaches to inference. Now it's time to step back and think about some of the ways that inference practices -- especially those related to NHST -- have been problematic for psychology research. We'll being with some issues surrounding $p$-values and then give a specific accident report related to the process of "$p$-hacking." We end by discussing the foundations for thinking about probability in light of these issues.
@@ -353,7 +352,6 @@ Another $p$-value problem that comes up frequently is what to conclude when $p>.
 
 [^inference-18]: Of course, weighing these two against one another brings you back to the Bayes Factor.
 
-These are not the only issues with $p$-values. In fact, people have so much trouble understanding what $p$-values *do* say that there are whole articles written about these misconceptions. Table \@ref(tab:dirty-dozen) shows a set of misconceptions documented and refuted by @goodman2008.
 
 ```{r dirty-dozen}
 dozen <- tribble(
@@ -378,9 +376,13 @@ knitr::kable(dozen,
 ```
 
 
+These are not the only issues with $p$-values. In fact, people have so much trouble understanding what $p$-values *do* say that there are whole articles written about these misconceptions. Table \@ref(tab:dirty-dozen) shows a set of misconceptions documented and refuted by @goodman2008. 
+
+Let's take a look at just a few. Misconception 1 is that, if $p= .05$, the null has a 5% chance of being true. This misconception is a result of confusing $p(H_0 | d)$ (the posterior) and $p(d | H_0)$ (the likelihood -- also known as the $p$-value). Misconception 2 -- that $p > .05$ allows us to *accept* the null -- also stems from this reversal of posterior and likelihood. And misconception 3 a misinterpretation of the $p$-value as an effect size (which we learned about in the last chapter): a large effect is likely to be clinically important, but with a small enough sample size, you can get a small $p$-value even for a very small effect. We won't go through all the misconceptions here, but we encourage you to challenge yourself to work through them (as in the exercise below). 
+
 <!-- NC: The dirty dozen table doesn't seem that useful if we do not explain why these things are incorrect. MM agrees. We can probably discuss the fallacies for one or the other and then just invoke the CI-p-value duality for why the other set of fallacies is also wrong. Mika and I discuss the CI fallacies below. -->
 
-Further, the $p$-value is a probability of a certain set of events happening (corresponding to the observed data or any "more extreme" data, that is to say, data further from the null). Since $p$-values are probabilities, we can combine them together across different events. If we run a null experiment -- an experiment where the expected effect is zero -- the probability of a dataset with $p < .05$ is of course .05. But if we run two such experiments, we can get $p < .05$ with probability `r round(2*.05 - .05*.05,2)`. By the time we run 20 experiments, we have an `r round(1 - .95^20,2)` chance of getting a positive result.
+Beyond these misonceptions, there's another problem. The $p$-value is a probability of a certain set of events happening (corresponding to the observed data or any "more extreme" data, that is to say, data further from the null). Since $p$-values are probabilities, we can combine them together across different events. If we run a null experiment -- an experiment where the expected effect is zero -- the probability of a dataset with $p < .05$ is of course .05. But if we run two such experiments, we can get $p < .05$ with probability `r round(2*.05 - .05*.05,2)`. By the time we run 20 experiments, we have an `r round(1 - .95^20,2)` chance of getting a positive result.
 
 It would obviously be a major mistake to run 20 null experiments and then report only the positive ones (which, by design, are false positives) as though these still were "statistically significant." The same thing applies to doing 20 different statistical tests within a single experiment. There are many statistical corrections that can be made to adjust for this problem.[^inference-19] But the the broader issue is one of transparency: unless you *know* what the appropriate set of experiments or tests is, it's not possible to implement one of these corrections![^inference-20]
 
@@ -420,21 +422,44 @@ These cognitive science findings help to explain some of the problems that peopl
 
 [^inference-23]: @cohen1994 is a great treatment of this issue.
 
-<!-- \^[MB: isn't it more accurate to say that standard error is an **estimate** of that standard deviation of the sampling distribution? and then that makes it more clear why larger n improves the estimate. more generally we might want to be more explicit/clear about the distinctions among the sd of the population, the sd of the sample, the sd of the sampling distribution, and the se] -->
-<!-- MM: Maybe we can use "SE/standard error" vs "\widehat{SE}/estimated standard error" throughout. I wouldn't want to lose the idea that there really is a true standard error out there. It depends on n, but not because it's an estimate. -->
-
 ## Estimating precision
 
-<!-- MM: Flagging some missing values "XXX" in here. -->
+Our last section presented an argument against using $p$-values for making *dichotomous* inferences. But we still want to move from what we know about our own limited sample to some inference about the population. How should we do this? 
 
-A convenient frequentist way to summarize the variability of the sampling distribution -- and hence how uncertain we are about the point estimate -- is a **confidence interval**, which heuristically represents a range of possible values for the parameter of interest that are plausible given the data. More formally, a 95% confidence interval for some estimate (call it $\widehat{\Delta}$, as in the tea example) is defined as a range of possible values for $\Delta$ such that, if we did repeated sampling, 95% of the intervals generated by those samples would contain the true parameter, $\Delta$. Here's an example. As we will calculate below, the 95% confidence interval for the milk ordering effect is XXX. If we were to conduct the experiment 100 times and calculate a confidence interval each time, we should expect 95 of the intervals to contain the true $\Delta$, whereas we would expect the remaining 5 to not contain $\Delta$. [^inference-8] Confidence intervals are like betting on the inferences drawn from your sample. The sample you drew is like one pull of a slot machine that will pay off (i.e., have the confidence interval contain the true parameter) 95% of the time. Put more concisely:
+### Confidence intervals
 
-> **95% of 95% confidence intervals contain the true value of the mean**.
+One thing we often want to do is to make an inference about how similar our estimate from our own sample is to the population parameter of interest. For example, how close is our tea-tasting effect estimate to the true effect of tea ordering in the population? We don't know what the true effect is, but our knowledge of sampling distributions lets us make some guesses about how precise our estimate is. 
+
+The **confidence interval** is a convenient frequentist way to summarize the variability of the sampling distribution -- and hence how precise our point estimate is. The confidence interval represents the range of possible values for the parameter of interest that are plausible given the data. More formally, a 95% confidence interval for some estimate (call it $\widehat{\Delta}$, as in the our example) is defined as a range of possible values for $\Delta$ such that, if we did repeated sampling, 95% of the intervals generated by those samples would contain the true parameter, $\Delta$. 
 
 
-In practice, though, confidence intervals are often misinterpreted by students and researchers alike [@hoekstra2014]. In Hoekstra et al's example, a researcher conducts an experiments and reports "The 95% confidence interval for the mean ranges from 0.1 to 0.4". All of the following statements, though tempting to make, are **technically** **false**:
+```{r inference-tea-se}
+tea_ratings <- tea_data$rating[tea_data$condition == "tea first"]
+milk_ratings <- tea_data$rating[tea_data$condition == "milk first"]
+n_tea <- length(tea_ratings)
+n_milk <- length(milk_ratings)
+sd_tea <- sd(tea_ratings)
+sd_milk <- sd(milk_ratings)
+tea_sd_pooled <- sqrt(((n_tea-1)*sd_tea^2 + (n_milk-1)*sd_milk^2) / 
+                        (n_tea + n_milk - 2))
 
-```{r ci-false}
+
+tea_se <- tea_sd_pooled * sqrt((1/n_tea) + (1/n_milk))
+
+delta_hat <- mean(milk_ratings) - mean(tea_ratings)
+tea_ci_lower <- delta_hat - tea_se *1.96
+tea_ci_upper <- delta_hat + tea_se *1.96
+```
+
+Here's an example. As we will calculate below, the 95% confidence interval for the milk ordering effect is [`r round(tea_ci_lower,2)`, `r round(tea_ci_upper,2)`]. If we were to conduct the experiment 100 times and calculate a confidence interval each time, we should expect 95 of the intervals to contain the true $\Delta$, whereas we would expect the remaining 5 to not contain $\Delta$.[^inference-8] 
+
+Confidence intervals are like betting on the inferences drawn from your sample. The sample you drew is like one pull of a slot machine that will pay off (i.e., have the confidence interval contain the true parameter) 95% of the time. Put more concisely: 95% of 95% confidence intervals contain the true value of the mean.
+
+## Confidence in confidence intervals? 
+
+In practice, though, confidence intervals are often misinterpreted by students and researchers alike [@hoekstra2014]. In Hoekstra et al.'s example, a researcher conducts an experiments and reports "The 95% confidence interval for the mean ranges from 0.1 to 0.4". All of the statements in Table \@ref(tab:inference-ci-false), though tempting to make, are *technically false*.
+
+```{r inference-ci-false}
 ci <- tribble(
   ~` `, ~` `,
   1, "The probability that the true mean is greater than 0 is at least 95%.",
@@ -447,29 +472,23 @@ ci <- tribble(
 
 knitr::kable(ci, 
              booktabs = TRUE, 
-             caption = "Confidence interval misconceptions. Adapted from Hoekstra [@hoekstra2014].")
+             caption = "Confidence interval misconceptions for a confidence interval [0.1,0.4]. Adapted from Hoekstra et al. (2014).")
 ```
 
 
-The problem with all of these statements is that, in the frequentist framework,  there is only true value of the parameter, and the variability captured in confidence intervals is about the *samples*, not the parameter itself.[^inference-9] For this reason, we can't make any statements about the probability of the value of the mean or of our confidence in specific numbers. To reiterate, what we *can* say is that if we were to repeat the procedure of conducting the experiment and calculating a confidence interval many times, in the long run 95% of those confidence intervals would contain the true mean. 
+The problem with all of these statements is that, in the frequentist framework,  there is only true value of the parameter, and the variability captured in confidence intervals is about the *samples*, not the parameter itself.[^inference-9] For this reason, we can't make any statements about the probability of the value of the mean or of our confidence in specific numbers. To reiterate, what we *can* say is: if we were to repeat the procedure of conducting the experiment and calculating a confidence interval many times, in the long run, 95% of those confidence intervals would contain the true mean. 
 
-Confidence intervals are constructed by estimating the middle 95% of the sampling distribution of $\widehat{\Delta}$. Because of our hero, the Central Limit Theorem, we can treat the sampling distribution as normal for reasonably large samples. Given this, it's common to construct a 95% confidence interval[\^This is called a "Wald" confidence interval.] as $\widehat{\Delta} \pm 1.96 \widehat{SE}$. For the tea example, we had $\widehat{SE} = \sigma/\sqrt{n} = XXX$, yielding the confidence interval: XXX.
-
+Confidence intervals are constructed by estimating the middle 95% of the sampling distribution of $\widehat{\Delta}$. Because of our hero, the Central Limit Theorem, we can treat the sampling distribution as normal for reasonably large samples. Given this, it's common to construct a 95% confidence intervalas $\widehat{\Delta} \pm 1.96 \widehat{SE}$.^[This type of CI is called a "Wald" confidence interval.] For the tea example, we had $\widehat{SE} = \sigma/\sqrt{n} = `r tea_se`$, yielding the confidence interval: [`r round(tea_ci_lower,2)`, `r round(tea_ci_upper,2)`]. 
 
 [^inference-8]: In case you don't have enough tea to do the experiment 100 times to confirm this, you can do it virtually [here](https://istats.shinyapps.io/ExploreCoverage/).
 
 [^inference-9]: In contrast, Bayesians do think of parameters themselves as variable rather than fixed.
 
+The Bayesian analog to a confidence interval is a **credible interval**. Recall that for Bayesians, parameters themselves are considered probabilistic (i.e., subject to random variation), not fixed. A 95% credible interval for an estimate, $\widehat{\Delta}$, represents a range of possible values for $\Delta$ such that there is a 95% probability that $\Delta$ falls inside the interval. Because we are now wearing our Bayesian hats, we are "allowed" to talk about $\Delta$ as if it were probabilistic rather than fixed. In practice, credible intervals are constructed by finding the posterior distribution of $\Delta$, as in Chapter \@ref(estimation), and then taking the middle 95%, for example. 
 
+Credible intervals are nice because they don't give rise to many of the inference fallacies surrounding confidence intervals . They actually do represent our beliefs about where $\Delta$ is likely to be, for example. Despite the technical differences between credible intervals and confidence intervals, in practice -- with larger sample sizes and weaker priors -- they turn out to be quite similar to one another in many cases. On the other hand, they can diverge sharply in cases with less data or stronger priors [@morey2016]. 
 
-
-### Credible intervals
-
-The Bayesian analog to a confidence interval is a **credible interval**. Recall that for Bayesians, parameters themselves are considered probabilistic (i.e., subject to random variation), not fixed. A 95% credible interval for an estimate, $\widehat{\Delta}$, represents a range of possible values for $\Delta$ such that there is a 95% probability that $\Delta$ falls inside the interval. Because we are now wearing our Bayesian hats, we are "allowed" to talk about $\Delta$ as if it were probabilistic rather than fixed.
-
-In practice, credible intervals are constructed by finding the posterior distribution of $\Delta$, as in Chapter \@ref(estimation), and then taking the middle 95%, for example. For the tea example, XXX.
-
-### Visualizing variability 
+<!-- ### Visualizing variability  -->
 
 
 
@@ -491,65 +510,65 @@ In practice, credible intervals are constructed by finding the posterior distrib
 <!-- ⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance -->
 
 
-::: {.interactive}
-⌨️ Interactive: Nonparameteric resampling under the null
+<!-- ::: {.interactive} -->
+<!-- ⌨️ Interactive: Nonparameteric resampling under the null -->
 
-As we've seen above, hypothesis testing hinges on approximating the null distribution of the statistical estimate. In the examples above, it was easy to use statistical theory to work out the null distribution: for example, in Figure \@ref(fig:inference-null-model), we knew that the null distribution must be binomial since we had a binary outcome, and the binomial distribution parameter $p$ must be 0.5, because that is what the null says. 
+<!-- As we've seen above, hypothesis testing hinges on approximating the null distribution of the statistical estimate. In the examples above, it was easy to use statistical theory to work out the null distribution: for example, in Figure \@ref(fig:inference-null-model), we knew that the null distribution must be binomial since we had a binary outcome, and the binomial distribution parameter $p$ must be 0.5, because that is what the null says.  -->
 
-But sometimes we don't know what the null distribution would look like. Suppose we want to estimate group differences in a highly skewed continuous outcome, like salary, but we had a small sample size (e.g., $n=10$ per group):
+<!-- But sometimes we don't know what the null distribution would look like. Suppose we want to estimate group differences in a highly skewed continuous outcome, like salary, but we had a small sample size (e.g., $n=10$ per group): -->
 
-```{r inference-permutation-1, eval=FALSE}
-print(d)
+<!-- ```{r inference-permutation-1, eval=FALSE} -->
+<!-- print(d) -->
 
-set.seed(451)
-n.per.group = 10
-d = data.frame( Y = c( rexp( n = n.per.group, rate = 4 ),
-                       rexp( n = n.per.group, rate = 4 ) + 0.3 ),
-                Group = c( rep( "Control", n.per.group ),
-                           rep ( "Treatment", n.per.group ) ) )
+<!-- set.seed(451) -->
+<!-- n.per.group = 10 -->
+<!-- d = data.frame( Y = c( rexp( n = n.per.group, rate = 4 ), -->
+<!--                        rexp( n = n.per.group, rate = 4 ) + 0.3 ), -->
+<!--                 Group = c( rep( "Control", n.per.group ), -->
+<!--                            rep ( "Treatment", n.per.group ) ) ) -->
 
-colors = c("black", "orange")
-ggplot( data = d,
-        aes(x = Y, group = Group ) ) +
-  
-  #geom_histogram( aes(fill = Group), alpha = 0.4 ) +
-  geom_dotplot( aes( fill=Group ), alpha=0.4, binwidth = .05 ) +
-  scale_y_continuous(NULL, breaks = NULL) +
-  
-  theme_bw() + xlab("Y") +
-  ylab("") 
-```
+<!-- colors = c("black", "orange") -->
+<!-- ggplot( data = d, -->
+<!--         aes(x = Y, group = Group ) ) + -->
 
-We can't proceed with a t-test in good conscience because, with only $n=20$, we can't necessarily trust that the Central Limit Theorem has "kicked in" sufficiently for the test to work despite the skewness. Stated otherwise, we can't be sure that the null distribution is normal in this case. 
+<!--   #geom_histogram( aes(fill = Group), alpha = 0.4 ) + -->
+<!--   geom_dotplot( aes( fill=Group ), alpha=0.4, binwidth = .05 ) + -->
+<!--   scale_y_continuous(NULL, breaks = NULL) + -->
 
-When we can't rely on theory, another way to approximate a null distribution is through nonparameteric resampling. "Resampling" means that we're going to cleverly draw new samples *from our existing sample*, and "nonparametric" means that we will do this in a way that obviates assumptions about the shape of the null distribution (in contrast to parameteric approaches that do rely on such assumptions).
+<!--   theme_bw() + xlab("Y") + -->
+<!--   ylab("")  -->
+<!-- ``` -->
 
-The central idea is that, if the treatment truly had no effect on the outcome, then the observations would be *exchangeable* between the treatment and control groups. That is, there would not be systematic differences between the treatment and control groups. This may or may not be true in our observed sample (after all, that's why we're doing a hypothesis test in the first place), but we could draw new samples from our existing sample in a manner that forces exchangeability. In this case, we could randomly permute the column of outcomes in our dataset while leaving the column of treatment assignments fixed:
+<!-- We can't proceed with a t-test in good conscience because, with only $n=20$, we can't necessarily trust that the Central Limit Theorem has "kicked in" sufficiently for the test to work despite the skewness. Stated otherwise, we can't be sure that the null distribution is normal in this case.  -->
 
-```{r inference-permutation-2, eval=FALSE}
-# show construction of a single permuted dataset
-# library(modelr)
-# library(purrr)
-perm.reps = 100
-perms = permute(data = d, n = perm.reps, Y)
+<!-- When we can't rely on theory, another way to approximate a null distribution is through nonparameteric resampling. "Resampling" means that we're going to cleverly draw new samples *from our existing sample*, and "nonparametric" means that we will do this in a way that obviates assumptions about the shape of the null distribution (in contrast to parameteric approaches that do rely on such assumptions). -->
 
-# show the first permuted dataset
-print( perms$perm[[1]]$data )
+<!-- The central idea is that, if the treatment truly had no effect on the outcome, then the observations would be *exchangeable* between the treatment and control groups. That is, there would not be systematic differences between the treatment and control groups. This may or may not be true in our observed sample (after all, that's why we're doing a hypothesis test in the first place), but we could draw new samples from our existing sample in a manner that forces exchangeability. In this case, we could randomly permute the column of outcomes in our dataset while leaving the column of treatment assignments fixed: -->
 
-#@WHY ARE THESE ALL THE SAME??
-cbind( perms$perm[[1]]$data$Y, perms$perm[[2]]$data$Y )
-# c.f. package example for debugging
-perms2 <- permute(mtcars,  1000, mpg)
-cbind( perms2$perm[[1]]$data$mpg, perms2$perm[[2]]$data$mpg )
-# also the same?? 
+<!-- ```{r inference-permutation-2, eval=FALSE} -->
+<!-- # show construction of a single permuted dataset -->
+<!-- # library(modelr) -->
+<!-- # library(purrr) -->
+<!-- perm.reps = 100 -->
+<!-- perms = permute(data = d, n = perm.reps, Y) -->
 
-# get group mean differences for each permutation via OLS
-ols = map(perms$perm, ~ lm(Y ~ 1, data = .))
-ATEs = lapply( ols, function(.ols) as.numeric( coef(.ols)["(Intercept)"] ) )
+<!-- # show the first permuted dataset -->
+<!-- print( perms$perm[[1]]$data ) -->
 
-# now plot the ATEs to show the null sampling distribution
-```
-:::
+<!-- #@WHY ARE THESE ALL THE SAME?? -->
+<!-- cbind( perms$perm[[1]]$data$Y, perms$perm[[2]]$data$Y ) -->
+<!-- # c.f. package example for debugging -->
+<!-- perms2 <- permute(mtcars,  1000, mpg) -->
+<!-- cbind( perms2$perm[[1]]$data$mpg, perms2$perm[[2]]$data$mpg ) -->
+<!-- # also the same??  -->
+
+<!-- # get group mean differences for each permutation via OLS -->
+<!-- ols = map(perms$perm, ~ lm(Y ~ 1, data = .)) -->
+<!-- ATEs = lapply( ols, function(.ols) as.numeric( coef(.ols)["(Intercept)"] ) ) -->
+
+<!-- # now plot the ATEs to show the null sampling distribution -->
+<!-- ``` -->
+<!-- ::: -->
 
 ## Chapter summary: Inference
 
