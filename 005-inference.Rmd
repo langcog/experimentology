@@ -1,18 +1,13 @@
 # Inference {#inference}
 
-<!-- TODO: -->
-
-<!-- * Connections to Karl Popper -->
-
-<!-- "needs a pass to make coherent/consistent with example in estimation" -->
-
 ::: {.learning-goals}
 🍎 Learning goals:
 
 -   Discuss the purpose of statistical inference
--   Visualize and interpret measures of estimate variability (including confidence intervals)
 -   Define $p$-values and Bayes Factors
 -   Consider common fallacies about inference (especially for $p$-values)
+-   Reason about sampling variability 
+-   Define and reason about confidence intervals
 :::
 
 We've been arguing that experiments are about measuring effects. You might ask then, why does this book even need a chapter about statistical inference? Why can't we just report our estimates and be done? The answer is that we are not typically interested in the characteristics of our sample specifically. **Statistical inference** is the process of going beyond the specific characteristics of the sample that you measured to make generalizations about the broader **population**. 
@@ -137,7 +132,7 @@ But look what happens as we draw increasingly larger samples in Figure \@ref(fig
 
 ## From variation to inference
 
-Ok, let's go back to Fisher's tea-tasting experiment. The first innovation of that experiment was the use of randomization to recover an estimate of the causal effect of milk ordering. But there was more to Fisher's analysis than we described. 
+OK, let's go back to Fisher's tea-tasting experiment. The first innovation of that experiment was the use of randomization to recover an estimate of the causal effect of milk ordering. But there was more to Fisher's analysis than we described. 
 
 The second innovation of the tea-tasting experiment was the idea of creating a model of what might happen during the experiment. Specifically, Fisher described a hypothetical **null model** that would arise if the nameless lady had chosen cups by chance rather than because of some tea sensitivity. In our tea-rating experiment, the null model describes what happens when there is no difference in ratings between tea-first and milk-first cups. Under the null model, the treatment effect ($\Delta$) is zero. 
 
@@ -174,7 +169,7 @@ ggplot(null_model_summary, aes(x =delta)) +
 
 That's the logic of Fisherian NHST: if the observed data fall in the region that has a probability of less than .05 under the null model, then we reject the null. So then when we observe some particular treatment effect $\hat{\Delta}$ in a single (real) instance of our experiment, we can compute the probability of these data or any data more extreme than ours under the null model. This probability is our $p$-value, and if it is small, it gives us license to conclude that the null is false.
 
-As we saw beore, the larger the sample size, the smaller the standard error. That's true for the null model too! Let's take a look at running tea-tasting experiments with 12, 24, 48, and 96 participants. Figure \@ref(fig:inference-null-model2) shows the expected null distributions in each of these, again with the 5% boundaries shown in red. 
+As we saw before, the larger the sample size, the smaller the standard error. That's true for the null model too! Let's take a look at running tea-tasting experiments with 12, 24, 48, and 96 participants. Figure \@ref(fig:inference-null-model2) shows the expected null distributions in each of these, again with the 5% boundaries shown in red. 
 
 ```{r inference-null-model2, fig.cap="Distribution of treatment effects under the null model for different numbers of participants (facets). Red lines indicate the p < .05 threshold."}
 
@@ -219,7 +214,7 @@ By defining a $p$-value, we got one procedure for giving this answer. If $p < .0
 
 ### Bayes Factors
 
-Bayes Factors are a method for quantifying the support for one hypothesis over another, based on an observed dataset. Informally, we've now talked about two different distinct hypotheses about the tea situation: our participant could have *no* tea discrimination ability -- leading to chance performance. We call this $H_0$. Or they could have some non-zero ability -- leading to greater than chance perfomance. We call this $H_1$. The Bayes Factor is simply the likelihood of the data (in the technical sense used above) under $H_1$ vs. under $H_0$:
+Bayes Factors are a method for quantifying the support for one hypothesis over another, based on an observed dataset. Informally, we've now talked about two different distinct hypotheses about the tea situation: our participant could have *no* tea discrimination ability -- leading to chance performance. We call this $H_0$. Or they could have some non-zero ability -- leading to greater than chance performance. We call this $H_1$. The Bayes Factor is simply the likelihood of the data (in the technical sense used above) under $H_1$ vs. under $H_0$:
 
 $$
 BF = \frac{\color{red}{p(d | H_1)}}{\color{red}{p(d | H_0)}}.
@@ -276,7 +271,7 @@ tea_bf_large <- BayesFactor::ttestBF(x = tea_data_large$rating[tea_data_large$co
 ```
 
 
-Figure \@ref(fig:inference-milk-first) shows one example dataset. Once we set up our models, we can compute the relative likelihood of the data under each.^[In this case, we use the "default Bayesian $t$-test provided by the `BayesFactor` pacakge.] The resulting BF is `r round(extractBF(tea_bf)$bf, 2)`, somewhere between anecdotal and substantial evidence. On the other hand, if we double the size of the experiment to 96 participants, the BF goes up to `r round(extractBF(tea_bf_large)$bf, 2)`, which is quite strong evidence.
+Figure \@ref(fig:inference-milk-first) shows one example dataset. Once we set up our models, we can compute the relative likelihood of the data under each.^[In this case, we use the "default Bayesian $t$-test provided by the `BayesFactor` package.] The resulting BF is `r round(extractBF(tea_bf)$bf, 2)`, somewhere between anecdotal and substantial evidence. On the other hand, if we double the size of the experiment to 96 participants, the BF goes up to `r round(extractBF(tea_bf_large)$bf, 2)`, which is quite strong evidence.
 
 That's the Bayes Factor. Now let's turn back to NHST and the $p$-value.
 
@@ -295,7 +290,7 @@ tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
 
 Next we can use a simple statistical test, a $t$-test, to compute $p$-values for our experiment. In case you haven't encountered one, a $t$-test is a procedure for computing a $p$-value by comparing the distribution of two variables using the null hypothesis that there is no difference between them.^[$t$-tests can also be used in cases where one sample is being compared to some baseline.] The $t$-test uses the data to compute a **test statistic** whose distribution under the null hypothesis is known. Then the value of this statistic can be converted to $p$-values for making an inference. 
 
-When we conduct a $t$-test on our experimental results, we see that the difference between the two groups is statistically significant at $p<.05$: `r papaja::apa_print(tea_t)$statistic`. Here we've given a standard American Psychological Association report of a $t$-test. The first part of this report on the test gives the $t$ value, qualified by the **degrees of freedom** for the test. We won't focus much on the idea of degrees of freedom here, but for now it's enough to know that this number quanifies the amount of information given by the data, in this case 48 datapoints minus the two means (one for each of the samples).  
+When we conduct a $t$-test on our experimental results, we see that the difference between the two groups is statistically significant at $p<.05$: `r papaja::apa_print(tea_t)$statistic`. Here we've given a standard American Psychological Association report of a $t$-test. The first part of this report on the test gives the $t$ value, qualified by the **degrees of freedom** for the test. We won't focus much on the idea of degrees of freedom here, but for now it's enough to know that this number quantifies the amount of information given by the data, in this case 48 datapoints minus the two means (one for each of the samples).  
 
 Let's compare $p$ values and default Bayes Factors for a couple of different conditions. In Table \@ref(tab:p-bf-comparison), you can see a set of simulated experiments with varying total numbers of participants and varying average treatment effects. Both $p$ and BF go up with more participants and larger effects. But in general BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ can sometimes translate to a BF of less than 3 [@benjamin2018]. 
 
@@ -382,7 +377,7 @@ Let's take a look at just a few. Misconception 1 is that, if $p= .05$, the null 
 
 <!-- NC: The dirty dozen table doesn't seem that useful if we do not explain why these things are incorrect. MM agrees. We can probably discuss the fallacies for one or the other and then just invoke the CI-p-value duality for why the other set of fallacies is also wrong. Mika and I discuss the CI fallacies below. -->
 
-Beyond these misonceptions, there's another problem. The $p$-value is a probability of a certain set of events happening (corresponding to the observed data or any "more extreme" data, that is to say, data further from the null). Since $p$-values are probabilities, we can combine them together across different events. If we run a null experiment -- an experiment where the expected effect is zero -- the probability of a dataset with $p < .05$ is of course .05. But if we run two such experiments, we can get $p < .05$ with probability `r round(2*.05 - .05*.05,2)`. By the time we run 20 experiments, we have an `r round(1 - .95^20,2)` chance of getting a positive result.
+Beyond these misconceptions, there's another problem. The $p$-value is a probability of a certain set of events happening (corresponding to the observed data or any "more extreme" data, that is to say, data further from the null). Since $p$-values are probabilities, we can combine them together across different events. If we run a null experiment -- an experiment where the expected effect is zero -- the probability of a dataset with $p < .05$ is of course .05. But if we run two such experiments, we can get $p < .05$ with probability `r round(2*.05 - .05*.05,2)`. By the time we run 20 experiments, we have an `r round(1 - .95^20,2)` chance of getting a positive result.
 
 It would obviously be a major mistake to run 20 null experiments and then report only the positive ones (which, by design, are false positives) as though these still were "statistically significant." The same thing applies to doing 20 different statistical tests within a single experiment. There are many statistical corrections that can be made to adjust for this problem.[^inference-19] But the the broader issue is one of transparency: unless you *know* what the appropriate set of experiments or tests is, it's not possible to implement one of these corrections![^inference-20]
 
@@ -405,7 +400,7 @@ Second, as we discussed, a $p$-value close to .05 does not necessarily provide s
 
 Finally, since precognition is not attested by any compelling prior scientific evidence -- and many researchers have tried to provide this evidence -- perhaps we should assign a low prior probability to Bem's $H_1$, a non-zero precognition effect. Taking a strong Bayesian position, Wagenmakers et al. suggest that we might do well to adopt a prior reflecting how unlikely precognition is, say $p(H_1) = 10^{-20}$. And if we adopt this prior, even a very well-designed, highly informative experiment (with a Bayes factor conveying substantial or even decisive evidence) would still lead to a very low posterior probability of precognition.
 
-Wagenmakers et al. concluded that, rather than suppporting precognition, the conclusion from Bem's paper should be psychologists should revise how they think about analyzing their data![^inference-21]
+Wagenmakers et al. concluded that, rather than supporting precognition, the conclusion from Bem's paper should be psychologists should revise how they think about analyzing their data![^inference-21]
 :::
 
 [^inference-21]: If you are intrigued by this set of issues, you might enjoy Slate Star Codex's post on ESP research, ["The Control Group is Out of Control"](https://slatestarcodex.com/2014/04/28/the-control-group-is-out-of-control/). We don't agree with everything in it, but it's definitely thought-provoking and contains many interesting links.
@@ -455,7 +450,7 @@ Here's an example. As we will calculate below, the 95% confidence interval for t
 
 Confidence intervals are like betting on the inferences drawn from your sample. The sample you drew is like one pull of a slot machine that will pay off (i.e., have the confidence interval contain the true parameter) 95% of the time. Put more concisely: 95% of 95% confidence intervals contain the true value of the mean.
 
-## Confidence in confidence intervals? 
+### Confidence in confidence intervals? 
 
 In practice, though, confidence intervals are often misinterpreted by students and researchers alike [@hoekstra2014]. In Hoekstra et al.'s example, a researcher conducts an experiments and reports "The 95% confidence interval for the mean ranges from 0.1 to 0.4". All of the statements in Table \@ref(tab:inference-ci-false), though tempting to make, are *technically false*.
 
@@ -478,7 +473,7 @@ knitr::kable(ci,
 
 The problem with all of these statements is that, in the frequentist framework,  there is only true value of the parameter, and the variability captured in confidence intervals is about the *samples*, not the parameter itself.[^inference-9] For this reason, we can't make any statements about the probability of the value of the mean or of our confidence in specific numbers. To reiterate, what we *can* say is: if we were to repeat the procedure of conducting the experiment and calculating a confidence interval many times, in the long run, 95% of those confidence intervals would contain the true mean. 
 
-Confidence intervals are constructed by estimating the middle 95% of the sampling distribution of $\widehat{\Delta}$. Because of our hero, the Central Limit Theorem, we can treat the sampling distribution as normal for reasonably large samples. Given this, it's common to construct a 95% confidence intervalas $\widehat{\Delta} \pm 1.96 \widehat{SE}$.^[This type of CI is called a "Wald" confidence interval.] For the tea example, we had $\widehat{SE} = \sigma/\sqrt{n} = `r tea_se`$, yielding the confidence interval: [`r round(tea_ci_lower,2)`, `r round(tea_ci_upper,2)`]. 
+Confidence intervals are constructed by estimating the middle 95% of the sampling distribution of $\widehat{\Delta}$. Because of our hero, the Central Limit Theorem, we can treat the sampling distribution as normal for reasonably large samples. Given this, it's common to construct a 95% confidence intervals $\widehat{\Delta} \pm 1.96 \widehat{SE}$.^[This type of CI is called a "Wald" confidence interval.] For the tea example, we had $\widehat{SE} = \sigma/\sqrt{n} = `r round(tea_se,2)`$, yielding the confidence interval: [`r round(tea_ci_lower,2)`, `r round(tea_ci_upper,2)`]. 
 
 [^inference-8]: In case you don't have enough tea to do the experiment 100 times to confirm this, you can do it virtually [here](https://istats.shinyapps.io/ExploreCoverage/).
 
@@ -487,88 +482,6 @@ Confidence intervals are constructed by estimating the middle 95% of the samplin
 The Bayesian analog to a confidence interval is a **credible interval**. Recall that for Bayesians, parameters themselves are considered probabilistic (i.e., subject to random variation), not fixed. A 95% credible interval for an estimate, $\widehat{\Delta}$, represents a range of possible values for $\Delta$ such that there is a 95% probability that $\Delta$ falls inside the interval. Because we are now wearing our Bayesian hats, we are "allowed" to talk about $\Delta$ as if it were probabilistic rather than fixed. In practice, credible intervals are constructed by finding the posterior distribution of $\Delta$, as in Chapter \@ref(estimation), and then taking the middle 95%, for example. 
 
 Credible intervals are nice because they don't give rise to many of the inference fallacies surrounding confidence intervals . They actually do represent our beliefs about where $\Delta$ is likely to be, for example. Despite the technical differences between credible intervals and confidence intervals, in practice -- with larger sample sizes and weaker priors -- they turn out to be quite similar to one another in many cases. On the other hand, they can diverge sharply in cases with less data or stronger priors [@morey2016]. 
-
-<!-- ### Visualizing variability  -->
-
-
-
-
-<!-- ### Visualizing variability -->
-
-<!-- Error bar: - standard deviation (why is this bad)? - SEM - CI -->
-
-
-
-
-
-
-<!-- ### Homeless -->
-
-<!-- Confidence in confidence intervals: <https://link.springer.com/article/10.3758/s13423-015-0947-8> -->
-
-
-<!-- ⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance -->
-
-
-<!-- ::: {.interactive} -->
-<!-- ⌨️ Interactive: Nonparameteric resampling under the null -->
-
-<!-- As we've seen above, hypothesis testing hinges on approximating the null distribution of the statistical estimate. In the examples above, it was easy to use statistical theory to work out the null distribution: for example, in Figure \@ref(fig:inference-null-model), we knew that the null distribution must be binomial since we had a binary outcome, and the binomial distribution parameter $p$ must be 0.5, because that is what the null says.  -->
-
-<!-- But sometimes we don't know what the null distribution would look like. Suppose we want to estimate group differences in a highly skewed continuous outcome, like salary, but we had a small sample size (e.g., $n=10$ per group): -->
-
-<!-- ```{r inference-permutation-1, eval=FALSE} -->
-<!-- print(d) -->
-
-<!-- set.seed(451) -->
-<!-- n.per.group = 10 -->
-<!-- d = data.frame( Y = c( rexp( n = n.per.group, rate = 4 ), -->
-<!--                        rexp( n = n.per.group, rate = 4 ) + 0.3 ), -->
-<!--                 Group = c( rep( "Control", n.per.group ), -->
-<!--                            rep ( "Treatment", n.per.group ) ) ) -->
-
-<!-- colors = c("black", "orange") -->
-<!-- ggplot( data = d, -->
-<!--         aes(x = Y, group = Group ) ) + -->
-
-<!--   #geom_histogram( aes(fill = Group), alpha = 0.4 ) + -->
-<!--   geom_dotplot( aes( fill=Group ), alpha=0.4, binwidth = .05 ) + -->
-<!--   scale_y_continuous(NULL, breaks = NULL) + -->
-
-<!--   theme_bw() + xlab("Y") + -->
-<!--   ylab("")  -->
-<!-- ``` -->
-
-<!-- We can't proceed with a t-test in good conscience because, with only $n=20$, we can't necessarily trust that the Central Limit Theorem has "kicked in" sufficiently for the test to work despite the skewness. Stated otherwise, we can't be sure that the null distribution is normal in this case.  -->
-
-<!-- When we can't rely on theory, another way to approximate a null distribution is through nonparameteric resampling. "Resampling" means that we're going to cleverly draw new samples *from our existing sample*, and "nonparametric" means that we will do this in a way that obviates assumptions about the shape of the null distribution (in contrast to parameteric approaches that do rely on such assumptions). -->
-
-<!-- The central idea is that, if the treatment truly had no effect on the outcome, then the observations would be *exchangeable* between the treatment and control groups. That is, there would not be systematic differences between the treatment and control groups. This may or may not be true in our observed sample (after all, that's why we're doing a hypothesis test in the first place), but we could draw new samples from our existing sample in a manner that forces exchangeability. In this case, we could randomly permute the column of outcomes in our dataset while leaving the column of treatment assignments fixed: -->
-
-<!-- ```{r inference-permutation-2, eval=FALSE} -->
-<!-- # show construction of a single permuted dataset -->
-<!-- # library(modelr) -->
-<!-- # library(purrr) -->
-<!-- perm.reps = 100 -->
-<!-- perms = permute(data = d, n = perm.reps, Y) -->
-
-<!-- # show the first permuted dataset -->
-<!-- print( perms$perm[[1]]$data ) -->
-
-<!-- #@WHY ARE THESE ALL THE SAME?? -->
-<!-- cbind( perms$perm[[1]]$data$Y, perms$perm[[2]]$data$Y ) -->
-<!-- # c.f. package example for debugging -->
-<!-- perms2 <- permute(mtcars,  1000, mpg) -->
-<!-- cbind( perms2$perm[[1]]$data$mpg, perms2$perm[[2]]$data$mpg ) -->
-<!-- # also the same??  -->
-
-<!-- # get group mean differences for each permutation via OLS -->
-<!-- ols = map(perms$perm, ~ lm(Y ~ 1, data = .)) -->
-<!-- ATEs = lapply( ols, function(.ols) as.numeric( coef(.ols)["(Intercept)"] ) ) -->
-
-<!-- # now plot the ATEs to show the null sampling distribution -->
-<!-- ``` -->
-<!-- ::: -->
 
 ## Chapter summary: Inference
 
@@ -581,7 +494,6 @@ If you want to quantify evidence for or against a hypothesis, it's worth conside
 Despite the reasons to be worried about $p$-values, for many practicing scientists (at least at time of writing) there is no one right answer as to whether to reject $p$-values. Even if we'd like to be Bayesian, there are a number of obstacles. First, though new computational tools make fitting Bayesian models and extracting Bayes Factors much easier than before (more about this below and in the next chapter), it's still on average quite a bit harder to fit a Bayesian model than it is a frequentist one. Second, because Bayesian analyses are less familiar, it may be an uphill battle to convince advisors, reviewers, and funders to use them. 
 
 As a group, some of us are more Bayesian than frequentist, while others are more frequentist than Bayeisan -- but all of us recognize the need to move flexibly between statistical paradigms. Furthermore, a lot of them time we're not so worried about which paradigm we're using. The paradigms are at their most divergent when making binary inferences, whether they are at $p < .05$ or $BF > 3$. 
-
 In sum, the practicing experimentalist should see binary inference tools as only one part of a bigger toolkit for data analysis. This toolkit should also include estimation approaches from the previous chapter as well as the methods for quantifying precision and uncertainty that we introduced above. Further, for more complex situations, the toolkit needs to include some tools for building models. Towards this goal, the next chapter provides some initial tools for how to use models for estimation and inference about experimental effects.
 
 ::: {.exercise}
@@ -591,8 +503,3 @@ Step away from the computer. Can you write the definition of a $p$-value and a B
 ::: {.exercise}
 Take three of Goodman's (2008) "dirty dozen" in Table \@ref(tab:dirty-dozen) and write a description of why each is a misconception. (These can be checked against the original article, which gives a nice discussion). 
 :::
-
-::: {.exercise}
-True or false? If we conducted the tea experiment with 500 participants instead of 48, then all else equal, we would expect tea ratings to cluster more closely around the sample mean in the experiment with 500 participants.
-::: 
-
