@@ -6,24 +6,22 @@ We'll start by using `qplot`. `qplot` is the easy interface, meant to replace `p
 
 We're going to be using the `diamonds` dataset. This is a set of measurements of diamonds, along with their price etc.
 
-```{r}
+```{r ggplot-diamonds}
 head(diamonds)
 qplot(diamonds$carat, diamonds$price)
 ```
 
 Scatter plots are trivial, and easy to add features to. Modify this plot so that it uses the dataframe rather than working from variables in the general namespace (good to get away from retyping `diamonds$` every time you reference a variable). 
 
-```{r}
+```{r ggplot-diamonds-viridis}
 qplot(data = diamonds, 
       carat, price, colour = price) + 
   viridis::scale_color_viridis()
 ```
 
+:::{.exercise}
 Try adding clarity and cut, using shape and color as your visual variables. 
-
-```{r}
-```
-
+:::
 
 ## More complex with `ggplot`
 
@@ -32,7 +30,7 @@ sometimes easier to use and sometimes a bit more complicated. What I want to sho
 
 `ggplot` is the basic call, where you specify A) a dataframe and B) an aesthetic (`aes`) mapping from variables in the plot space to variables in the dataset. 
 
-```{r}
+```{r ggplot-diamonds-more}
 d <- ggplot(diamonds, aes(x=carat, y=price)) # first you set the aesthetic and dataset
 d + geom_point() # then you add geoms
 d + geom_point(aes(colour = carat)) # and you can keep doing this to add layers to the plot
@@ -41,7 +39,7 @@ d + geom_point(aes(colour = carat)) # and you can keep doing this to add layers 
 Try writing this as a single set of additions (e.g. one line of R code, though you can put in linebreaks). This is the most common workflow for me. 
 
 
-```{r}
+```{r ggplot-diamonds-singleline}
 ggplot(diamonds, aes(x=carat, y=price)) + 
   geom_point() + 
   geom_point(aes(colour = clarity)) 
@@ -52,7 +50,7 @@ ggplot(diamonds, aes(x=carat, y=price)) +
 
 Let's try out another version of the `qplot` example above. Rewrite the last qplot example with ggplot.
 
-```{r}
+```{r ggplot-diamonds-facets}
 ggplot(diamonds, aes(x=carat, y=price)) + 
   geom_point() + 
   geom_point(aes(colour = clarity)) 
@@ -89,16 +87,18 @@ As you've seen above, the basic unit of a ggplot plot is a "geom" - a mapping be
 
 Let's try adding some geoms and manipulating their parameters. One combo I really like is a scatterplot with a smoothing layer (`geom_smooth`). Try adding one onto this plot. 
 
-```{r}
+```{r ggplot-diamonds-geoms}
 ggplot(diamonds, aes(x=carat, y=price)) +
   geom_point(shape = ".") +
   facet_grid(cut ~ clarity) 
 ```
 
 
-CHALLENGE: You could also try starting with a histogram and adding densities. (`geom_density`), Try [this link](https://stackoverflow.com/questions/5688082/ggplot2-overlay-histogram-with-density-curve).
+:::{.exercise}
+You could also try starting with a histogram and adding densities. (`geom_density`), Try [this link](https://stackoverflow.com/questions/5688082/ggplot2-overlay-histogram-with-density-curve).
+:::
 
-```{r}
+```{r ggplot-diamonds-density}
 ggplot(diamonds, aes(x = carat)) +
   geom_density()
 ```
@@ -115,7 +115,7 @@ Finally, don't forget to "fix the axis labels"!
 
 Here's a somewhat ugly plot - see if you can make it look awesome. 
 
-```{r}
+```{r ggplot-diamonds-cleanup}
 ggplot(diamonds, aes(x = carat, y = price, col = cut)) + 
   geom_point() + 
   facet_wrap(~clarity) 
@@ -126,7 +126,7 @@ ggplot(diamonds, aes(x = carat, y = price, col = cut)) +
 
 Let's take this base plot. 
 
-```{r}
+```{r ggplot-diamonds-inheritance}
 ggplot(data = diamonds, 
        aes(x = carat, y = price, 
            color = cut)) + 
@@ -137,7 +137,7 @@ ggplot(data = diamonds,
 
 Say I want to map clarity to be mapped to size. Try adding it to the top level. This doesn't work. 
 
-```{r}
+```{r ggplot-diamonds-inheritance-2}
 ggplot(diamonds, 
        aes(x = carat, y = price, 
            color = cut, size = clarity)) + 
@@ -147,7 +147,7 @@ ggplot(diamonds,
 ```
 The reason is inheritance. I want the POINTS to have sizes, but the smoothing lines not to have that AES feature. 
 
-```{r}
+```{r ggplot-diamonds-inheritance-3}
 ggplot(diamonds, 
        aes(x = carat, y = price, 
            color = cut)) + 
@@ -161,7 +161,7 @@ ggplot(diamonds,
 
 This is an exploration of Blake et al. (2015), [Ontogeny of fairness in seven societies](http://www.nature.com/nature/journal/v528/n7581/full/nature15703.html).
 
-```{r}
+```{r ggplot-blake1}
 library(tidyverse)
 
 d <- read_csv("data/ontogeny_of_fairness.csv") %>%
@@ -177,20 +177,20 @@ d <- read_csv("data/ontogeny_of_fairness.csv") %>%
 
 The general structue of this experiment is that we have pairs of participants assigned to the Disadvantageous and Advantageous conditions, and they do 16 trials for each pair in two blocks (varying value of the offer). 
 
-```{r}
+```{r ggplot-blake2}
 d
 ```
 
 
 ### Variable exploration
 
-```{r}
+```{r ggplot-blake3}
 d %>%
   group_by(country) %>%
   summarise(n = n())
 ```
 
-```{r}
+```{r ggplot-blake4}
 d %>%
   group_by(country, actor.id) %>%
   summarise(n = n()) %>%
@@ -201,7 +201,7 @@ d %>%
   summarise(n = length(unique(actor.id)))
 ```
 
-```{r}
+```{r ggplot-blake5}
 d %>%
   group_by(country, actor.age.years, actor.id) %>%
   summarise(n = n()) %>%
@@ -212,7 +212,7 @@ d %>%
 
 Describe the dataset graphically in ways that are useful for you to get a handle on the data collection effort. 
 
-```{r}
+```{r ggplot-blake6}
 demo <- d %>%
   mutate(age = floor(actor.age.years)) %>%
   group_by(country, age, actor.id) %>%
@@ -229,7 +229,7 @@ ggplot(demo,
 
 Try just plotting the un-adjusted curves. 
 
-```{r}
+```{r ggplot-blake7}
 ms <- d %>%
   filter(!is.na(eq.uneq)) %>%
   mutate(age = floor(actor.age.years), 
@@ -251,7 +251,7 @@ ggplot(ms,
   ggthemes::scale_color_solarized()
 ```
 
-```{r}
+```{r ggplot-blake8}
 ggplot(filter(ms, country == "US"), 
        aes(x = age, y = decision, col = country)) + 
   geom_point(aes(size = n)) +
@@ -266,7 +266,7 @@ ggplot(filter(ms, country == "US"),
 
 Now rebin into 3-year bins.
 
-```{r}
+```{r ggplot-blake9}
 ms <- d %>%
   filter(!is.na(eq.uneq)) %>%
   mutate(age = floor(actor.age.years/2)*2, 
@@ -287,7 +287,7 @@ ggplot(ms, aes(x = age, y = decision, col = country)) +
 
 Break this down by country. I like this plot best so far. 
 
-```{r}
+```{r ggplot-blake10}
 ggplot(ms, aes(x = age, y = decision, col = condition)) + 
   geom_point(aes(size = n)) +
   facet_grid(trial_type ~ country) + 
