@@ -208,22 +208,21 @@ The towel example is a good starting point but there is much more we can do with
 
 ## The basics of evidence synthesis
 
-
 ### How *not* to synthesize evidence
 
-When considering evidence across multiple studies, most of us intuitively count how many studies supported vs. did not support the hypothesis under investigation. Such a count usually amounts to counting the number of studies with "significant" $p$-values, since (for better or for worse) "significance" is largely what drives studies' take-home conclusions [@mcshane2017statistical; @nelson1986interpretation]. This is often called *vote-counting* [@borenstein2021introduction]. For example, in the @paluck2019contact meta-analysis, all studies yielded positive effect sizes, but only approximately `r sum(DF$sig)` of `r nrow(DF)` were significant. So, based on this vote-count, we would have the impression that most studies do not support the contact hypothesis.[^1]
+When considering evidence across multiple studies, most of us intuitively count how many studies supported versus did not support the hypothesis under investigation. This usually amounts to counting the number of studies with "significant" $p$-values, since (for better or for worse) "significance" is largely what drives the take-home conclusions researchers report [@mcshane2017statistical; @nelson1986interpretation]. This is often called *vote-counting* [@borenstein2021introduction]. For example, in the @paluck2019contact meta-analysis, all studies yielded positive effect sizes, but only approximately `r sum(DF$sig)` of `r nrow(DF)` were significant. So, based on this vote-count, we would have the impression that most studies do not support the contact hypothesis.[^1]
 
 [^1]: Many narrative reviews take essentially this vote-counting approach, albeit often not explicitly. If you see this kind of practice, your first instinct should be to say "why is there no quantitative meta-analysis?"
 
-Despite its intuitive appeal, vote-counting can be very misleading because this approach characterizes evidence solely in terms of dichotomized $p$-values, while entirely ignoring effect sizes. In Chapter \@ref(replication), we saw how this fetishism of statistical significance can mislead us when we consider individual studies. These problems propagate if we vote-count statistical significance across studies as well. For example, it could be the case that relatively few studies are significant (for example, in a literature of typically small studies), yet if the studies typically have large point estimates, then the consensus of evidence could actually be quite strong. Or inversely, it could be that nearly all studies are significant, but if they typically have small point estimates, then the consensus of evidence might still be rather weak. In these cases, vote-counting could lead us badly astray [@borenstein2021introduction].
+Despite its intuitive appeal, vote-counting can be very misleading because this approach characterizes evidence solely in terms of dichotomized $p$-values, while entirely ignoring effect sizes. In Chapter \@ref(replication), we saw how this fetishism of statistical significance can mislead us when we consider individual studies. These problems propagate to evidence syntheses if we simply vote-count statistical significance across studies as well. For example, it could be the case that relatively few studies are significant (for example, in a literature of typically small studies), yet if the studies typically have large point estimates, then the consensus of evidence could actually be quite strong. Or inversely, it could be that nearly all studies are significant, but if they typically have small point estimates, then the consensus of evidence might still be rather weak. In these cases, vote-counting could lead us badly astray [@borenstein2021introduction].
 
-To avoid these pitfalls, a principled evidence synthesis needs to account for effect sizes themselves. How about if we just average the studies' estimates? For example, in Paluck et al.'s meta-analysis, the mean of the studies' estimates is `r mean(DF$d)` This approach is perhaps a step in the right direction, but still has some important limitations. In particular, this approach gives equal weight to each study, such that a small study (like Clunies-Ross and O'Meara, 1989, with a sample size of `r DF[1, ]$n_total`) contributes as much to the mean effect size as a large study (like Boisjoly et al., 2006, with a sample size of `r DF[27, ]$n_total`). That doesn't make sense: larger studies should clearly carry more weight in the analysis. This brings us to our first principled approach to meta-analysis, namely fixed-effects meta-analysis.
+To avoid these pitfalls, a principled evidence synthesis needs to account for effect sizes themselves. How about if we just average the studies' estimates? For example, in Paluck et al.'s meta-analysis, the mean of the studies' estimates is `r round( mean(DF$d), digits )` This approach is perhaps a step in the right direction, but still has some important limitations. In particular, this approach gives equal weight to each study, such that a small study (like Clunies-Ross and O'Meara, 1989, with a sample size of `r DF[1, ]$n_total`) contributes as much to the mean effect size as a large study (like Boisjoly et al., 2006, with a sample size of `r DF[27, ]$n_total`). That doesn't make sense: larger studies should clearly carry more weight in the analysis. This brings us to our first principled approach to meta-analysis, namely fixed-effects meta-analysis.
 
 
 
 ### Combining results across studies using fixed-effects meta-analysis
 
-As we've seen throughout this book, it is a good idea to visualize your data before and after analysis. In a meta-analysis, a commmon way to do so is the **forest plot**, which depicts individual studies' estimates and confidence intervals. (You can ignore for now the column of percentages and the final line, "RE Model"; we will return to these later.) In this plot, the larger squares correspond to more precise studies; notice how much narrower their confidence intervals are than the confidence intervals of less precise studies.
+As we've seen throughout this book, visualizing data before and after analysis helps benchmark and sanity-check our intuitions about the formal statistical results. In a meta-analysis, a common way to do so is the **forest plot**, which depicts individual studies' estimates and confidence intervals. (You can ignore for now the column of percentages and the final line, "RE Model"; we will return to these later.) In this plot, the larger squares correspond to more precise studies; notice how much narrower their confidence intervals are than the confidence intervals of less precise studies.
 
 
 ```{r meta-forest, fig.cap="Forest plot for Paluck et al. meta-analysis. Studies are ordered from smallest to largest standard error."}
@@ -235,10 +234,7 @@ metafor::forest(re.m,
 
 Fixed-effects meta-analysis is a simple way to average studies' estimates while giving more weight to larger, more precise studies. Specifically, fixed-effects meta-analysis is a weighted average in which each study's estimate is weighted by its inverse-variance (i.e., the inverse of its squared standard error). This makes sense because larger, more precise studies have smaller variances, so they should get more weight in the analysis. The fixed-effects pooled estimate is:
 
-$$\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}$$ where $k$ is the number of studies, $\widehat{\theta}_i$ is the point estimate of the $i^{th}$ study, and $w_i = 1/\widehat{\sigma}^2_i$ is study $i$'s weight in the analysis (i.e., the inverse of its variance).
-
-> \[Do we want to show the SE for $\widehat{\mu}$?\] NC: I am conflicted about this. On one hand, it seems odd that we don't give any information about how one would perform a hypothesis test with the overall effect size estimate. On the other hand, I don't want to scare people with too many equations. Maybe we can address this concern by explaining in simple language what the equations are doing and then putting the actual equation in the margin?
-
+$$\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}$$ where $k$ is the number of studies, $\widehat{\theta}_i$ is the point estimate of the $i^{th}$ study, and $w_i = 1/\widehat{\sigma}^2_i$ is study $i$'s weight in the analysis (i.e., the inverse of its variance).[^9]
 
 In Paluck et al.'s meta-analysis, we would calculate the fixed-effects estimate, $\widehat{\mu}$, as:
 
@@ -247,6 +243,11 @@ $$\widehat{\mu} = \frac{ \frac{0.03}{0.08^2} + \frac{0.30}{0.08^2} + \frac{0.00}
 
 
 We thus estimate that the effect size in these studies is a standardized mean difference of $\widehat{\mu}$ = `r round(as.numeric(fe.m$b), 2)`; 95% confidence interval \[`r paste0(round(fe.m$ci.lb, 2), ", ", round(fe.m$ci.ub, 2))`\]; $p=$ \< .001. That is, we estimated that intergroup contact was associated with a decrease in prejudice of `r round(as.numeric(fe.m$b), 2)` standard deviations.
+
+
+[^9]: The standard error of the fixed-effects $\Mhat$ itself is simply $\sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}$. This can be used to construct a confidence interval or $p$-value.
+
+
 
 ### Limitations of fixed-effects meta-analysis
 
@@ -258,9 +259,12 @@ Does this presence of heterogeneity remind you of anything from when we analyzed
 
 ### Random-effects meta-analysis
 
-Whereas fixed-effects meta-analysis essentially postulates that all studies in the meta-analysis have the same population effect size, $\mu$, random-effects meta-analysis instead postulates that studies' population effects come from a normal distribution with mean $\mu$ and standard deviation $\tau$.[^2] The larger the standard deviation, $\tau$, the more heterogeneous the effects are across studies. A random-effects model then estimates both $\mu$ and $\tau$, for example by maximum likelihood (@dersimonian1986meta; @brockwell2001comparison).
+Whereas fixed-effects meta-analysis essentially postulates that all studies in the meta-analysis have the same population effect size, $\mu$, random-effects meta-analysis instead postulates that studies' population effects come from a normal distribution with mean $\mu$ and standard deviation $\tau$.[^2] The larger the standard deviation, $\tau$, the more heterogeneous the effects are across studies. A random-effects model then estimates both $\mu$ and $\tau$, for example by maximum likelihood (@dersimonian1986meta; @brockwell2001comparison).[^10]
 
 [^2]: Technically, other specifications of random-effects meta-analysis are possible. For example, robust variance estimation does not require making assumptions about the distribution of effects across studies [@hedges2010robust\]. These approaches also have other substantial advantages, like their ability to handle effects that are clustered (e.g., because some papers contribute multiple estimates; @hedges2010robust; @pustejovsky2021meta) and their ability to provide better inference in meta-analyses with relatively few studies [@tipton2015small]. For these reasons, we tend to use these methods by default when conducting meta-analyses.
+
+[^10]: A confidence interval and $p$-value for the random-effects estimate $\Mhat$ can be obtained using standard theory for maximum likelihood estimates [DOES THIS HAVE AN ANTECEDENT?] with an additional adjustment that helps account for uncertainty in estimating $\tau$ [@knapp2003improved].
+
 
 The resulting estimate $\widehat{\mu}$ is still a weighted average of studies' estimates, as for fixed-effects meta-analysis:
 
