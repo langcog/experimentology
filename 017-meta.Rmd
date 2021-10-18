@@ -12,10 +12,121 @@
 library("tidyverse")
 library("metafor")
 library("MetaUtility")
+library("PublicationBias")
 
 # rounding digits
 digits = 2
+
+# helper fn taken from https://osf.io/ue36m/
+sim_data2 = function(p,
+                     keep.all.studies = FALSE) {
+
+  N = p$k * p$per.cluster
+
+  # generate cluster random intercepts
+  # called "zeta" in paper
+  # these are normal even when true effect dist is exponential
+  gam1 = rnorm( n = p$k, mean = 0, sd = sqrt( p$V.gam ) )
+  gam1i = rep( gam1, each = p$per.cluster )
+
+  # generate individual-study random intrcepts
+  # these are called "gamma" in the paper
+  # these are either normal or exponential
+  if ( p$true.dist == "norm" ) gam2i = rnorm( n = N, mean = 0, sd = sqrt( p$V - p$V.gam ) )
+
+    if ( p$true.dist == "exp" ) {
+      true.effect.var = p$V - p$V.gam
+      # set var using properties of exponential
+      gam2i = rexp( n = N, rate = true.effect.var^(-1/2) )
+      # shift to have mean of 0
+      # use fact that var = mean^2 in exponential
+      gam2i = gam2i - true.effect.var^(1/2)
+    }
+
+
+  # individual study SEs
+  sei = runif( n = N, min = p$sei.min, max = p$sei.max )
+
+  # individual study means
+  if ( p$SE.corr == TRUE ) {
+    beta = 6
+    mui = p$mu + beta * sei + gam1i + gam2i
+
+    # recenter them to have desired mean of p$mu
+    # because E[sei}]
+    mui = mui - beta * mean(sei)
+
+    cor(sei, mui)
+  } else {
+    mui = p$mu + gam1i + gam2i
+  }
+
+  # individual study point estimates
+  yi = rnorm( n = N, mean = mui, sd = sei )
+
+  # NEW: make cluster variable
+  # this way, if we generate (say) 5 studies per "cluster", but V.gam = 0 in order
+  #  to effectively generate without clustering, the cluster variable we ultimately
+  #  pass to robumeta correctly reflects the lack of clustering
+  if ( p$V.gam == 0 ) cluster = 1:N else cluster = rep(1:p$k, each = p$per.cluster)
   
+  # suppress warnings from cor if SD of mui is 0 (fixed-effects model)
+  d = suppressWarnings( data.frame( cluster = cluster,
+                                    Study.name = 1:N,
+                                    mui,
+                                    yi = yi,
+                                    sei = sei,
+                                    vi = sei^2,
+                                    pval = 2 * ( 1 - pnorm( abs(yi) / sei ) ),
+                                    SE.corr.emp = cor(sei, mui) ) )  # empirical correlation
+  
+  # 1-tailed publication bias
+  signif = d$pval < 0.05 & d$yi > 0
+  publish = rep( 1, nrow(d) )
+  publish[ signif == FALSE ] = rbinom( n = sum(signif == FALSE), size = 1, prob = 1/p$eta )
+
+  d$weight = 1
+  d$weight[ signif == 0 ] = p$eta
+
+  # optionally, also select for small SE
+  # Fi as defined in Supplement
+  # tertiles of empirical SEs prior to selection
+  Fi = rep( 1, nrow(d) )  # so that it has no effect if we're not selecting based on SE
+  if ( p$select.SE == TRUE ) {
+    terts = p$sei.min + (p$sei.max - p$sei.min) * c(1/3, 2/3)
+    # prob of inclusion based on SE
+    P.Fi = rep(NA, nrow(d))
+    P.Fi[ d$sei < terts[1] ] = 1
+    #Fi[ d$sei >= terts[1] ] = 0
+    P.Fi[ d$sei >= terts[1] & d$sei < terts[2] ] = .75
+    P.Fi[ d$sei >= terts[2] ] = .5
+    Fi = rbinom( n = nrow(d),
+                 size = 1,
+                 prob = P.Fi )
+  }
+
+  if ( keep.all.studies == FALSE ) d = d[ publish == 1 & Fi == 1, ]
+  if ( keep.all.studies == TRUE ){
+    # just add the indicators
+    d$publish = publish
+    d$Fi = Fi
+  }
+
+  # record the mean empirical SE (after publication bias) as sanity check on SE selection
+  # but avoid errors if d now has 0 studies
+  if ( nrow(d) > 0 ) {
+    d$SE.mean.emp = mean(d$sei)
+    d$P.select.SE.emp = mean(Fi)
+    d$P.publish.emp = mean(publish)
+    return(d)
+  } else {
+    # still return the empty dataset for use in doParallel
+    return(d)
+  }
+}
+```
+
+```{r meta-paluck}  
 DF <- read.csv("data/Contact_quant_outcomes.csv")
 
 
@@ -136,7 +247,7 @@ In Paluck et al.'s meta-analysis, we would calculate the fixed-effects estimate,
 $$\widehat{\mu} = \frac{ \frac{0.03}{0.08^2} + \frac{0.30}{0.08^2} + \frac{0.00}{0.10^2} + \frac{0.00}{0.11^2} + \cdots }{ \frac{1}{0.08^2} + \frac{1}{0.08^2} + \frac{1}{0.10^2} + \frac{1}{0.11^2} + \cdots }$$
 
 
-We thus estimate that the effect size in this studies is a standardized mean difference of $\widehat{\mu}$ = `r round(as.numeric(fe.m$b), 2)`; 95% confidence interval \[`r paste0(round(fe.m$ci.lb, 2), ", ", round(fe.m$ci.ub, 2))`\]; $p=$ \< .001. That is, we estimated that intergroup contact was associated with a decrease in prejudice of `r round(as.numeric(fe.m$b), 2)` standard deviations.
+We thus estimate that the effect size in these studies is a standardized mean difference of $\widehat{\mu}$ = `r round(as.numeric(fe.m$b), 2)`; 95% confidence interval \[`r paste0(round(fe.m$ci.lb, 2), ", ", round(fe.m$ci.ub, 2))`\]; $p=$ \< .001. That is, we estimated that intergroup contact was associated with a decrease in prejudice of `r round(as.numeric(fe.m$b), 2)` standard deviations.
 
 ### Limitations of fixed-effects meta-analysis
 
@@ -223,8 +334,6 @@ Within-study biases affect the internal validity of the meta-analyzed studies' i
 
 To mitigate this problem, meta-analysts should try to define study eligibility criteria that reduce within-study biases (for example, by excluding nonrandomized studies when confounding is of concern, as @paluck2019contact did). After data have been collected, meta-analysts should also qualitatively assess studies' risks of bias using established rating tools [@art]. Additionally, it is often informative to conduct statistical sensitivity analyses that help characterize how sensitive meta-analysis results may be to residual bias that cannot be eliminated by limiting study eligibility [@art].
 
-<!-- ### Applied example -->
-
 In Paluck et al.'s meta-analysis, one way they tried to counteract within-study biases was by only including studies that randomly assigned participants to receive a contact intervention. However, they could have gone a step further by coding for the extent to which, for example, participants may have differentially dropped out of the study. For example, imagine that (a) both a contact intervention and control condition have an equal distribution of prejudice scores and (b) the contact intervention does not significantly impact prejudice. If highly prejudiced people are more likely to drop out of the study when they are in the contact vs. control condition (e.g., because they do not like interacting with a member of a minority group), the mean of the contact intervention will become smaller. In this scenario, researchers may erroneously conclude that the contact intervention reduced depression, despite the fact that the effect can be attributed to differential attrition.
 
 ### Across-study biases
@@ -255,15 +364,84 @@ As in the context of within-study biases, meta-analysts should try to mitigate a
 
 [^5]: However, evidence is mixed regarding whether including gray literature actually reduces across-study biases in meta-analysis [@tsuji2020addressing; @sapbe].
 
-There are also statistical methods to help assess how robust the results may be to across-study biases. Among the most popular tools to assess and correct for publication bias is the **funnel plot** [@duval2000trim; @egger1997bias], a graph relating the meta-analyzed studies' point estimates to some measure of their precision, such as sample size or standard error. Here is an example of a funnel plot for a hypothetical meta-analysis with no publication bias:
+There are also statistical methods to help assess how robust the results may be to across-study biases. Among the most popular tools to assess and correct for publication bias is the **funnel plot** [@duval2000trim; @egger1997bias], a graph relating the meta-analyzed studies' point estimates to some measure of their precision, such as sample size or standard error. Here is an example of a type of funnel plot [@sapb] for a simulated meta-analysis of 100 studies with no publication bias:
 
-> \[Insert generic funnel plot\]
+<!-- MM: I used a type of enhanced funnel here that I believe helps visualize publication bias better than standard funnels. Mike, up to you if you want regular funnels instead. I've included commented code for those as well. I didn't describe the purpose of the grey diamonds for now. Text snippet if we decide to briefly mention that: "the grey diamonds represent worst-case point estimate within only the studies with $p \ge 0.05$ or negative estimates." -->
 
-Notice that larger studies (those with smaller standard errors) cluster more closely around the mean than do smaller studies, but large and small studies alike would have point estimates centered around the mean. That is, the funnel plot is symmetric. In contrast, a funnel plot might look asymmetric:
 
-> \[Insert example of asymmetric funnel plot. I think Paluck's will work, and it's a great example of asymmetry that could reflect substantive differences between large and small studies.\]
+```{r meta-funnel-unbiased, fig.cap = "Significance funnel plot for a meta-analysis simulated to have no publication bias. Orange points: studies with $p<0.05$ and positive estimates. Grey points: studies with $p \ge 0.05$ or negative estimates. Black diamond: random-effects estimate of $\Mhat$ within all studies."}
+# simulate meta with publication bias, but keep all studies
+set.seed(451)
+d.all = sim_data2( data.frame( k = 100,
+                            per.cluster = 1,
+                            mu = .5,
+                            V = 1,
+                            V.gam = 0,  # no clustering
+                            sei.min = 0.10,
+                            sei.max = 1,
+                            true.dist = "norm",
+                            SE.corr = FALSE,
+                            select.SE = FALSE,
+                            eta = 10  # set publication bias
+),
+keep.all.studies = TRUE )  
 
-Here, there appears to be a correlation between studies' estimates and their standard errors, such that smaller studies tend to have larger estimates than do larger studies. Such a correlation can indicate the presence of **"small-study effects"**, meaning that effect sizes differ systematically between small and large studies [@sterne2011recommendations].
+# published studies only
+dp = d.all %>% filter(publish == TRUE)
+
+meta.all = rma(yi = yi,
+            vi = vi,
+            data = d.all,
+            method = "REML",
+            knha = TRUE)
+
+meta.NA = rma(yi = yi,
+            vi = vi,
+            data = d.all %>% filter(pval > 0.05 | yi < 0),
+            method = "REML",
+            knha = TRUE)
+
+p1 = significance_funnel(yi = meta.all$yi,
+                         vi = meta.all$vi,
+                         favor.positive = TRUE,
+                         plot.pooled = TRUE,
+                         est.all = meta.all$b,
+                         est.N = meta.NA$b) 
+p1 + scale_x_continuous( breaks = seq(-2.5, 3.5, 0.5) )
+
+# alternative: standard funnel without contour enhancement
+# MM considers less preferable
+# funnel(meta.all, 
+#        xlab = "Standardized mean difference")
+```
+
+Notice that larger studies (those with smaller standard errors) cluster more closely around the mean of `r round(meta.all$b, digits)` than do smaller studies, but large and small studies alikehave point estimates centered around the mean. That is, the funnel plot is symmetric. In contrast, a funnel plot might look asymmetric. Here is what happens to our hypothetical meta-analysis if all studies with $p<0.05$ and positive estimates are published, but only 10% of studies with $p \ge 0.05$ or with negative estimates are published:
+
+```{r meta-funnel-biased, fig.cap = "Significance funnel plot for the same simulated meta-analysis after publication bias has occurred. Orange points: studies with $p<0.05$ and positive estimates. Grey points: studies with $p \ge 0.05$ or negative estimates. Black diamond: random-effects estimate of $\Mhat$ within all studies."}
+meta.p = rma(yi = yi,
+            vi = vi,
+            data = dp,
+            method = "REML",
+            knha = TRUE)
+
+meta.p.NA = rma(yi = yi,
+            vi = vi,
+            data = dp %>% filter(pval > 0.05 | yi < 0),
+            method = "REML",
+            knha = TRUE)
+
+p2 = significance_funnel(yi = meta.p$yi,
+                         vi = meta.p$vi,
+                         favor.positive = TRUE,
+                         plot.pooled = TRUE,
+                         est.all = meta.p$b,
+                         est.N = meta.p.NA$b) 
+
+p2 + scale_x_continuous( breaks = seq(-1, 3.5, 0.5) )
+```
+
+
+Notice that the introduction of publication has dramatically inflated the pooled estimate from `r round(meta.all$b, digits)` to `r round(meta.p$b, digits)`.[^8] Also, there appears to be a correlation between studies' estimates and their standard errors, such that smaller studies tend to have larger estimates than do larger studies. Such a correlation can indicate the presence of **"small-study effects"**, meaning that effect sizes differ systematically between small and large studies [@sterne2011recommendations].
 
 Several popular statistical methods, such as Trim-and-Fill [@duval2000trim\] and Egger's regression \[@egger1997bias\] are designed to quantify this type of asymmetry. It is critical to note that small-study effects need not always represent publication bias: they can also reflect genuine substantive differences between small and large studies \[@egger1997bias; @lau2006case]. For example, in a meta-analysis of intervention studies, if the most effective interventions are also the most expensive or difficult to implement, these highly effective interventions might be used primarily in the smallest studies. Funnel plot methods detect these types of small-study effects as well as certain limited forms of publication bias [@smt].[^6]
 
@@ -271,7 +449,7 @@ Several popular statistical methods, such as Trim-and-Fill [@duval2000trim\] and
 
 For these reasons, assessments of publication bias in meta-analysis should rely not only on funnel plots [@smt]. There are numerous other methods that can be applied as well, such as **selection models**.[^7] These models can detect other forms of publication bias that funnel plots may not detect, such as publication bias that favors significant results.
 
-[^7]: High-level overviews of selection models are given in @mcshane2016adjusting and @smt. for more methodological detail, see for example @hedges1984estimation, @iyengar1988, and @vevea1995. For a tutorial on fitting and interpreting selection models, see @smt.
+
 
 You may also have heard of "$p$-methods" to detect across-study biases such as $p$-curve and $p$-uniform [@simonsohn2014p, @simonsohn2014b, @van2015meta\]. These methods essentially assess whether the significant $p$-values "bunch up" just under 0.05, which is taken to indicate publication bias. These methods are increasingly popular in psychology and have merits. However, it is important to note that these methods are actually simplified versions of selection models \[e.g., @hedges1984estimation\] that work only under considerably more restrictive settings than do the original selection models \[for example, when there is not heterogeneity across studies; @mcshane2016adjusting]. For this reason, it is usually (although not always) better to use selection models in place of the more restrictive $p$-methods.
 
@@ -279,6 +457,10 @@ In Paluck and colleagues' meta-analysis, they:
 
 -   Used a regression-based approach for publication bias. Found a significant relation between standard error and effect size, which may be driven by publication bias. Used this same regression-based approach to try to correct for publication bias. Effect size was close-to-zero when doing so. Concluded that publication bias is a problem.
 -   Informally compared studies that were pre-registered vs. not pre-registered. Found that the effect size among pre-registered studies is close to zero. Concluded that publication bias is a problem.
+
+
+
+[^7]: High-level overviews of selection models are given in @mcshane2016adjusting and @smt. for more methodological detail, see for example @hedges1984estimation, @iyengar1988, and @vevea1995. For a tutorial on fitting and interpreting selection models, see @smt.
 
 <!-- ## Summary -->
 
