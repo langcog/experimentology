@@ -350,6 +350,8 @@ There are also statistical methods to help assess how robust the results may be 
 
 <!-- MM: I used a type of enhanced funnel here that I believe helps visualize publication bias better than standard funnels. Mike, up to you if you want regular funnels instead. I've included commented code for those as well. I didn't describe the purpose of the grey diamonds for now. Text snippet if we decide to briefly mention that: "the grey diamonds represent worst-case point estimate within only the studies with $p \ge 0.05$ or negative estimates." -->
 
+<!-- NC: I like the funnel plot, but it keeps duplicating the plots for some reason" -->
+
 
 ```{r meta-funnel-unbiased, fig.cap = "Significance funnel plot for a meta-analysis simulated to have no publication bias. Orange points: studies with $p<0.05$ and positive estimates. Grey points: studies with $p ge 0.05$ or negative estimates. Black diamond: random-effects estimate of $Mhat$ within all studies."}
 # simulate meta with publication bias, but keep all studies
@@ -383,18 +385,18 @@ meta.NA = rma(yi = yi,
             method = "REML",
             knha = TRUE)
 
-p1 = significance_funnel(yi = meta.all$yi,
-                         vi = meta.all$vi,
-                         favor.positive = TRUE,
-                         plot.pooled = TRUE,
-                         est.all = meta.all$b,
-                         est.N = meta.NA$b) 
-p1 + scale_x_continuous( breaks = seq(-2.5, 3.5, 0.5) )
+significance_funnel(yi = meta.all$yi,
+                    vi = meta.all$vi,
+                    favor.positive = TRUE,
+                    plot.pooled = TRUE,
+                    est.all = meta.all$b,
+                    est.N = meta.NA$b)
+# scale_x_continuous( breaks = seq(-2.5, 3.5, 0.5))
 
 # alternative: standard funnel without contour enhancement
-# MM considers less preferable
- funnel(meta.all, 
-        xlab = "Standardized mean difference")
+# MM considers less preferable. NC concurs.
+# funnel(meta.all, 
+#        xlab = "Standardized mean difference")
 ```
 
 Notice that larger studies (those with smaller standard errors) cluster more closely around the mean of `r round(meta.all$b, digits)` than do smaller studies, but large and small studies alikehave point estimates centered around the mean. That is, the funnel plot is symmetric. In contrast, a funnel plot might look asymmetric. Here is what happens to our hypothetical meta-analysis if all studies with $p<0.05$ and positive estimates are published, but only 10% of studies with $p \ge 0.05$ or with negative estimates are published:
@@ -412,54 +414,59 @@ meta.p.NA = rma(yi = yi,
             method = "REML",
             knha = TRUE)
 
-p2 = significance_funnel(yi = meta.p$yi,
-                         vi = meta.p$vi,
-                         favor.positive = TRUE,
-                         plot.pooled = TRUE,
-                         est.all = meta.p$b,
-                         est.N = meta.p.NA$b) 
+significance_funnel(yi = meta.p$yi,
+                    vi = meta.p$vi,
+                    favor.positive = TRUE,
+                    plot.pooled = TRUE,
+                    est.all = meta.p$b,
+                    est.N = meta.p.NA$b) 
 
-p2 + scale_x_continuous( breaks = seq(-1, 3.5, 0.5) )
+#p2 + scale_x_continuous( breaks = seq(-1, 3.5, 0.5) )
 ```
 
 
 Notice that the introduction of publication has dramatically inflated the pooled estimate from `r round(meta.all$b, digits)` to `r round(meta.p$b, digits)`.[^8] Also, there appears to be a correlation between studies' estimates and their standard errors, such that smaller studies tend to have larger estimates than do larger studies. This is often called *funnel plot asymmetry*.
 
-Several popular statistical methods, such as Trim-and-Fill [@duval2000trim\] and Egger's regression \[@egger1997bias\] are designed to quantify funnel plot asymmetry. However, one limitation is that funnel plot asymmetry is not always representative of publication bias. Indeed, soemtimes funnel plot asymmetry is driven by  genuine differences in the effects being studied in small and large studies [@egger1997bias; @lau2006case]. For example, in a meta-analysis of intervention studies, if the most effective interventions are also the most expensive or difficult to implement, these highly effective interventions might be used primarily in the smallest studies. Funnel plot methods detect these types of small-study effects as well as certain limited forms of publication bias [@smt].[^14] For these reasons, assessments of publication bias in meta-analysis should rely not only on funnel plots [@smt]. There are numerous other methods that can be applied as well, such as **selection models**.[^15] These models can detect other forms of publication bias that funnel plots may not detect, such as publication bias that favors significant results.
+Several popular statistical methods, such as Trim-and-Fill [@duval2000trim] and Egger's regression [@egger1997bias] are designed to quantify funnel plot asymmetry. However, one limitation is that funnel plot asymmetry is not always representative of publication bias. Indeed, sometimes funnel plot asymmetry is driven by  genuine differences in the effects being studied in small and large studies [@egger1997bias; @lau2006case]. For example, in a meta-analysis of intervention studies, if the most effective interventions are also the most expensive or difficult to implement, these highly effective interventions might be used primarily in the smallest studies. Thus, funnel plot methods may be indicative of publication bias--but they may more simply driven by small-study effects [@smt].[^14] For these reasons, assessments of publication bias in meta-analysis should rely not only on funnel plots [@smt]. There are numerous other methods that can be applied as well, such as **selection models**.[^15] These models can detect other forms of publication bias that funnel plots may not detect, such as publication bias that favors significant results.
 
 [^14]: Essentially, funnel plots and most related methods can detect publication bias in which (1) small studies with large positive point estimates are more likely to be published than small studies with small or negative point estimates; and (2) the largest studies are published regardless of the magnitude of their point estimates. Funnel plots may not detect publication bias that favors significant results. For more detail on these points, see @smt.
 
-You may also have heard of "$p$-methods" to detect across-study biases such as $p$-curve and $p$-uniform [@simonsohn2014p, @simonsohn2014b, @van2015meta]. These methods essentially assess whether the significant $p$-values "bunch up" just under 0.05, which is taken to indicate publication bias. These methods are increasingly popular in psychology and have merits. However, it is important to note that these methods are actually simplified versions of selection models [e.g., @hedges1984estimation] that work only under considerably more restrictive settings than do the original selection models [for example, when there is not heterogeneity across studies; @mcshane2016adjusting]. For this reason, it is usually (although not always) better to use selection models in place of the more restrictive $p$-methods.
+You may also have heard of "$p$-methods" to detect across-study biases such as $p$-curve and $p$-uniform [@simonsohn2014p; @simonsohn2014b; @van2015meta]. These methods essentially assess whether the significant $p$-values "bunch up" just under 0.05, which is taken to indicate publication bias. These methods are increasingly popular in psychology and have merits. However, it is important to note that these methods are actually simplified versions of selection models [e.g., @hedges1984estimation] that work only under considerably more restrictive settings than do the original selection models [for example, when there is not heterogeneity across studies; @mcshane2016adjusting]. For this reason, it is usually (although not always) better to use selection models in place of the more restrictive $p$-methods.
 
-[^15]: High-level overviews of selection models are given in @mcshane2016adjusting and @smt. for more methodological detail, see for example @hedges1984estimation, @iyengar1988, and @vevea1995. For a tutorial on fitting and interpreting selection models, see @smt.
+[^15]: High-level overviews of selection models are given in @mcshane2016adjusting and @smt. For more methodological detail, see @hedges1984estimation, @iyengar1988, and @vevea1995. For a tutorial on fitting and interpreting selection models, see @smt.
 
 #### Applied example
-In Paluck and colleagues' meta-analysis, they used a regression-based approach to assess and correct for publication bias. This approach provided significant evidence of a relationship between the standard error and effect size (i.e., evidence of an asymmetric funnel plot). This asymettric funnel plot, of course, could be driven by small study effects, but it may be indicative of publication bias. Paluck and colleague subsequently used this same regression-based approach to try to correct for potential  publication bias. Results from this model indicated that the bias-corrected effect size estimate was close to zero. Consequently, Paluck and colleagues concluded that publication bias may be a problem. In other words, even though all studies estimated that intergroup contact decreased prejudice, it is possible that there are studies that did not find this (or found that intergroup contact increased prejudice.)
+In Paluck and colleagues' meta-analysis, they used a regression-based approach to assess and correct for publication bias. This approach provided significant evidence of a relationship between the standard error and effect size (i.e., evidence of an asymmetric funnel plot). This asymettric funnel plot, of course, could be driven by small study effects, but it may be indicative of publication bias. Paluck and colleague subsequently used this same regression-based approach to try to correct for potential  publication bias. Results from this model indicated that the bias-corrected effect size estimate was close to zero. Consequently, Paluck and colleagues concluded that publication bias may be a problem. In other words, even though all studies estimated that intergroup contact decreased prejudice, it is possible that there are studies that did not find this (or found that intergroup contact increased prejudice).
+
+Taken together, Paluck and colleagues' use of meta-analysis provided several important insights that would have been easy to miss in a non-quantitative review:
+1. Despite a preponderance of non-significant findings, real-world intergroup contact interventions are estimated to significant decrease prejudice by `r round(as.numeric(re.m$b), 2)` standard deviations.
+2. There is significant heterogeneity in intergroup contact effects, suggesting that there are important moderators of the effectiveness of these interventions.
+3. Publication bias is a concern, suggesting the need for follow-up research that will be published regardless of the outcome.
 
 ::: accident-report
 ⚠️ Garbage in, garbage out? Meta-analyzing bad research (Coles et al. 2019)
 
-You may have heard that Botox can help eliminate wrinkles. But some researchers have also suggested that it may help treat clinical depression when used to paralyze the muscles associated with frowning. As crazy as they may sound, a quick examination of the literature would lead many to conclude that this treatment works. Studies that randomly assign depressed patients to either receive Botox injections or saline injections do indeed find that Botox recipients exhibit decreases in depression. And when you combine all available evidence in a meta-analysis, you find that this difference is quite large: $\widehat{\mu}$ = 0.83, 95% CI [0.52, 1.14].
+You may have heard that Botox can help eliminate wrinkles. But some researchers have also suggested that it may help treat clinical depression when used to paralyze the muscles associated with frowning. As crazy as they may sound, a quick examination of the literature would lead many to conclude that this treatment works. Studies that randomly assign depressed patients to either receive Botox injections or saline injections do indeed find that Botox recipients exhibit decreases in depression. And when you combine all available evidence in a meta-analysis, you find that this difference is quite large: $\widehat{d}$ = 0.83, 95% CI [0.52, 1.14].
 
 However, @coles2019does pointed out that there is a problem with within-study bias. Participants are not supposed to know whether they have been randomly assigned to receive Botox or a control saline injections. However, only one of these treatments leads the upper half of your face to be paralyzed, and after a couple of weeks you're likely to figure out whether you received the Botox treatment or control saline injection. Thus, it is possible that the apparent effect of Botox on depression is actually an effect of placebo. The meta-analytic conclusions are potentially undermined by within-study bias.
 
 @coles2019does also found evidence of between-study bias. When coding the effect sizes in the literature, they found that 51% of the outcomes measured were not reported by the study authors. For example, researchers may have collected two measures of depression, but only reported one in the manuscript. This raises concerns about selective reporting: that researchers examining the effects of Botox on depression are only reporting the outcomes that demonstrate an effect, while hiding away the outcomes that do not. In this scenario, any meta-analytic conclusions are potentially undermined by between-study bias.
 
-This is sometimes called the Garbage In, Garbage Out problem in meta-analysis. If within- and between-study bias is not properly mitigated, it is difficult to conclude make valid inferences in a meta-analysis.
+@coles2019does provides a great example of the "garbage in, garbage out" problem we alluded to throughout this chapter. If within- and between-study bias is not properly mitigated, it is difficult to conclude make valid inferences in a meta-analysis.
 :::
 
 <!-- ## Summary -->
 
 ::: exercise
-You read the following result in the abstract of a meta-analysis: "In 83 randomized studies of middle school children, replacing one hour of class time with mindfulness meditation significantly improved standardized test scores (standardized mean difference $\widehat{\mu} = 0.05$; 95% confidence interval: \[$0.01, 0.09$\]; $p<0.05$)." Why is this a problematic way to report on meta-analysis results? Suggest a better sentence to replace this one.
+Imagine that you read the following result in the abstract of a meta-analysis: "In 83 randomized studies of middle school children, replacing one hour of class time with mindfulness meditation significantly improved standardized test scores (standardized mean difference $\widehat{\mu} = 0.05$; 95% confidence interval: \[$0.01, 0.09$\]; $p<0.05$)." Why is this a problematic way to report on meta-analysis results? Suggest a better sentence to replace this one.
 
-You read the rest of the meta-analysis, which concludes with: "These findings demonstrate robust benefits of meditation for children, suggesting that test scores improve even when the meditation is introduced as a replacement for normal class time." You recall that the heterogeneity estimate was $\widehat{\tau} = 0.90$. Do you think that this result regarding the heterogeneity tends to support, or rather tends to undermine, the concluding sentence of the meta-analysis? Why?
+As you read the rest of the meta-analysis, you find that the authors conclude that "These findings demonstrate robust benefits of meditation for children, suggesting that test scores improve even when the meditation is introduced as a replacement for normal class time." You recall that the heterogeneity estimate was $\widehat{\tau} = 0.90$. Do you think that this result regarding the heterogeneity tends to support, or rather tends to undermine, the concluding sentence of the meta-analysis? Why?
 
 What kinds of within-study biases would concern you in this meta-analysis? How might you assess the credibility of the meta-analyzed studies and of the meta-analysis as whole in light of these possible biases?
 :::
 
 ::: exercise
-You do a meta-analysis on a literature in which statistically significant results in either direction are much more likely to be published that nonsignificant results. Draw the funnel plot you would expect to see. Is the plot symmetric or asymmetric?
+Imagine you conduct a meta-analysis on a literature in which statistically significant results in either direction are much more likely to be published that nonsignificant results. Draw the funnel plot you would expect to see. Is the plot funnel symmetric or asymmetric?
 :::
 
 ::: exercise
