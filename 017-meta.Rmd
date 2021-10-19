@@ -194,7 +194,7 @@ In a widely-cited study on the power of describing social norms, @goldstein2008r
 At first glance, you might conclude that these studies indicate that social norm messages do not reliably impact towel reuse. You might even go a step further and try to think of explanations for why one team found the effect, but others did not. (Maybe the messages change behavior when guest receive nice fluffy towels, but not when they  receive cheap, low-quality towels.) However, this is a case where binary thinking about $p$-values can mislead us. When @scheibehenne2016 combined the evidence via a *meta-analysis*, they found that the results across these studies were, for the most part, quite consistent. Participants who received a social norm message were slightly more likely to reuse their towels in four out of five of the studies--but most of the studies simply did not have large enough samples for this difference to be statistically significant. When combined, however, meta-analysis indicated that social norm messages did have a significant overall effect on hotel towel reuse.
 :::
 
-When students hear the term "review", they often have flashbacks to times where they threw some search term into Google Scholar, downloaded a bunch of articles that looked interesting, spent a few days reading those articles, and then wrote a summary of what they learned. This is one of many ways of performing a review (see [@grant2009typology]), but this chapter focuses on a specific type of quantitative review called *meta-analysis*.
+When students hear the term "review", they often have flashbacks to times where they threw some search term into Google Scholar, downloaded a bunch of articles that looked interesting, spent a few days reading those articles, and then wrote a summary of what they learned. This is one of many ways of performing a review (see @grant2009typology), but this chapter focuses on a specific type of quantitative review called *meta-analysis*.
 
 One of the central parts of the meta-analysis is extracting *effect sizes* from individual studies and then combining these effect sizes. (Feel free to check back to Chapter \@ref(estimation) if you need a refresher on effect sizes. We'll wait here for you, we promise.) By combining information from multiple studies, meta-analysis often provides more precise estimates of an effect size than any single study. In addition, meta-analysis also allows the researcher to look at the extent to which an effect varies  across studies. If an effect does vary across studies, meta-analysis can be used to test whether certain study characteristics systematically produce different results (e.g., whether an effect is larger in certain world regions).
 
@@ -236,17 +236,17 @@ In Paluck et al.'s meta-analysis, we would calculate the fixed-effect estimate, 
 $$\widehat{\mu} = \frac{ \frac{\widehat{\theta}_{study1}}{\widehat{\sigma}^2_{study1}} + \frac{\widehat{\theta}_{study2}}{\widehat{\sigma}^2_{study2}} + \cdots}{ \frac{1}{\widehat{\sigma}^2_{study1}} + \frac{1}{\widehat{\sigma}^2_{study2}} + \cdots } =
 \frac{ \frac{0.03}{0.08^2} + \frac{0.30}{0.08^2} + \cdots }{ \frac{1}{0.08^2} + \frac{1}{0.08^2} + \cdots }$$
 
-We thus estimate that the overall effect size in these studies is a standardized mean difference of $\widehat{\mu}$ = `r round(as.numeric(fe.m$b), 2)`; 95% confidence interval \[`r paste0(round(fe.m$ci.lb, 2), ", ", round(fe.m$ci.ub, 2))`\]; $p=$ \< .001. That is, we estimated that intergroup contact was associated with a decrease in prejudice of `r round(as.numeric(fe.m$b), 2)` standard deviations.
+We thus estimate that the overall effect size in these studies is a standardized mean difference of $\widehat{\mu}$ = `r round(as.numeric(fe.m$b), 2)`; 95% confidence interval [`r paste0(round(fe.m$ci.lb, 2), ", ", round(fe.m$ci.ub, 2))`]; $p=$ < .001. Because cohen's $d$ is our effect size index, this means that intergroup contact decreased prejudice by `r round(as.numeric(fe.m$b), 2)` standard deviations.
 
 
-[^9]: The standard error of the fixed-effect $\widehat{\mu}$ is simply $\frac{1}{\sum_{i=1}^k w_i}$. This can be used to construct a confidence interval or $p$-value.
+[^9]: If you are curious, the standard error of the fixed-effect $\widehat{\mu}$ is $\frac{1}{\sum_{i=1}^k w_i}$. This can be used to construct a confidence interval or $p$-value.
 
 
 ### Limitations of fixed-effects meta-analysis
 
-One of the limitations of fixed-effect meta-analysis is that it assumes that the effect size is, well, *fixed* across studies. In other words, fixed-effect meta-analysis assumes that there is a single effect size that all studies are estimating. This is a bold assumption. For example, imagine that intergroup contact (a) decreases prejudice when the groups work together to obtain a resource, but (b) increases prejudice when the groups compete for a resource. If we combined one study that examined intergroup cooperation with a study that examined intergroup competition, we would likely to conclude that the effect of intergroup contact is zero. However, is it reasonable to assume that these studies are examining the same fixed effect? Is it perhaps more useful to think of the *multiple* effects of integroup contact (e.g., one effect for intergroup cooperation and one effect for intergroup competition?) 
+One of the limitations of fixed-effect meta-analysis is that it assumes that the true effect size is, well, *fixed* across studies. In other words, fixed-effect meta-analysis assumes that there is a single effect size that all studies are estimating. This is a bold assumption. For example, imagine that intergroup contact (a) decreases prejudice when the groups succeed at their goal, but (b) increases prejudice when the groups fail at their goal.  If we combined one study that had intergroups fail at their goal with another study that had intergroups succeed at their goal, it would appear that the true effect of intergroup contact is zero. However, is it reasonable to assume that these studies are examining the same fixed effect? Is it perhaps more useful to think of the *multiple* effects of intergroup contact (e.g., one effect for intergroup success and one effect for intergroup failure?) 
 
-In Paluck et al.'s meta-analysis, it turns out that all studies examined intergroup cooperation. However, these studies still differed in other ways that could lead to different effects. For example, some studies recruited adult participants while others recruited children. If we assume that intergroup contact works different for adults vs. children, then it is misleading to talk about a single intergroup contact effect. Instead, we would say that the effects of intergroup contact varies across studies: an idea called **heterogeneity**.
+In Paluck et al.'s meta-analysis, studies differed in several ways that could lead to different true effects. For example, some studies recruited adult participants while others recruited children. If we assume that intergroup contact works different for adults vs. children, then it is misleading to talk about a single intergroup contact effect. Instead, we would say that the effects of intergroup contact varies across studies: an idea called **heterogeneity**.
 
 Does this presence of heterogeneity remind you of anything from when we analyzed repeated-measures data in Chapter \@ref(models) on models? Recall that, with repeated-measures data, we had dealt with the possibility of heterogeneity across participants by introducing participant-level random intercepts to our regression model. Turns out that we can do a similar thing in meta-analysis!
 
@@ -259,7 +259,7 @@ Whereas fixed-effect meta-analysis essentially assumes that all studies in the m
 [^11]: A confidence interval and $p$-value for the random-effects estimate $\widehat{\mu}$ can be obtained using standard theory for maximum likelihood estimates with an additional adjustment that helps account for uncertainty in estimating $\tau$ [@knapp2003improved].
 
 
-Like fixed-effect meta-analysis, the random-effects estimate of $\widehat{\mu}$ is still a weighted average of studies' estimates: $$\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}$$
+Like fixed-effect meta-analysis, the random-effects estimate of $\widehat{\mu}$ is still a weighted average of studies' effect size estimates: $$\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}$$
 
 However, in random-effects meta-analysis, the inverse-variance weights now incorporate heterogeneity: $w_i = 1/\left(\widehat{\tau}^2 + \widehat{\sigma}^2_i \right)$. These weights represent the inverse of studies' *marginal* variances, comprising not only statistical error due to their finite sample sizes ($\widehat{\sigma}^2_i$) but also genuine effect heterogeneity ($\widehat{\tau}^2$).[^12]
 
@@ -269,7 +269,7 @@ However, in random-effects meta-analysis, the inverse-variance weights now incor
 
 Remember that in random-effects meta-analysis, the estimate $\widehat{\mu}$ represents only the *mean* population effect across studies. It tells us nothing about how much the effects *vary* across studies. Thus, we recommend always reporting the heterogeneity estimate $\widehat{\tau}$, perhaps supplemented by other related metrics (@riley2011interpretation; @wang2019simple; @mathur_mam; @npphat). Reporting the heterogeneity indicates how consistent or inconsistent the effects are across studies, which may point to the need to investigate *moderators* of the effect (i.e., factors that can cause a shift in the size of the effect, such as the type of intergroup contact intervention).[^13]
 
-[^13]: For example, one approach to investigate moderators in meta-analysis is meta-regression, in which moderators (e.g., type of intergroup contact) are included as covariates in a random-effects meta-analysis model [@thompson2002should]. As in standard regression, coefficients can then be estimated for each moderator, representing the mean difference in population effect between studies with versus without the moderator.
+[^13]: One common approach to investigating moderators in meta-analysis is meta-regression, in which moderators (e.g., type of intergroup contact) are included as covariates in a random-effects meta-analysis model [@thompson2002should]. As in standard regression, coefficients can then be estimated for each moderator, representing the mean difference in population effect between studies with versus without the moderator.
 
 ### Applied example
 
@@ -326,9 +326,9 @@ Meta-analysis is an invaluable tool to synthesize evidence across studies. Howev
 
 Within-study biases--such as demand characteristics, confounds, and order effects--not only impact the validity of individual studies, but also any attempt to synthesize those studies. In other words: garbage in, garbage out. For example, @paluck2019contact noted that early studies on intergroup contact almost exclusively used nonrandomized designs. Imagine a hypothetical study where researchers (a) are studying a completely ineffective intergroup contact intervention, and (b) non-randomly assign low-prejudice people to the intergroup contact condition and high-prejudice people to the control condition. In a scenario like this, the researcher will, of course, find that the prejudice was lower in the intergroup contact condition. However, this is not a true effect of the contact intervention, but rather a spurious effect of non-random assignment. Now imagine repeating this across many studies and then performing a meta-analysis. The meta-analyst would find impressive evidence of an intergroup contact effect, but this is simply driven by systematic non-random assignment. Once again: you put garbage in, you get garbage out.
 
-To mitigate this problem, meta-analysts often exclude studies that may be affected by within-study bias (for example, by excluding nonrandomized studies when confounding is of concern, as done by @paluck2019contact). After data have been collected, meta-analysts often also qualitatively assess studies' risks of bias using established rating tools [@art]. Additionally, meta-analysts often conduct sensitivity analyses that examine how much meta-analysis results change when excluding certain types of studies [@art].
+To mitigate this problem, meta-analysts often exclude studies that may be affected by within-study bias. For example, @paluck2019contact excluded nonrandomized studies to avoid concerns about confounding. After data have been collected, meta-analysts often also qualitatively assess studies' risks of bias using established rating tools [@art]. Doing so allows the meta-analyst to communicate just how much within-study bias there may be. @paluck2019contact did not use this tool, but they could have used it to communicate for example, the extent to which participants may have differentially dropped out of the study. Meta-analysts also often conduct sensitivity analyses that examine how much meta-analysis results change when excluding certain types of studies [@art]. For example, if nonrandom assignment is a concern, a meta-analysts may run the analyses with and without studies using nonrandom assignment in order to determine if including these studies changes the meta-analysis results.
 
-In Paluck et al.'s meta-analysis, one way they tried to counteract within-study biases was by only including studies that randomly assigned participants to receive a contact intervention. However, they could have gone a step further by coding for the extent to which, for example, participants may have differentially dropped out of the study. Doing so helps communicate just how much "garbage" is in the meta-analysis.
+<!-- It would be nice to show the reader an example of a risk of bias rating scale. Doing so would also help clarify what types of within-study biases meta-analysts are typically concerned about. https://drive.google.com/file/d/1Q4Fk3HCuBRwIDWTGZa5oH11OdR4Gbhdo/view-->
 
 ### Across-study biases
 
@@ -342,7 +342,7 @@ In 2014, @franco2014 and colleagues examined the population of 221 studies condu
 What results do you think were most likely to be published? If you guessed "significant results" you have a good intuition about publication bias. Over 60% of studies with statistically significant results were published, compared to the mere 25% of studies that produced only statistically non-significant results. 
 :::
 
-Like within-study biases, meta-analysts often try to across-study biases by being careful about what studies make it into the meta-analysis. Meta-analysts don't only want to capture high-profile, published studies on their effect of interest, but also studies published in low-profile journals and the so-called "gray literature" (i.e., unpublished dissertations and theses; @lefebvre2019searching\].[^5]
+Like within-study biases, meta-analysts often try to mitigate across-study biases by being careful about what studies make it into the meta-analysis. Meta-analysts don't only want to capture high-profile, published studies on their effect of interest, but also studies published in low-profile journals and the so-called "gray literature" (i.e., unpublished dissertations and theses; @lefebvre2019searching\].[^5]
 
 [^5]: Evidence is mixed regarding whether including gray literature actually reduces across-study biases in meta-analysis [@tsuji2020addressing; @sapbe], but it is still common practice to try to oinclude this literature.
 
@@ -359,8 +359,8 @@ d.all = sim_data2( data.frame( k = 100,
                             mu = .5,
                             V = 1,
                             V.gam = 0,  # no clustering
-                            sei.min = 0.10,
-                            sei.max = 1,
+                            sei.min = 0.05,
+                            sei.max = 3,
                             true.dist = "norm",
                             SE.corr = FALSE,
                             select.SE = FALSE,
@@ -393,8 +393,8 @@ p1 + scale_x_continuous( breaks = seq(-2.5, 3.5, 0.5) )
 
 # alternative: standard funnel without contour enhancement
 # MM considers less preferable
-# funnel(meta.all, 
-#        xlab = "Standardized mean difference")
+ funnel(meta.all, 
+        xlab = "Standardized mean difference")
 ```
 
 Notice that larger studies (those with smaller standard errors) cluster more closely around the mean of `r round(meta.all$b, digits)` than do smaller studies, but large and small studies alikehave point estimates centered around the mean. That is, the funnel plot is symmetric. In contrast, a funnel plot might look asymmetric. Here is what happens to our hypothetical meta-analysis if all studies with $p<0.05$ and positive estimates are published, but only 10% of studies with $p \ge 0.05$ or with negative estimates are published:
