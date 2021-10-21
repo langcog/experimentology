@@ -247,7 +247,7 @@ In practice, the thing that is both tricky and good about Bayes Factors is that 
 
 ```{r inference-milk-first, fig.cap="Ratings of the quality of milk-first tea, with the best fitting normal distribution shown in blue (mean shown by the dashed line)."}
 sigma <- 1.25
-n_total <- 48
+n_total <- 20
 
 tea_data <- make_tea_data(n_total, sigma)
 
@@ -258,7 +258,7 @@ ggplot(tea_data, aes(x = rating, fill = condition)) +
   ylab("Number of ratings") + 
   xlab("Quality rating (1-7)") + 
   theme(axis.text.y=element_blank(),
-        axis.ticks.y=element_blank())
+        axis.ticks.y=element_blank()) 
 
 tea_bf <- BayesFactor::ttestBF(x = tea_data$rating[tea_data$condition == "milk first"],
                                y = tea_data$rating[tea_data$condition == "tea first"], 
@@ -269,6 +269,7 @@ tea_bf_large <- BayesFactor::ttestBF(x = tea_data_large$rating[tea_data_large$co
                                y = tea_data_large$rating[tea_data_large$condition == "tea first"], 
                                paired = FALSE)
 ```
+
 
 
 Figure \@ref(fig:inference-milk-first) shows one example dataset. Once we set up our models, we can compute the relative likelihood of the data under each.^[In this case, we use the "default Bayesian $t$-test provided by the `BayesFactor` package.] The resulting BF is `r round(extractBF(tea_bf)$bf, 2)`, somewhere between anecdotal and substantial evidence. On the other hand, if we double the size of the experiment to 96 participants, the BF goes up to `r round(extractBF(tea_bf_large)$bf, 2)`, which is quite strong evidence.
@@ -477,7 +478,29 @@ Confidence intervals are constructed by estimating the middle 95% of the samplin
 
 [^inference-8]: In case you don't have enough tea to do the experiment 100 times to confirm this, you can do it virtually [here](https://istats.shinyapps.io/ExploreCoverage/).
 
-[^inference-9]: In contrast, Bayesians do think of parameters themselves as variable rather than fixed.
+[^inference-9]: In contrast, Bayesians think of parameters themselves as variable rather than fixed.
+
+
+```{r inference-condition-cis, fig.margin=TRUE, fig.cap = "Confidence intervals on each of the two condition estimates."}
+ggplot(tea_data_large, 
+       aes(x = condition, y= rating)) + 
+  stat_summary(fun.data = "mean_cl_boot") + 
+  ylab("Quality rating (1-7)") + 
+  xlab("Condition")
+```
+For visualization purposes, we can show the confidence intervals on individual estimates (Figure \@ref(fig:inference-condition-cis)). These tell us about the precision of our estimates of each quantity relative to the population estimate. But we've been talking primarily about the CI on the treatment effect $\widehat{\Delta}$, which is shown in Figure \@ref(fig:inference-treatment-ci). This CI 
+
+```{r inference-treatment-ci, fig.margin=TRUE, fig.cap = "Confidence intervals on each of the two condition estimates."}
+treatment_ci <- tibble(ymin = tea_ci_lower, 
+                       mean = delta_hat, 
+                       ymax = tea_ci_upper)
+ggplot(treatment_ci, 
+       aes(x = "", y= mean)) + 
+  geom_pointrange(aes(ymin = tea_ci_lower, ymax = tea_ci_upper)) + 
+  geom_hline(yintercept = 0, lty = 2) + 
+  ylab("Quality rating (1-7)") + 
+  xlab("Treatment effect")
+```
 
 The Bayesian analog to a confidence interval is a **credible interval**. Recall that for Bayesians, parameters themselves are considered probabilistic (i.e., subject to random variation), not fixed. A 95% credible interval for an estimate, $\widehat{\Delta}$, represents a range of possible values for $\Delta$ such that there is a 95% probability that $\Delta$ falls inside the interval. Because we are now wearing our Bayesian hats, we are "allowed" to talk about $\Delta$ as if it were probabilistic rather than fixed. In practice, credible intervals are constructed by finding the posterior distribution of $\Delta$, as in Chapter \@ref(estimation), and then taking the middle 95%, for example. 
 
