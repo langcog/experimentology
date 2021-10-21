@@ -189,12 +189,209 @@ Placeholder
 
 <!--chapter:end:009-sampling.Rmd-->
 
+```{r include=FALSE, cache=FALSE}
+library(tidyverse)
+library(glue)
+library(knitr)
+library(shiny)
+library(metafor)
+require(BayesFactor)
+require(papaja)
 
+opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  error = FALSE,
+  comment = "#>",
+  collapse = TRUE,
+  cache = TRUE,
+  echo = FALSE,
+  cache.lazy = FALSE,
+  dev = "png",
+  dpi = 300,
+  out.width = "\\linewidth"
+)
+kable <- function(...) knitr::kable(..., booktabs = TRUE, linesep = "")
+
+set.seed(42)
+
+.font <- "Source Sans Pro"
+theme_set(theme_bw(base_size = 14, base_family = .font))
+theme_update(panel.grid = ggplot2::element_blank(),
+             strip.background = ggplot2::element_blank(),
+             legend.key = ggplot2::element_blank(),
+             panel.border = ggplot2::element_blank(),
+             axis.line = ggplot2::element_line(),
+             strip.text = ggplot2::element_text(face = "bold"))
+.grey <- "grey70"
+.refline <- "dotted"
+.coef_line <- element_line(colour = .grey, size = 0.1)
+
+.pal <- ggthemes::ptol_pal
+.scale_colour_discrete <- ggthemes::scale_colour_ptol
+.scale_color_discrete <- .scale_colour_discrete
+.scale_fill_discrete <- ggthemes::scale_fill_ptol
+
+.scale_colour_continuous <- viridis::scale_colour_viridis
+.scale_color_continuous <- .scale_colour_continuous
+.scale_fill_continuous <- viridis::scale_fill_viridis
+
+.scale_colour_numerous <- scale_colour_discrete
+.scale_color_numerous <- .scale_colour_numerous
+.scale_fill_numerous <- scale_fill_discrete
+
+# from https://bookdown.org/yihui/rmarkdown-cookbook/font-color.html
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color,
+            x)
+  } else x
+}
+```
 # Preregistration {#prereg}
 
-Placeholder
+::: {.learning-goals}
+🍎 Learning goals: 
 
+- Recognize the dangers of researcher degrees of freedom in "the garden of forking paths"
+- Understand the differences between exploratory and confirmatory modes of research
+- Learn how preregistration and other tools can reduce risk of bias and help others to evaluate your work by increasing transparency
 
+:::
+
+> When not planned beforehand, data analysis can approximate a projective technique, such as the Rorschach, because the investigator can project on the data his own expectancies, desires, or biases and can pull out of the data almost any ‘finding’ he may desire.
+>
+> `r tufte::quote_footer('--- Theodore X. Barber [-@barber1976]')`
+
+> The first principle is that you must not fool yourself--and you are the easiest person to fool...After you've not fooled yourself, it's easy not to fool other scientists. You just have to be honest in a conventional way after that. 
+>
+> `r tufte::quote_footer('--- Richard Feynman [-@feynman1974]')`
+
+This may surprise you coming from the authors of a textbook about research methods, but there is no single "correct" way to design and analyze an experiment[^1]. In fact, for most research decisions, there are many justifiable options. For example, will you stop data collection after 20, 200, or 2000 participants? Will you remove outlier values and how will you define them? Will you conduct subgroup analyses to see whether the results are affected by sex, or age, or some other factor? Consider a simplified, hypothetical case where you need to make five analysis decisions and have five justifiable options for each decision — this alone would result in 3125 (5^5) unique ways to analyze your data! In this chapter, we will find out why undisclosed flexibility in the design, analysis, reporting, and interpretation of experiments (also referred to as "researcher degrees of freedom"), can lead to scientists fooling themselves and fooling each other. We will also learn about how preregistration (and other tools) can be used to protect our research from bias and provide the transparency that other scientists need to properly evaluate and interpret our work.
+
+[^1]: Though there are plenty of incorrect ways to design and analyse experiments and we hope we can help you to avoid these!
+
+## Lost in a garden of forking paths
+
+```{r forking-paths, fig.cap="Garden of forking paths (placeholder image I hacked together, replace with an illustration?)", fig.margin=TRUE}
+knitr::include_graphics("images/prereg/forking-paths.png")
+```
+
+One way to visualize researcher degrees of freedom is as a vast decision tree or "garden of forking paths" [@gelman2014 Figure \@ref(fig:forking-paths)]. Each node represents a decision point and each branch represents a justifiable choice. Each unique pathway through the garden terminates in an individual result. Because scientific observations typically consist of both noise (random variation unique to this sample) and signal (regularities that will reoccur in other samples), some of these pathways will inevitably lead to results that are misleading (e.g., inflated effect sizes, exaggerated evidence, or false positives)[^2]. The more potential paths there are in the garden that you might explore, the higher the chance of encountering misleading results[^3]. Statisticians refer to this as a *multiplicity* problem. 
+
+[^2]: The signal-to-noise ratio is worse in situations (alas, common in psychology) that involve small effect sizes, high variation, and large measurement errors [@ioannidis2005]. Researcher degrees of freedom may be constrained to some extent by strong theory [@oberauer2019], community methodological norms and standards, or replication studies, though these constraints may be more implicit than explicit, and can still leave plenty of room for flexible decision-making.
+
+[^3]: In frequentist terminology, there is an increasing the chance of making a 'Type I error'.
+
+As noted in Chapter \@ref(inference), multiplicity can be addressed to some extent with statistical countermeasures, like the Bonferroni correction; however, these adjustment methods need to account for every path that you *could have* taken [@gelman2014; @degroot2014]. When you navigate the garden of forking paths *during data analysis*, it is easy to forget, or even be unaware of every path that you could have taken, so these methods can longer be used effectively. Additionally, when a researcher navigates the garden of forking paths during data analysis, their decisions can be biased because they are receiving feedback on how different choices affect the results (*results-dependent* decision making). If a researcher is seeking a particular kind of result (which is likely - see Box 1), then they are more likely to follow the branches that steer them in that direction. You could think of this a bit like playing a game of "hot🔥! or cold☃️!" where hot🔥! indicates that the choice will move the researcher closer to a desirable overall result and cold☃️! indicates that the choice will move them further away. Each time the researcher reaches a decision point, they try one of the branches and get feedback on how that choice affects the results. If the feedback is hot🔥! then they take that branch. If the answer is cold☃️!, they try a different branch. If they reach the end of a complete pathway, and the results are cold☃️!, maybe they even retrace their steps and try some different branches earlier in the pathway. This strategy create a risk of bias[^4] because the results are being systematically skewed towards the researcher's preferences[^5] [@hardwicke2021b]. 
+
+[^4]: We say "risk of bias" rather than just "bias" because in most scientific contexts, we do not have a known ground truth to compare the results to. So in any specific situation, we do not know the extent to which results-dependent analyses have actually biased the results.
+
+[^5]: Another way to think of this is in terms of 'regression to the mean'. When a sample statistic is selected because it crosses some threshold (e.g., statistical significance), then it is more likely to provide a biased estimate that decreases upon subsequent measurement.
+
+::: {.interactive}
+Box 1. Only human: Cognitive biases and skewed incentives
+
+There's a storybook image of the scientist as an objective, rationale, and dispassionate arbiter of truth [@veldkamp2017]. But in reality, scientists are only human: they have egos, career ambitions, and rent to pay! So even if we do want to live up to the storybook image, its important to acknowledge that our decisions and behaviour are also influenced by a range of cognitive biases and external incentives that can steer us away from that goal. Unfortunately, the allocation of funding, awards, and publication prestige is often based on the nature of research results rather than research quality [@smaldino2016; @nosek2012]. For example, many academic journals, especially those that are widely considered to be the most prestigious, appear to have a preference for novel, positive, and 'statistically significant' findings over incremental, negative, or null findings [@bakker2012]. There is also pressure to write articles with concise, coherent, and compelling narratives [@giner-sorolla2012]. This incentivizes scientists to be 'impressive' over being right and encourages questionable research practices. The process of iteratively p-hacking and HARKing one's way to 'beautiful' scientific paper has been dubbed "The Chrysalis Effect" [@oboyle2017 Figure \@ref(fig:chrysalis)].
+
+```{r chrysalis, fig.cap="The Chrysalis Effect, when ugly truth becomes a beautiful fiction. Placeholder image - replace with illustration?", fig.margin=F}
+knitr::include_graphics("images/prereg/chrysalis.png")
+```
+
+:::
+
+In the most egregious cases, a researcher may try multiple pathways until they obtain a desirable result[^6] and then *selectively report* that result, neglecting to mention that they have tried several other analysis strategies. You may remember an example of this when participants apparently became younger when they listened to "When I'm 64" by The Beatles in Chapter \@ref(ethics). Another nice example is when a group of enterprising researchers were able to 'discover' brain activity in a dead Atlantic Salmon by deliberately exploiting flexibility in the fMRI analysis pipeline [@bennett2009 Figure \@ref(fig:salmon)]. Deliberately taking advantage of researcher degrees of freedom and selectively reporting results is known by various names, like p-hacking, cherry picking, data dredging, and it is unethical because it involves hiding highly relevant information. But you should also be aware that results-dependent analysis incurs a risk of bias even if a researcher has good intentions, doesn't explicitly try multiple pathways, and honestly reports everything they did. For example, if each branch they took was hot🔥!, they may reach the result they desire at the end of the pathway without realizing that, had the results been different, they would have followed other pathways [@gelman2014; @degroot2014]. In other words, even though the researcher doesn't intend to deliberately hide anything, there is still undisclosed analytic flexibility - important context that is relevant to properly interpret the results. Its surprisingly easy to convince yourself after the fact that you made the decisions you did for principled reasons that had nothing to do with the results (see 'motivated reasoning', Box 1). In sum, engaging in results-dependent analysis increases the chances that you will fool yourself by inadvertently stumbling across misleading results - and if that analytic flexibility goes undisclosed, you may fool others too.
+
+[^6]: "If you torture the data long enough, it will confess" [@good1972]
+
+```{r salmon, fig.cap="By deliberately exploiting analytic flexibility in the processing pipeline of fMRI data, Bennet et al. (2009) were able to identify 'brain activity' in a dead Atlantic Salmon.", fig.margin=TRUE}
+knitr::include_graphics("images/prereg/salmon.jpeg")
+```
+
+An important factor that we've not yet mentioned in detail, is that there is additional flexibility in how researchers *explain* research results. Any single result can be consistent with multiple different theories (this is known as the Duhem-Quine problem @duhem1954). We might call these "explanatory degrees of freedom". The practice of selecting or developing your hypothesis after seeing the study results has been called "Hypotheisizing After the Results are Known", or "HARKing" [@kerr1998]. HARKing is potentially problematic because it expands the garden of forking paths and helps to justify the use of various analytic degrees of freedom (Figure \@ref(fig:grid)). For example, you may come up with an explanation for why an intervention is effective in men but not in women in order to justify a post-hoc subgroup analysis based on sex (see Case Study). The extent to which HARKing is problematic is contested [for discussion see @hardwicke2021b], but we would argue that at the very least its important to be honest about whether hypotheses were developed before or after seeing research results.
+
+```{r grid, fig.cap="A scientist exploring a grid of individual research results. The horizontal axis illustrates a simplified ‘garden of forking paths’: the many justifiable analysis specifications that the scientist can use to transform the data (D) into the evidence (E). The vertical axis illustrates that there may be several relevant theories (T), and hypotheses (H) derived from those theories, which could be constructed or selected and then confronted with the evidence. Thus, an unconstrained scientist can simultaneously exploit their analytic degrees of freedom and explanatory degrees of freedom to fit evidence to hypotheses and fit hypotheses to evidence in order to arrive at a study outcome that is more likely to align more with their preferences, but less likely to align with the truth. Caption is copied verbatim so needs editing. Shared under a CC-BY license, artwork by Viktor Beekman, concept by Tom Hardwicke and Eric-Jan Wagenmakers.", fig.margin=F}
+knitr::include_graphics("images/prereg/grid.jpg")
+```
+
+But hang on a minute! Isn't it a good thing to seek out interesting results if they are there in the data? Shouldn't we "let the data speak"? The answer is yes[^7]! In fact, we have dedicated a whole chapter to exploratory data analysis (Chapter \@ref(eda)). The important thing to remember about exploratory research is that you need to (a) be aware of the increased risk of bias and calibrate your confidence in the results accordingly; (2) be honest with other researchers about your analysis strategy so they are also aware of the risk of bias and can calibrate *their* confidence in the results accordingly. Its important to understand the distinction between exploratory and confirmatory research modes[^8]. Confirmatory research involves making design and analysis decisions, *before* the results have been observed. In the next section, we will learn about how to do that using preregistration.
+
+[^7]:Note that exploratory research is not the same as p-hacking, which is explicitly dishonest because it involves deliberately withholding information.
+
+[^8]: In practice, an individual study may contain both exploratory and confirmatory aspects which is why we describe them as different 'modes'.
+
+## Reducing bias, increasing transparency, and calibrating confidence with preregistration
+
+Perhaps the easiest way to counter the problem of undisclosed researcher degrees of freedom outlined above, is to make research decisions before seeing the study results - a bit like planning your route through the garden of forking paths before you start your journey. A great way to do this is preregistration [@wagenmakers2012; @hardwicke2021b]. Preregistration involves declaring your research decisions in an online public registry before the data are inspected. Preregistration ensures that your decisions are results-independent, which reduces risk of bias arising from the issues described above. Preregistration also transparently conveys to others what you planned, helping them to determine the risk of bias and calibrate their confidence in the results. In other words, preregistration transparently provides the context needed to properly evaluate and interpret research. Preregistration does not require that you specify all research decisions in advance, only that you are transparent about what was planned, and what was not planned. This helps to make a distinction between which aspects of the research were exploratory and which were confirmatory (Figure \@ref(fig:continuum)). All else being equal, we should have more confidence in confirmatory findings, because there is a lower risk of bias. Exploratory analyses have a higher risk of bias, but they are also more sensitive to serendipitous (unexpected) discoveries. So exploratory and confirmatory research are both valuable activities, it is just important to differentiate them. Preregistration offers the best of both worlds by clearing separating one from the other.
+
+```{r continuum, fig.cap="Preregistration clarifies where aspects of your research fall on a spectrum of exploratory and confirmatory modes of research. A preregistration is just a snapshot of your current thinking. If you have planned very little, your preregistration may not have much detail, but that's absolutely fine! The important thing is that preregistration transparently conveys what was planned (confirmatory) and what was not (exploratory). Increasing the amount of detail in your preregistration increases your protection against bias. Placeholder image, use better illustration?", fig.margin=F}
+knitr::include_graphics("images/prereg/continuum.png")
+```
+
+In addition to the benefits described above, preregistration may improve the quality of research by encouraging closer attention to study planning. We've found that it really helps facilitate communication between collaborators, and can catch addressable problems before time and resources are wasted on a poorly designed study. Detailed advanced planning can also create opportunities for useful community feedback, particularly in the context of Registered Reports, where dedicated peer reviewers will evaluate your study before its even begun (Box 2).
+
+::: {.interactive}
+Box 2. Preregistration and friends: A toolbox of countermeasures to address researcher degrees of freedom
+
+NB - CURRENT TEXT VERY CLOSE TO HARDWICKE & WAGENMAKERS (2021) NEEDS EDITING
+
+There are several useful tools that take can be used to address the problem of researcher degrees of freedom. In general, we would recommend that these tools are combined with preregistration, rather than used as a replacement [@hardwicke2021b].
+
+**Robustness checks**. Whilst preregistration aims to constrain researcher degrees of freedom, robustness checks directly exploit them in order to evaluate their impact. Traditional sensitivity analyses may evaluate a few justifiable options for a single research decision92; however, recent approaches, variously known as “multiverse analysis”93, “vibration of effects”94, “specification curve”95, or “multimodel analysis”96, systematically assess the factorial intersection of multiple choices for multiple decisions, potentially resulting in tens of thousands of unique analysis specifications97–100. This is akin to simultaneously examining multiple cells in the array depicted in Figure 1, rather than a single prespecified cell. 
+
+Some have argued  that systematic robustness checks render preregistration redundant71,101. However, the subjective choice of which specifications to examine or report90,102 means that robustness checks can introduce researcher degrees of freedom, creating an opportunity for selective reporting, and thereby increasing the risk of bias. Researchers can have the best of both worlds (Section 4.2) by preregistering their robustness checks.
+
+**Blind analysis**. Issues arising during data collection such as attrition, missing data, randomisation failures, or unexpected data distributions may invalidate planned analyses. Blind analysis disguises information related to outcomes (e.g., by adding noise or shuffling variables) allowing the data to be inspected whilst ensuring decision-making remains outcome-independent103,104. Blind analysis is used in physics to address concerns about bias introduced by outcome-dependent analyses105–107. Blind analysis requires some technical expertise and can introduce bias if poorly implemented. Additionally, blind analysis does not prevent selective reporting, so should ideally be used in conjunction with preregistration.
+
+**Hold-out sample**. Splitting a dataset can enable exploratory analyses in a ‘training’ sample followed by confirmatory analyses in a ‘test’ or ‘hold-out’ sample108. This approach requires a large sample size as splitting the data reduces statistical power. Preregistering the analyses intended for the hold-out sample ensures they are truly confirmatory.
+
+**Preregistration of analysis scripts based on simulated data**. It requires some imagination to anticipate the details to include in an analysis plan69,109 and it can be difficult to communicate analysis specifications in prose110,111. This can be addressed by preregistering analysis scripts prepared using simulated data66.
+
+**Standard Operating Procedures**. Maintaining a living document of default research decisions that is co-registered with each study could enhance preregistration efficiency112.
+
+**Open lab notebooks**. Open lab notebooks could improve transparency throughout a research project113 and help track departures from the preregistration. Preregistration is similar to sharing the pages of your lab notebook which outline the study plan.
+
+**Registered Reports**. Registered Reports are a journal article format that offers in-principle acceptance for publication before studies begin based on peer review of a prespecified study protocol87 (Figure \@ref(fig:reg-reports)). This radical departure from traditional publication practices promises the benefits of preregistration with enhanced protection against publication bias. Registered Reports may be most suitable for more confirmatory studies114. Related tools that could also mitigate publication bias involve combining standard preregistration with post-study results-blind peer review115 and encouraging results reporting in study registries (a mandate for some clinical trials, often ignored in practice116); however, the time investment and public accountability involved in Registered Reports may offer greater motivation for authors to report results even if they do not reflect their preferred outcome.
+
+:::
+
+```{r reg-reports, fig.cap="Registered Reports (https://www.cos.io/initiatives/registered-reports)", fig.margin=TRUE}
+knitr::include_graphics("images/prereg/registered-reports.png")
+```
+
+::: {.case-study}
+🔬 Case study: Undisclosed analytic flexibility in the wild 
+
+NB this box was previously called "A tale of two RCTs" but I'm not sure why - there's only one RCT right?
+
+A few years ago, one of us (Mike) was reading a paper [@berkowitz2015] and something seemed odd. The paper reported a randomized field experiment evaluating an educational app intended to increase children's math skills. According to the reported analysis, the app was a success. But the analysis had not been preregistered, and Mike found some of the analysis choices to be unusual. For example, the analysis had probed whether there was an effect of the app in particular subgroups, but neglected to evaluate whether there was an overall effect. Mike was concerned that the results were affected by undisclosed analytic flexibility and published a commentary consisting of alternative analyses that suggested the app was not effective [@frank2016]. The original authors responded that their analyses were entirely based on prior research and argued that the disagreement about how the data should be analyzed was "philosophical" [@berkowitz2016]. The problem here is that it is very difficult to know the extent to which the original analysis was influenced by the results. If the analysis plan had been preregistered, this would reduce the risk of bias and allow Mike and other readers to have more confidence in the reported results[^10}.
+
+:::
+
+[^10]: Its worth pointing out that preregistration cannot magically improve a poorly specified analysis. One aspect of the original analysis was straightforwardly erroneous (though the original authors dispute this) because it concluded that there was an effect in one group, but not in another, by testing the effect separately in those groups, and neglecting to test the interaction. This is a statistical fallacy, regardless of whether the analyses were preregistered [@gelman2006]. Nevertheless, preregistration would have provided transparency to enable a more informed scientific debate about the results without concern for whether they influenced by undisclosed analytic flexibility.
+
+## How to preregister
+
+Preregistration is actually pretty new to psychology, and there's still no standard way of doing it - you're already at the cutting edge[^9]! We recommend using the Open Science Framework (OSF) as this is one of the most popular registries in psychology and you can do lots of other useful things there to make your research transparent, like sharing data, materials, analysis scripts, and preprints. On the OSF it is possible to "register" any file you have uploaded. When you register a file, it creates a timestamped, read-only copy, with a dedicated link. You can add this link to articles reporting your research. One approach to preregistration is to write a protocol document that specifies the study rationale, aims or hypotheses, methods, and analysis plan, and register that (here's an example from one of our own studies: https://osf.io/2cnkq/). The OSF also has a collection of dedicated preregistration templates that you can use if you prefer. These templates are often tailored to the needs of particular types of research. For example, there are templates for general quantitative psychology research ["PRP-QUANT" @bosnjak2021], cognitive modelling [@cruwell2021], and secondary data analysis [@akker2019]. The OSF interface may change, but currently if you go to https://osf.io/registries/osf/new you can follow the steps to create a new registration.
+
+[^9]: There's a much longer history of registering research in medicine [@dickersin2012] and preregistration has only recently started to gain traction in other disciplines like psychology [@nosek2018]. Its still very rare though; one study estimated that about 3% of psychology studies are preregistered [@hardwicke2021c].
+
+Once you've preregistered your plan, you just go off and run the study and report the results, right? Well hopefully...but things might not turn out to be that straightforward. Its quite common to forgot to include something in your plan or to have to depart from the plan due to something unexpected. Preregistration can actually be pretty hard in practice [@nosek2019]! Don't worry though - remember that the primary goal of preregistration is transparency to enable others to evaluate and interpret our work. If you decide to depart from your original plan and conduct results-dependent analyses, then this may increase the risk of bias. But its important to know that so we can appropriately calibrate our confidence in the results. You may even be able to run both the planned and unplanned analyses as a robustness check (Box 2) to evaluate the extent to which this choice impacts the results.
+
+When you report your study, it is important to distinguish between what was planned and what was not. If you ran a lot of results-dependent analyses, then it might be worth having separate exploratory and confirmatory results sections. If you mainly stuck to your original plan, with only minor departures, then you could include a table (perhaps in an appendix) that outlines these changes (for example, see Supplementary Information A of this article: https://doi.org/10.31222/osf.io/wt5ny)
+
+<!-- TODO: Barriers to adoption of preregistration. -->
+<!-- TODO: Limitations of the preregistration approach, especially with respect to iterative theory building (e.g., Navarro critique). -->
+
+::: {.exercise}
+P-hack your way to scientific glory! To get a feel for how results-dependent analyses might work in practice, have a play around with this app: https://projects.fivethirtyeight.com/p-hacking/
+:::
+
+::: {.exercise}
+Preregister your next experiment! The best way to get started with preregistration is to have a go with your next study. Head over to https://osf.io/registries/osf/new and register your study protocol or complete one of the templates. 
+:::
 
 <!--chapter:end:010-prereg.Rmd-->
 
@@ -289,542 +486,23 @@ Placeholder
 
 <!--chapter:end:016-writing.Rmd-->
 
-```{r include=FALSE, cache=FALSE}
-library(tidyverse)
-library(glue)
-library(knitr)
-library(shiny)
-library(metafor)
-require(BayesFactor)
-require(papaja)
 
-opts_chunk$set(
-  message = FALSE,
-  warning = FALSE,
-  error = FALSE,
-  comment = "#>",
-  collapse = TRUE,
-  cache = TRUE,
-  echo = FALSE,
-  cache.lazy = FALSE,
-  dev = "png",
-  dpi = 300,
-  out.width = "\\linewidth"
-)
-kable <- function(...) knitr::kable(..., booktabs = TRUE, linesep = "")
-
-set.seed(42)
-
-.font <- "Source Sans Pro"
-theme_set(theme_bw(base_size = 14, base_family = .font))
-theme_update(panel.grid = ggplot2::element_blank(),
-             strip.background = ggplot2::element_blank(),
-             legend.key = ggplot2::element_blank(),
-             panel.border = ggplot2::element_blank(),
-             axis.line = ggplot2::element_line(),
-             strip.text = ggplot2::element_text(face = "bold"))
-.grey <- "grey70"
-.refline <- "dotted"
-.coef_line <- element_line(colour = .grey, size = 0.1)
-
-.pal <- ggthemes::ptol_pal
-.scale_colour_discrete <- ggthemes::scale_colour_ptol
-.scale_color_discrete <- .scale_colour_discrete
-.scale_fill_discrete <- ggthemes::scale_fill_ptol
-
-.scale_colour_continuous <- viridis::scale_colour_viridis
-.scale_color_continuous <- .scale_colour_continuous
-.scale_fill_continuous <- viridis::scale_fill_viridis
-
-.scale_colour_numerous <- scale_colour_discrete
-.scale_color_numerous <- .scale_colour_numerous
-.scale_fill_numerous <- scale_fill_discrete
-
-# from https://bookdown.org/yihui/rmarkdown-cookbook/font-color.html
-colorize <- function(x, color) {
-  if (knitr::is_latex_output()) {
-    sprintf("\\textcolor{%s}{%s}", color, x)
-  } else if (knitr::is_html_output()) {
-    sprintf("<span style='color: %s;'>%s</span>", color,
-            x)
-  } else x
-}
-```
 # Meta-analysis {#meta}
 
-<!-- NC: May need to remind the reader that we are using SMD as the effect size -->
+Placeholder
 
-
-```{r meta-initialization}
-#--------------------------------------------------------------------------------
-# Paluck et al. meta-analysis
-# Note: I cannot perfectly reproduce their results
-#--------------------------------------------------------------------------------
-library("tidyverse")
-library("metafor")
-library("MetaUtility")
-library("PublicationBias")
-
-# rounding digits
-digits = 2
-
-# helper fn taken from https://osf.io/ue36m/
-sim_data2 = function(p,
-                     keep.all.studies = FALSE) {
-
-  N = p$k * p$per.cluster
-
-  # generate cluster random intercepts
-  # called "zeta" in paper
-  # these are normal even when true effect dist is exponential
-  gam1 = rnorm( n = p$k, mean = 0, sd = sqrt( p$V.gam ) )
-  gam1i = rep( gam1, each = p$per.cluster )
-
-  # generate individual-study random intercepts
-  # these are called "gamma" in the paper
-  # these are either normal or exponential
-  if ( p$true.dist == "norm" ) gam2i = rnorm( n = N, mean = 0, sd = sqrt( p$V - p$V.gam ) )
-
-    if ( p$true.dist == "exp" ) {
-      true.effect.var = p$V - p$V.gam
-      # set var using properties of exponential
-      gam2i = rexp( n = N, rate = true.effect.var^(-1/2) )
-      # shift to have mean of 0
-      # use fact that var = mean^2 in exponential
-      gam2i = gam2i - true.effect.var^(1/2)
-    }
-
-
-  # individual study SEs
-  sei = runif( n = N, min = p$sei.min, max = p$sei.max )
-
-  # individual study means
-  if ( p$SE.corr == TRUE ) {
-    beta = 6
-    mui = p$mu + beta * sei + gam1i + gam2i
-
-    # recenter them to have desired mean of p$mu
-    # because E[sei}]
-    mui = mui - beta * mean(sei)
-
-    cor(sei, mui)
-  } else {
-    mui = p$mu + gam1i + gam2i
-  }
-
-  # individual study point estimates
-  yi = rnorm( n = N, mean = mui, sd = sei )
-
-  # NEW: make cluster variable
-  # this way, if we generate (say) 5 studies per "cluster", but V.gam = 0 in order
-  #  to effectively generate without clustering, the cluster variable we ultimately
-  #  pass to robumeta correctly reflects the lack of clustering
-  if ( p$V.gam == 0 ) cluster = 1:N else cluster = rep(1:p$k, each = p$per.cluster)
-  
-  # suppress warnings from cor if SD of mui is 0 (fixed-effects model)
-  d = suppressWarnings( data.frame( cluster = cluster,
-                                    Study.name = 1:N,
-                                    mui,
-                                    yi = yi,
-                                    sei = sei,
-                                    vi = sei^2,
-                                    pval = 2 * ( 1 - pnorm( abs(yi) / sei ) ),
-                                    SE.corr.emp = cor(sei, mui) ) )  # empirical correlation
-  
-  # 1-tailed publication bias
-  signif = d$pval < 0.05 & d$yi > 0
-  publish = rep( 1, nrow(d) )
-  publish[ signif == FALSE ] = rbinom( n = sum(signif == FALSE), size = 1, prob = 1/p$eta )
-
-  d$weight = 1
-  d$weight[ signif == 0 ] = p$eta
-
-  # optionally, also select for small SE
-  # Fi as defined in Supplement
-  # tertiles of empirical SEs prior to selection
-  Fi = rep( 1, nrow(d) )  # so that it has no effect if we're not selecting based on SE
-  if ( p$select.SE == TRUE ) {
-    terts = p$sei.min + (p$sei.max - p$sei.min) * c(1/3, 2/3)
-    # prob of inclusion based on SE
-    P.Fi = rep(NA, nrow(d))
-    P.Fi[ d$sei < terts[1] ] = 1
-    #Fi[ d$sei >= terts[1] ] = 0
-    P.Fi[ d$sei >= terts[1] & d$sei < terts[2] ] = .75
-    P.Fi[ d$sei >= terts[2] ] = .5
-    Fi = rbinom( n = nrow(d),
-                 size = 1,
-                 prob = P.Fi )
-  }
-
-  if ( keep.all.studies == FALSE ) d = d[ publish == 1 & Fi == 1, ]
-  if ( keep.all.studies == TRUE ){
-    # just add the indicators
-    d$publish = publish
-    d$Fi = Fi
-  }
-
-  # record the mean empirical SE (after publication bias) as sanity check on SE selection
-  # but avoid errors if d now has 0 studies
-  if ( nrow(d) > 0 ) {
-    d$SE.mean.emp = mean(d$sei)
-    d$P.select.SE.emp = mean(Fi)
-    d$P.publish.emp = mean(publish)
-    return(d)
-  } else {
-    # still return the empty dataset for use in doParallel
-    return(d)
-  }
-}
-```
-
-```{r meta-paluck}  
-DF <- read.csv("data/Contact_quant_outcomes.csv")
-
-
-# remove supplemental studies (see Paluck et al. Supplement Section 1)
-DF <- DF[1:27, ]
-
-# calculate total n and determine whether d estimate was significant
-DF <- DF %>% 
-  
-  rowwise() %>% 
-  
-  # calculate total n
-  mutate(n_total = n_t + n_c) %>% 
-  
-  # determine whether d estimate was significant
-    ## calculate lower and upper bounds
-    mutate(lb = d - (1.96 * sqrt(var_d)),
-           ub = d + (1.96 * sqrt(var_d))) %>% 
-    
-    ## determine significance
-    mutate(sig = if_else(
-      condition = lb > 0,
-      true = 1,
-      false = 0)) %>% 
-  
-  ungroup() %>% 
-  
-  # MM likes it ordered by variance for forest plot prettiness
-  arrange(var_d)
-
-# fixed effect meta
-fe.m <- rma(yi = d,
-            vi = var_d,
-            data = DF,
-            method = "FE")
-
-# random effect meta
-re.m <- rma(yi = d,
-            vi = var_d,
-            data = DF,
-            method = "REML",
-            knha = TRUE,
-            # for forest plot joy:
-            slab = DF$name_short)
-
-# estimated heterogeneity with inference
-t2.CI = tau_CI(meta = re.m)
-tauStats = round( c( sqrt(re.m$tau2), t2.CI[1], t2.CI[2] ), digits )
-
-```
-
-::: learning-goals
-🍎 Learning goals:
-
-- Understand the benefits of synthesizing evidence across studies.
-- Understand the pitfalls of intuitive approaches to evidence synthesis, with a focus on how many of these issues are addressed via meta-analysis.
-- Conduct a simple fixed- or random-effects meta analysis.
-- Understand that within- and across-study biases affect not only individual studies, but also meta-analysis. 
-:::
-
-::: case-study
-🔬 Case study: Hotel towel reuse (Scheibehenne, Jamil, and Wagenmakers 2016). A simple example of aggregating noisy evidence from replications.
-
-In a widely-cited study on the power of describing social norms, @goldstein2008room examined the effect of social norm messaging on hotel towel reuse. Across two studies, they found that guests were significantly more likely to reuse their towels after receiving a social norm message that stated most other people reuse their towels (Study 1 $p = .05$, Study 2 $p = .03$). However, five subsequent studies consistently failed to indicate that social norm messages increased hotel towel reuse (all $p > .05$).
-
-At first glance, you might conclude that these studies indicate that social norm messages do not reliably impact towel reuse. You might even go a step further and try to think of explanations for why one team found the effect, but others did not. (Maybe the messages change behavior when guest receive nice fluffy towels, but not when they  receive cheap, low-quality towels.) However, this is a case where binary thinking about $p$-values can mislead us. When @scheibehenne2016 combined the evidence via a *meta-analysis*, they found that the results across these studies were, for the most part, quite consistent. Participants who received a social norm message were slightly more likely to reuse their towels in four out of five of the studies--but most of the studies simply did not have large enough samples for this difference to be statistically significant. When combined, however, meta-analysis indicated that social norm messages did have a significant overall effect on hotel towel reuse.
-:::
-
-When students hear the term "review", they often have flashbacks to times where they threw some search term into Google Scholar, downloaded a bunch of articles that looked interesting, spent a few days reading those articles, and then wrote a summary of what they learned. This is one of many ways of performing a review (see @grant2009typology), but this chapter focuses on a specific type of quantitative review called *meta-analysis*.
-
-One of the central parts of the meta-analysis is extracting *effect sizes* from individual studies and then combining these effect sizes. (Feel free to check back to Chapter \@ref(estimation) if you need a refresher on effect sizes. We'll wait here for you, we promise.) By combining information from multiple studies, meta-analysis often provides more precise estimates of an effect size than any single study. In addition, meta-analysis also allows the researcher to look at the extent to which an effect varies  across studies. If an effect does vary across studies, meta-analysis can be used to test whether certain study characteristics systematically produce different results (e.g., whether an effect is larger in certain world regions).
-
-Meta-analysis often teaches us something about a body of evidence that we do not intuitively grasp when we casually read through a bunch of articles. Indeed, in the above case study, merely reading all the studies that tested the effect of social norm messaging on hotel towel re-use would give the impression that the effect is (at best) unreliable. However, meta-analysis indicated that the results across studies are not as inconsistent as they seem--and that social norm messaging did decrease towel re-use overall. Given the number of hotel bookings worldwide--1.7 billion in the European Union alone in 2013 @kotzeva2015eurostat--the unique insight provided by the meta-analysis is not at all trivial!
-
-The hotel towel example is a good starting point but there is much more we can do with meta-analysis. To illustrate, we'll turn to another example: a meta-analysis of an idea called the *contact hypothesis*. According to contact hypothesis, prejudice can be reduced when members of majority and minority groups come together in the pursuit of a common goal @allport1954nature. To examine whether this type of intergroup contact can mitigate prejudice in the real world, @paluck2019contact performed a meta-analysis of studies that tested the effects of randomly-assigned intergroup contact interventions on prejudice-related outcomes. Cohen's $d$--which, if you recall from Chapter \@ref(estimation), represents the standardized mean difference--was used as the effect size index. As we show in the remainder of the chapter, the meta-analytic tools @paluck2019contact used provide several useful insights about this proposed prejudice-reduction intervention.
 
 ## The basics of evidence synthesis
-
 ### How *not* to synthesize evidence
-
-When considering evidence across multiple studies, many people intuitively count how many studies supported versus did not support the hypothesis under investigation. This usually amounts to counting the number of studies with "significant" $p$-values, since (for better or for worse) "significance" is largely what drives the take-home conclusions researchers report [@mcshane2017statistical; @nelson1986interpretation]. In meta-analysis, we call this practice of counting the number of significant $p$-values *vote-counting* [@borenstein2021introduction]. For example, in the @paluck2019contact meta-analysis, all studies yielded positive effect sizes, but only approximately `r sum(DF$sig)` of `r nrow(DF)` were significant. So, based on this vote-count, we would have the impression that most studies do not support the contact hypothesis.
-
-Many literature reviews use this vote-counting approach--albeit often not explicitly. Despite its intuitive appeal, though, vote-counting can be very misleading because it characterizes evidence solely in terms of dichotomized $p$-values, while entirely ignoring effect sizes. In Chapter \@ref(replication), we saw how this fetishism of statistical significance can mislead us when we consider individual studies. These problems propagate to evidence syntheses if we simply vote-count statistical significance across studies as well. For example, small studies on large effects may consistently produce non-significant effects that, when combined in a large meta-analysis, provide strong evidence of an effect. Inversely, it is also possible for a meta-analysis to not provide strong evidence of an effect despite several studies finding statistically significant effect size estimates. In these cases, vote-counting could lead us badly astray [@borenstein2021introduction]. To avoid these pitfalls, meta-analysis combines the effect sizes estimates from each study.
-
-
 ### Combining results across studies using fixed-effect meta-analysis
-
-Once you are ready to combine results across studies, you have to figure out how you will do so. A seemingly reasonable approach would be to simply average the effect size estimates from each study. For example, in Paluck et al.'s meta-analysis, the mean of the studies' effect size estimates is `r round( mean(DF$d), digits )`. This approach is a step in the right direction, but it has an important limitation. Specifically, simply averaging effect size estimates gives equal weight to each study. A small study (like @clunies1989changing, with a sample size of `r DF[1, ]$n_total`) contributes as much to the mean effect size as a large study (like @boisjoly2006empathy, with a sample size of `r DF[27, ]$n_total`). This is problematic--as we know that larger studies typically provide more accurate estimates of effect sizes. Thus, larger studies should carry more weight in the analysis. This brings us to a common approach to principled evidence synthesis, *fixed-effect meta-analysis*.
-
-<!-- NC: I'm not really sure if this forest plot adds much to the explanation. As is, I worry that it may confuse more than it informs  -->
-As we've seen throughout this book, visualizing data before and after analysis helps benchmark and sanity-check our intuitions about the formal statistical results. In a meta-analysis, a common way to do so is the **forest plot**, which depicts individual studies' estimates and confidence intervals. (You can ignore for now the column of percentages and the final line, "RE Model"; we will return to these later.) In this plot, the larger squares correspond to more precise studies; notice how much narrower their confidence intervals are than the confidence intervals of less precise studies.
-
-
-```{r meta-forest, fig.cap="Forest plot for Paluck et al. meta-analysis. Studies are ordered from smallest to largest standard error."}
-metafor::forest(re.m,
-       showweights = TRUE,
-       header = TRUE,
-       xlab = "Standardized mean difference")
-```
-
-Fixed-effect meta-analysis uses a *weighted-average*, wherein larger, more precise studies are given more weight in the calculation of the overall effect size. Specifically, studies are weighed by the inverse of their variance (i.e., the inverse of their squared standard error). This makes sense because larger, more precise studies have smaller variances, and thus get more weight in the analysis. The fixed-effect pooled estimate is:
-
-$$\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}$$ where $k$ is the number of studies, $\widehat{\theta}_i$ is the point estimate of the $i^{th}$ study, and $w_i = 1/\widehat{\sigma}^2_i$ is study $i$'s weight in the analysis (i.e., the inverse of its variance).[^9]
-
-In Paluck et al.'s meta-analysis, we would calculate the fixed-effect estimate, $\widehat{\mu}$, as:
-
-<!-- hard-coded from DF$d[1:2] and DF$se_d[1:2] -->
-$$\widehat{\mu} = \frac{ \frac{\widehat{\theta}_{study1}}{\widehat{\sigma}^2_{study1}} + \frac{\widehat{\theta}_{study2}}{\widehat{\sigma}^2_{study2}} + \cdots}{ \frac{1}{\widehat{\sigma}^2_{study1}} + \frac{1}{\widehat{\sigma}^2_{study2}} + \cdots } =
-\frac{ \frac{0.03}{0.08^2} + \frac{0.30}{0.08^2} + \cdots }{ \frac{1}{0.08^2} + \frac{1}{0.08^2} + \cdots }$$
-
-We thus estimate that the overall effect size in these studies is a standardized mean difference of $\widehat{\mu}$ = `r round(as.numeric(fe.m$b), 2)`; 95% confidence interval [`r paste0(round(fe.m$ci.lb, 2), ", ", round(fe.m$ci.ub, 2))`]; $p=$ < .001. Because cohen's $d$ is our effect size index, this means that intergroup contact decreased prejudice by `r round(as.numeric(fe.m$b), 2)` standard deviations.
-
-
-[^9]: If you are curious, the standard error of the fixed-effect $\widehat{\mu}$ is $\frac{1}{\sum_{i=1}^k w_i}$. This can be used to construct a confidence interval or $p$-value.
-
-
 ### Limitations of fixed-effects meta-analysis
-
-One of the limitations of fixed-effect meta-analysis is that it assumes that the true effect size is, well, *fixed* across studies. In other words, fixed-effect meta-analysis assumes that there is a single effect size that all studies are estimating. This is a bold assumption. For example, imagine that intergroup contact (a) decreases prejudice when the groups succeed at their goal, but (b) increases prejudice when the groups fail at their goal.  If we combined one study that had intergroups fail at their goal with another study that had intergroups succeed at their goal, it would appear that the true effect of intergroup contact is zero. However, is it reasonable to assume that these studies are examining the same fixed effect? Is it perhaps more useful to think of the *multiple* effects of intergroup contact (e.g., one effect for intergroup success and one effect for intergroup failure?) 
-
-In Paluck et al.'s meta-analysis, studies differed in several ways that could lead to different true effects. For example, some studies recruited adult participants while others recruited children. If we assume that intergroup contact works different for adults vs. children, then it is misleading to talk about a single intergroup contact effect. Instead, we would say that the effects of intergroup contact varies across studies: an idea called **heterogeneity**.
-
-Does this presence of heterogeneity remind you of anything from when we analyzed repeated-measures data in Chapter \@ref(models) on models? Recall that, with repeated-measures data, we had dealt with the possibility of heterogeneity across participants by introducing participant-level random intercepts to our regression model. Turns out that we can do a similar thing in meta-analysis!
-
 ### Random-effects meta-analysis
-
-Whereas fixed-effect meta-analysis essentially assumes that all studies in the meta-analysis have the same population effect size, $\mu$, random-effects meta-analysis instead postulates that studies' population effects come from a normal distribution with mean $\mu$ and standard deviation $\tau$.[^10] The larger the standard deviation, $\tau$, the more heterogeneous the effects are across studies. A random-effects model then estimates both $\mu$ and $\tau$, for example by maximum likelihood (@dersimonian1986meta; @brockwell2001comparison).[^11]
-
-[^10]: Technically, other specifications of random-effects meta-analysis are possible. For example, robust variance estimation does not require making assumptions about the distribution of effects across studies [@hedges2010robust]. These approaches also have other substantial advantages, like their ability to handle effects that are clustered (e.g., because some papers contribute multiple estimates; [@hedges2010robust]; [@pustejovsky2021meta]) and their ability to provide better inference in meta-analyses with relatively few studies [@tipton2015small]. For these reasons, we tend to use these methods by default when conducting meta-analyses.
-
-[^11]: A confidence interval and $p$-value for the random-effects estimate $\widehat{\mu}$ can be obtained using standard theory for maximum likelihood estimates with an additional adjustment that helps account for uncertainty in estimating $\tau$ [@knapp2003improved].
-
-
-Like fixed-effect meta-analysis, the random-effects estimate of $\widehat{\mu}$ is still a weighted average of studies' effect size estimates: $$\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}$$
-
-However, in random-effects meta-analysis, the inverse-variance weights now incorporate heterogeneity: $w_i = 1/\left(\widehat{\tau}^2 + \widehat{\sigma}^2_i \right)$. These weights represent the inverse of studies' *marginal* variances, comprising not only statistical error due to their finite sample sizes ($\widehat{\sigma}^2_i$) but also genuine effect heterogeneity ($\widehat{\tau}^2$).[^12]
-
-[^12]: The estimate of $\widehat{\tau}^2$ is a bit more complicated, but is essentially a weighted average of studies' residuals, $\widehat{\theta_i} - \widehat{\mu}$, while subtracting away variation due to statistical error, $\widehat{\sigma}^2_i$ [@dersimonian1986meta; @brockwell2001comparison].
-
 ### Reporting on heterogeneity
-
-Remember that in random-effects meta-analysis, the estimate $\widehat{\mu}$ represents only the *mean* population effect across studies. It tells us nothing about how much the effects *vary* across studies. Thus, we recommend always reporting the heterogeneity estimate $\widehat{\tau}$, perhaps supplemented by other related metrics (@riley2011interpretation; @wang2019simple; @mathur_mam; @npphat). Reporting the heterogeneity indicates how consistent or inconsistent the effects are across studies, which may point to the need to investigate *moderators* of the effect (i.e., factors that can cause a shift in the size of the effect, such as the type of intergroup contact intervention).[^13]
-
-[^13]: One common approach to investigating moderators in meta-analysis is meta-regression, in which moderators (e.g., type of intergroup contact) are included as covariates in a random-effects meta-analysis model [@thompson2002should]. As in standard regression, coefficients can then be estimated for each moderator, representing the mean difference in population effect between studies with versus without the moderator.
-
 ### Applied example
-
-Conducting a random-effects meta-analysis of Paluck et al.'s dataset yields $\widehat{\mu}$ = `r round(as.numeric(re.m$b), 2)` ; 95% confidence interval [ `r paste0(round(re.m$ci.lb, 2), ", ", round(re.m$ci.ub, 2))` ]; $p=$ < .001. That is, they estimated that, *on average across studies*, intergroup contact was associated with a decrease in prejudice of `r round(as.numeric(re.m$b), 2)` standard deviations. However, these effects appeared to differ considerably across studies; they estimated that the standard deviation of effects across studies was $\widehat{\tau}$ = `r tauStats[1]` ; 95% confidence interval [`r tauStats[2]`, `r tauStats[3]`]. To conveniently visualize these results, we can plot the estimated density of the population effects, which is just a normal distribution with mean $\widehat{\mu}$ and standard deviation $\widehat{\tau}$. 
-
-
-```{r meta-densities, fig.margin = TRUE, fig.cap= "Estimated distribution of population effects from random-effects meta-analysis of Paluck et. al's dataset (heavy red curve) and estimated density of studies' point estimates (thin black curve)."}
-# red line: fitted density of *population* effects from meta-analysis
-# gray line: just a dumb density estimate from the *point estimates*
-library(ggplot2)
-
-ggplot(data = data.frame(x = c(-2, 2)),
-       aes(x)) +
-  
-  # reference lines
-  geom_vline(xintercept = 0,
-             lwd = 1,
-             color = "gray") +
-  
-  geom_vline(xintercept = re.m$b,
-             lty = 2,
-             lwd = 1,
-             color = "red"
-  ) +
-  
-  # estimated density of estimates (nonparametric)
-  geom_density( data = DF,
-                aes(x = d),
-                adjust = 1.2 ) +
-  
-  # estimated density from meta-analysis (parametric)
-  stat_function( fun = dnorm,
-                 n = 101,
-                 args = list( mean = re.m$b,
-                              sd = sqrt(re.m$tau2) ),
-                 lwd = 1.2,
-                 color = "red") +
-
-  ylab("") +
-  scale_x_continuous( breaks = seq(-2, 2, 0.5)) +
-  xlab("Standardized mean difference") +
-  theme_minimal() +
-  scale_y_continuous(breaks = NULL) +
-  theme(text = element_text(size=16),
-        axis.text.x = element_text(size=16))
-```
-
-
 ## Bias in meta-analysis
-
-Meta-analysis is an invaluable tool to synthesize evidence across studies. However, meta-analyses can be compromised by two categories of bias: *within-study biases* and *across-study biases*. Either type of bias can lead to meta-analysis estimates that are too large, too small, or in the wrong direction. We will now discuss examples of each type of bias. We will also discuss ways to address these biases when conducting a meta-analysis, including mitigating the biases at the outset through sound meta-analysis design and also assessing the robustness of the ultimate conclusions to possible remaining bias.
-
 ### Within-study biases
-
-Within-study biases--such as demand characteristics, confounds, and order effects--not only impact the validity of individual studies, but also any attempt to synthesize those studies. In other words: garbage in, garbage out. For example, @paluck2019contact noted that early studies on intergroup contact almost exclusively used nonrandomized designs. Imagine a hypothetical study where researchers (a) are studying a completely ineffective intergroup contact intervention, and (b) non-randomly assign low-prejudice people to the intergroup contact condition and high-prejudice people to the control condition. In a scenario like this, the researcher will, of course, find that the prejudice was lower in the intergroup contact condition. However, this is not a true effect of the contact intervention, but rather a spurious effect of non-random assignment. Now imagine repeating this across many studies and then performing a meta-analysis. The meta-analyst would find impressive evidence of an intergroup contact effect, but this is simply driven by systematic non-random assignment. Once again: you put garbage in, you get garbage out.
-
-To mitigate this problem, meta-analysts often exclude studies that may be affected by within-study bias. For example, @paluck2019contact excluded nonrandomized studies to avoid concerns about confounding. After data have been collected, meta-analysts often also qualitatively assess studies' risks of bias using established rating tools [@art]. Doing so allows the meta-analyst to communicate just how much within-study bias there may be. @paluck2019contact did not use this tool, but they could have used it to communicate for example, the extent to which participants may have differentially dropped out of the study. Meta-analysts also often conduct sensitivity analyses that examine how much meta-analysis results change when excluding certain types of studies [@art]. For example, if nonrandom assignment is a concern, a meta-analysts may run the analyses with and without studies using nonrandom assignment in order to determine if including these studies changes the meta-analysis results.
-
-<!-- It would be nice to show the reader an example of a risk of bias rating scale. Doing so would also help clarify what types of within-study biases meta-analysts are typically concerned about. https://drive.google.com/file/d/1Q4Fk3HCuBRwIDWTGZa5oH11OdR4Gbhdo/view-->
-
 ### Across-study biases
-
-Across-study biases refer to behaviors like researchers selecting reporting certain types of findings (*selective reporting*) or selectively publishing certain types of findings (*publication bias*; see below accident report). Often, these across-study biases favor statistically significant positive results, which means the meta-analysis of the available results will be inflated. For example, if researchers publish only the studies that yield statistically significant positive results and hide the studies that don't, statistically combining the published studies via meta-analysis will obviously lead to exaggerated effect size estimates. Bias in, bias out--garbage in, garbage out.
-
-::: accident-report
-🔬 Accident Report: Quantifying publication bias in the social sciences
-
-In 2014, @franco2014 and colleagues examined the population of 221 studies conducted through a funding initiative that helps researchers run experiments on nationally-representative samples in the U.S. First, Franco and colleagues examined the records of these studies to determine whether the researchers found statistically significant results, a mixture of statistically significant and nonsignificant results, or only nonsignificant results. Then, Franco and colleagues examined the likelihood that these results were published in the scientific literature.
-
-What results do you think were most likely to be published? If you guessed "significant results" you have a good intuition about publication bias. Over 60% of studies with statistically significant results were published, compared to the mere 25% of studies that produced only statistically non-significant results. 
-:::
-
-Like within-study biases, meta-analysts often try to mitigate across-study biases by being careful about what studies make it into the meta-analysis. Meta-analysts don't only want to capture high-profile, published studies on their effect of interest, but also studies published in low-profile journals and the so-called "gray literature" (i.e., unpublished dissertations and theses; @lefebvre2019searching\].[^5]
-
-[^5]: Evidence is mixed regarding whether including gray literature actually reduces across-study biases in meta-analysis [@tsuji2020addressing; @sapbe], but it is still common practice to try to oinclude this literature.
-
-There are also statistical methods to help assess how robust the results may be to across-study biases. Among the most popular tools to assess and correct for publication bias is the **funnel plot** [@duval2000trim; @egger1997bias], a graph relating the meta-analyzed studies' point estimates to some measure of their precision, such as sample size or standard error. Here is an example of a type of funnel plot [@sapb] for a simulated meta-analysis of 100 studies with no publication bias:
-
-<!-- MM: I used a type of enhanced funnel here that I believe helps visualize publication bias better than standard funnels. Mike, up to you if you want regular funnels instead. I've included commented code for those as well. I didn't describe the purpose of the grey diamonds for now. Text snippet if we decide to briefly mention that: "the grey diamonds represent worst-case point estimate within only the studies with $p \ge 0.05$ or negative estimates." -->
-
-<!-- NC: I like the funnel plot, but it keeps duplicating the plots for some reason" -->
-
-
-```{r meta-funnel-unbiased, fig.cap = "Significance funnel plot for a meta-analysis simulated to have no publication bias. Orange points: studies with $p<0.05$ and positive estimates. Grey points: studies with $p ge 0.05$ or negative estimates. Black diamond: random-effects estimate of $Mhat$ within all studies."}
-# simulate meta with publication bias, but keep all studies
-set.seed(451)
-d.all = sim_data2( data.frame( k = 100,
-                            per.cluster = 1,
-                            mu = .5,
-                            V = 1,
-                            V.gam = 0,  # no clustering
-                            sei.min = 0.05,
-                            sei.max = 3,
-                            true.dist = "norm",
-                            SE.corr = FALSE,
-                            select.SE = FALSE,
-                            eta = 10  # set publication bias
-),
-keep.all.studies = TRUE )  
-
-# published studies only
-dp = d.all %>% filter(publish == TRUE)
-
-meta.all = rma(yi = yi,
-            vi = vi,
-            data = d.all,
-            method = "REML",
-            knha = TRUE)
-
-meta.NA = rma(yi = yi,
-            vi = vi,
-            data = d.all %>% filter(pval > 0.05 | yi < 0),
-            method = "REML",
-            knha = TRUE)
-
-significance_funnel(yi = meta.all$yi,
-                    vi = meta.all$vi,
-                    favor.positive = TRUE,
-                    plot.pooled = TRUE,
-                    est.all = meta.all$b,
-                    est.N = meta.NA$b)
-# scale_x_continuous( breaks = seq(-2.5, 3.5, 0.5))
-
-# alternative: standard funnel without contour enhancement
-# MM considers less preferable. NC concurs.
-# funnel(meta.all, 
-#        xlab = "Standardized mean difference")
-```
-
-Notice that larger studies (those with smaller standard errors) cluster more closely around the mean of `r round(meta.all$b, digits)` than do smaller studies, but large and small studies alikehave point estimates centered around the mean. That is, the funnel plot is symmetric. In contrast, a funnel plot might look asymmetric. Here is what happens to our hypothetical meta-analysis if all studies with $p<0.05$ and positive estimates are published, but only 10% of studies with $p \ge 0.05$ or with negative estimates are published:
-
-```{r meta-funnel-biased, fig.cap = "Significance funnel plot for the same simulated meta-analysis after publication bias has occurred. Orange points: studies with $p<0.05$ and positive estimates. Grey points: studies with $p ge 0.05$ or negative estimates. Black diamond: random-effects estimate of $Mhat$ within all studies."}
-meta.p = rma(yi = yi,
-            vi = vi,
-            data = dp,
-            method = "REML",
-            knha = TRUE)
-
-meta.p.NA = rma(yi = yi,
-            vi = vi,
-            data = dp %>% filter(pval > 0.05 | yi < 0),
-            method = "REML",
-            knha = TRUE)
-
-significance_funnel(yi = meta.p$yi,
-                    vi = meta.p$vi,
-                    favor.positive = TRUE,
-                    plot.pooled = TRUE,
-                    est.all = meta.p$b,
-                    est.N = meta.p.NA$b) 
-
-#p2 + scale_x_continuous( breaks = seq(-1, 3.5, 0.5) )
-```
-
-
-Notice that the introduction of publication has dramatically inflated the pooled estimate from `r round(meta.all$b, digits)` to `r round(meta.p$b, digits)`.[^8] Also, there appears to be a correlation between studies' estimates and their standard errors, such that smaller studies tend to have larger estimates than do larger studies. This is often called *funnel plot asymmetry*.
-
-Several popular statistical methods, such as Trim-and-Fill [@duval2000trim] and Egger's regression [@egger1997bias] are designed to quantify funnel plot asymmetry. However, one limitation is that funnel plot asymmetry is not always representative of publication bias. Indeed, sometimes funnel plot asymmetry is driven by  genuine differences in the effects being studied in small and large studies [@egger1997bias; @lau2006case]. For example, in a meta-analysis of intervention studies, if the most effective interventions are also the most expensive or difficult to implement, these highly effective interventions might be used primarily in the smallest studies. Thus, funnel plot methods may be indicative of publication bias--but they may more simply driven by small-study effects [@smt].[^14] For these reasons, assessments of publication bias in meta-analysis should rely not only on funnel plots [@smt]. There are numerous other methods that can be applied as well, such as **selection models**.[^15] These models can detect other forms of publication bias that funnel plots may not detect, such as publication bias that favors significant results.
-
-[^14]: Essentially, funnel plots and most related methods can detect publication bias in which (1) small studies with large positive point estimates are more likely to be published than small studies with small or negative point estimates; and (2) the largest studies are published regardless of the magnitude of their point estimates. Funnel plots may not detect publication bias that favors significant results. For more detail on these points, see @smt.
-
-You may also have heard of "$p$-methods" to detect across-study biases such as $p$-curve and $p$-uniform [@simonsohn2014p; @simonsohn2014b; @van2015meta]. These methods essentially assess whether the significant $p$-values "bunch up" just under 0.05, which is taken to indicate publication bias. These methods are increasingly popular in psychology and have merits. However, it is important to note that these methods are actually simplified versions of selection models [e.g., @hedges1984estimation] that work only under considerably more restrictive settings than do the original selection models [for example, when there is not heterogeneity across studies; @mcshane2016adjusting]. For this reason, it is usually (although not always) better to use selection models in place of the more restrictive $p$-methods.
-
-[^15]: High-level overviews of selection models are given in @mcshane2016adjusting and @smt. For more methodological detail, see @hedges1984estimation, @iyengar1988, and @vevea1995. For a tutorial on fitting and interpreting selection models, see @smt.
-
 #### Applied example
-In Paluck and colleagues' meta-analysis, they used a regression-based approach to assess and correct for publication bias. This approach provided significant evidence of a relationship between the standard error and effect size (i.e., evidence of an asymmetric funnel plot). This asymettric funnel plot, of course, could be driven by small study effects, but it may be indicative of publication bias. Paluck and colleague subsequently used this same regression-based approach to try to correct for potential  publication bias. Results from this model indicated that the bias-corrected effect size estimate was close to zero. Consequently, Paluck and colleagues concluded that publication bias may be a problem. In other words, even though all studies estimated that intergroup contact decreased prejudice, it is possible that there are studies that did not find this (or found that intergroup contact increased prejudice).
-
-Taken together, Paluck and colleagues' use of meta-analysis provided several important insights that would have been easy to miss in a non-quantitative review:
-1. Despite a preponderance of non-significant findings, real-world intergroup contact interventions are estimated to significant decrease prejudice by `r round(as.numeric(re.m$b), 2)` standard deviations.
-2. There is significant heterogeneity in intergroup contact effects, suggesting that there are important moderators of the effectiveness of these interventions.
-3. Publication bias is a concern, suggesting the need for follow-up research that will be published regardless of the outcome.
-
-::: accident-report
-⚠️ Garbage in, garbage out? Meta-analyzing bad research (Coles et al. 2019)
-
-You may have heard that Botox can help eliminate wrinkles. But some researchers have also suggested that it may help treat clinical depression when used to paralyze the muscles associated with frowning. As crazy as they may sound, a quick examination of the literature would lead many to conclude that this treatment works. Studies that randomly assign depressed patients to either receive Botox injections or saline injections do indeed find that Botox recipients exhibit decreases in depression. And when you combine all available evidence in a meta-analysis, you find that this difference is quite large: $\widehat{d}$ = 0.83, 95% CI [0.52, 1.14].
-
-However, @coles2019does pointed out that there is a problem with within-study bias. Participants are not supposed to know whether they have been randomly assigned to receive Botox or a control saline injections. However, only one of these treatments leads the upper half of your face to be paralyzed, and after a couple of weeks you're likely to figure out whether you received the Botox treatment or control saline injection. Thus, it is possible that the apparent effect of Botox on depression is actually an effect of placebo. The meta-analytic conclusions are potentially undermined by within-study bias.
-
-@coles2019does also found evidence of between-study bias. When coding the effect sizes in the literature, they found that 51% of the outcomes measured were not reported by the study authors. For example, researchers may have collected two measures of depression, but only reported one in the manuscript. This raises concerns about selective reporting: that researchers examining the effects of Botox on depression are only reporting the outcomes that demonstrate an effect, while hiding away the outcomes that do not. In this scenario, any meta-analytic conclusions are potentially undermined by between-study bias.
-
-@coles2019does provides a great example of the "garbage in, garbage out" problem we alluded to throughout this chapter. If within- and between-study bias is not properly mitigated, it is difficult to conclude make valid inferences in a meta-analysis.
-:::
-
-<!-- ## Summary -->
-
-::: exercise
-Imagine that you read the following result in the abstract of a meta-analysis: "In 83 randomized studies of middle school children, replacing one hour of class time with mindfulness meditation significantly improved standardized test scores (standardized mean difference $\widehat{\mu} = 0.05$; 95% confidence interval: \[$0.01, 0.09$\]; $p<0.05$)." Why is this a problematic way to report on meta-analysis results? Suggest a better sentence to replace this one.
-
-As you read the rest of the meta-analysis, you find that the authors conclude that "These findings demonstrate robust benefits of meditation for children, suggesting that test scores improve even when the meditation is introduced as a replacement for normal class time." You recall that the heterogeneity estimate was $\widehat{\tau} = 0.90$. Do you think that this result regarding the heterogeneity tends to support, or rather tends to undermine, the concluding sentence of the meta-analysis? Why?
-
-What kinds of within-study biases would concern you in this meta-analysis? How might you assess the credibility of the meta-analyzed studies and of the meta-analysis as whole in light of these possible biases?
-:::
-
-::: exercise
-Imagine you conduct a meta-analysis on a literature in which statistically significant results in either direction are much more likely to be published that nonsignificant results. Draw the funnel plot you would expect to see. Is the plot funnel symmetric or asymmetric?
-:::
-
-::: exercise
-Why do you think small studies receive more weight in random-effects meta-analysis than in fixed-effects meta-analysis? Can you see why this is true mathematically based on the equations given above, and can you also explain the intuition in simple language?
-:::
-
 
 <!--chapter:end:017-meta.Rmd-->
 
