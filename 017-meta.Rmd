@@ -1,232 +1,71 @@
 # Meta-analysis {#meta}
 
-<!-- NC: May need to remind the reader that we are using SMD as the effect size -->
-
-
-```{r meta-initialization}
-#--------------------------------------------------------------------------------
-# Paluck et al. meta-analysis
-# Note: I cannot perfectly reproduce their results
-#--------------------------------------------------------------------------------
-library("tidyverse")
-library("metafor")
-library("MetaUtility")
-library("PublicationBias")
-
-# rounding digits
-digits = 2
-
-# helper fn taken from https://osf.io/ue36m/
-sim_data2 = function(p,
-                     keep.all.studies = FALSE) {
-
-  N = p$k * p$per.cluster
-
-  # generate cluster random intercepts
-  # called "zeta" in paper
-  # these are normal even when true effect dist is exponential
-  gam1 = rnorm( n = p$k, mean = 0, sd = sqrt( p$V.gam ) )
-  gam1i = rep( gam1, each = p$per.cluster )
-
-  # generate individual-study random intercepts
-  # these are called "gamma" in the paper
-  # these are either normal or exponential
-  if ( p$true.dist == "norm" ) gam2i = rnorm( n = N, mean = 0, sd = sqrt( p$V - p$V.gam ) )
-
-    if ( p$true.dist == "exp" ) {
-      true.effect.var = p$V - p$V.gam
-      # set var using properties of exponential
-      gam2i = rexp( n = N, rate = true.effect.var^(-1/2) )
-      # shift to have mean of 0
-      # use fact that var = mean^2 in exponential
-      gam2i = gam2i - true.effect.var^(1/2)
-    }
-
-
-  # individual study SEs
-  sei = runif( n = N, min = p$sei.min, max = p$sei.max )
-
-  # individual study means
-  if ( p$SE.corr == TRUE ) {
-    beta = 6
-    mui = p$mu + beta * sei + gam1i + gam2i
-
-    # recenter them to have desired mean of p$mu
-    # because E[sei}]
-    mui = mui - beta * mean(sei)
-
-    cor(sei, mui)
-  } else {
-    mui = p$mu + gam1i + gam2i
-  }
-
-  # individual study point estimates
-  yi = rnorm( n = N, mean = mui, sd = sei )
-
-  # NEW: make cluster variable
-  # this way, if we generate (say) 5 studies per "cluster", but V.gam = 0 in order
-  #  to effectively generate without clustering, the cluster variable we ultimately
-  #  pass to robumeta correctly reflects the lack of clustering
-  if ( p$V.gam == 0 ) cluster = 1:N else cluster = rep(1:p$k, each = p$per.cluster)
-  
-  # suppress warnings from cor if SD of mui is 0 (fixed-effects model)
-  d = suppressWarnings( data.frame( cluster = cluster,
-                                    Study.name = 1:N,
-                                    mui,
-                                    yi = yi,
-                                    sei = sei,
-                                    vi = sei^2,
-                                    pval = 2 * ( 1 - pnorm( abs(yi) / sei ) ),
-                                    SE.corr.emp = cor(sei, mui) ) )  # empirical correlation
-  
-  # 1-tailed publication bias
-  signif = d$pval < 0.05 & d$yi > 0
-  publish = rep( 1, nrow(d) )
-  publish[ signif == FALSE ] = rbinom( n = sum(signif == FALSE), size = 1, prob = 1/p$eta )
-
-  d$weight = 1
-  d$weight[ signif == 0 ] = p$eta
-
-  # optionally, also select for small SE
-  # Fi as defined in Supplement
-  # tertiles of empirical SEs prior to selection
-  Fi = rep( 1, nrow(d) )  # so that it has no effect if we're not selecting based on SE
-  if ( p$select.SE == TRUE ) {
-    terts = p$sei.min + (p$sei.max - p$sei.min) * c(1/3, 2/3)
-    # prob of inclusion based on SE
-    P.Fi = rep(NA, nrow(d))
-    P.Fi[ d$sei < terts[1] ] = 1
-    #Fi[ d$sei >= terts[1] ] = 0
-    P.Fi[ d$sei >= terts[1] & d$sei < terts[2] ] = .75
-    P.Fi[ d$sei >= terts[2] ] = .5
-    Fi = rbinom( n = nrow(d),
-                 size = 1,
-                 prob = P.Fi )
-  }
-
-  if ( keep.all.studies == FALSE ) d = d[ publish == 1 & Fi == 1, ]
-  if ( keep.all.studies == TRUE ){
-    # just add the indicators
-    d$publish = publish
-    d$Fi = Fi
-  }
-
-  # record the mean empirical SE (after publication bias) as sanity check on SE selection
-  # but avoid errors if d now has 0 studies
-  if ( nrow(d) > 0 ) {
-    d$SE.mean.emp = mean(d$sei)
-    d$P.select.SE.emp = mean(Fi)
-    d$P.publish.emp = mean(publish)
-    return(d)
-  } else {
-    # still return the empty dataset for use in doParallel
-    return(d)
-  }
-}
+```{r meta-helper-child, child="helper/meta_prelims.Rmd"}
 ```
 
-```{r meta-paluck}  
-DF <- read.csv("data/Contact_quant_outcomes.csv")
-
-
-# remove supplemental studies (see Paluck et al. Supplement Section 1)
-DF <- DF[1:27, ]
-
-# calculate total n and determine whether d estimate was significant
-DF <- DF %>% 
-  
-  rowwise() %>% 
-  
-  # calculate total n
-  mutate(n_total = n_t + n_c) %>% 
-  
-  # determine whether d estimate was significant
-    ## calculate lower and upper bounds
-    mutate(lb = d - (1.96 * sqrt(var_d)),
-           ub = d + (1.96 * sqrt(var_d))) %>% 
-    
-    ## determine significance
-    mutate(sig = if_else(
-      condition = lb > 0,
-      true = 1,
-      false = 0)) %>% 
-  
-  ungroup() %>% 
-  
-  # MM likes it ordered by variance for forest plot prettiness
-  arrange(var_d)
-
-# fixed effect meta
-fe.m <- rma(yi = d,
-            vi = var_d,
-            data = DF,
-            method = "FE")
-
-# random effect meta
-re.m <- rma(yi = d,
-            vi = var_d,
-            data = DF,
-            method = "REML",
-            knha = TRUE,
-            # for forest plot joy:
-            slab = DF$name_short)
-
-# estimated heterogeneity with inference
-t2.CI = tau_CI(meta = re.m)
-tauStats = round( c( sqrt(re.m$tau2), t2.CI[1], t2.CI[2] ), digits )
-
-```
-
-::: learning-goals
+:::{.learning-goals}
 🍎 Learning goals:
 
-- Understand the benefits of synthesizing evidence across studies.
-- Understand the pitfalls of intuitive approaches to evidence synthesis, with a focus on how many of these issues are addressed via meta-analysis.
-- Conduct a simple fixed- or random-effects meta analysis.
-- Understand that within- and across-study biases affect not only individual studies, but also meta-analysis. 
+- Discuss the benefits of synthesizing evidence across studies
+- Conduct a simple fixed- or random-effects meta analysis
+- Reason about the role of within- and across-study biases in meta-analysis interpretation
 :::
 
-::: case-study
-🔬 Case study: Hotel towel reuse (Scheibehenne, Jamil, and Wagenmakers 2016). A simple example of aggregating noisy evidence from replications.
+Throughout this book, we have focused on the importance of using experiments to estimate effects. Our focus has been on design decisions that maximize the precision of our estimates and minimizes their bias. But even when we do our best to get a precise, unbiased estimate of effect size, we also must acknowledge the role of participant, stimulus, and methodological variability in limiting both the precision and the generalizability of our estimates. 
 
-In a widely-cited study on the power of describing social norms, @goldstein2008room examined the effect of social norm messaging on hotel towel reuse. Across two studies, they found that guests were significantly more likely to reuse their towels after receiving a social norm message that stated most other people reuse their towels (Study 1 $p = .05$, Study 2 $p = .03$). However, five subsequent studies consistently failed to indicate that social norm messages increased hotel towel reuse (all $p > .05$).
+Both before and after conducting an experiment, a review of the literature is a critical tool for understanding sources of variation in a particular effect of interest. The term "review" might sound like you throw a search term into Google Scholar, download articles that look topical or interesting, spend a few days reading those articles, and then write a summary. While this ad-hoc technique is one of many ways of performing a review of the literature [@grant2009typology], it doesn't provide any kind of quantitative expectation about a particular effect. Further, it doesn't tell you anything about potential biases in the literature -- for example, a bias for the publication of positive effects. 
 
-At first glance, you might conclude that these studies indicate that social norm messages do not reliably impact towel reuse. You might even go a step further and try to think of explanations for why one team found the effect, but others did not. (Maybe the messages change behavior when guest receive nice fluffy towels, but not when they  receive cheap, low-quality towels.) However, this is a case where binary thinking about $p$-values can mislead us. When @scheibehenne2016 combined the evidence via a *meta-analysis*, they found that the results across these studies were, for the most part, quite consistent. Participants who received a social norm message were slightly more likely to reuse their towels in four out of five of the studies--but most of the studies simply did not have large enough samples for this difference to be statistically significant. When combined, however, meta-analysis indicated that social norm messages did have a significant overall effect on hotel towel reuse.
+To address these questions, a more systematic, quantitative review of the literature is required. This chapter focuses on a specific type of quantitative review called **meta-analysis**. Meta-analysis is a method for combining effect sizes across different measurements. (If you need a refresher on effect size, flip back to Chapter \@ref(estimation), where we introduce the concept.^[We'll exclusively be using Cohen's $d$, the standardized difference between means, which we introduced in Chapter \@ref(estimation). There are many more varieties of effect size available, but we focus here on $d$ because it's common and easy to reason about in the context of the statistical tools we introduced in the earlier sections of the book.]
+
+By combining information from multiple studies, meta-analysis often provides more precise estimates of an effect size than any single study. In addition, meta-analysis also allows the researcher to look at the extent to which an effect varies  across studies. If an effect does vary across studies, meta-analysis also can be used to test whether certain study characteristics systematically produce different results (e.g., whether an effect is larger in certain populations). 
+
+:::{.case-study}
+🔬 Case study: Hotel towel reuse
+
+Imagine you are staying in a hotel and you have just taken a shower. Do you throw the towels on the floor or hang them back up again? In a widely-cited study on the power of describing social norms, @goldstein2008room provided a message that "most other guests reuse their towels." Across two studies, they found that guests were significantly more likely to reuse their towels after receiving the social norm message than a control (Study 1: $p = .05$, Study 2: $p = .03$). 
+
+Unfortunately, five subsequent studies testing whether social norm messages increased hotel towel reuse all failed to reject the null hypothesis (all $p$s $> .05$). You might conclude that these studies indicate that social norm messages do not reliably impact towel reuse. You might even go a step further and try to think of explanations for why one team found the effect, but others did not. (Maybe the messages change behavior when guest receive nice fluffy towels, but not when they  receive cheap, low-quality towels.) 
+
+Yet when the evidence was combined in a *meta-analysis, @scheibehenne2016 found that the results across these studies were, for the most part, quite consistent. Participants who received a social norm message were slightly more likely to reuse their towels in four out of five of the studies -- but most of the studies simply did not have large enough samples for this difference to be statistically significant. When combined, however, meta-analysis indicated that social norm messages did have a significant overall effect on hotel towel reuse. Although each study was likely under-powered to detect the true effect, on the balance it appears that the social norm message does make a difference. 
 :::
 
-When students hear the term "review", they often have flashbacks to times where they threw some search term into Google Scholar, downloaded a bunch of articles that looked interesting, spent a few days reading those articles, and then wrote a summary of what they learned. This is one of many ways of performing a review (see @grant2009typology), but this chapter focuses on a specific type of quantitative review called *meta-analysis*.
-
-One of the central parts of the meta-analysis is extracting *effect sizes* from individual studies and then combining these effect sizes. (Feel free to check back to Chapter \@ref(estimation) if you need a refresher on effect sizes. We'll wait here for you, we promise.) By combining information from multiple studies, meta-analysis often provides more precise estimates of an effect size than any single study. In addition, meta-analysis also allows the researcher to look at the extent to which an effect varies  across studies. If an effect does vary across studies, meta-analysis can be used to test whether certain study characteristics systematically produce different results (e.g., whether an effect is larger in certain world regions).
-
-Meta-analysis often teaches us something about a body of evidence that we do not intuitively grasp when we casually read through a bunch of articles. Indeed, in the above case study, merely reading all the studies that tested the effect of social norm messaging on hotel towel re-use would give the impression that the effect is (at best) unreliable. However, meta-analysis indicated that the results across studies are not as inconsistent as they seem--and that social norm messaging did decrease towel re-use overall. Given the number of hotel bookings worldwide--1.7 billion in the European Union alone in 2013 @kotzeva2015eurostat--the unique insight provided by the meta-analysis is not at all trivial!
-
-The hotel towel example is a good starting point but there is much more we can do with meta-analysis. To illustrate, we'll turn to another example: a meta-analysis of an idea called the *contact hypothesis*. According to contact hypothesis, prejudice can be reduced when members of majority and minority groups come together in the pursuit of a common goal @allport1954nature. To examine whether this type of intergroup contact can mitigate prejudice in the real world, @paluck2019contact performed a meta-analysis of studies that tested the effects of randomly-assigned intergroup contact interventions on prejudice-related outcomes. Cohen's $d$--which, if you recall from Chapter \@ref(estimation), represents the standardized mean difference--was used as the effect size index. As we show in the remainder of the chapter, the meta-analytic tools @paluck2019contact used provide several useful insights about this proposed prejudice-reduction intervention.
+Meta-analysis often teaches us something about a body of evidence that we do not intuitively grasp when we casually read through a bunch of articles. Merely reading all the studies that tested the effect of social norm messaging on hotel towel re-use would give the impression that the effect is (at best) unreliable. But meta-analysis indicated that the results across studies are not as inconsistent as they seem -- and that social norm messaging did decrease towel re-use overall.^[Given the number of hotel bookings worldwide -- 1.7 billion in the European Union alone in 2013 [@kotzeva2015eurostat] -- the insight provided by the meta-analysis is not trivial!]
 
 ## The basics of evidence synthesis
 
-### How *not* to synthesize evidence
+The hotel towel example is a good starting point but there is much more we can do with meta-analysis. To illustrate, we'll turn to another example: a meta-analysis of an idea called the *contact hypothesis*. According to contact hypothesis, prejudice can be reduced when members of majority and minority groups come together in the pursuit of a common goal @allport1954nature. 
 
-When considering evidence across multiple studies, many people intuitively count how many studies supported versus did not support the hypothesis under investigation. This usually amounts to counting the number of studies with "significant" $p$-values, since (for better or for worse) "significance" is largely what drives the take-home conclusions researchers report [@mcshane2017statistical; @nelson1986interpretation]. In meta-analysis, we call this practice of counting the number of significant $p$-values *vote-counting* [@borenstein2021introduction]. For example, in the @paluck2019contact meta-analysis, all studies yielded positive effect sizes, but only approximately `r sum(DF$sig)` of `r nrow(DF)` were significant. So, based on this vote-count, we would have the impression that most studies do not support the contact hypothesis.
+To examine whether this type of inter-group contact can mitigate prejudice in real-world contexts, @paluck2019contact performed a meta-analysis of studies that tested the effects of randomly-assigned inter-group contact interventions on prejudice-related outcomes. The starting point of their analysis was to identify all of the published papers that randomly assigned participants to inter-group contact situations and measured outcomes after a delay. They then did the hard work of extracting effect size estimates from each of these papers. Because not every paper reports standardized effect sizes -- or even means and standard deviations for every group -- this process can often involve scraping information from plots, tables, and statistical tests to try and reconstruct effect sizes.
 
-Many literature reviews use this vote-counting approach--albeit often not explicitly. Despite its intuitive appeal, though, vote-counting can be very misleading because it characterizes evidence solely in terms of dichotomized $p$-values, while entirely ignoring effect sizes. In Chapter \@ref(replication), we saw how this fetishism of statistical significance can mislead us when we consider individual studies. These problems propagate to evidence syntheses if we simply vote-count statistical significance across studies as well. For example, small studies on large effects may consistently produce non-significant effects that, when combined in a large meta-analysis, provide strong evidence of an effect. Inversely, it is also possible for a meta-analysis to not provide strong evidence of an effect despite several studies finding statistically significant effect size estimates. In these cases, vote-counting could lead us badly astray [@borenstein2021introduction]. To avoid these pitfalls, meta-analysis combines the effect sizes estimates from each study.
+<!-- Cohen's $d$ -- which, if you recall from Chapter \@ref(estimation), represents the standardized mean difference -- was used as the effect size index. As we show in the remainder of the chapter, the meta-analytic tools @paluck2019contact used provide several useful insights about this proposed prejudice-reduction intervention. -->
+
+### How not to synthesize evidence
+
+Many people's first instinct for evidence synthesis is to count how many studies support versus did not support the hypothesis under investigation. This technique usually amounts to counting the number of studies with "significant" $p$-values, since (for better or for worse) "significance" is largely what drives the take-home conclusions researchers report [@mcshane2017statistical; @nelson1986interpretation]. In meta-analysis, we call this practice of counting the number of significant $p$-values **vote-counting** [@borenstein2021introduction]. 
+
+For example, in the @paluck2019contact meta-analysis, all studies yielded positive effect sizes, but only approximately `r sum(DF$sig)` of `r nrow(DF)` were significant. So, based on this vote-count, we would have the impression that most studies do not support the contact hypothesis.
+
+Many literature reviews use this vote-counting approach -- albeit often not explicitly. Despite its intuitive appeal, vote-counting can be very misleading: it characterizes evidence solely in terms of dichotomized $p$-values, while entirely ignoring effect sizes. In Chapter \@ref(replication), we saw how this fetishism of statistical significance can mislead us when we consider individual studies. These problems are even worse when they are multiplied across studies. 
+
+For example, small studies on large effects may consistently produce non-significant effects that, when combined in a large meta-analysis, provide good evidence of an effect (as with the hotel towels). Inversely, it is also possible for a meta-analysis not to provide strong evidence of an effect despite several studies finding statistically significant effects. In these cases, vote-counting can lead us badly astray [@borenstein2021introduction]. To avoid these pitfalls, meta-analysis combines the effect sizes estimates from each study, weighting them in a principled way.
+
+### Fixed effects meta-analysis
+
+If vote-counting is a bad idea, how should we combine results across studies? The next simplest way might be to average effect sizes from each study. Let's take a look at the effects that @paluck2019contact identified. As we've seen throughout this book, visualizing data before and after analysis helps benchmark and sanity-check our intuitions about the formal statistical results. In a meta-analysis, a common way to do so is the **forest plot**, which depicts individual studies' estimates and confidence intervals.^[You can ignore for now the column of percentages and the final line, "RE Model"; we will return to these later.] In this plot, the larger squares correspond to more precise studies; notice how much narrower their confidence intervals are than the confidence intervals of less precise studies. In Paluck et al.'s meta-analysis, the mean of the studies' effect size estimates is `r round( mean(DF$d), digits )`. 
 
 
-### Combining results across studies using fixed-effect meta-analysis
-
-Once you are ready to combine results across studies, you have to figure out how you will do so. A seemingly reasonable approach would be to simply average the effect size estimates from each study. For example, in Paluck et al.'s meta-analysis, the mean of the studies' effect size estimates is `r round( mean(DF$d), digits )`. This approach is a step in the right direction, but it has an important limitation. Specifically, simply averaging effect size estimates gives equal weight to each study. A small study (like @clunies1989changing, with a sample size of `r DF[1, ]$n_total`) contributes as much to the mean effect size as a large study (like @boisjoly2006empathy, with a sample size of `r DF[27, ]$n_total`). This is problematic--as we know that larger studies typically provide more accurate estimates of effect sizes. Thus, larger studies should carry more weight in the analysis. This brings us to a common approach to principled evidence synthesis, *fixed-effect meta-analysis*.
-
-<!-- NC: I'm not really sure if this forest plot adds much to the explanation. As is, I worry that it may confuse more than it informs  -->
-As we've seen throughout this book, visualizing data before and after analysis helps benchmark and sanity-check our intuitions about the formal statistical results. In a meta-analysis, a common way to do so is the **forest plot**, which depicts individual studies' estimates and confidence intervals. (You can ignore for now the column of percentages and the final line, "RE Model"; we will return to these later.) In this plot, the larger squares correspond to more precise studies; notice how much narrower their confidence intervals are than the confidence intervals of less precise studies.
-
-
-```{r meta-forest, fig.cap="Forest plot for Paluck et al. meta-analysis. Studies are ordered from smallest to largest standard error."}
+```{r meta-forest, fig.cap="Forest plot for Paluck et al. meta-analysis. Studies are ordered from smallest to largest standard error.", fig.height=8}
 metafor::forest(re.m,
        showweights = TRUE,
        header = TRUE,
        xlab = "Standardized mean difference")
 ```
 
-Fixed-effect meta-analysis uses a *weighted-average*, wherein larger, more precise studies are given more weight in the calculation of the overall effect size. Specifically, studies are weighed by the inverse of their variance (i.e., the inverse of their squared standard error). This makes sense because larger, more precise studies have smaller variances, and thus get more weight in the analysis. The fixed-effect pooled estimate is:
+This averaging approach is a step in the right direction, but it has an important limitation. Averaging effect size estimates gives equal weight to each study. A small study [e.g., @clunies1989changing, N=`r DF[1, ]$n_total`] contributes as much to the mean effect size as a large study [e.g., @boisjoly2006empathy, N=`r DF[27, ]$n_total`]. Larger studies typically provide more accurate estimates of effect sizes, so this weighting seems problematic. Larger studies should carry more weight in the analysis. 
+
+To address this issue, **fixed-effect meta-analysis** uses a **weighted average** approach. Larger, more precise studies are given more weight in the calculation of the overall effect size. Specifically, studies are weighed by the inverse of their variance (i.e., the inverse of their squared standard error). This makes sense because larger, more precise studies have smaller variances, and thus get more weight in the analysis. 
+
+The fixed-effect pooled estimate is:
 
 $$\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}$$ where $k$ is the number of studies, $\widehat{\theta}_i$ is the point estimate of the $i^{th}$ study, and $w_i = 1/\widehat{\sigma}^2_i$ is study $i$'s weight in the analysis (i.e., the inverse of its variance).[^9]
 
@@ -236,7 +75,7 @@ In Paluck et al.'s meta-analysis, we would calculate the fixed-effect estimate, 
 $$\widehat{\mu} = \frac{ \frac{\widehat{\theta}_{study1}}{\widehat{\sigma}^2_{study1}} + \frac{\widehat{\theta}_{study2}}{\widehat{\sigma}^2_{study2}} + \cdots}{ \frac{1}{\widehat{\sigma}^2_{study1}} + \frac{1}{\widehat{\sigma}^2_{study2}} + \cdots } =
 \frac{ \frac{0.03}{0.08^2} + \frac{0.30}{0.08^2} + \cdots }{ \frac{1}{0.08^2} + \frac{1}{0.08^2} + \cdots }$$
 
-We thus estimate that the overall effect size in these studies is a standardized mean difference of $\widehat{\mu}$ = `r round(as.numeric(fe.m$b), 2)`; 95% confidence interval [`r paste0(round(fe.m$ci.lb, 2), ", ", round(fe.m$ci.ub, 2))`]; $p=$ < .001. Because cohen's $d$ is our effect size index, this means that intergroup contact decreased prejudice by `r round(as.numeric(fe.m$b), 2)` standard deviations.
+We thus estimate that the overall effect size in these studies is a standardized mean difference of $\widehat{\mu}$ = `r round(as.numeric(fe.m$b), 2)`; 95% confidence interval [`r paste0(round(fe.m$ci.lb, 2), ", ", round(fe.m$ci.ub, 2))`]; $p=$ < .001. Because Cohen's $d$ is our effect size index, this means that intergroup contact decreased prejudice by `r round(as.numeric(fe.m$b), 2)` standard deviations.
 
 
 [^9]: If you are curious, the standard error of the fixed-effect $\widehat{\mu}$ is $\frac{1}{\sum_{i=1}^k w_i}$. This can be used to construct a confidence interval or $p$-value.
@@ -324,7 +163,7 @@ Meta-analysis is an invaluable tool to synthesize evidence across studies. Howev
 
 ### Within-study biases
 
-Within-study biases--such as demand characteristics, confounds, and order effects--not only impact the validity of individual studies, but also any attempt to synthesize those studies. In other words: garbage in, garbage out. For example, @paluck2019contact noted that early studies on intergroup contact almost exclusively used nonrandomized designs. Imagine a hypothetical study where researchers (a) are studying a completely ineffective intergroup contact intervention, and (b) non-randomly assign low-prejudice people to the intergroup contact condition and high-prejudice people to the control condition. In a scenario like this, the researcher will, of course, find that the prejudice was lower in the intergroup contact condition. However, this is not a true effect of the contact intervention, but rather a spurious effect of non-random assignment. Now imagine repeating this across many studies and then performing a meta-analysis. The meta-analyst would find impressive evidence of an intergroup contact effect, but this is simply driven by systematic non-random assignment. Once again: you put garbage in, you get garbage out.
+Within-study biases -- such as demand characteristics, confounds, and order effects -- not only impact the validity of individual studies, but also any attempt to synthesize those studies. In other words: garbage in, garbage out. For example, @paluck2019contact noted that early studies on intergroup contact almost exclusively used nonrandomized designs. Imagine a hypothetical study where researchers (a) are studying a completely ineffective intergroup contact intervention, and (b) non-randomly assign low-prejudice people to the intergroup contact condition and high-prejudice people to the control condition. In a scenario like this, the researcher will, of course, find that the prejudice was lower in the intergroup contact condition. However, this is not a true effect of the contact intervention, but rather a spurious effect of non-random assignment. Now imagine repeating this across many studies and then performing a meta-analysis. The meta-analyst would find impressive evidence of an intergroup contact effect, but this is simply driven by systematic non-random assignment. Once again: you put garbage in, you get garbage out.
 
 To mitigate this problem, meta-analysts often exclude studies that may be affected by within-study bias. For example, @paluck2019contact excluded nonrandomized studies to avoid concerns about confounding. After data have been collected, meta-analysts often also qualitatively assess studies' risks of bias using established rating tools [@art]. Doing so allows the meta-analyst to communicate just how much within-study bias there may be. @paluck2019contact did not use this tool, but they could have used it to communicate for example, the extent to which participants may have differentially dropped out of the study. Meta-analysts also often conduct sensitivity analyses that examine how much meta-analysis results change when excluding certain types of studies [@art]. For example, if nonrandom assignment is a concern, a meta-analysts may run the analyses with and without studies using nonrandom assignment in order to determine if including these studies changes the meta-analysis results.
 
@@ -332,7 +171,7 @@ To mitigate this problem, meta-analysts often exclude studies that may be affect
 
 ### Across-study biases
 
-Across-study biases refer to behaviors like researchers selecting reporting certain types of findings (*selective reporting*) or selectively publishing certain types of findings (*publication bias*; see below accident report). Often, these across-study biases favor statistically significant positive results, which means the meta-analysis of the available results will be inflated. For example, if researchers publish only the studies that yield statistically significant positive results and hide the studies that don't, statistically combining the published studies via meta-analysis will obviously lead to exaggerated effect size estimates. Bias in, bias out--garbage in, garbage out.
+Across-study biases refer to behaviors like researchers selecting reporting certain types of findings (*selective reporting*) or selectively publishing certain types of findings (*publication bias*; see below accident report). Often, these across-study biases favor statistically significant positive results, which means the meta-analysis of the available results will be inflated. For example, if researchers publish only the studies that yield statistically significant positive results and hide the studies that don't, statistically combining the published studies via meta-analysis will obviously lead to exaggerated effect size estimates. Bias in, bias out -- garbage in, garbage out.
 
 ::: accident-report
 🔬 Accident Report: Quantifying publication bias in the social sciences
@@ -427,7 +266,7 @@ significance_funnel(yi = meta.p$yi,
 
 Notice that the introduction of publication has dramatically inflated the pooled estimate from `r round(meta.all$b, digits)` to `r round(meta.p$b, digits)`.[^8] Also, there appears to be a correlation between studies' estimates and their standard errors, such that smaller studies tend to have larger estimates than do larger studies. This is often called *funnel plot asymmetry*.
 
-Several popular statistical methods, such as Trim-and-Fill [@duval2000trim] and Egger's regression [@egger1997bias] are designed to quantify funnel plot asymmetry. However, one limitation is that funnel plot asymmetry is not always representative of publication bias. Indeed, sometimes funnel plot asymmetry is driven by  genuine differences in the effects being studied in small and large studies [@egger1997bias; @lau2006case]. For example, in a meta-analysis of intervention studies, if the most effective interventions are also the most expensive or difficult to implement, these highly effective interventions might be used primarily in the smallest studies. Thus, funnel plot methods may be indicative of publication bias--but they may more simply driven by small-study effects [@smt].[^14] For these reasons, assessments of publication bias in meta-analysis should rely not only on funnel plots [@smt]. There are numerous other methods that can be applied as well, such as **selection models**.[^15] These models can detect other forms of publication bias that funnel plots may not detect, such as publication bias that favors significant results.
+Several popular statistical methods, such as Trim-and-Fill [@duval2000trim] and Egger's regression [@egger1997bias] are designed to quantify funnel plot asymmetry. However, one limitation is that funnel plot asymmetry is not always representative of publication bias. Indeed, sometimes funnel plot asymmetry is driven by  genuine differences in the effects being studied in small and large studies [@egger1997bias; @lau2006case]. For example, in a meta-analysis of intervention studies, if the most effective interventions are also the most expensive or difficult to implement, these highly effective interventions might be used primarily in the smallest studies. Thus, funnel plot methods may be indicative of publication bias -- but they may more simply driven by small-study effects [@smt].[^14] For these reasons, assessments of publication bias in meta-analysis should rely not only on funnel plots [@smt]. There are numerous other methods that can be applied as well, such as **selection models**.[^15] These models can detect other forms of publication bias that funnel plots may not detect, such as publication bias that favors significant results.
 
 [^14]: Essentially, funnel plots and most related methods can detect publication bias in which (1) small studies with large positive point estimates are more likely to be published than small studies with small or negative point estimates; and (2) the largest studies are published regardless of the magnitude of their point estimates. Funnel plots may not detect publication bias that favors significant results. For more detail on these points, see @smt.
 
@@ -455,7 +294,10 @@ However, @coles2019does pointed out that there is a problem with within-study bi
 @coles2019does provides a great example of the "garbage in, garbage out" problem we alluded to throughout this chapter. If within- and between-study bias is not properly mitigated, it is difficult to conclude make valid inferences in a meta-analysis.
 :::
 
-<!-- ## Summary -->
+## Chapter summary: Meta-analysis
+
+
+
 
 ::: exercise
 Imagine that you read the following result in the abstract of a meta-analysis: "In 83 randomized studies of middle school children, replacing one hour of class time with mindfulness meditation significantly improved standardized test scores (standardized mean difference $\widehat{\mu} = 0.05$; 95% confidence interval: [$0.01, 0.09$]; $p<0.05$)." Why is this a problematic way to report on meta-analysis results? Suggest a better sentence to replace this one.
