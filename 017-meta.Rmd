@@ -35,7 +35,7 @@ Meta-analysis often teaches us something about a body of evidence that we do not
 
 The hotel towel example is a good starting point but there is much more we can do with meta-analysis. To illustrate, we'll turn to another example: a meta-analysis of an idea called the *contact hypothesis*. According to contact hypothesis, prejudice can be reduced when members of majority and minority groups come together in the pursuit of a common goal @allport1954nature. 
 
-To examine whether this type of inter-group contact can mitigate prejudice in real-world contexts, @paluck2019contact performed a meta-analysis of studies that tested the effects of randomly-assigned inter-group contact interventions on prejudice-related outcomes. The starting point of their analysis was to identify all of the published papers that randomly assigned participants to inter-group contact situations and measured outcomes after a delay. They then did the hard work of extracting effect size estimates from each of these papers. Because not every paper reports standardized effect sizes -- or even means and standard deviations for every group -- this process can often involve scraping information from plots, tables, and statistical tests to try and reconstruct effect sizes.
+To examine whether this type of intergroup contact can mitigate prejudice in real-world contexts, @paluck2019contact performed a meta-analysis of studies that tested the effects of randomly-assigned intergroup contact interventions on prejudice-related outcomes. The starting point of their analysis was to identify all of the published papers that randomly assigned participants to intergroup contact situations and measured outcomes after a delay. They then did the hard work of extracting effect size estimates from each of these papers. Because not every paper reports standardized effect sizes -- or even means and standard deviations for every group -- this process can often involve scraping information from plots, tables, and statistical tests to try and reconstruct effect sizes.
 
 <!-- Cohen's $d$ -- which, if you recall from Chapter \@ref(estimation), represents the standardized mean difference -- was used as the effect size index. As we show in the remainder of the chapter, the meta-analytic tools @paluck2019contact used provide several useful insights about this proposed prejudice-reduction intervention. -->
 
@@ -51,7 +51,7 @@ For example, small studies on large effects may consistently produce non-signifi
 
 ### Fixed effects meta-analysis
 
-If vote-counting is a bad idea, how should we combine results across studies? The next simplest way might be to average effect sizes from each study. Let's take a look at the effects that @paluck2019contact identified. As we've seen throughout this book, visualizing data before and after analysis helps benchmark and sanity-check our intuitions about the formal statistical results. In a meta-analysis, a common way to do so is the **forest plot**, which depicts individual studies' estimates and confidence intervals.^[You can ignore for now the column of percentages and the final line, "RE Model"; we will return to these later.] In this plot, the larger squares correspond to more precise studies; notice how much narrower their confidence intervals are than the confidence intervals of less precise studies. In Paluck et al.'s meta-analysis, the mean of the studies' effect size estimates is `r round( mean(DF$d), digits )`. 
+If vote-counting is a bad idea, how should we combine results across studies? The next simplest way might be to average effect sizes from each study. Let's take a look at the effects that @paluck2019contact identified. As we've seen throughout this book, visualizing data before and after analysis helps benchmark and sanity-check our intuitions about the formal statistical results. In a meta-analysis, a common way to do so is the **forest plot**, which depicts individual studies' estimates and confidence intervals.^[You can ignore for now the column of percentages and the final line, "RE Model"; we will return to these later.] In the forest plot in Figure \@ref(fig:meta-forest), the larger squares correspond to more precise studies; notice how much narrower their confidence intervals are than the confidence intervals of less precise studies. In Paluck et al.'s meta-analysis, the mean of the studies' effect size estimates is `r round( mean(DF$d), digits )`. 
 
 
 ```{r meta-forest, fig.cap="Forest plot for Paluck et al. meta-analysis. Studies are ordered from smallest to largest standard error.", fig.height=8}
@@ -61,7 +61,7 @@ metafor::forest(re.m,
        xlab = "Standardized mean difference")
 ```
 
-This averaging approach is a step in the right direction, but it has an important limitation. Averaging effect size estimates gives equal weight to each study. A small study [e.g., @clunies1989changing, N=`r DF[1, ]$n_total`] contributes as much to the mean effect size as a large study [e.g., @boisjoly2006empathy, N=`r DF[27, ]$n_total`]. Larger studies typically provide more accurate estimates of effect sizes, so this weighting seems problematic. Larger studies should carry more weight in the analysis. 
+This averaging approach is a step in the right direction, but it has an important limitation. Averaging effect size estimates gives equal weight to each study. A small study [e.g.,  N=`r DF[27, ]$n_total`, @clunies1989changing] contributes as much to the mean effect size as a large study [e.g., N=`r DF[1, ]$n_total`, @boisjoly2006empathy]. Larger studies typically provide more accurate estimates of effect sizes, so this weighting seems problematic. Larger studies should carry more weight in the analysis. 
 
 To address this issue, **fixed-effect meta-analysis** uses a **weighted average** approach. Larger, more precise studies are given more weight in the calculation of the overall effect size. Specifically, studies are weighed by the inverse of their variance (i.e., the inverse of their squared standard error). This makes sense because larger, more precise studies have smaller variances, and thus get more weight in the analysis. 
 
@@ -69,51 +69,51 @@ The fixed-effect pooled estimate is:
 
 $$\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}$$ where $k$ is the number of studies, $\widehat{\theta}_i$ is the point estimate of the $i^{th}$ study, and $w_i = 1/\widehat{\sigma}^2_i$ is study $i$'s weight in the analysis (i.e., the inverse of its variance).[^9]
 
-In Paluck et al.'s meta-analysis, we would calculate the fixed-effect estimate, $\widehat{\mu}$, as:
+<!-- In Paluck et al.'s meta-analysis, we would calculate the fixed-effect estimate, $\widehat{\mu}$, as: -->
 
-<!-- hard-coded from DF$d[1:2] and DF$se_d[1:2] -->
-$$\widehat{\mu} = \frac{ \frac{\widehat{\theta}_{study1}}{\widehat{\sigma}^2_{study1}} + \frac{\widehat{\theta}_{study2}}{\widehat{\sigma}^2_{study2}} + \cdots}{ \frac{1}{\widehat{\sigma}^2_{study1}} + \frac{1}{\widehat{\sigma}^2_{study2}} + \cdots } =
-\frac{ \frac{0.03}{0.08^2} + \frac{0.30}{0.08^2} + \cdots }{ \frac{1}{0.08^2} + \frac{1}{0.08^2} + \cdots }$$
+<!-- <!-- hard-coded from DF$d[1:2] and DF$se_d[1:2] --> -->
+<!-- $$\widehat{\mu} = \frac{ \frac{\widehat{\theta}_{study1}}{\widehat{\sigma}^2_{study1}} + \frac{\widehat{\theta}_{study2}}{\widehat{\sigma}^2_{study2}} + \cdots}{ \frac{1}{\widehat{\sigma}^2_{study1}} + \frac{1}{\widehat{\sigma}^2_{study2}} + \cdots } = -->
+<!-- \frac{ \frac{0.03}{0.08^2} + \frac{0.30}{0.08^2} + \cdots }{ \frac{1}{0.08^2} + \frac{1}{0.08^2} + \cdots }$$ -->
 
-We thus estimate that the overall effect size in these studies is a standardized mean difference of $\widehat{\mu}$ = `r round(as.numeric(fe.m$b), 2)`; 95% confidence interval [`r paste0(round(fe.m$ci.lb, 2), ", ", round(fe.m$ci.ub, 2))`]; $p=$ < .001. Because Cohen's $d$ is our effect size index, this means that intergroup contact decreased prejudice by `r round(as.numeric(fe.m$b), 2)` standard deviations.
+We can use the fixed-effects formula to estimate that the overall effect size in Paluck et al.'s meta-analysis studies is a standardized mean difference of $\widehat{\mu}$ = `r round(as.numeric(fe.m$b), 2)`; 95% confidence interval [`r paste0(round(fe.m$ci.lb, 2), ", ", round(fe.m$ci.ub, 2))`]; $p < .001$. Because Cohen's $d$ is our effect size index, this estimate means that intergroup contact decreased prejudice by `r round(as.numeric(fe.m$b), 2)` standard deviations.
 
 
-[^9]: If you are curious, the standard error of the fixed-effect $\widehat{\mu}$ is $\frac{1}{\sum_{i=1}^k w_i}$. This can be used to construct a confidence interval or $p$-value.
+[^9]: If you are curious, the standard error of the fixed-effect $\widehat{\mu}$ is $\frac{1}{\sum_{i=1}^k w_i}$. This standard error can be used to construct a confidence interval or $p$-value, just like how we talked about in Chapter \@ref(inference).
 
 
 ### Limitations of fixed-effects meta-analysis
 
-One of the limitations of fixed-effect meta-analysis is that it assumes that the true effect size is, well, *fixed* across studies. In other words, fixed-effect meta-analysis assumes that there is a single effect size that all studies are estimating. This is a bold assumption. For example, imagine that intergroup contact (a) decreases prejudice when the groups succeed at their goal, but (b) increases prejudice when the groups fail at their goal.  If we combined one study that had intergroups fail at their goal with another study that had intergroups succeed at their goal, it would appear that the true effect of intergroup contact is zero. However, is it reasonable to assume that these studies are examining the same fixed effect? Is it perhaps more useful to think of the *multiple* effects of intergroup contact (e.g., one effect for intergroup success and one effect for intergroup failure?) 
+One of the limitations of fixed-effect meta-analysis is that it assumes that the true effect size is, well, *fixed*! In other words, fixed-effect meta-analysis assumes that there is a single effect size that all studies are estimating. This is a bold assumption. For example, imagine that intergroup contact (a) decreases prejudice when the groups succeed at their goal, but (b) *increases* prejudice when the groups fail at their goal.  If we combined one study that showed intergroup contact leading to failure with another study showed intergroup contact leading to success, it would appear that the true effect of intergroup contact is zero. 
 
-In Paluck et al.'s meta-analysis, studies differed in several ways that could lead to different true effects. For example, some studies recruited adult participants while others recruited children. If we assume that intergroup contact works different for adults vs. children, then it is misleading to talk about a single intergroup contact effect. Instead, we would say that the effects of intergroup contact varies across studies: an idea called **heterogeneity**.
+In Paluck et al.'s meta-analysis, studies differed in several ways that could lead to different true effects. For example, some studies recruited adult participants while others recruited children. If we assume that intergroup contact works different for adults vs. children, then it is misleading to talk about a single intergroup contact effect. Instead, we would say that the effects of intergroup contact varies across studies: an idea called **heterogeneity**. So it doesn't seem reasonable to assume that all the studies in Paluck et al.'s set are examining the same fixed effect. 
 
-Does this presence of heterogeneity remind you of anything from when we analyzed repeated-measures data in Chapter \@ref(models) on models? Recall that, with repeated-measures data, we had dealt with the possibility of heterogeneity across participants by introducing participant-level random intercepts to our regression model. Turns out that we can do a similar thing in meta-analysis!
+Does this presence of heterogeneity remind you of anything from when we analyzed repeated-measures data in Chapter \@ref(models) on models? Recall that, with repeated-measures data, we had to deal with the possibility of heterogeneity across participants -- and we did so by introducing participant-level random intercepts to our regression model. Turns out that we can do a similar thing in meta-analysis, dealing with heterogeneity across studies!
 
 ### Random-effects meta-analysis
 
-Whereas fixed-effect meta-analysis essentially assumes that all studies in the meta-analysis have the same population effect size, $\mu$, random-effects meta-analysis instead postulates that studies' population effects come from a normal distribution with mean $\mu$ and standard deviation $\tau$.[^10] The larger the standard deviation, $\tau$, the more heterogeneous the effects are across studies. A random-effects model then estimates both $\mu$ and $\tau$, for example by maximum likelihood (@dersimonian1986meta; @brockwell2001comparison).[^11]
+While fixed-effect meta-analysis essentially assumes that all studies in the meta-analysis have the same population effect size, $\mu$, random-effects meta-analysis instead postulates that studies' population effects come from a normal distribution with mean $\mu$ and standard deviation $\tau$.[^10] The larger the standard deviation, $\tau$, the more heterogeneous the effects are across studies. A random-effects model then estimates both $\mu$ and $\tau$, for example by maximum likelihood [@dersimonian1986meta; @brockwell2001comparison].[^11]
 
-[^10]: Technically, other specifications of random-effects meta-analysis are possible. For example, robust variance estimation does not require making assumptions about the distribution of effects across studies [@hedges2010robust]. These approaches also have other substantial advantages, like their ability to handle effects that are clustered (e.g., because some papers contribute multiple estimates; [@hedges2010robust]; [@pustejovsky2021meta]) and their ability to provide better inference in meta-analyses with relatively few studies [@tipton2015small]. For these reasons, we tend to use these methods by default when conducting meta-analyses.
+[^10]: Technically, other specifications of random-effects meta-analysis are possible. For example, robust variance estimation does not require making assumptions about the distribution of effects across studies [@hedges2010robust]. These approaches also have other substantial advantages, like their ability to handle effects that are clustered [e.g., because some papers contribute multiple estimates; @hedges2010robust; @pustejovsky2021meta] and their ability to provide better inference in meta-analyses with relatively few studies [@tipton2015small]. For these reasons, we tend to use these methods by default when conducting meta-analyses.
 
 [^11]: A confidence interval and $p$-value for the random-effects estimate $\widehat{\mu}$ can be obtained using standard theory for maximum likelihood estimates with an additional adjustment that helps account for uncertainty in estimating $\tau$ [@knapp2003improved].
 
 
 Like fixed-effect meta-analysis, the random-effects estimate of $\widehat{\mu}$ is still a weighted average of studies' effect size estimates: $$\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}$$
 
-However, in random-effects meta-analysis, the inverse-variance weights now incorporate heterogeneity: $w_i = 1/\left(\widehat{\tau}^2 + \widehat{\sigma}^2_i \right)$. These weights represent the inverse of studies' *marginal* variances, comprising not only statistical error due to their finite sample sizes ($\widehat{\sigma}^2_i$) but also genuine effect heterogeneity ($\widehat{\tau}^2$).[^12]
+However, in random-effects meta-analysis, the inverse-variance weights now incorporate heterogeneity: $w_i = 1/\left(\widehat{\tau}^2 + \widehat{\sigma}^2_i \right)$. Where before we had one factor in our weights, now we have two. These weights represent the inverse of studies' *marginal* variances, taking into account both statistical error due to their finite sample sizes ($\widehat{\sigma}^2_i$) and also genuine effect heterogeneity ($\widehat{\tau}^2$).[^12] 
 
 [^12]: The estimate of $\widehat{\tau}^2$ is a bit more complicated, but is essentially a weighted average of studies' residuals, $\widehat{\theta_i} - \widehat{\mu}$, while subtracting away variation due to statistical error, $\widehat{\sigma}^2_i$ [@dersimonian1986meta; @brockwell2001comparison].
 
-### Reporting on heterogeneity
 
-Remember that in random-effects meta-analysis, the estimate $\widehat{\mu}$ represents only the *mean* population effect across studies. It tells us nothing about how much the effects *vary* across studies. Thus, we recommend always reporting the heterogeneity estimate $\widehat{\tau}$, perhaps supplemented by other related metrics (@riley2011interpretation; @wang2019simple; @mathur_mam; @npphat). Reporting the heterogeneity indicates how consistent or inconsistent the effects are across studies, which may point to the need to investigate *moderators* of the effect (i.e., factors that can cause a shift in the size of the effect, such as the type of intergroup contact intervention).[^13]
+Conducting a random-effects meta-analysis of Paluck et al.'s dataset yields $\widehat{\mu}$ = `r round(as.numeric(re.m$b), 2)` ; 95% confidence interval [ `r paste0(round(re.m$ci.lb, 2), ", ", round(re.m$ci.ub, 2))` ]; $p < .001$. That is, they estimated that, *on average across studies*, intergroup contact was associated with a decrease in prejudice of `r round(as.numeric(re.m$b), 2)` standard deviations. This meta-analytic estimate is shown as the bottom line of Figure \@ref(fig:meta-forest).
+
+However, these effects appeared to differ considerably across studies. Remember that in random-effects meta-analysis, the estimate $\widehat{\mu}$ represents only the *mean* population effect across studies. It tells us nothing about how much the effects *vary* across studies. Thus, we recommend always reporting the heterogeneity estimate $\widehat{\tau}$, perhaps supplemented by other related metrics [@riley2011interpretation; @wang2019simple; @mathur_mam; @npphat]. Reporting the heterogeneity indicates how consistent or inconsistent the effects are across studies, which may point to the need to investigate *moderators* of the effect (i.e., factors that can cause a shift in the size of the effect, such as the type of intergroup contact intervention).[^13] 
 
 [^13]: One common approach to investigating moderators in meta-analysis is meta-regression, in which moderators (e.g., type of intergroup contact) are included as covariates in a random-effects meta-analysis model [@thompson2002should]. As in standard regression, coefficients can then be estimated for each moderator, representing the mean difference in population effect between studies with versus without the moderator.
 
-### Applied example
 
-Conducting a random-effects meta-analysis of Paluck et al.'s dataset yields $\widehat{\mu}$ = `r round(as.numeric(re.m$b), 2)` ; 95% confidence interval [ `r paste0(round(re.m$ci.lb, 2), ", ", round(re.m$ci.ub, 2))` ]; $p=$ < .001. That is, they estimated that, *on average across studies*, intergroup contact was associated with a decrease in prejudice of `r round(as.numeric(re.m$b), 2)` standard deviations. However, these effects appeared to differ considerably across studies; they estimated that the standard deviation of effects across studies was $\widehat{\tau}$ = `r tauStats[1]` ; 95% confidence interval [`r tauStats[2]`, `r tauStats[3]`]. To conveniently visualize these results, we can plot the estimated density of the population effects, which is just a normal distribution with mean $\widehat{\mu}$ and standard deviation $\widehat{\tau}$. 
-
+In Paluck et al.'s meta-analysis, 
+; they estimated that the standard deviation of effects across studies was $\widehat{\tau}$ = `r tauStats[1]` ; 95% confidence interval [`r tauStats[2]`, `r tauStats[3]`]. This estimate indicates a substantial amount of heterogeneity! To conveniently visualize these results, we can plot the estimated density of the population effects, which is just a normal distribution with mean $\widehat{\mu}$ and standard deviation $\widehat{\tau}$ (Figure \@ref(fig:meta-densities)). 
 
 ```{r meta-densities, fig.margin = TRUE, fig.cap= "Estimated distribution of population effects from random-effects meta-analysis of Paluck et. al's dataset (heavy red curve) and estimated density of studies' point estimates (thin black curve)."}
 # red line: fitted density of *population* effects from meta-analysis
@@ -159,33 +159,43 @@ ggplot(data = data.frame(x = c(-2, 2)),
 
 ## Bias in meta-analysis
 
-Meta-analysis is an invaluable tool to synthesize evidence across studies. However, meta-analyses can be compromised by two categories of bias: *within-study biases* and *across-study biases*. Either type of bias can lead to meta-analysis estimates that are too large, too small, or in the wrong direction. We will now discuss examples of each type of bias. We will also discuss ways to address these biases when conducting a meta-analysis, including mitigating the biases at the outset through sound meta-analysis design and also assessing the robustness of the ultimate conclusions to possible remaining bias.
+Meta-analysis is an invaluable tool to synthesize evidence across studies. Using meta-analysis can lead to increased precision of our estimates of experimental effects. But a precise estimate is less useful if it is subject to bias. 
+
+Meta-analyses can be compromised by two categories of bias: **within-study biases** and **across-study biases**. Either type can lead to meta-analysis estimates that are too large, too small, or in the wrong direction. We will now discuss examples of each type of bias as well as ways to address these biases when conducting a meta-analysis, including mitigating the biases at the outset through sound meta-analysis design and also assessing the robustness of the ultimate conclusions to possible remaining bias.
 
 ### Within-study biases
 
-Within-study biases -- such as demand characteristics, confounds, and order effects -- not only impact the validity of individual studies, but also any attempt to synthesize those studies. In other words: garbage in, garbage out. For example, @paluck2019contact noted that early studies on intergroup contact almost exclusively used nonrandomized designs. Imagine a hypothetical study where researchers (a) are studying a completely ineffective intergroup contact intervention, and (b) non-randomly assign low-prejudice people to the intergroup contact condition and high-prejudice people to the control condition. In a scenario like this, the researcher will, of course, find that the prejudice was lower in the intergroup contact condition. However, this is not a true effect of the contact intervention, but rather a spurious effect of non-random assignment. Now imagine repeating this across many studies and then performing a meta-analysis. The meta-analyst would find impressive evidence of an intergroup contact effect, but this is simply driven by systematic non-random assignment. Once again: you put garbage in, you get garbage out.
+Within-study biases -- such as demand characteristics, confounds, and order effects -- not only impact the validity of individual studies, but also any attempt to synthesize those studies. In other words: garbage in, garbage out. For example, @paluck2019contact noted that early studies on intergroup contact almost exclusively used non-randomized designs. Imagine a hypothetical study where researchers (a) are studying a completely ineffective intergroup contact intervention, and (b) non-randomly assign low-prejudice people to the intergroup contact condition and high-prejudice people to the control condition. In a scenario like this, the researcher will, of course, find that the prejudice was lower in the intergroup contact condition. However, this is not a true effect of the contact intervention, but rather a spurious effect of non-random assignment. 
 
-To mitigate this problem, meta-analysts often exclude studies that may be affected by within-study bias. For example, @paluck2019contact excluded nonrandomized studies to avoid concerns about confounding. After data have been collected, meta-analysts often also qualitatively assess studies' risks of bias using established rating tools [@art]. Doing so allows the meta-analyst to communicate just how much within-study bias there may be. @paluck2019contact did not use this tool, but they could have used it to communicate for example, the extent to which participants may have differentially dropped out of the study. Meta-analysts also often conduct sensitivity analyses that examine how much meta-analysis results change when excluding certain types of studies [@art]. For example, if nonrandom assignment is a concern, a meta-analysts may run the analyses with and without studies using nonrandom assignment in order to determine if including these studies changes the meta-analysis results.
+Now imagine repeating this scenario across many studies and then performing a meta-analysis. The meta-analyst would find impressive evidence of an intergroup contact effect, but this is simply driven by systematic non-random assignment. Once again: you put garbage in, you get garbage out.
+
+To mitigate this problem, meta-analysts often exclude studies that may be affected by within-study bias. For example, @paluck2019contact excluded non-randomized studies to avoid concerns about confounding. Preregistration of exclusion criteria for meta-analyses is one way to ensure that these kinds of data-quality controls are applied in a systematic and uniform way, rather than being applied after looking at the results. 
+
+Sometimes, though, particular sources of biased or low-quality data are not known ahead of time. After data have been collected, meta-analysts often also  assess studies' risks of bias qualitatively using established rating tools [@art]. Doing so allows the meta-analyst to communicate just how much within-study bias there may be.^[@paluck2019contact did not use this tool, but they could have used it to communicate for example, the extent to which participants might have differentially dropped out of the study.] Meta-analysts also often conduct sensitivity analyses that examine how much results change when excluding certain types of studies. For example, if nonrandom assignment is a concern, a meta-analysts may run the analyses with and without studies using nonrandom assignment in order to determine if including these studies changes the meta-analysis results. These two options  parallel our discussion of experimental preregistration in Chapter \@ref(prereg): To allay concerns about results-dependent meta-analysis researchers can either preregister their analyses ahead of time or else be transparent about their choices after the fact. Sensitivity analyses can allay concerns that a specific choice of exclusion criteria is critically related to the reported results. 
 
 <!-- It would be nice to show the reader an example of a risk of bias rating scale. Doing so would also help clarify what types of within-study biases meta-analysts are typically concerned about. https://drive.google.com/file/d/1Q4Fk3HCuBRwIDWTGZa5oH11OdR4Gbhdo/view-->
 
 ### Across-study biases
 
-Across-study biases refer to behaviors like researchers selecting reporting certain types of findings (*selective reporting*) or selectively publishing certain types of findings (*publication bias*; see below accident report). Often, these across-study biases favor statistically significant positive results, which means the meta-analysis of the available results will be inflated. For example, if researchers publish only the studies that yield statistically significant positive results and hide the studies that don't, statistically combining the published studies via meta-analysis will obviously lead to exaggerated effect size estimates. Bias in, bias out -- garbage in, garbage out.
+Across-study biases refer to behaviors like researchers selecting reporting certain types of findings (**selective reporting**) or selectively publishing certain types of findings (**publication bias**). Often, these across-study biases favor statistically significant positive results, which means the meta-analysis of the available results will be inflated. For example, if researchers publish only the studies that yield statistically significant positive results and hide the studies that don't, statistically combining the published studies via meta-analysis will obviously lead to exaggerated effect size estimates. Bias in, bias out -- garbage in, garbage out.
 
 ::: accident-report
 🔬 Accident Report: Quantifying publication bias in the social sciences
 
-In 2014, @franco2014 and colleagues examined the population of 221 studies conducted through a funding initiative that helps researchers run experiments on nationally-representative samples in the U.S. First, Franco and colleagues examined the records of these studies to determine whether the researchers found statistically significant results, a mixture of statistically significant and nonsignificant results, or only nonsignificant results. Then, Franco and colleagues examined the likelihood that these results were published in the scientific literature.
+In 2014, @franco2014 and colleagues examined the population of 221 studies conducted through a funding initiative called TESS ("time-sharing experiments in the social sciences") that helps researchers run experiments on nationally-representative samples in the U.S. This sample of studies was unique in that everyone that used TESS had to register their study with the group. That meant that Franco et al. knew the whole universe of studies that had been conducted using TESS -- a key piece of information that meta-analysts almost never have available. 
 
-What results do you think were most likely to be published? If you guessed "significant results" you have a good intuition about publication bias. Over 60% of studies with statistically significant results were published, compared to the mere 25% of studies that produced only statistically non-significant results. 
+Using this information, Franco and colleagues examined the records of these studies to determine whether the researchers found statistically significant results, a mixture of statistically significant and non-significant results, or only non-significant results. Then, they examined the likelihood that these results were published in the scientific literature.
+
+Which results do you think were most likely to be published? If you guessed "significant results," then you have a good intuition about publication bias. Over 60% of studies with statistically significant results were published, compared to the mere 25% of studies that produced only statistically non-significant results. Everyone believes that there is some degree of publication bias, but this finding was important because it quantified how strong that bias was, at least for one sample of studies. 
 :::
 
-Like within-study biases, meta-analysts often try to mitigate across-study biases by being careful about what studies make it into the meta-analysis. Meta-analysts don't only want to capture high-profile, published studies on their effect of interest, but also studies published in low-profile journals and the so-called "gray literature" (i.e., unpublished dissertations and theses; @lefebvre2019searching\].[^5]
+Like within-study biases, meta-analysts often try to mitigate across-study biases by being careful about what studies make it into the meta-analysis. Meta-analysts don't only want to capture high-profile, published studies on their effect of interest, but also studies published in low-profile journals and the so-called "gray literature" [i.e., unpublished dissertations and theses; @lefebvre2019searching].[^5]
 
-[^5]: Evidence is mixed regarding whether including gray literature actually reduces across-study biases in meta-analysis [@tsuji2020addressing; @sapbe], but it is still common practice to try to oinclude this literature.
+[^5]: Evidence is mixed regarding whether including gray literature actually reduces across-study biases in meta-analysis [@tsuji2020addressing; @sapbe], but it is still common practice to try to include this literature.
 
-There are also statistical methods to help assess how robust the results may be to across-study biases. Among the most popular tools to assess and correct for publication bias is the **funnel plot** [@duval2000trim; @egger1997bias], a graph relating the meta-analyzed studies' point estimates to some measure of their precision, such as sample size or standard error. Here is an example of a type of funnel plot [@sapb] for a simulated meta-analysis of 100 studies with no publication bias:
+There are also statistical methods to help assess how robust the results may be to across-study biases. Among the most popular tools to assess and correct for publication bias is the **funnel plot** [@duval2000trim; @egger1997bias]. A funnel plot shows the relationship between studies' effect estimates and their precision (usually their standard error). They are called "funnel plots" because usually as the precision gets larger, the effects "funnel" towards the meta-analytic estimate. As the precision is smaller, they spread out more because of greater measurement error.
+
+Here is an example of one type of funnel plot [@sapb] for a simulated meta-analysis of 100 studies with no publication bias:
 
 <!-- MM: I used a type of enhanced funnel here that I believe helps visualize publication bias better than standard funnels. Mike, up to you if you want regular funnels instead. I've included commented code for those as well. I didn't describe the purpose of the grey diamonds for now. Text snippet if we decide to briefly mention that: "the grey diamonds represent worst-case point estimate within only the studies with $p \ge 0.05$ or negative estimates." -->
 
@@ -224,12 +234,14 @@ meta.NA = rma(yi = yi,
             method = "REML",
             knha = TRUE)
 
-significance_funnel(yi = meta.all$yi,
+foo <- significance_funnel(yi = meta.all$yi,
                     vi = meta.all$vi,
                     favor.positive = TRUE,
                     plot.pooled = TRUE,
                     est.all = meta.all$b,
-                    est.N = meta.NA$b)
+                    est.N = meta.NA$b,
+                    xmin = -8, xmax = 8) 
+
 # scale_x_continuous( breaks = seq(-2.5, 3.5, 0.5))
 
 # alternative: standard funnel without contour enhancement
@@ -238,9 +250,9 @@ significance_funnel(yi = meta.all$yi,
 #        xlab = "Standardized mean difference")
 ```
 
-Notice that larger studies (those with smaller standard errors) cluster more closely around the mean of `r round(meta.all$b, digits)` than do smaller studies, but large and small studies alikehave point estimates centered around the mean. That is, the funnel plot is symmetric. In contrast, a funnel plot might look asymmetric. Here is what happens to our hypothetical meta-analysis if all studies with $p<0.05$ and positive estimates are published, but only 10% of studies with $p \ge 0.05$ or with negative estimates are published:
+As implied by the "funnel" moniker, our plot looks a little funnel-like. Larger studies (those with smaller standard errors) cluster more closely around the mean of `r round(meta.all$b, digits)` than do smaller studies, but large and small studies alike have point estimates centered around the mean. That is, the funnel plot is symmetric.^[Classic funnel plots look more like Figure \@ref(fig:meta-classic-funnel). Our version is different in a couple of ways. Most prominently, we don't have the vertical axis reversed (which we think is confusing), and we don't have the left boundary highlighted (because we think folks don't typically select for negative studies).]
 
-```{r meta-funnel-biased, fig.cap = "Significance funnel plot for the same simulated meta-analysis after publication bias has occurred. Orange points: studies with $p < 0.05$ and positive estimates. Grey points: studies with $p$ $\\ge$ $0.05$ or negative estimates. Black diamond: random-effects estimate of $\\widehat{\\mu}$ within all studies."}
+```{r meta-classic-funnel, fig.margin=TRUE, fig.cap = "Classic funnel plot."}
 meta.p = rma(yi = yi,
             vi = vi,
             data = dp,
@@ -253,51 +265,55 @@ meta.p.NA = rma(yi = yi,
             method = "REML",
             knha = TRUE)
 
-significance_funnel(yi = meta.p$yi,
+funnel(meta.all, 
+       xlab = "Standardized mean difference")
+```
+
+
+Not all funnel plots are symmetric! Figure \@ref(fig:meta-funnel-biased) is what happens to our hypothetical meta-analysis if all studies with $p<0.05$ and positive estimates are published, but only 10% of studies with $p \ge 0.05$ or with negative estimates are published. The introduction of publication bias dramatically inflates the pooled estimate from `r round(meta.all$b, digits)` to `r round(meta.p$b, digits)`.[^8] Also, there appears to be a correlation between studies' estimates and their standard errors, such that smaller studies tend to have larger estimates than do larger studies. This correlation is often called **funnel plot asymmetry** because the funnel plot starts to look like a right triangle rather than a funnel. Funnel plot asymmetry *can* be a diagnostic for publication bias, though it isn't always a perfect indicator, as we'll see in the next subsection.
+
+```{r meta-funnel-biased, fig.cap = "Significance funnel plot for the same simulated meta-analysis after publication bias has occurred. Orange points: studies with $p < 0.05$ and positive estimates. Grey points: studies with $p$ $\\ge$ $0.05$ or negative estimates. Black diamond: random-effects estimate of $\\widehat{\\mu}$ within all studies."}
+
+foo <- significance_funnel(yi = meta.p$yi,
                     vi = meta.p$vi,
                     favor.positive = TRUE,
                     plot.pooled = TRUE,
                     est.all = meta.p$b,
-                    est.N = meta.p.NA$b) 
+                    est.N = meta.p.NA$b,
+                    xmin = -8, xmax = 8) 
 
 #p2 + scale_x_continuous( breaks = seq(-1, 3.5, 0.5) )
 ```
+### Across-study bias correction
 
+How do we identify and correct bias across studies? Starting with the funnel plot makes it look like the right thing to do is to quantify how asymmetric it is. Indeed, several popular statistical methods, such as Trim-and-Fill [@duval2000trim] and Egger's regression [@egger1997bias] are designed to quantify funnel plot asymmetry. But funnel plot asymmetry is not always representative of publication bias! 
 
-Notice that the introduction of publication has dramatically inflated the pooled estimate from `r round(meta.all$b, digits)` to `r round(meta.p$b, digits)`.[^8] Also, there appears to be a correlation between studies' estimates and their standard errors, such that smaller studies tend to have larger estimates than do larger studies. This is often called *funnel plot asymmetry*.
+Sometimes funnel plot asymmetry is driven by genuine differences in the effects being studied in small and large studies [@egger1997bias; @lau2006case]. For example, in a meta-analysis of intervention studies, if the most effective interventions are also the most expensive or difficult to implement, these highly effective interventions might be used primarily in the smallest studies ("small study effects"). Essentially, funnel plots and related methods can detect publication bias in which (1) small studies with large positive point estimates are more likely to be published than small studies with small or negative point estimates; and (2) the largest studies are published regardless of the magnitude of their point estimates. That model of publication bias is sometimes what is happening, but not always!
 
-Several popular statistical methods, such as Trim-and-Fill [@duval2000trim] and Egger's regression [@egger1997bias] are designed to quantify funnel plot asymmetry. However, one limitation is that funnel plot asymmetry is not always representative of publication bias. Indeed, sometimes funnel plot asymmetry is driven by  genuine differences in the effects being studied in small and large studies [@egger1997bias; @lau2006case]. For example, in a meta-analysis of intervention studies, if the most effective interventions are also the most expensive or difficult to implement, these highly effective interventions might be used primarily in the smallest studies. Thus, funnel plot methods may be indicative of publication bias -- but they may more simply driven by small-study effects [@smt].[^14] For these reasons, assessments of publication bias in meta-analysis should rely not only on funnel plots [@smt]. There are numerous other methods that can be applied as well, such as **selection models**.[^15] These models can detect other forms of publication bias that funnel plots may not detect, such as publication bias that favors significant results.
+A more flexible approach for detecting publication bias uses **selection models**. These models can detect other forms of publication bias that funnel plots may not detect, such as publication bias that favors *significant* results. We won't cover these methods in detail here, but we think they are a better approach to the question.^[High-level overviews of selection models are given in @mcshane2016adjusting and @smt. For more methodological detail, see @hedges1984estimation, @iyengar1988, and @vevea1995. For a tutorial on fitting and interpreting selection models, see @smt.] 
 
-[^14]: Essentially, funnel plots and most related methods can detect publication bias in which (1) small studies with large positive point estimates are more likely to be published than small studies with small or negative point estimates; and (2) the largest studies are published regardless of the magnitude of their point estimates. Funnel plots may not detect publication bias that favors significant results. For more detail on these points, see @smt.
+You may also have heard of "$p$-methods" to detect across-study biases such as $p$-curve and $p$-uniform [@simonsohn2014p; @simonsohn2014b; @van2015meta]. These methods essentially assess whether the significant $p$-values "bunch up" just under 0.05, which is taken to indicate publication bias. These methods are increasingly popular in psychology and have their merits. However, it is important to note that these methods are actually simplified versions of selection models [e.g., @hedges1984estimation] that work only under considerably more restrictive settings than do the original selection models [for example, when there is not heterogeneity across studies; @mcshane2016adjusting]. For this reason, it is usually (although not always) better to use selection models in place of the more restrictive $p$-methods.
 
-You may also have heard of "$p$-methods" to detect across-study biases such as $p$-curve and $p$-uniform [@simonsohn2014p; @simonsohn2014b; @van2015meta]. These methods essentially assess whether the significant $p$-values "bunch up" just under 0.05, which is taken to indicate publication bias. These methods are increasingly popular in psychology and have merits. However, it is important to note that these methods are actually simplified versions of selection models [e.g., @hedges1984estimation] that work only under considerably more restrictive settings than do the original selection models [for example, when there is not heterogeneity across studies; @mcshane2016adjusting]. For this reason, it is usually (although not always) better to use selection models in place of the more restrictive $p$-methods.
+In Paluck and colleagues' meta-analysis, they used a regression-based approach to assess and correct for publication bias. This approach provided significant evidence of a relationship between the standard error and effect size (i.e., an asymmetric funnel plot). This asymmetric funnel plot could be driven by small study effects, but it may be indicative of publication bias. Paluck and colleague subsequently used this same regression-based approach to try to correct for potential publication bias. Unfortunately, results from this model indicated that the bias-corrected effect size estimate was close to zero. In other words, even though all studies estimated that intergroup contact decreased prejudice, it is possible that there are unpublished studies that did not find this (or found that intergroup contact increased prejudice).
 
-[^15]: High-level overviews of selection models are given in @mcshane2016adjusting and @smt. For more methodological detail, see @hedges1984estimation, @iyengar1988, and @vevea1995. For a tutorial on fitting and interpreting selection models, see @smt.
+::: {.accident-report}
+⚠️ Garbage in, garbage out? Meta-analyzing bad research 
 
-#### Applied example
-In Paluck and colleagues' meta-analysis, they used a regression-based approach to assess and correct for publication bias. This approach provided significant evidence of a relationship between the standard error and effect size (i.e., evidence of an asymmetric funnel plot). This asymettric funnel plot, of course, could be driven by small study effects, but it may be indicative of publication bias. Paluck and colleague subsequently used this same regression-based approach to try to correct for potential  publication bias. Results from this model indicated that the bias-corrected effect size estimate was close to zero. Consequently, Paluck and colleagues concluded that publication bias may be a problem. In other words, even though all studies estimated that intergroup contact decreased prejudice, it is possible that there are studies that did not find this (or found that intergroup contact increased prejudice).
+Botox can help eliminate wrinkles. But some researchers have also suggested that it may help treat clinical depression when used to paralyze the muscles associated with frowning. As crazy as they may sound, a quick examination of the literature would lead many to conclude that this treatment works. Studies that randomly assign depressed patients to either receive Botox injections or saline injections do indeed find that Botox recipients exhibit decreases in depression. And when you combine all available evidence in a meta-analysis, you find that this difference is quite large: $\widehat{d}$ = 0.83, 95% CI [0.52, 1.14]. Unfortunately, this meta-analytic result has problems with both within- and between-study bias [@coles2019does]. 
 
-Taken together, Paluck and colleagues' use of meta-analysis provided several important insights that would have been easy to miss in a non-quantitative review:
-1. Despite a preponderance of non-significant findings, real-world intergroup contact interventions are estimated to significant decrease prejudice by `r round(as.numeric(re.m$b), 2)` standard deviations.
-2. There is significant heterogeneity in intergroup contact effects, suggesting that there are important moderators of the effectiveness of these interventions.
-3. Publication bias is a concern, suggesting the need for follow-up research that will be published regardless of the outcome.
+First, participants are not supposed to know whether they have been randomly assigned to receive Botox or a control saline injections. However, only one of these treatments leads the upper half of your face to be paralyzed! After a couple of weeks you're pretty likely to figure out whether you received the Botox treatment or control saline injection. Thus, the apparent effect of Botox on depression could very well be a placebo effect, a clear within-study bias issue. 
 
-::: accident-report
-⚠️ Garbage in, garbage out? Meta-analyzing bad research (Coles et al. 2019)
+Second,  51% of the outcomes measured were found not to have been reported by the study authors. This finding raises concerns about selective reporting: perhaps researchers examining the effects of Botox on depression only report the outcomes that demonstrate an effect, but not those that do not. In this scenario, any meta-analytic conclusions are potentially undermined by between-study bias.
 
-You may have heard that Botox can help eliminate wrinkles. But some researchers have also suggested that it may help treat clinical depression when used to paralyze the muscles associated with frowning. As crazy as they may sound, a quick examination of the literature would lead many to conclude that this treatment works. Studies that randomly assign depressed patients to either receive Botox injections or saline injections do indeed find that Botox recipients exhibit decreases in depression. And when you combine all available evidence in a meta-analysis, you find that this difference is quite large: $\widehat{d}$ = 0.83, 95% CI [0.52, 1.14].
-
-However, @coles2019does pointed out that there is a problem with within-study bias. Participants are not supposed to know whether they have been randomly assigned to receive Botox or a control saline injections. However, only one of these treatments leads the upper half of your face to be paralyzed, and after a couple of weeks you're likely to figure out whether you received the Botox treatment or control saline injection. Thus, it is possible that the apparent effect of Botox on depression is actually an effect of placebo. The meta-analytic conclusions are potentially undermined by within-study bias.
-
-@coles2019does also found evidence of between-study bias. When coding the effect sizes in the literature, they found that 51% of the outcomes measured were not reported by the study authors. For example, researchers may have collected two measures of depression, but only reported one in the manuscript. This raises concerns about selective reporting: that researchers examining the effects of Botox on depression are only reporting the outcomes that demonstrate an effect, while hiding away the outcomes that do not. In this scenario, any meta-analytic conclusions are potentially undermined by between-study bias.
-
-@coles2019does provides a great example of the "garbage in, garbage out" problem we alluded to throughout this chapter. If within- and between-study bias is not properly mitigated, it is difficult to conclude make valid inferences in a meta-analysis.
+Garbage in, garbage out: If within- and between-study bias is not properly mitigated, it is difficult to make valid inferences from even the best-conducted meta-analysis.
 :::
 
 ## Chapter summary: Meta-analysis
 
+Taken together, Paluck and colleagues' use of meta-analysis provided several important insights that would have been easy to miss in a non-quantitative review. First, despite a preponderance of non-significant findings, real-world intergroup contact interventions were estimated to significant decrease prejudice by `r round(as.numeric(re.m$b), 2)` standard deviations.
+On the other hand, there was significant heterogeneity in intergroup contact effects, suggesting that there are important moderators of the effectiveness of these interventions. And finally, publication bias was a substantial concern, suggesting the need for follow-up research that will be published regardless of the outcome.
 
-
+Overall, meta-analysis is a key technique for aggregating evidence across studies. Meta-analysis allows researchers to move beyond the bias of naive techniques like vote counting and towards a more quantitative summary of an experimental effect. Unfortunately, a meta-analysis is only as good as the literature it's based on, so the aspiring meta-analyst must be aware of both within- and between-study biases! 
 
 ::: exercise
 Imagine that you read the following result in the abstract of a meta-analysis: "In 83 randomized studies of middle school children, replacing one hour of class time with mindfulness meditation significantly improved standardized test scores (standardized mean difference $\widehat{\mu} = 0.05$; 95% confidence interval: [$0.01, 0.09$]; $p<0.05$)." Why is this a problematic way to report on meta-analysis results? Suggest a better sentence to replace this one.
@@ -308,7 +324,7 @@ What kinds of within-study biases would concern you in this meta-analysis? How m
 :::
 
 ::: exercise
-Imagine you conduct a meta-analysis on a literature in which statistically significant results in either direction are much more likely to be published that nonsignificant results. Draw the funnel plot you would expect to see. Is the plot funnel symmetric or asymmetric?
+Imagine you conduct a meta-analysis on a literature in which statistically significant results in either direction are much more likely to be published that non-significant results. Draw the funnel plot you would expect to see. Is the plot funnel symmetric or asymmetric?
 :::
 
 ::: exercise
