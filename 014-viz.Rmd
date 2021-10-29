@@ -3,17 +3,29 @@
 # Visualization {#viz}
 
 ::: {.learning-goals}
-🍎 Learning goals: Analyze the principles behind informative visualizations; incorporate visualization into analysis workflow; learn to make “the design plot” showing raw data relative to the critical design inferences of the experiment; select different visualizations of variability and distribution; connect visualization concepts to measurement principles.
-:::
+🍎 Learning goals:
 
-::: {.case-study}
-🔬 Case study: Sklar et al. (2012) reported evidence of “unconscious” arithmetic. Further reanalyses didn’t support this finding (Moors and Hesselmann 2018). Rabagliati et al. (2018) also failed to replicate. Visualizations provide a framework for asking about the ways the measurements relate to the manipulation that might have shed light on the issues. 
+-   Analyze the principles behind informative visualizations
+-   Incorporate visualization into analysis workflow
+-   Learn to make "the design plot"
+-   Select different visualizations of variability and distribution
+-   Connect visualization concepts to measurement principles.
 :::
 
 ```{marginfigure, echo=TRUE}
 <img src="images/snow_cholera_voronoi.jpeg"/>
 Mapping out a cholera epidemic (1854). Line shows region for which Broad Street pump is nearest.
 ```
+
+What makes visualizations so useful, and what role do they play in the toolkit of experimentology?
+Simply put, data visualization is the act of "making the invisible visible." 
+Our visual systems are remarkably powerful pattern detectors, and relationships that aren't at all clear when scanning through rows of raw data can immediately jump out at us when presented in an appropriate graphical form [@zacks2020designing].
+Good visualizations aim to delibrately harness this power and put it to work at every stage of the research process, from the quick sanity checks we run when first reading in our data to the publication-quality figures we design when we are ready to communicate our findings.
+Yet our powerful pattern detectors can also be a liability; if we're not careful, we can easily be fooled into seeing patterns that are unreliable or even misleading.
+As psychology moves into an era of bigger data and more complex behaviors, we become increasingly reliant on **data visualization literacy** [@borner2019data] to make sense of what is going on.
+
+::: {.case-study}
+🔬 Case study: Mapping a pandemic
 
 In 1854, a deadly outbreak of cholera was sweeping through London.
 The scientific consensus at the time was that diseases like cholera spread through breathing poisonous and foul-smelling vapors, an idea known as the "miasma theory" [@halliday2001death].
@@ -22,15 +34,38 @@ To make a public case for this idea, he started counting cholera deaths.
 He marked each case on a map of the area, and indicated the locations of the water pumps for reference.
 Furthermore, a line could be drawn representing the region that was closest to each water pump, a technique which is now known as a [Voronoi diagram](https://en.wikipedia.org/wiki/Voronoi_diagram).
 The resulting illustration clearly reveals that cases clustered around an area called Golden Square, which received water from a pump on Broad Street.
-Indeed, the outbreak died down shortly after the pump's handle was removed.
-Although the precise causal role of these maps in Snow's own thinking is disputed, and it is likely that he produced them well after the incident [@brody2000map], they have nonetheless played a significant role in the history of data visualization [@friendly2021history] more broadly^[Actually, the use of disease maps goes back even further! [@seaman1798inquiry] mapped an outbreak of yellow fever in New York City to argue that deaths clustered around a handful of waste sites. He turned out to be right, but for the wrong reasons! These waste sites were breeding grounds for mosquitos, which were the real culprits. Coincidentally, Seaman is also known as the first to introduce vaccines to the United States. He vaccinated his children against smallpox and later organized a program to provide free vaccines to the public.].
+Although the precise causal role of these maps in Snow's own thinking is disputed, and it is likely that he produced them well after the incident [@brody2000map], they have nonetheless played a significant role in the history of data visualization [@friendly2021history].^[Actually, the use of disease maps goes back even further! [@seaman1798inquiry] mapped an outbreak of yellow fever in New York City to argue that deaths clustered around a handful of waste sites. He turned out to be right, but for the wrong reasons! These waste sites were breeding grounds for mosquitos, which were the real culprits. Coincidentally, Seaman is also known as the first to introduce vaccines to the United States. He vaccinated his children against smallpox and later organized a program to provide free vaccines to the public.].
 
-What makes visualizations so useful, and what role do they play in the toolkit of experimentology?
-Simply put, data visualization is the act of "making the invisible visible." 
-Our visual systems are remarkably powerful pattern detectors, and relationships that aren't at all clear when scanning through rows of raw data can immediately jump out at us when presented in an appropriate graphical form [@zacks2020designing].
-Good visualizations aim to delibrately harness this power and put it to work at every stage of the research process, from the quick sanity checks we run when first reading in our data to the publication-quality figures we design when we are ready to communicate our findings.
-Yet our powerful pattern detectors can also be a liability; if we're not careful, we can easily be fooled into seeing patterns that are unreliable or even misleading.
-As psychology moves into an era of bigger data and more complex behaviors, we become increasingly reliant on **data visualization literacy** [@borner2019data] to make sense of what is going on.
+Nearly two centuries later, as the Covid-19 pandemic swept through the world, governmental agencies like the [CDC](https://covid.cdc.gov/covid-data-tracker) produced maps of the outbreak that have become much more familiar:
+
+```{r viz-covid, fig.cap="Map showing the known locations of cumulative coronavirus cases by share of the population in each county (reproduced from the New York Times)"}
+knitr::include_graphics("images/viz/covid-hot-spots.png")
+```
+
+These maps make abstract statistics visible: By assigning higher cumulative case rates to darker colors, we can see at a glance which areas have been most affected.
+And we're not limited by the spatial layout of a map.
+We're now also used to seeing the horizontal axis correspond to *time* and the vertical axis correspond to some value at that time.
+Curves like the following, showing the 7-day average of new cases, allow us to see other patterns, like the *rate of change*.
+Even though more and more cases accumulate every day, we can see at a glance the different 'waves' of cases, and when they peaked. 
+
+```{r viz-cases, fig.cap="7-day average of new reported COVID cases (reproduced from the New York Times)"}
+knitr::include_graphics("images/viz/covid-cases.png")
+```
+
+While these visualizations capture purely descriptive statistics, we often want our visualizations to answer more specific questions.
+For example, we may ask about the effectiveness of vaccinations: how do case rates differ across vaccinated and unvaccinated populations?
+In this case, we may talk about ``breaking out'' a curve by some other variable, like vaccination status:
+
+```{r viz-cases, fig.cap="Rates of COVID cases by vaccination status (reproduced from [`covid.cdc.gov`](https://covid.cdc.gov/covid-data-tracker/#rates-by-vaccine-status))"}
+knitr::include_graphics("images/viz/vaccination.png")
+```
+
+From this visualization, it is apparent that unvaccinated individuals are about 6x more likely to test positive.
+At the same time, these visualizations were produced using *observational* data, and therefore make it challenging to draw causal inferences.
+For example, people were not randomly assigned to vaccination conditions, and those who have avoided vaccinations may differ in other ways than those who sought out vaccinations.
+Additionally, you may have noticed that these visualizations typically do not give a sense of the raw data, the sample sizes of each group, or uncertainty about the estimates. 
+In this chapter, we will explore how to use visualizations in our own carefully controlled behavioral experiments. 
+:::
 
 ## Basic principles of visualization
 
@@ -50,6 +85,10 @@ Unlike statistical visualization, which aims to clearly expose the logic of an e
 ### Show the design
 
 (see below for the “data plot”): make sure that the variables you manipulate are visible in your plots
+
+::: {.case-study}
+🔬 Case study: Sklar et al. (2012) reported evidence of “unconscious” arithmetic. Further reanalyses didn’t support this finding (Moors and Hesselmann 2018). Rabagliati et al. (2018) also failed to replicate. Visualizations provide a framework for asking about the ways the measurements relate to the manipulation that might have shed light on the issues. 
+:::
 
 ### Facilitate comparison
 
