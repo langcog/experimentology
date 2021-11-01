@@ -56,7 +56,7 @@ While these visualizations capture purely descriptive statistics, we often want 
 For example, we may ask about the effectiveness of vaccinations: how do case rates differ across vaccinated and unvaccinated populations?
 In this case, we may talk about ``breaking out'' a curve by some other variable, like vaccination status:
 
-```{r viz-cases, fig.cap="Rates of COVID cases by vaccination status (reproduced from [`covid.cdc.gov`](https://covid.cdc.gov/covid-data-tracker/#rates-by-vaccine-status))"}
+```{r viz-cases2, fig.cap="Rates of COVID cases by vaccination status (reproduced from [`covid.cdc.gov`](https://covid.cdc.gov/covid-data-tracker/#rates-by-vaccine-status))"}
 knitr::include_graphics("images/viz/vaccination.png")
 ```
 
@@ -80,9 +80,8 @@ In this section, we review several basic principles of making statistical visual
 These are the production-ready figures that anchor the results section of a paper and accompany the key, pre-registered analyses of interest.
 We then return below to the role of visualization in more exploratory analyses. 
 
-```{marginfigure, echo=TRUE}
-<img src="images/viz/viz_infoviz.png"/>
-Unlike statistical visualization, which aims to clearly expose the logic of an experiment at a glance, infoviz aims to provide a rich world of patterns to explore [reproduced from @infoviz].
+```{r viz-infoviz, fig.margin=TRUE, fig.cap = "Unlike statistical visualization, which aims to clearly expose the logic of an experiment at a glance, infoviz aims to provide a rich world of patterns to explore [reproduced from @infoviz]."}
+knitr::include_graphics("images/viz/viz_infoviz.jpeg")
 ```
 
 ### Principle 1: Show the design
@@ -102,9 +101,8 @@ ggplot(aes(x = condition, y = response, color = ..., linetype = ..., ))
 
 ### Principle 2: Facilitate comparison
 
-```{marginfigure, echo=TRUE}
-<img src="images/viz/viz_hierarchy.png"/>
-Principles of visual perception can help guide visualization choices.
+```{r viz-hierarchy, fig.margin = TRUE, fig.cap = "Principles of visual perception can help guide visualization choices."}
+knitr::include_graphics("images/viz/viz_hierarchy.png")
 ```
 
 Now that you've mapped your design clearly to the figure's axes, how do you decide which graphical elements to display?
@@ -317,14 +315,12 @@ Simply put, we should try to use the simplest possible presentation of the maxim
 To calculate the amount of information shown, @tufte2001visual suggested a measure called the "data density index" (ddi), the "numbers plotted per square inch".
 The worst offenders have a very low density while also using a lot of excess ink.
 
-```{marginfigure, echo=TRUE}
-<img src="images/viz/bad-viz1.png"/>
-This figure uses a lot to ink to show exactly three numbers, for a "ddi" of $0.2$ [This came from the Washington Post, 1978; see @wainer1984display for other examples].
+```{r viz-bad, fig.margin = TRUE, fig.cap = "This figure uses a lot to ink to show exactly three numbers, for a \"ddi\" of $0.2$ [This came from the Washington Post, 1978; see @wainer1984display for other examples]."}
+knitr::include_graphics("images/viz/bad-viz1.png")
 ```
 
-```{marginfigure, echo=TRUE}
-<img src="images/viz/roeder_badviz.jpeg"/>
-This figure uses complicated 3D ribbons to compare distributions across four countries [from @roeder1994dna]. How could the same data have been presented more legibly?
+```{r viz-bad2, fig.margin = TRUE, fig.cap = "This figure uses complicated 3D ribbons to compare distributions across four countries [from @roeder1994dna]. How could the same data have been presented more legibly?"}
+knitr::include_graphics("images/viz/roeder_badviz.jpeg")
 ```
 
 The defaults in modern visualization libraries like `ggplot` prevent some of the worst offenses, but are still often suboptimal.
@@ -361,9 +357,9 @@ A few additional tips:
 
 * Different audiences may require different levels of specificity. Sometimes it is better to collapse over secondary variables (even if they are included in your statistical models) in order to control the density of the figure and draw attention to the key question of interest. 
 
-::: {.case-study}
-🔬 Case study: Sklar et al. (2012) reported evidence of “unconscious” arithmetic. Further reanalyses didn’t support this finding (Moors and Hesselmann 2018). Rabagliati et al. (2018) also failed to replicate. Visualizations provide a framework for asking about the ways the measurements relate to the manipulation that might have shed light on the issues. 
-:::
+<!-- ::: {.case-study} -->
+<!-- 🔬 Case study: Sklar et al. (2012) reported evidence of “unconscious” arithmetic. Further reanalyses didn’t support this finding (Moors and Hesselmann 2018). Rabagliati et al. (2018) also failed to replicate. Visualizations provide a framework for asking about the ways the measurements relate to the manipulation that might have shed light on the issues.  -->
+<!-- ::: -->
 
 
 ## Exploratory visualization
@@ -383,9 +379,9 @@ In this section, we consider best practices for exploratory visualization.
 
 ### Distributional information
 
-```{marginfigure, echo=TRUE}
-<img src="images/viz/viz_anscombe.png"/>
-[@anscombe1973graphs]
+```{r viz-anscome, fig.margin = TRUE, fig.cap = "Anscombe's quartet [@anscombe1973graphs]."}
+knitr::include_graphics("images/viz/viz_anscombe.png")
+
 ```
 
 The central insight of exploratory visualization -- the reason it is uniquely important for data science -- is that it gives us access to holistic, distributional information that cannot be captured in any single summary statistic. 
@@ -400,9 +396,9 @@ Of course, there are arbitrarily many datasets with the same statistics, and mos
 The problem arises when we operationalize a theory's predictions in terms of a single statistic (e.g. a difference between groups) and lose track of the bigger pattern.
 Visualization forces us to zoom out and see the bigger picture. 
 
-```{marginfigure, echo=TRUE}
-<img src="images/viz/datasaurus.png"/>
-Originally inspired by a figure constructed by [@datasaurus](http://www.thefunctionalart.com/2016/08/download-datasaurus-never-trust-summary.html) using the (drawMyData)[http://robertgrantstats.co.uk/drawmydata.html] tool, we can actually construct an arbitrary number of different graphs with exactly the same statistics [@matejka2017same,@murray2021generating]. This set, known as the [The Datasaurus Dozen](https://www.autodesk.com/research/publications/same-stats-different-graphs), even has the same set of boxplots. 
+```{r viz-datasaurus, fig.margin = TRUE, fig.cap = "Originally inspired by a figure constructed by [@datasaurus](http://www.thefunctionalart.com/2016/08/download-datasaurus-never-trust-summary.html) using the (drawMyData)[http://robertgrantstats.co.uk/drawmydata.html] tool, we can actually construct an arbitrary number of different graphs with exactly the same statistics [@matejka2017same,@murray2021generating]. This set, known as the [The Datasaurus Dozen](https://www.autodesk.com/research/publications/same-stats-different-graphs), even has the same set of boxplots."}
+knitr::include_graphics("images/viz/datasaurus.png")
+
 ```
 
 ### Data diagnostics

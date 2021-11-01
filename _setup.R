@@ -4,8 +4,11 @@ library(here)
 library(knitr)
 library(shiny)
 library(metafor)
-require(BayesFactor)
+library(ggrepel) # viz
+library(GGally) # viz
+require(BayesFactor) # inference
 require(papaja)
+
 
 opts_chunk$set(
   message = FALSE,
