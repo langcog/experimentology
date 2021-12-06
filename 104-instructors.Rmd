@@ -3,21 +3,109 @@
 
 ## Introduction 
 
-This is an instructor’s guide to conducting replication projects in courses. In this guide, we will motivate project-based courses by explaining what students can gain from them, explore different ways in which courses may be modified depending on student level and resources, and provide some guidelines and examples to help you set up the logistics of your course.
+This is an instructor’s guide to conducting replication projects in courses. In addition to benefiting the field in ways that have been previously discussed by some of the authors of this book (e.g., Hawkins et al., 2018, Frank & Saxe, 2012), replication-based courses can additionally benefit students in these courses. In this guide, we will describe these benefits, explore different ways in which courses may be modified depending on student level and resources, and provide some guidelines and examples to help you set up the logistics of your course.
 
 ## Why Teach a Project-Based Course?
 
-Possible motivations for structuring a course around replication projects include: 
+Over the years, we have observed many ways in which our replication-based courses benefited students above and beyond a more traditional lecture and problem set-based course. Some of these benefits include: 
 
-* **Student interest**: Allows application of course methods and lessons to a topic that is interesting to each student.
-* **Usefulness**: If this course is taught in the first year of the program (as recommended), students may use their project as a way to establish robustness of a phenomenon before building studies on top of it
-* **Realism**: Real data is often messier than practice datasets typically provided for course exercises.
-* **Intuition**: Final presentation of students’ replication outcomes trains students to read the literature with a better “sense” of which studies may be more likely to replicate than others. Frustrating experiences can motivate students to adopt best practices for their own future studies.
+* **Student interest**: Since each student will be free to replicate a study that is aligned with their research interests, this freedom facilitates a more direct application of course methods and lessons to a project that is interesting to each student.
+* **Usefulness**: If this course is taught in the first year of the program (as recommended), students may use their replication project as a way to establish robustness of a phenomenon before building studies on top of it.
+* **Realism**: Practice datasets that are typically provided for course exercises lack the complexity and messiness of real data. By conducting a replication project and dealing with real data, students learn to apply the tools provided in the course in a way that more closely demonstrates their usefulness beyond the course. 
+* **Intuition**: Presentations of replication outcomes across the class along with a discussion of what factors seemed to predict these outcomes helps students develop a better intuition when reading the literature for how likely studies are to replicate. 
+* **Perspective**: Frustrating experiences with ambiguity (whether regarding experimental methods, materials, or analyses) can motivate students to adopt best practices for their own future studies.
 
+## Logistics
+
+First, before we dive in, we want to acknowledge that a project-based course may look very different depending on student level (undergraduate vs. graduate/post-doc level) and availability of resources at your institution for a course like this, namely in terms of TA support and course funding (for data collection). For most of this guide, we will assume that you have a similar setup to ours (i.e., teaching at the graduate/post-doc level and have course funding and TAs to support the course), but we have also spent some time considering ways to adjust the course to fit different student levels and availability of resources. If this applies to you, please find the section at the end called "## Scenarios for different course layouts" where we lay out some ideas for how to adjust your course. 
+
+### Sample syllabus for a 10-week and 16-week version of the course
+
+Depending on whether your university operates on a quarterly basis (as Stanford does), or on a semester basis (as most other universities do), the pace of the course will differ. For Psych 251, since we are on the quarter system, we use the 10-week syllabus shown below. However, we have also adapted this to a 16-week course given that it better represents a majority of other institutions' academic calendars. ^[For the 16-week course, we have assumed that classes meet twice a week.)]
+
+**10-week syllabus:**
+```{r}
+library(tidyverse)
+library(kableExtra)
+syllabus10Week <- read_csv("data/Syllabus10Week.csv")
+options(knitr.kable.NA = '')
+syllabus10Week %>% 
+  dplyr::select(-Week) %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = c("hover", "condensed", "responsive")) %>%
+  pack_rows("Week 1", 1, 3, label_row_css = "background-color: #666; color: #fff;") %>%
+  pack_rows("Week 2", 4, 6, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 3", 7, 9, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 4", 10, 12, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 5", 13, 15, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 6", 16, 18, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 7", 19, 21, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 8", 22, 24, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 9", 25, 27, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 10", 28, 30, label_row_css = "background-color: #666; color: #fff;") %>% 
+  column_spec(3, border_right = T) %>% 
+  column_spec(4, border_right = T)
+```
+
+**16-week syllabus:**
+```{r}
+syllabus16Week <- read_csv("data/Syllabus16Week.csv")
+options(knitr.kable.NA = '')
+syllabus16Week %>% 
+  dplyr::select(-Week) %>% 
+  kbl() %>% 
+  kable_styling(bootstrap_options = c("hover", "condensed", "responsive")) %>%
+  pack_rows("Week 1", 1, 2, label_row_css = "background-color: #666; color: #fff;") %>%
+  pack_rows("Week 2", 3, 4, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 3", 5, 6, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 4", 7, 8, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 5", 9, 10, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 6", 11, 12, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 7", 13, 14, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 8", 15, 16, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 9", 17, 18, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 10", 19, 20, label_row_css = "background-color: #666; color: #fff;") %>% 
+  pack_rows("Week 11", 21, 22, label_row_css = "background-color: #666; color: #fff;") %>%
+  pack_rows("Week 12", 23, 24, label_row_css = "background-color: #666; color: #fff;") %>%
+  pack_rows("Week 13", 25, 26, label_row_css = "background-color: #666; color: #fff;") %>%
+  pack_rows("Week 14", 27, 28, label_row_css = "background-color: #666; color: #fff;") %>%
+  pack_rows("Week 15", 29, 30, label_row_css = "background-color: #666; color: #fff;") %>%
+  pack_rows("Week 16", 31, 32, label_row_css = "background-color: #666; color: #fff;") %>%
+  column_spec(3, border_right = T) %>% 
+  column_spec(4, border_right = T)
+```
+### Grading
+
+Depending on your course format and teaching philosophy, you may have preferred grading criteria. As a point of reference, in Psych 251, we wanted to encompass both the assignments (problemsets and project components) as well as actual course attendance and participation. In addition, because the replication project is a central part of the course, we weighted the project components slightly more than the problemsets: 
+
+40%: Problem sets (four, at 10% each)
+50%: Final project components, including presentations, data collection, analysis, and writeup
+10%: Attendance and participation in class
+
+### Course budget
+
+For our course, we usually receive around US$1,000 for course funding from the Psychology Department. In addition, when students from other departments are enrolled, we have been lucky to receive additional funding from those departments as well, to further support the course. Still, making sure that the course funds cover all students' projects is one of the most challenging parts of the course. Assuming you have a budget to work with, here are some lessons we've learned along the way regarding budgeting (and if you don't have any funding, please refer to the section titled "Course Funding (or lack thereof)" under "## Scenarios for different course layouts"):
+
+* Before students pick their study to replicate, provide them with an estimate of how many participant hours they will be able to receive for their project
+* As soon as students pick a study for their replication project, help each student run a power analysis to confirm that replicating the study would be within the budget (TAs can help with this)
+* If a student feels strongly about a study that does not fit within the budget, consider the following ways to adjust the study: 1) can the study be made shorter by cutting out unnecessary measures? 2) if it is a multi-trial study, can the number of trials be reduced? 3) would their advisors be willing to provide additional funding? 4) can the study be run on university participant pools?
+* As mentioned above, if there are students from other departments who are enrolled in your course, one possibility to obtain more funding is to reach out to the heads of those departments to see whether they would be willing to help support your course.
+
+Once all projects have been approved as within-budget, we encourage you to create a shared spreadsheet containing each student's name, so that they can fill in the details of their replication project. Ultimately, this will help ensure that students are paying fair wages to their participants and keep track of how the course funds are being divided up. 
+
+### Course-related Institutional Review Board application
+
+While it may be possible to apply for individual IRB approval for each student's project, we recommend applying for course-wide standard IRB approval for all replication projects that are conducted in your class. Contacting your review board early in the planning stages of the course should clarify what options you have available.
+
+One important thing to remember when students run their individual projects is that they should have the course-wide consent form at the beginning of their studies (and TAs should check this when they review the paradigms). For reference, this is the consent form that each student is required to post at the beginning of their study:
+
+"By answering the following questions, you are participating in a study being performed by cognitive scientists in the Stanford Department of Psychology. If you have questions about this research, please contact us at stanfordpsych251@gmail.com. You must be at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions. You may decline further participation, at any time, without adverse consequences. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you."
+
+[Mike - should we share any other info about the IRB we have?]
 
 ## Scenarios for different course layouts
 
-First, before we dive in, we want to acknowledge that a project-based course may look very different depending on student level (undergraduate vs. graduate/post-doc level) and availability of resources at your institution for a course like this, namely in terms of TA support and course funding (for data collection). Since these considerations will likely shape some important decisions you make in designing your course, we'll address these factors here:
+Now that we have covered the standard format of the course, we want to now turn our attention to ways in which this format can be tweaked in order to fit different needs and resources. We have organized this section into two main categories: student level, and course resources (such as TAs and course funding). 
 
 ### Student Level:
 
@@ -66,24 +154,4 @@ In addition to availability of TAs, another way in which your course may be diff
 
 3) **Reproduce a Replication**: The suggestions above apply if you at least have *some* amount of course funding, but what if you have *no* funding at all? While there are obvious limitations to this solution, one suggestion is to have students reproduce past public replications. For instance, our [course Github page](https://github.com/psych251), contains public repositories of all past replication projects that have been conducted in our course. Since the data for each replication project is available in these repositories, you could provide each of your students with a dataset and the original paper associated with it, and assign them to reproduce the results of the replication (Mike - would this be okay? Feel free to adjust or delete if not). Students should then be able to follow each step of the replication project described below (e.g., writing the report, identifying the key analysis, running the analysis). This format will only work if students do not view the original final replication reports that are posted publicly for their project, so it may be necessary to be clear about this at the beginning of the course. 
 
-For those of you who are working with a different course format (whether in terms of student level or course resources), we hope these suggestions were useful. If you try out a new idea in your course that you found helpful, we would be thrilled if you shared them with us! 
-
-Now that we've covered our suggestions for different course formats, we will provide the standard framework for our course, Psych 251 below. Again, we encourage you to adjust this to fit your needs and constraints.
-
-
-## Logistics
-
-### Course budget
-
-### Course-related Institutional Review Board application
-
-### Sample syllabus for a 10-week and 16-week version of the course
-
-
-
-<!-- ### Student Assignments -->
-
-<!-- ### Problem Set 0: Git and Github -->
-
-<!-- * Points: 5 points -->
-<!-- * Instructions: "Submit a link to the Github repository you created. In order to receive credit, the repository must have an appropriately-formatted README file and another file with one successfully-pushed change in its history. This shows you have pushed a change in a second file to GitHub"  -->
+For those of you who are working with a different course format (whether in terms of student level or course resources), we hope these suggestions were useful. If you try out a new idea in your course that you found helpful, we would be thrilled if you shared them with us!
