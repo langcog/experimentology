@@ -15,12 +15,6 @@
 <meta name="author" content="Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke, Robert Hawkins, Maya Mathur, and Rondeline Williams" />
 
 
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <meta name="description" content="Chapter 8 Design of experiments | Experimentology">
 
@@ -30,83 +24,12 @@ MathJax.Hub.Config({
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
-<script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
-<script src="libs/jquery-3.5.1/jquery.min.js"></script>
-<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-<script src="libs/datatables-binding-0.18/datatables.js"></script>
-<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
-<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
-<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
-<link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
-<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script>
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="libs/viz-1.8.2/viz.js"></script>
+<link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+<script src="libs/grViz-binding-1.0.6.1/grViz.js"></script>
 
 
-<style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-</style>
 
 
 <style type="text/css">
@@ -190,32 +113,74 @@ div.csl-indent {
 <li>Discuss strategies to design experiments that are appropriate to the populations of interest</li>
 </ul>
 </div>
-<p>A randomized experiment is a combination of a manipulation and a measure. We talked about measures in Chapter <a href="7-measurement.html#measurement">7</a>; our topic in the current chapter is manipulations. This topic is commonly referred to as “design of experiments.”</p>
-<p>To be useful, a measure must be a valid measure of a construct of interest. The same is true for a manipulation – it must validly relate to the causal effect of interest. We’ll begin by talking about issues of <strong>manipulation validity</strong>, including both issues of ecological validity and <strong>confounding</strong>. We’ll talk about how practices like <strong>randomization</strong> and <strong>counterbalancing</strong> can help remove nuisance confounds.<label for="tufte-sn-101" class="margin-toggle sidenote-number">101</label><input type="checkbox" id="tufte-sn-101" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">101</span> This section will draw on our introduction of causal inference in Chapter <a href="1-intro.html#intro">1</a>, so if you haven’t read that, now’s the time.</span></p>
-<p>What is the best experimental design to test a theory? Our next discussio</p>
-<div class="case-study">
-<p>🔬 Case study: Still suspicious?</p>
-<p>The “suspicious coincidence” effect (Xu and Tenenbaum 2007) with non-replication by Spencer et al. (2011) resolved by Lewis &amp; Frank (2018) “still suspicious” paper.</p>
+<p>The key thesis of our book is that experiments should be designed to yield precise and unbiased measurements of a causal effect of interest. But the causal effect of what? The manipulation, in a word. In an experiment we intervene on the world and measure the effects of that manipulation. We then compare that measurement to a case where the intervention has not occurred. The previous chapter covered the topic of measurement; here we discuss manipulations.</p>
+<p>We refer to different intervention states as <strong>conditions</strong> of the experiment. The most common experimental design is the comparison between a <strong>control</strong> condition, in which the intervention is not performed, and an <strong>experimental</strong> (or sometimes, <strong>treatment</strong>) condition in which the intervention is performed. But many other experimental designs are possible. The goal of this chapter is to introduce some of these and give you some tools for considering their tradeoffs. In the first part of the chapter, we’ll introduce some common experimental designs and the vocabulary for describing them.</p>
+<p>To be useful, a measure must be a valid measure of a construct of interest. The same is true for a manipulation – it must validly relate to the causal effect of interest. In the next part of the chapter, we’ll discuss issues of <strong>manipulation validity</strong>, including both issues of ecological validity and <strong>confounding</strong>. We’ll talk about how practices like <strong>randomization</strong> and <strong>counterbalancing</strong> can help remove nuisance confounds.<label for="tufte-sn-1" class="margin-toggle sidenote-number">1</label><input type="checkbox" id="tufte-sn-1" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">1</span> This section will draw on our introduction of causal inference in Chapter <a href="1-intro.html#intro">1</a>, so if you haven’t read that, now’s the time.</span></p>
+<p>We’ll end the chapter by discussing some aspects of strategy in experimental design. How do you design an experiment to test a theory? What sorts of experimental designs are maximally efficient?</p>
+<div id="experimental-designs" class="section level2" number="8.1">
+<h2><span class="header-section-number">8.1</span> Experimental designs</h2>
+<p>Experimental designs are so fundamental to so many fields that they are discussed in many different ways. As a result, the terminology can get quite confusing. Here we’ll try to stay consistent by describing an experiment as a relationship between some <strong>manipulation</strong> in which participants are randomly assigned to an experimental condition to evaluate its effects on some <strong>measure</strong>.<label for="tufte-sn-2" class="margin-toggle sidenote-number">2</label><input type="checkbox" id="tufte-sn-2" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">2</span> The alternative terminology used in psychology is that of an <strong>independent variable</strong> (the manipulation, which is causally prior and hence “independent” of other causal influences) and a <strong>dependent variable</strong> (the measure, which causally depends on the manipulation, or so we hypothesize). This terminology seems transparently terrible. An alternative is the terms that are often used in econometrics of the <strong>treatment</strong> or <strong>intervention</strong> (manipulation) and the <strong>outcome</strong> (measure). This terminology is clearer, but also has some fairly medical connotations – it sounds like the treatment is something substantial and lasting, and the outcome is meaningful. That’s not always the case in experiments that investigate psychological mechanisms. For example, in a cognitive psychology context, it sounds a bit weird to us to say that the “treatment” was reading scrambled words and the “outcome” was lexical decision reaction times.</span></p>
 </div>
-<div id="manipulation-validity" class="section level2" number="8.1">
-<h2><span class="header-section-number">8.1</span> Manipulation validity</h2>
-<div id="threats-to-manipulation-validity" class="section level3" number="8.1.1">
-<h3><span class="header-section-number">8.1.1</span> Threats to manipulation validity</h3>
+<div id="factorial-experiments" class="section level2" number="8.2">
+<h2><span class="header-section-number">8.2</span> Factorial experiments</h2>
+<p>How should we decide what conditions to have in our experiment? The classical “design of experiments” paradigm has as its goal to</p>
+<p>Crossed designs</p>
+</div>
+<div id="between--vs.-within-participant-designs" class="section level2" number="8.3">
+<h2><span class="header-section-number">8.3</span> Between- vs. within-participant designs</h2>
+<div class="figure"><span id="fig:unnamed-chunk-2"></span>
+<div id="htmlwidget-30e4409849e39179307f" style="width:50%;height:110%;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-30e4409849e39179307f">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = LR]\n  \n  node [shape = rectangle, style = filled, fillcolor = white]        \n  a [label = \"Participant 1\"]\n  b [label = \"Participant 2\"]\n  c [label = \"Participant 3\"]\n  d [label = \"Participant 4\"]\n  \n  node [fillcolor = pink]\n  c1a [label = \"Experimental Manipulation\"]\n  c1b [label = \"Experimental Manipulation\"]\n  \n  node [fillcolor = lightblue]\n  c2a [label = \"Control Manipulation\"]\n  c2b [label = \"Control Manipulation\"]\n  \n  node [fillcolor = white]\n  m1 [label =  \"Measure\"]\n  m2 [label =  \"Measure\"]\n  m3 [label =  \"Measure\"]\n  m4 [label =  \"Measure\"]\n  \n  # edge definitions with the node IDs\n  a -> c1a -> m1\n  b -> c1b -> m2\n  c -> c2b -> m4\n  d -> c2a -> m3\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<p class="caption marginnote shownote">
+Figure 8.1: A between-participants design.
+</p>
+</div>
+<p>between
+Main advantage
+No contamination by other exposure to experimental materials
+Disadvantages
+Requires many participants
+Individual differences create a lot of variability in groups
+Potential for assignment bias: need to control for differences between groups
+Other environmental group differences</p>
+<p>Main advantage
+Eliminates subject variability
+Relatively few participants needed, because of this lack of variability
+Disadvantages
+Carryover effects mean that ordering of conditions can be problematic
+Not always possible: imagine trying a within-subjects design for surgery
+General contention: preferable when possible</p>
+</div>
+<div id="discrete-and-continuous-experimental-manipulations" class="section level2" number="8.4">
+<h2><span class="header-section-number">8.4</span> Discrete and continuous experimental manipulations</h2>
+<p>Continuous and discrete variables</p>
+<p>Dose response relationships</p>
+<p>Multi-experiment design strategy: start simple?</p>
+<!-- ::: {.case-study} -->
+<!-- 🔬 Case study: Still suspicious? -->
+<!-- The “suspicious coincidence” effect (Xu and Tenenbaum 2007) with non-replication by Spencer et al. (2011) resolved by Lewis & Frank (2018) “still suspicious” paper.  -->
+<!-- ::: -->
+</div>
+<div id="manipulation-validity" class="section level2" number="8.5">
+<h2><span class="header-section-number">8.5</span> Manipulation validity</h2>
+<div id="threats-to-manipulation-validity" class="section level3" number="8.5.1">
+<h3><span class="header-section-number">8.5.1</span> Threats to manipulation validity</h3>
 <ul>
 <li><p>Manipulations must correspond to the construct whose causal effect is being estimated.</p></li>
 <li><p>Demand characteristics. How did concerns about demand characteristics emerge? What proposed mechanisms cause demand characteristics to influence participant behavior? What evidence do we have that demand characteristics impact participant behavior? And what strategies can we use to mitigate demand characteristics?</p></li>
 </ul>
+<p>Ecological validity</p>
 </div>
-<div id="confounding" class="section level3" number="8.1.2">
-<h3><span class="header-section-number">8.1.2</span> Confounding</h3>
+<div id="confounding" class="section level3" number="8.5.2">
+<h3><span class="header-section-number">8.5.2</span> Confounding</h3>
 <p>Let’s consider an alternate experiment now. Suppose we did the same basic procedure, but now with a “within-subjects” design where participants do both the Dylan treatment and the control, in that order. This experiment is flawed, of course. If you observe a Dylan effect, you can’t rule out the idea that participants got tired and wrote worse in the control condition because it always came second.</p>
 <p>Order (Dylan first vs. control first; notated X’) is an experimental confound: a variable that is created in the course of the experiment that is both causally related to the predictor and potentially also related to the outcome. Here’s how the causal model now looks:</p>
 <p>We’ve reconstructed the same kind of confounding relationship we had with age, where we had a variable (X’) that was correlated both with our predictor (X) and our outcome (Y)! So…</p>
 <p>In the causal language we have been using, counterbalancing allows us to snip out the causal dependency between order and Dylan. Now they are unconfounded (uncorrelated) with one another. We’ve “solved” a confound in our experimental design. Here’s the picture:</p>
 <p>These are not covariates! Covariates are related but don’t have causal force in this design because of randomization. We can use them in our analysis to make our estimates more precise (see Chapter <a href="6-models.html#models">6</a>), but we won’t worry about them here. If someone says to you, “participant gender is a confound in your experiment,” if you’ve done random assignment to condition appropriately (acoss genders), you should say “no it’s not.”</p>
 </div>
-<div id="removing-nuisance-confounds" class="section level3" number="8.1.3">
-<h3><span class="header-section-number">8.1.3</span> Removing nuisance confounds</h3>
+<div id="removing-nuisance-confounds" class="section level3" number="8.5.3">
+<h3><span class="header-section-number">8.5.3</span> Removing nuisance confounds</h3>
 <p>What should we do with our experimental confounds?</p>
 <p>Option 1. Randomize. Increasingly, this is my go-to method for dealing with any confound. Is the correct answer on my survey confounded with response side? Randomize what side the response shows up on! Is order confounded with condition? Randomize the order you present in! Randomization is much easier now that we program many of our experiments using software like Qualtrics or code them from scratch in JavaScript.</p>
 <p>The only time you really get in trouble with randomization is when you have a large number of options, a small number of participants, or some combination of the two. In this case, you can end up with unbalanced levels of the randomized factors (for example, ten answers on the right side and two on the left). Averaging across many experiments, this lack of balance will come out in the wash. But in a single experiment, it can really mess up your data – especially if your participants notice and start choosing one side more than the other because it’s right more often. For that reason, when balance is critical, you want option 2.</p>
@@ -224,8 +189,10 @@ div.csl-indent {
 <p>Option 3. Do Options 1 and 2 and then model the variation. This option was never part of my training, but it’s an interesting third option that I’m increasingly considering.** That is, we are often faced with the choice between A) a noisy between-participants design and B) a lower-noise within-participants design that nevertheless adds noise back in via some obvious order effect that you have to randomize or counterbalance. In a recent talk by Andrew Gelman, he suggested that we try to model these as covariates, to reduce noise. This seems like a pretty interesting suggestion, especially if the correlation between them and the outcome is substantial.***</p>
 </div>
 </div>
-<div id="how-to-design-a-manipulation-to-test-a-theory." class="section level2" number="8.2">
-<h2><span class="header-section-number">8.2</span> How to design a manipulation to test a theory.</h2>
+<div id="strategy" class="section level2" number="8.6">
+<h2><span class="header-section-number">8.6</span> Strategy</h2>
+<div id="how-to-design-a-manipulation-to-test-a-theory." class="section level3" number="8.6.1">
+<h3><span class="header-section-number">8.6.1</span> How to design a manipulation to test a theory.</h3>
 <p>Simplicity as a key design principle</p>
 <ul>
 <li>E. O. Wilson’s advice: iteration on a repeatable measurement.</li>
@@ -235,15 +202,9 @@ div.csl-indent {
 <p>The temptation to manipulate lots of things</p>
 <p>Again, we advocate for simplicity.</p>
 <p>The advice is out there to</p>
-<div id="design-concepts" class="section level3" number="8.2.1">
-<h3><span class="header-section-number">8.2.1</span> Design concepts</h3>
-<p>Crossed designs</p>
-<p>Continuous and discrete variables</p>
-<p>Dose response relationships</p>
-<p>Multi-experiment design strategy: start simple?</p>
 </div>
-<div id="connecting-with-theory" class="section level3" number="8.2.2">
-<h3><span class="header-section-number">8.2.2</span> Connecting with theory</h3>
+<div id="connecting-with-theory" class="section level3" number="8.6.2">
+<h3><span class="header-section-number">8.6.2</span> Connecting with theory</h3>
 <ul>
 <li>The ethics of the “dead on arrival” experiment – why appropriate experimental design is an ethical imperative (we “waste” participant contributions otherwise).
 “risky tests”: those that will best help adjudicate between theories. <span class="citation"><a href="#ref-meehl1978" role="doc-biblioref">Meehl</a> (<a href="#ref-meehl1978" role="doc-biblioref">1978</a>)</span></li>

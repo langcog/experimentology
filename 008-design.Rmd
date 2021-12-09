@@ -8,26 +8,111 @@
 * Discuss strategies to design experiments that are appropriate to the populations of interest
 :::
 
-A randomized experiment is a combination of a manipulation and a measure. We talked about measures in Chapter \@ref(measurement); our topic in the current chapter is manipulations. This topic is commonly referred to as "design of experiments."
+The key thesis of our book is that experiments should be designed to yield precise and unbiased measurements of a causal effect of interest. But the causal effect of what? The manipulation, in a word. In an experiment we intervene on the world and measure the effects of that manipulation. We then compare that measurement to a case where the intervention has not occurred. The previous chapter covered the topic of measurement; here we discuss manipulations.  
+
+We refer to different intervention states as **conditions** of the experiment. The most common experimental design is the comparison between a **control** condition, in which the intervention is not performed, and an **experimental** (or sometimes, **treatment**) condition in which the intervention is performed. But many other experimental designs are possible. The goal of this chapter is to introduce some of these and give you some tools for considering their tradeoffs.  In the first part of the chapter, we'll introduce some common experimental designs and the vocabulary for describing them. 
+
+To be useful, a measure must be a valid measure of a construct of interest. The same is true for a manipulation -- it must validly relate to the causal effect of interest. In the next part of the chapter, we'll discuss issues of **manipulation validity**, including both issues of ecological validity and **confounding**. We'll talk about how practices like **randomization** and **counterbalancing** can help remove nuisance confounds.^[This section will draw on our introduction of causal inference in Chapter \@ref(intro), so if you haven't read that, now's the time.] 
+
+We'll end the chapter by discussing some aspects of strategy in experimental design. How do you design an experiment to test a theory? What sorts of experimental designs are maximally efficient? 
+
+## Experimental designs
+
+Experimental designs are so fundamental to so many fields that they are discussed in many different ways. As a result, the terminology can get quite confusing. Here we'll try to stay consistent by describing an experiment as a relationship between some **manipulation** in which participants are randomly assigned to an experimental condition to evaluate its effects on some **measure**.^[The alternative terminology used in psychology is that of an **independent variable** (the manipulation, which is causally prior and hence "independent" of other causal influences) and a **dependent variable** (the measure, which causally depends on the manipulation, or so we hypothesize). This terminology seems transparently terrible. An alternative is the terms that are often used in econometrics of the **treatment** or **intervention** (manipulation) and the **outcome** (measure). This terminology is clearer, but also has some fairly medical connotations -- it sounds like the treatment is something substantial and lasting, and the outcome is meaningful. That's not always the case in experiments that investigate psychological mechanisms. For example, in a cognitive psychology context, it sounds a bit weird to us to say that the "treatment" was reading scrambled words and the "outcome" was lexical decision reaction times.]
+
+## Factorial experiments
+
+How should we decide what conditions to have in our experiment? The classical "design of experiments" paradigm has as its goal to 
+
+Crossed designs
 
 
-To be useful, a measure must be a valid measure of a construct of interest. The same is true for a manipulation -- it must validly relate to the causal effect of interest. We'll begin by talking about issues of **manipulation validity**, including both issues of ecological validity and **confounding**. We'll talk about how practices like **randomization** and **counterbalancing** can help remove nuisance confounds.^[This section will draw on our introduction of causal inference in Chapter \@ref(intro), so if you haven't read that, now's the time.] 
+## Between- vs. within-participant designs
 
-What is the best experimental design to test a theory? Our next discussio
+```{r, fig.cap="A between-participants design."}
+g <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = LR]
+  
+  node [shape = rectangle, style = filled, fillcolor = white]        
+  a [label = 'Participant 1']
+  b [label = 'Participant 2']
+  c [label = 'Participant 3']
+  d [label = 'Participant 4']
+  
+  node [fillcolor = pink]
+  c1a [label = 'Experimental Manipulation']
+  c1b [label = 'Experimental Manipulation']
+  
+  node [fillcolor = lightblue]
+  c2a [label = 'Control Manipulation']
+  c2b [label = 'Control Manipulation']
+  
+  node [fillcolor = white]
+  m1 [label =  'Measure']
+  m2 [label =  'Measure']
+  m3 [label =  'Measure']
+  m4 [label =  'Measure']
+  
+  # edge definitions with the node IDs
+  a -> c1a -> m1
+  b -> c1b -> m2
+  c -> c2b -> m4
+  d -> c2a -> m3
+  }")
 
-::: {.case-study}
-🔬 Case study: Still suspicious?
+g$width <- "50%"
+g$height <- "100%"
+g
+```
 
-The “suspicious coincidence” effect (Xu and Tenenbaum 2007) with non-replication by Spencer et al. (2011) resolved by Lewis & Frank (2018) “still suspicious” paper. 
-:::
+
+
+between
+Main advantage
+No contamination by other exposure to experimental materials
+Disadvantages
+Requires many participants
+Individual differences create a lot of variability in groups
+Potential for assignment bias: need to control for differences between groups
+Other environmental group differences
+
+
+Main advantage
+Eliminates subject variability
+Relatively few participants needed, because of this lack of variability
+Disadvantages
+Carryover effects mean that ordering of conditions can be problematic
+Not always possible: imagine trying a within-subjects design for surgery
+General contention: preferable when possible
+
+
+## Discrete and continuous experimental manipulations 
+
+
+Continuous and discrete variables
+
+Dose response relationships 
+
+Multi-experiment design strategy: start simple? 
+
+
+
+<!-- ::: {.case-study} -->
+<!-- 🔬 Case study: Still suspicious? -->
+
+<!-- The “suspicious coincidence” effect (Xu and Tenenbaum 2007) with non-replication by Spencer et al. (2011) resolved by Lewis & Frank (2018) “still suspicious” paper.  -->
+<!-- ::: -->
 
 ## Manipulation validity
+
 
 ### Threats to manipulation validity
 
  - Manipulations must correspond to the construct whose causal effect is being estimated.
  
   - Demand characteristics. How did concerns about demand characteristics emerge? What proposed mechanisms cause demand characteristics to influence participant behavior? What evidence do we have that demand characteristics impact participant behavior? And what strategies can we use to mitigate demand characteristics?
+
+Ecological validity
   
 ### Confounding
 
@@ -62,7 +147,9 @@ Counterbalancing doesn't always work, though. It gets trickier when you have too
 
 Option 3. Do Options 1 and 2 and then model the variation. This option was never part of my training, but it's an interesting third option that I'm increasingly considering.** That is, we are often faced with the choice between A) a noisy between-participants design and B) a lower-noise within-participants design that nevertheless adds noise back in via some obvious order effect that you have to randomize or counterbalance. In a recent talk by Andrew Gelman, he suggested that we try to model these as covariates, to reduce noise. This seems like a pretty interesting suggestion, especially if the correlation between them and the outcome is substantial.***
 
-## How to design a manipulation to test a theory.
+## Strategy
+
+### How to design a manipulation to test a theory.
 
 Simplicity as a key design principle
 
@@ -76,15 +163,6 @@ Again, we advocate for simplicity.
 
 The advice is out there to
 
-### Design concepts
-
-Crossed designs
-
-Continuous and discrete variables
-
-Dose response relationships 
-
-Multi-experiment design strategy: start simple? 
 
 ### Connecting with theory
 
@@ -93,6 +171,8 @@ Multi-experiment design strategy: start simple?
  “risky tests”: those that will best help adjudicate between theories. @meehl1978
   
   Optimal experiment design in psychophysics and beyond – how to use quantitative models to select the stimulus that maximizes your chances of a theory-informing result.
+
+
 
 
 
