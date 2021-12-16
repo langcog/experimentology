@@ -30,7 +30,10 @@ MathJax.Hub.Config({
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
-<script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="libs/viz-1.8.2/viz.js"></script>
+<link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+<script src="libs/grViz-binding-1.0.6.1/grViz.js"></script>
 <script src="libs/jquery-3.5.1/jquery.min.js"></script>
 <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
 <script src="libs/datatables-binding-0.18/datatables.js"></script>
@@ -39,6 +42,8 @@ MathJax.Hub.Config({
 <script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
 <link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
 <script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 
 
 <style type="text/css">code{white-space: pre;}</style>
@@ -191,8 +196,8 @@ div.csl-indent {
 <li>Know about generating APA format files with <code>papaja</code> and bibtex</li>
 </ul>
 </div>
-<p>This is a short tutorial on using R Markdown to mix prose and code together for creating reproducible scientific documents.<label for="tufte-sn-143" class="margin-toggle sidenote-number">143</label><input type="checkbox" id="tufte-sn-143" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">143</span> The current version is adapted from an earlier tutorial that Mike Frank and Chris Hartgerink taught together at SIPS 2017.</span></p>
-<p>In short: R Markdown allows you to create documents that are compiled with code, producing your next scientific paper. This tutorial will help you learn the nuts and bolts of how to do this. This appendix – actually this whole book – is written in R Markdown. It’s a very flexible platform for writing nice looking documents.<label for="tufte-sn-144" class="margin-toggle sidenote-number">144</label><input type="checkbox" id="tufte-sn-144" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">144</span> If you’re interested in the source code for this tutorial, it’s available <a href="https://github.com/langcog/experimentology/blob/master/101-rmarkdown.Rmd">here</a>. We use the amazing <code>bookdown</code> package to format multi-chapter manuscripts, and we use the <code>tufte</code> package (lightly customized) for style.</span></p>
+<p>This is a short tutorial on using R Markdown to mix prose and code together for creating reproducible scientific documents.<label for="tufte-sn-174" class="margin-toggle sidenote-number">174</label><input type="checkbox" id="tufte-sn-174" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">174</span> The current version is adapted from an earlier tutorial that Mike Frank and Chris Hartgerink taught together at SIPS 2017.</span></p>
+<p>In short: R Markdown allows you to create documents that are compiled with code, producing your next scientific paper. This tutorial will help you learn the nuts and bolts of how to do this. This appendix – actually this whole book – is written in R Markdown. It’s a very flexible platform for writing nice looking documents.<label for="tufte-sn-175" class="margin-toggle sidenote-number">175</label><input type="checkbox" id="tufte-sn-175" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">175</span> If you’re interested in the source code for this tutorial, it’s available <a href="https://github.com/langcog/experimentology/blob/master/101-rmarkdown.Rmd">here</a>. We use the amazing <code>bookdown</code> package to format multi-chapter manuscripts, and we use the <code>tufte</code> package (lightly customized) for style.</span></p>
 <div id="why-write-reproducible-papers" class="section level2" number="20.1">
 <h2><span class="header-section-number">20.1</span> Why write reproducible papers?</h2>
 <p>There are three reasons to write reproducible papers. To be right, to be reproducible, and to be efficient. In more depth:</p>
@@ -208,7 +213,7 @@ div.csl-indent {
 <p>If you click on “Knit” (or hit <code>CTRL+SHIFT+K</code>) the R Markdown file will run and generate all results and present you with a PDF file, HTML file, or a Word file. If RStudio requests you to install packages, click yes and see whether everything works to begin with.</p>
 <p>We need that before we teach you more about R Markdown. But you should feel good if you get here already, because honestly, you’re about 80% of the way to being able to write basic R Markdown files. It’s <em>that</em> easy.</p>
 <div class="exercise">
-<p><span id="exr:unlabeled-div-15" class="exercise"><strong>Exercise 20.1  </strong></span>Knit the R Markdown template to Word and PDF to ensure that you can get this to work. Isn’t it gratifying?</p>
+<p><span id="exr:unlabeled-div-16" class="exercise"><strong>Exercise 20.1  </strong></span>Knit the R Markdown template to Word and PDF to ensure that you can get this to work. Isn’t it gratifying?</p>
 </div>
 </div>
 <div id="structure-of-an-r-markdown-file" class="section level2" number="20.3">
@@ -216,13 +221,13 @@ div.csl-indent {
 <p>An R Markdown file contains several parts. Most essential are the header, the body text, and code chunks. When you knit the resulting document, you will get the output – text combined with the results of running the core – in one of a number of output formats.</p>
 <div id="header" class="section level3" number="20.3.1">
 <h3><span class="header-section-number">20.3.1</span> Header</h3>
-<p>Headers in R Markdown files contain some metadata about your document, which you can customize to your liking. Below is a simple example that purely states the title, author name(s), date, and output format.<label for="tufte-sn-145" class="margin-toggle sidenote-number">145</label><input type="checkbox" id="tufte-sn-145" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">145</span> The header is written in “YAML,” which means “yet another markup language.” You don’t need to know that, and don’t worry about it. Just make sure you are careful with indenting, as YAML does care about that.</span></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="20-rmarkdown.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb3-2"><a href="20-rmarkdown.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Untitled&quot;</span></span>
-<span id="cb3-3"><a href="20-rmarkdown.html#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;NAME&quot;</span></span>
-<span id="cb3-4"><a href="20-rmarkdown.html#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;July 28, 2017&quot;</span></span>
-<span id="cb3-5"><a href="20-rmarkdown.html#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> html_document</span></span>
-<span id="cb3-6"><a href="20-rmarkdown.html#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<p>Headers in R Markdown files contain some metadata about your document, which you can customize to your liking. Below is a simple example that purely states the title, author name(s), date, and output format.<label for="tufte-sn-176" class="margin-toggle sidenote-number">176</label><input type="checkbox" id="tufte-sn-176" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">176</span> The header is written in “YAML,” which means “yet another markup language.” You don’t need to know that, and don’t worry about it. Just make sure you are careful with indenting, as YAML does care about that.</span></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="20-rmarkdown.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb4-2"><a href="20-rmarkdown.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Untitled&quot;</span></span>
+<span id="cb4-3"><a href="20-rmarkdown.html#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;NAME&quot;</span></span>
+<span id="cb4-4"><a href="20-rmarkdown.html#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;July 28, 2017&quot;</span></span>
+<span id="cb4-5"><a href="20-rmarkdown.html#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> html_document</span></span>
+<span id="cb4-6"><a href="20-rmarkdown.html#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <!-- For now, go ahead and set `html_document` to `word_docCument`, except if you have strong preferences for `HTML` or `PDF`. -->
 </div>
 <div id="body-text" class="section level3" number="20.3.2">
@@ -263,10 +268,10 @@ If you want to create PDFs from R Markdown you need a installation on your compu
 <div id="headers" class="section level3" number="20.5.1">
 <h3><span class="header-section-number">20.5.1</span> Headers</h3>
 <p>We’re going to want more libraries loaded (for now we’re loading them inline).</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="20-rmarkdown.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
-<span id="cb4-2"><a href="20-rmarkdown.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb4-3"><a href="20-rmarkdown.html#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb4-4"><a href="20-rmarkdown.html#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="20-rmarkdown.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb5-2"><a href="20-rmarkdown.html#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-3"><a href="20-rmarkdown.html#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb5-4"><a href="20-rmarkdown.html#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span></code></pre></div>
 <p>We often also add <code>chunk options</code> to each code chunk so that, for example:</p>
 <ul>
 <li>code does or doesn’t display inline (<code>echo</code> setting)</li>
@@ -275,18 +280,18 @@ If you want to create PDFs from R Markdown you need a installation on your compu
 <li>computations are cached (<code>cache</code> setting)</li>
 </ul>
 <p>There are many others available as well. Caching can be very helpful for large files, but can also cause problems when there are external dependencies that change. An example that is useful for manuscripts is:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="20-rmarkdown.html#cb5-1" aria-hidden="true" tabindex="-1"></a>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">fig.width=</span><span class="dv">8</span>, <span class="at">fig.height=</span><span class="dv">5</span>, </span>
-<span id="cb5-2"><a href="20-rmarkdown.html#cb5-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">echo=</span><span class="cn">TRUE</span>, </span>
-<span id="cb5-3"><a href="20-rmarkdown.html#cb5-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">warning=</span><span class="cn">FALSE</span>, <span class="at">message=</span><span class="cn">FALSE</span>, </span>
-<span id="cb5-4"><a href="20-rmarkdown.html#cb5-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">cache=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="20-rmarkdown.html#cb6-1" aria-hidden="true" tabindex="-1"></a>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">fig.width=</span><span class="dv">8</span>, <span class="at">fig.height=</span><span class="dv">5</span>, </span>
+<span id="cb6-2"><a href="20-rmarkdown.html#cb6-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">echo=</span><span class="cn">TRUE</span>, </span>
+<span id="cb6-3"><a href="20-rmarkdown.html#cb6-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">warning=</span><span class="cn">FALSE</span>, <span class="at">message=</span><span class="cn">FALSE</span>, </span>
+<span id="cb6-4"><a href="20-rmarkdown.html#cb6-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">cache=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <div class="exercise">
-<p><span id="exr:unlabeled-div-16" class="exercise"><strong>Exercise 20.2  </strong></span>Outlining using headings is a really great way to keep things organized! Try making a bunch of headings, and then recompiling your document.</p>
+<p><span id="exr:unlabeled-div-17" class="exercise"><strong>Exercise 20.2  </strong></span>Outlining using headings is a really great way to keep things organized! Try making a bunch of headings, and then recompiling your document.</p>
 </div>
 <div class="exercise">
-<p><span id="exr:unlabeled-div-17" class="exercise"><strong>Exercise 20.3  </strong></span>To show off your headings from the previous exercise, add a table of contents. Go to the header of the document (the <code>YAML</code>), and add some options to the <code>html document</code> bit. You want it to look like this (indentation must to be correct):</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="20-rmarkdown.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> </span></span>
-<span id="cb6-2"><a href="20-rmarkdown.html#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
-<span id="cb6-3"><a href="20-rmarkdown.html#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div>
+<p><span id="exr:unlabeled-div-18" class="exercise"><strong>Exercise 20.3  </strong></span>To show off your headings from the previous exercise, add a table of contents. Go to the header of the document (the <code>YAML</code>), and add some options to the <code>html document</code> bit. You want it to look like this (indentation must to be correct):</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb7-1"><a href="20-rmarkdown.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb7-2"><a href="20-rmarkdown.html#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">html_document</span><span class="kw">:</span></span>
+<span id="cb7-3"><a href="20-rmarkdown.html#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div>
 </div>
 </div>
 <div id="graphs" class="section level3" number="20.5.2">
@@ -295,7 +300,7 @@ If you want to create PDFs from R Markdown you need a installation on your compu
 <p><img src="experimentology_files/figure-html/rmarkdown-ex-1.png" width="\linewidth"  /></p>
 <p>All you have to do is make the plot and it will render straight into the text.</p>
 <p>External graphics can also be included, as follows:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="20-rmarkdown.html#cb7-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">&quot;path/to/file&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="20-rmarkdown.html#cb8-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">&quot;path/to/file&quot;</span>)</span></code></pre></div>
 </div>
 <div id="tables" class="section level3" number="20.5.3">
 <h3><span class="header-section-number">20.5.3</span> Tables</h3>
@@ -306,180 +311,387 @@ If you want to create PDFs from R Markdown you need a installation on your compu
 <li><p>For APA manuscripts, it can also be helpful to use the <code>xtable</code> package, which creates very flexible LaTeX tables. These can be tricky to get right but they are completely customizable provided you want to google around and learn a bit about tex.</p></li>
 </ul>
 <p>We recommend starting with <code>kable</code>. An expression like this:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="20-rmarkdown.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(mtcars), <span class="at">digits =</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="20-rmarkdown.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(mtcars), <span class="at">digits =</span> <span class="dv">1</span>)</span></code></pre></div>
 <p>Produces tabular output like this:</p>
 <table>
 <thead>
-<tr class="header">
-<th align="left"></th>
-<th align="right">mpg</th>
-<th align="right">cyl</th>
-<th align="right">disp</th>
-<th align="right">hp</th>
-<th align="right">drat</th>
-<th align="right">wt</th>
-<th align="right">qsec</th>
-<th align="right">vs</th>
-<th align="right">am</th>
-<th align="right">gear</th>
-<th align="right">carb</th>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+mpg
+</th>
+<th style="text-align:right;">
+cyl
+</th>
+<th style="text-align:right;">
+disp
+</th>
+<th style="text-align:right;">
+hp
+</th>
+<th style="text-align:right;">
+drat
+</th>
+<th style="text-align:right;">
+wt
+</th>
+<th style="text-align:right;">
+qsec
+</th>
+<th style="text-align:right;">
+vs
+</th>
+<th style="text-align:right;">
+am
+</th>
+<th style="text-align:right;">
+gear
+</th>
+<th style="text-align:right;">
+carb
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">Mazda RX4</td>
-<td align="right">21.0</td>
-<td align="right">6</td>
-<td align="right">160</td>
-<td align="right">110</td>
-<td align="right">3.9</td>
-<td align="right">2.6</td>
-<td align="right">16.5</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">4</td>
+<tr>
+<td style="text-align:left;">
+Mazda RX4
+</td>
+<td style="text-align:right;">
+21.0
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+160
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+3.9
+</td>
+<td style="text-align:right;">
+2.6
+</td>
+<td style="text-align:right;">
+16.5
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
 </tr>
-<tr class="even">
-<td align="left">Mazda RX4 Wag</td>
-<td align="right">21.0</td>
-<td align="right">6</td>
-<td align="right">160</td>
-<td align="right">110</td>
-<td align="right">3.9</td>
-<td align="right">2.9</td>
-<td align="right">17.0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">4</td>
+<tr>
+<td style="text-align:left;">
+Mazda RX4 Wag
+</td>
+<td style="text-align:right;">
+21.0
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+160
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+3.9
+</td>
+<td style="text-align:right;">
+2.9
+</td>
+<td style="text-align:right;">
+17.0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
 </tr>
-<tr class="odd">
-<td align="left">Datsun 710</td>
-<td align="right">22.8</td>
-<td align="right">4</td>
-<td align="right">108</td>
-<td align="right">93</td>
-<td align="right">3.9</td>
-<td align="right">2.3</td>
-<td align="right">18.6</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+Datsun 710
+</td>
+<td style="text-align:right;">
+22.8
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+108
+</td>
+<td style="text-align:right;">
+93
+</td>
+<td style="text-align:right;">
+3.9
+</td>
+<td style="text-align:right;">
+2.3
+</td>
+<td style="text-align:right;">
+18.6
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">Hornet 4 Drive</td>
-<td align="right">21.4</td>
-<td align="right">6</td>
-<td align="right">258</td>
-<td align="right">110</td>
-<td align="right">3.1</td>
-<td align="right">3.2</td>
-<td align="right">19.4</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">3</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+Hornet 4 Drive
+</td>
+<td style="text-align:right;">
+21.4
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+258
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+3.1
+</td>
+<td style="text-align:right;">
+3.2
+</td>
+<td style="text-align:right;">
+19.4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">Hornet Sportabout</td>
-<td align="right">18.7</td>
-<td align="right">8</td>
-<td align="right">360</td>
-<td align="right">175</td>
-<td align="right">3.1</td>
-<td align="right">3.4</td>
-<td align="right">17.0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">3</td>
-<td align="right">2</td>
+<tr>
+<td style="text-align:left;">
+Hornet Sportabout
+</td>
+<td style="text-align:right;">
+18.7
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+360
+</td>
+<td style="text-align:right;">
+175
+</td>
+<td style="text-align:right;">
+3.1
+</td>
+<td style="text-align:right;">
+3.4
+</td>
+<td style="text-align:right;">
+17.0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
 </tr>
-<tr class="even">
-<td align="left">Valiant</td>
-<td align="right">18.1</td>
-<td align="right">6</td>
-<td align="right">225</td>
-<td align="right">105</td>
-<td align="right">2.8</td>
-<td align="right">3.5</td>
-<td align="right">20.2</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">3</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+Valiant
+</td>
+<td style="text-align:right;">
+18.1
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+225
+</td>
+<td style="text-align:right;">
+105
+</td>
+<td style="text-align:right;">
+2.8
+</td>
+<td style="text-align:right;">
+3.5
+</td>
+<td style="text-align:right;">
+20.2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 </tbody>
 </table>
 <div class="exercise">
-<p><span id="exr:unlabeled-div-18" class="exercise"><strong>Exercise 20.4  </strong></span>Using the <code>mtcars</code> dataset, insert a table and a graph of your choice into your R Markdown template document. If you’re feeling uninspired, try <code>hist(mtcars$mpg)</code>.</p>
+<p><span id="exr:unlabeled-div-19" class="exercise"><strong>Exercise 20.4  </strong></span>Using the <code>mtcars</code> dataset, insert a table and a graph of your choice into your R Markdown template document. If you’re feeling uninspired, try <code>hist(mtcars$mpg)</code>.</p>
 </div>
 </div>
 <div id="statistics" class="section level3" number="20.5.4">
 <h3><span class="header-section-number">20.5.4</span> Statistics</h3>
 <p>It’s also really easy to include statistical tests of various types. One option is to use the <code>broom</code> package, which formats the outputs of various tests really nicely. Paired with knitr’s <code>kable</code> you can make very simple tables in just a few lines of code. This expression:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="20-rmarkdown.html#cb9-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> cyl, <span class="at">data =</span> mtcars)</span>
-<span id="cb9-2"><a href="20-rmarkdown.html#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">tidy</span>(mod), <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="20-rmarkdown.html#cb10-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> cyl, <span class="at">data =</span> mtcars)</span>
+<span id="cb10-2"><a href="20-rmarkdown.html#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">tidy</span>(mod), <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div>
 <p>produces this output:</p>
 <table>
 <thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">std.error</th>
-<th align="right">statistic</th>
-<th align="right">p.value</th>
+<tr>
+<th style="text-align:left;">
+term
+</th>
+<th style="text-align:right;">
+estimate
+</th>
+<th style="text-align:right;">
+std.error
+</th>
+<th style="text-align:right;">
+statistic
+</th>
+<th style="text-align:right;">
+p.value
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">36.908</td>
-<td align="right">2.191</td>
-<td align="right">16.847</td>
-<td align="right">0.000</td>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+36.908
+</td>
+<td style="text-align:right;">
+2.191
+</td>
+<td style="text-align:right;">
+16.847
+</td>
+<td style="text-align:right;">
+0.000
+</td>
 </tr>
-<tr class="even">
-<td align="left">hp</td>
-<td align="right">-0.019</td>
-<td align="right">0.015</td>
-<td align="right">-1.275</td>
-<td align="right">0.213</td>
+<tr>
+<td style="text-align:left;">
+hp
+</td>
+<td style="text-align:right;">
+-0.019
+</td>
+<td style="text-align:right;">
+0.015
+</td>
+<td style="text-align:right;">
+-1.275
+</td>
+<td style="text-align:right;">
+0.213
+</td>
 </tr>
-<tr class="odd">
-<td align="left">cyl</td>
-<td align="right">-2.265</td>
-<td align="right">0.576</td>
-<td align="right">-3.933</td>
-<td align="right">0.000</td>
+<tr>
+<td style="text-align:left;">
+cyl
+</td>
+<td style="text-align:right;">
+-2.265
+</td>
+<td style="text-align:right;">
+0.576
+</td>
+<td style="text-align:right;">
+-3.933
+</td>
+<td style="text-align:right;">
+0.000
+</td>
 </tr>
 </tbody>
 </table>
 <p>Cleaning these tables up for publication can take some work. For example, we’d need to rename a bunch of fields to make this table have the labels we wanted (e.g., to turn <code>hp</code> into <code>Horsepower</code>).</p>
 <p>We often need APA-formatted statistics to be printed in text, though. A good approach is to compute them first, and then print them inline. First, we’d run something like this:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="20-rmarkdown.html#cb10-1" aria-hidden="true" tabindex="-1"></a>ts <span class="ot">&lt;-</span> <span class="fu">with</span>(mtcars,<span class="fu">t.test</span>(hp[cyl<span class="sc">==</span><span class="dv">4</span>], hp[cyl<span class="sc">==</span><span class="dv">6</span>]))</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="20-rmarkdown.html#cb11-1" aria-hidden="true" tabindex="-1"></a>ts <span class="ot">&lt;-</span> <span class="fu">with</span>(mtcars,<span class="fu">t.test</span>(hp[cyl<span class="sc">==</span><span class="dv">4</span>], hp[cyl<span class="sc">==</span><span class="dv">6</span>]))</span></code></pre></div>
 <p>Then we’d print this:</p>
 <blockquote>
 <p>There’s a statistically-significant difference in horsepower for 4- and 6-cylinder cars (<span class="math inline">\(t(11.49) = -3.56\)</span>, <span class="math inline">\(p = 0.004\)</span>).</p>
 </blockquote>
-<p>We did this via an inline code block: <code>round(ts$parameter, 2)</code>.<label for="tufte-sn-146" class="margin-toggle sidenote-number">146</label><input type="checkbox" id="tufte-sn-146" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">146</span> APA would require omission of the leading zero. <code>papaja::printp()</code> will let you do that, see below.</span></p>
+<p>We did this via an inline code block: <code>round(ts$parameter, 2)</code>.<label for="tufte-sn-177" class="margin-toggle sidenote-number">177</label><input type="checkbox" id="tufte-sn-177" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">177</span> APA would require omission of the leading zero. <code>papaja::printp()</code> will let you do that, see below.</span></p>
 <p>Rounding <span class="math inline">\(p\)</span> values can occasionally get you in trouble. It’s very easy to have an output of <span class="math inline">\(p = 0\)</span> when in fact <span class="math inline">\(p\)</span> can never be exactly equal to 0. Nonetheless, this can help you prevent the kinds of rounding errors that would get picked up by software like <code>statcheck</code>.</p>
 </div>
 </div>
 <div id="writing-apa-format-papers" class="section level2" number="20.6">
 <h2><span class="header-section-number">20.6</span> Writing APA-format papers</h2>
-<p>The end-game of reproducible research is to knit your entire paper into a submittable APA-style writeup. Managing APA format is a pain in the best of times. The <code>papaja</code> package allows you to circumvent this task by rendering your manuscript directly from R Markdown.<label for="tufte-sn-147" class="margin-toggle sidenote-number">147</label><input type="checkbox" id="tufte-sn-147" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">147</span> Thanks to <a href="http://github.com/crsh">Frederick Aust</a> for contributing much of the code in this section! For a bit more on <code>papaja</code>, check out <a href="https://rpubs.com/YaRrr/papaja_guide">this guide</a>.</span></p>
+<p>The end-game of reproducible research is to knit your entire paper into a submittable APA-style writeup. Managing APA format is a pain in the best of times. The <code>papaja</code> package allows you to circumvent this task by rendering your manuscript directly from R Markdown.<label for="tufte-sn-178" class="margin-toggle sidenote-number">178</label><input type="checkbox" id="tufte-sn-178" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">178</span> Thanks to <a href="http://github.com/crsh">Frederick Aust</a> for contributing much of the code in this section! For a bit more on <code>papaja</code>, check out <a href="https://rpubs.com/YaRrr/papaja_guide">this guide</a>.</span></p>
 <!-- ### Technical requirements -->
 <!-- `papaja` is a R-package including a R Markdown template that can be used to produce documents that adhere to the American Psychological Association (APA) manuscript guidelines. -->
 <!-- ^[Some Linux users may need a few additional TeX packages for the LaTeX document class `apa7` to work.] -->
 <!-- ^[For Ubuntu, we suggest running: `sudo apt-get install texlive texlive-publishers texlive-fonts-extra texlive-latex-extra texlive-humanities lmodern`.] -->
 <p><code>papaja</code> has not yet been released on CRAN but you can install it from GitHub.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="20-rmarkdown.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install devtools package if necessary</span></span>
-<span id="cb11-2"><a href="20-rmarkdown.html#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="st">&quot;devtools&quot;</span> <span class="sc">%in%</span> <span class="fu">rownames</span>(<span class="fu">installed.packages</span>())) <span class="fu">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)</span>
-<span id="cb11-3"><a href="20-rmarkdown.html#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="20-rmarkdown.html#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Install papaja</span></span>
-<span id="cb11-5"><a href="20-rmarkdown.html#cb11-5" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;crsh/papaja&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="20-rmarkdown.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install devtools package if necessary</span></span>
+<span id="cb12-2"><a href="20-rmarkdown.html#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="st">&quot;devtools&quot;</span> <span class="sc">%in%</span> <span class="fu">rownames</span>(<span class="fu">installed.packages</span>())) <span class="fu">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)</span>
+<span id="cb12-3"><a href="20-rmarkdown.html#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="20-rmarkdown.html#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Install papaja</span></span>
+<span id="cb12-5"><a href="20-rmarkdown.html#cb12-5" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;crsh/papaja&quot;</span>)</span></code></pre></div>
 <p>The APA manuscript template should now be available through the RStudio menus when creating a new R Markdown file.</p>
 <p>When you click RStudio’s <em>Knit</em> button <code>papaja</code>, <code>rmarkdown,</code> and <code>knitr</code> work together to create an APA conform manuscript that includes both your manuscript text and the results of any embedded R code.</p>
 <!-- If you don't have TeX installed on your computer, or if you would like to create a Word document replace `output: papaja::apa6_pdf` with `output: papaja::apa6_word` in the document YAML header. -->
@@ -488,14 +700,14 @@ If you want to create PDFs from R Markdown you need a installation on your compu
 <!-- If `figurelist`, `tablelist`, or `footnotelist` are set to `yes` a list of figure captions, table captions, or footnotes is given following the reference section. -->
 <!-- `lineno` indicates whether lines should be continuously numbered through out the manuscript. -->
 <div class="exercise">
-<p><span id="exr:unlabeled-div-19" class="exercise"><strong>Exercise 20.5  </strong></span>Make sure you’ve got <code>papaja</code>, then open a new APA template file. Compile this document, and look at how awesome it is. Try pasting in your figure and table from your other R Markdown (don’t forget any libraries you need to make it compile).</p>
+<p><span id="exr:unlabeled-div-20" class="exercise"><strong>Exercise 20.5  </strong></span>Make sure you’ve got <code>papaja</code>, then open a new APA template file. Compile this document, and look at how awesome it is. Try pasting in your figure and table from your other R Markdown (don’t forget any libraries you need to make it compile).</p>
 </div>
 </div>
 <div id="bibiographic-management" class="section level2" number="20.7">
 <h2><span class="header-section-number">20.7</span> Bibiographic management</h2>
 <p>Managing a bibliography by hand is a lot of work. Letting software do this for you is much easier. In R Markdown it’s possible to include references using <code>bibtex</code>, by using <code>@ref</code> syntax. You can do this in <code>papaja</code> but it’s also possible to o it in other packages that have some kind of bibliographic handling.</p>
 <p>It’s simple. You put together a set of paper citations in a bibtex file – then when you refer to them in text, the citations pop up formatted correctly, and they are also put in your bibliography. As an example, <code>@nuijten2016</code> results in the in text citation “<span class="citation"><a href="#ref-nuijten2016" role="doc-biblioref">Michèle B. Nuijten et al.</a> (<a href="#ref-nuijten2016" role="doc-biblioref">2016</a>)</span>,” or cite them parenthetically with <code>[@nuijten2016]</code> <span class="citation">(<a href="#ref-nuijten2016" role="doc-biblioref">Michèle B. Nuijten et al., 2016</a>)</span>. Take a look at the <code>papaja</code> APA example to see how this works.</p>
-<p>How do you make your bibtex file? You can do it by hand but this is a pain. One option for managing references is <a href="http://bibdesk.sourceforge.net/">bibdesk</a>, which integrates with google scholar.<label for="tufte-sn-148" class="margin-toggle sidenote-number">148</label><input type="checkbox" id="tufte-sn-148" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">148</span> Many other options are possible. For example, some of us use Zotero frequently as well.</span>
+<p>How do you make your bibtex file? You can do it by hand but this is a pain. One option for managing references is <a href="http://bibdesk.sourceforge.net/">bibdesk</a>, which integrates with google scholar.<label for="tufte-sn-179" class="margin-toggle sidenote-number">179</label><input type="checkbox" id="tufte-sn-179" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">179</span> Many other options are possible. For example, some of us use Zotero frequently as well.</span>
 <code>citr</code> is an R package that provides an easy-to-use <a href="https://rstudio.github.io/rstudioaddins/">RStudio addin</a> that facilitates inserting citations.
 The addin will automatically look up the Bib(La)TeX-file(s) specified in the YAML front matter.
 The references for the inserted citations are automatically added to the documents reference section. Once <code>citr</code> is installed (<code>install.packages("citr")</code>) and you have restarted your R session, the addin appears in the menus and you can define a <a href="https://rstudio.github.io/rstudioaddins/#keyboard-shorcuts">keyboard shortcut</a> to call the addin.</p>
@@ -504,8 +716,8 @@ The references for the inserted citations are automatically added to the documen
 <h2><span class="header-section-number">20.8</span> Collaboration</h2>
 <p>How do we collaborate using R Markdown? There are lots of different workflows that people use. Here are a few:</p>
 <ul>
-<li>The lead author makes a github repository with the markdown-formatted document in it. Others read the PDF and send text comments or PDF annotations and the lead makes modifications accordingly.<label for="tufte-sn-149" class="margin-toggle sidenote-number">149</label><input type="checkbox" id="tufte-sn-149" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">149</span> Dropbox has good PDF annotation tools for writing comments on specific lines of text.</span> This workflow works well when the lead author is relatively experienced and wants to keep control of the manuscript without too much line-by-line rewriting.</li>
-<li>The lead author makes a repository as above, but co-authors collaborate either by pushing changes to master or by creating pull requests. This workflow works well when the authors are all fairly git-savvy, and can be great for quickly writing different parts in parallel because of git’s automatic merging.<label for="tufte-sn-150" class="margin-toggle sidenote-number">150</label><input type="checkbox" id="tufte-sn-150" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">150</span> We wrote this book using the all-github workflow, and it was pretty good, modulo some merge conflicts.</span></li>
+<li>The lead author makes a github repository with the markdown-formatted document in it. Others read the PDF and send text comments or PDF annotations and the lead makes modifications accordingly.<label for="tufte-sn-180" class="margin-toggle sidenote-number">180</label><input type="checkbox" id="tufte-sn-180" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">180</span> Dropbox has good PDF annotation tools for writing comments on specific lines of text.</span> This workflow works well when the lead author is relatively experienced and wants to keep control of the manuscript without too much line-by-line rewriting.</li>
+<li>The lead author makes a repository as above, but co-authors collaborate either by pushing changes to master or by creating pull requests. This workflow works well when the authors are all fairly git-savvy, and can be great for quickly writing different parts in parallel because of git’s automatic merging.<label for="tufte-sn-181" class="margin-toggle sidenote-number">181</label><input type="checkbox" id="tufte-sn-181" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">181</span> We wrote this book using the all-github workflow, and it was pretty good, modulo some merge conflicts.</span></li>
 <li>The authors work collaboratively together in an editor like Google Docs, Word, or Overleaf. (We favor cloud platforms rather than emailing back and forth, for all the reasons discussed in Chapter <a href="13-management.html#management">13</a>). Once the substantive text sections have converged, the lead author puts that text back into the markdown document and adds references. This workflow is good for very collaborative introduction writing when co-authors don’t use git or markdown. This workflow is a little clunky, but not too bad. And critically, all the figures and numbers get rendered fresh when you re-knit, so nothing can get accidentally altered during the editing process.</li>
 <li>The lead author renders the results section from markdown, then writes text in the resulting Word document (or uploads it to Google Docs). This workflow is closest to the “old way” that many people are used to, but runs the biggest risk of errors getting introduced and propagated forward, since it’s not possible to rerender the whole document from scratch. If someone makes changes to the results section, it’s critical to propagate these back to the markdown and keep the two in sync.</li>
 </ul>

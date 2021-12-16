@@ -30,7 +30,10 @@ MathJax.Hub.Config({
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
-<script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="libs/viz-1.8.2/viz.js"></script>
+<link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+<script src="libs/grViz-binding-1.0.6.1/grViz.js"></script>
 <script src="libs/jquery-3.5.1/jquery.min.js"></script>
 <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
 <script src="libs/datatables-binding-0.18/datatables.js"></script>
@@ -39,6 +42,8 @@ MathJax.Hub.Config({
 <script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
 <link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
 <script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 
 
 <style type="text/css">code{white-space: pre;}</style>
@@ -266,6 +271,52 @@ div.csl-indent {
 ** Importantly, it’s a lot like adding random effects to your model – you model sources of structure in your data so that you can better estimate the particular effects of interest.
 *** The advice not to model covariates that aren’t very correlated with your outcome is very frequentist, with the idea being that you lose power when you condition on too many things. In contrast, Gelman &amp; Hill (2006) give more Bayesian advice: if you think a variable matters to your outcome, keep it in the model. This advice is consistent with the idea of modeling experimental covariates, even if they don’t have a big correlation with the outcome. In the Bayesian framework, including this extra information should (maybe only marginally) improve your precision but you aren’t “spending degrees of freedom” in the same way.</li>
 </ul>
+<!-- ### Homeless -->
+<!-- ⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance -->
+<!-- ::: {.interactive} -->
+<!-- ⌨️ Interactive: Nonparameteric resampling under the null -->
+<!-- As we've seen above, hypothesis testing hinges on approximating the null distribution of the statistical estimate. In the examples above, it was easy to use statistical theory to work out the null distribution: for example, in Figure \@ref(fig:inference-null-model), we knew that the null distribution must be binomial since we had a binary outcome, and the binomial distribution parameter $p$ must be 0.5, because that is what the null says.  -->
+<!-- But sometimes we don't know what the null distribution would look like. Suppose we want to estimate group differences in a highly skewed continuous outcome, like salary, but we had a small sample size (e.g., $n=10$ per group): -->
+<!-- ```{r inference-permutation-1, eval=FALSE} -->
+<!-- print(d) -->
+<!-- set.seed(451) -->
+<!-- n.per.group = 10 -->
+<!-- d = data.frame( Y = c( rexp( n = n.per.group, rate = 4 ), -->
+<!--                        rexp( n = n.per.group, rate = 4 ) + 0.3 ), -->
+<!--                 Group = c( rep( "Control", n.per.group ), -->
+<!--                            rep ( "Treatment", n.per.group ) ) ) -->
+<!-- colors = c("black", "orange") -->
+<!-- ggplot( data = d, -->
+<!--         aes(x = Y, group = Group ) ) + -->
+<!--   #geom_histogram( aes(fill = Group), alpha = 0.4 ) + -->
+<!--   geom_dotplot( aes( fill=Group ), alpha=0.4, binwidth = .05 ) + -->
+<!--   scale_y_continuous(NULL, breaks = NULL) + -->
+<!--   theme_bw() + xlab("Y") + -->
+<!--   ylab("")  -->
+<!-- ``` -->
+<!-- We can't proceed with a t-test in good conscience because, with only $n=20$, we can't necessarily trust that the Central Limit Theorem has "kicked in" sufficiently for the test to work despite the skewness. Stated otherwise, we can't be sure that the null distribution is normal in this case.  -->
+<!-- When we can't rely on theory, another way to approximate a null distribution is through nonparameteric resampling. "Resampling" means that we're going to cleverly draw new samples *from our existing sample*, and "nonparametric" means that we will do this in a way that obviates assumptions about the shape of the null distribution (in contrast to parameteric approaches that do rely on such assumptions). -->
+<!-- The central idea is that, if the treatment truly had no effect on the outcome, then the observations would be *exchangeable* between the treatment and control groups. That is, there would not be systematic differences between the treatment and control groups. This may or may not be true in our observed sample (after all, that's why we're doing a hypothesis test in the first place), but we could draw new samples from our existing sample in a manner that forces exchangeability. In this case, we could randomly permute the column of outcomes in our dataset while leaving the column of treatment assignments fixed: -->
+<!-- ```{r inference-permutation-2, eval=FALSE} -->
+<!-- # show construction of a single permuted dataset -->
+<!-- # library(modelr) -->
+<!-- # library(purrr) -->
+<!-- perm.reps = 100 -->
+<!-- perms = permute(data = d, n = perm.reps, Y) -->
+<!-- # show the first permuted dataset -->
+<!-- print( perms$perm[[1]]$data ) -->
+<!-- #@WHY ARE THESE ALL THE SAME?? -->
+<!-- cbind( perms$perm[[1]]$data$Y, perms$perm[[2]]$data$Y ) -->
+<!-- # c.f. package example for debugging -->
+<!-- perms2 <- permute(mtcars,  1000, mpg) -->
+<!-- cbind( perms2$perm[[1]]$data$mpg, perms2$perm[[2]]$data$mpg ) -->
+<!-- # also the same??  -->
+<!-- # get group mean differences for each permutation via OLS -->
+<!-- ols = map(perms$perm, ~ lm(Y ~ 1, data = .)) -->
+<!-- ATEs = lapply( ols, function(.ols) as.numeric( coef(.ols)["(Intercept)"] ) ) -->
+<!-- # now plot the ATEs to show the null sampling distribution -->
+<!-- ``` -->
+<!-- ::: -->
 
 </div>
 </div>

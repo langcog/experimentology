@@ -1,5 +1,10 @@
 # Design of experiments {#design}
 
+```{r design-meme}
+knitr::include_graphics("images/design/meme.jpg")
+```
+
+
 ::: {.learning-goals}
 🍎 Learning goals: 
 
@@ -8,9 +13,9 @@
 * Discuss strategies to design experiments that are appropriate to the populations of interest
 :::
 
-The key thesis of our book is that experiments should be designed to yield precise and unbiased measurements of a causal effect of interest. But the causal effect of what? The manipulation, in a word. In an experiment we intervene on the world and measure the effects of that manipulation. We then compare that measurement to a case where the intervention has not occurred. The previous chapter covered the topic of measurement; here we discuss manipulations.  
+The key thesis of our book is that experiments should be designed to yield precise and unbiased measurements of a causal effect. But the causal effect of what? The manipulation, in a word. In an experiment we intervene on the world and measure the effects of that manipulation. We then compare that measurement to a case where the intervention has not occurred. The previous chapter covered the topic of measurement; here we discuss manipulations.  
 
-We refer to different intervention states as **conditions** of the experiment. The most common experimental design is the comparison between a **control** condition, in which the intervention is not performed, and an **experimental** (or sometimes, **treatment**) condition in which the intervention is performed. But many other experimental designs are possible. The goal of this chapter is to introduce some of these and give you some tools for considering their tradeoffs.  In the first part of the chapter, we'll introduce some common experimental designs and the vocabulary for describing them. 
+We refer to different intervention states as **conditions** of the experiment. These conditions instantiate specific **factors** of interest. The most common experimental design is the comparison between a **control** condition, in which the intervention is not performed, and an **experimental** (or sometimes, **treatment**) condition in which the intervention is performed. But many other experimental designs are possible. The goal of this chapter is to introduce some of these and give you some tools for considering their tradeoffs.  In the first part of the chapter, we'll introduce some common experimental designs and the vocabulary for describing them. 
 
 To be useful, a measure must be a valid measure of a construct of interest. The same is true for a manipulation -- it must validly relate to the causal effect of interest. In the next part of the chapter, we'll discuss issues of **manipulation validity**, including both issues of ecological validity and **confounding**. We'll talk about how practices like **randomization** and **counterbalancing** can help remove nuisance confounds.^[This section will draw on our introduction of causal inference in Chapter \@ref(intro), so if you haven't read that, now's the time.] 
 
@@ -18,16 +23,60 @@ We'll end the chapter by discussing some aspects of strategy in experimental des
 
 ## Experimental designs
 
-Experimental designs are so fundamental to so many fields that they are discussed in many different ways. As a result, the terminology can get quite confusing. Here we'll try to stay consistent by describing an experiment as a relationship between some **manipulation** in which participants are randomly assigned to an experimental condition to evaluate its effects on some **measure**.^[The alternative terminology used in psychology is that of an **independent variable** (the manipulation, which is causally prior and hence "independent" of other causal influences) and a **dependent variable** (the measure, which causally depends on the manipulation, or so we hypothesize). This terminology seems transparently terrible. An alternative is the terms that are often used in econometrics of the **treatment** or **intervention** (manipulation) and the **outcome** (measure). This terminology is clearer, but also has some fairly medical connotations -- it sounds like the treatment is something substantial and lasting, and the outcome is meaningful. That's not always the case in experiments that investigate psychological mechanisms. For example, in a cognitive psychology context, it sounds a bit weird to us to say that the "treatment" was reading scrambled words and the "outcome" was lexical decision reaction times.]
+Experimental designs are so fundamental to so many fields that they are discussed in many different ways. As a result, the terminology can get quite confusing. Here we'll try to stay consistent by describing an experiment as a relationship between some **manipulation** in which participants are randomly assigned to an experimental condition to evaluate its effects on some **measure**.^[The alternative terminology used in psychology is that of an **independent variable** (the manipulation, which is causally prior and hence "independent" of other causal influences) and a **dependent variable** (the measure, which causally depends on the manipulation, or so we hypothesize). This terminology seems transparently terrible.] An alternative is the terms that are often used in econometrics: the **treatment** (manipulation) and the **outcome** (measure).^[This terminology has some fairly medical connotations -- it sounds like the treatment is something substantial and lasting, and the outcome is meaningful. That's not always the case in experiments that investigate psychological mechanisms. For example, in a cognitive psychology context, it sounds a bit weird to us to say that the "treatment" was reading scrambled words and the "outcome" was lexical decision reaction times.] We'll sometimes use "treatment" language here as well. 
 
-## Factorial experiments
+In this section, we'll discuss a number of dimensions on which experiments vary. First, they vary in how many factors they incorporate and how these factors are crossed -- we begin with the two-factor experiment and then discuss generalizations. Second, they vary in how many conditions and how many measures are given to each participant. Third, their manipulations can be discrete or continuous. 
 
-How should we decide what conditions to have in our experiment? The classical "design of experiments" paradigm has as its goal to 
+### A two-factor experiment
 
-Crossed designs
+The classical "design of experiments" framework has as its goal to separate observed variability in the dependent measure into 1) variability due to the manipulation(s) and (2) other variability, including measurement error and participant-level variation. This framework maps nicely onto the statistical framework described in Chapters \@ref(estimation) -- \@ref(models). We are modeling the distribution of our measure using information about the condition structure of our experiment as our predictors. 
+
+Different experimental designs will allow us to estimate condition effects more and less effectively. Recall in Chapter \@ref(estimation), we estimated the effect of our manipulation by a simple subtraction: $\Delta = \theta_{treatment} - \theta_{control}$ (where $\Delta$ is the effect estimate, and $\theta$s indicate the estimates for each condition). This logic works just fine also if there are two distinct treatments in  a three condition experiment: each treatment can be compared to control separately.  For treatment 1, $\Delta_{T_1} = \theta_{T_2} - \theta_{control}$ and $\Delta_{T_1} = \theta_{T_2} - \theta_{control}$.
+
+That logic is going to get more complicated if we have more than one distinct factor of interest, though. Let's look at a simple example. @young2007 were interested in how moral judgments depend on both the beliefs of actors and the outcomes of their actions. They presented participants with vignettes in which they learned, for example, that Grace visits a chemical factory with her friend and goes to the coffee break room where she sees a white powder that she puts in her friend's coffee. They then manipulated both Grace's beliefs and the outcomes of her actions following the schema in Figure \@ref(fig:design-young-design). Participants (N=10) used a four-point Likert scale to rate whether the actions were morally forbidden (1) or permissible (4). 
+
+```{r design-young-design, fig.cap="The 2x2 crossed design used in Young et al. (2007).", fig.margin = TRUE}
+knitr::include_graphics("images/design/young2007-design.png")
+```
+Young et al.'s design has two factors -- belief and outcome -- each with two levels (negative and neutral).^[Note that neither of these is necessarily a "control" condition: the goal is simply to compare these two levels of the factor -- negative and neutral -- to estimate the effect due to the factor.] These factors are **fully crossed**: each level of each factor is combined with each level of each other. That means that we can estimate a number of effects of interest. The experimental data are shown in Figure \@ref(fig:design-young-data). 
 
 
-## Between- vs. within-participant designs
+```{r design-young-data, fig.cap="Moral permissability as a function of belief and outcome. Results from Young et al. (2007).", fig.margin = TRUE}
+knitr::include_graphics("images/design/young2007-data.png")
+```
+
+This fully-crossed design makes it easy for us to estimate quantities of interest. Let's say that our **reference** group (equivalent to the control group for now) is neutral belief, neutral outcome, which we'll notate $B,O$. Now it's easy to use the same kind of subtraction we did before to estimate a variety of effects. For example, we can look at the effect of negative belief in the case of a neutral outcome: $\Delta_{-B,O} = \theta_{-B,O} - \theta_{B,O}$. The effect of a negative outcome is computed similarly as $\Delta_{B,-O} = \theta_{B,-O} - \theta_{B,O}$. 
+
+But now there is a complexity: these two **simple effects** (effects of one variable at a particular level of another variable) make a prediction. They predict that the combined effect $\Delta_{-B,-O}$ should be equal to the sum of $\Delta_{-B,O}$ and $\Delta_{B,-O}$.^[If you're interested, you can also compute the **average** or **main** effect of a particular factor via the same subtractive logic. For example, the average effect of negative belief ($-B$) vs. a neutral belief ($B$) can be computed as $\Delta_{-B} = \frac{(\theta_{-O, -B} + \theta_{O, -B}) - (\theta_{-O, B} + \theta_{O, B})}{2}$.] As we can see from the graph, that's not right: if it were, the negative belief, negative outcome condition would be below the minimum possible rating. Instead, we observe an **interaction** effect (sometimes called a **two-way interaction** when there are two factors): The effect when both factors are present is different than the sum of the two simple effects.^[If you're reading carefully, you might be thinking that this all sounds like we're talking about the analysis of variance (ANOVA), not about experimental design per se. But these two topics are actually the same topic under the hood: the question is how to design an experiment so that these statistical models can be used to estimate particular effects -- and combinations of effects -- that we care about.] Critically, without a fully-crossed design, we can't estimate this interaction and we would have made an incorrect prediction. 
+
+### Generalized factorial designs
+
+We can refer to Young et al.'s design, in which there are two factors with two levels each as a **2x2 design** (pronounced "two by two"). 2x2 designs are incredibly common and useful, but they are only one of an infinite variety of such designs that can be constructed. 
+
+Say we added a third factor to Young et al.'s design such that Grace either feels neutral towards her friend or is angry on that day. If we fully crossed this third affective factor with the other two (belief and outcome), we'd have a 2x2x2 design. This design would have eight conditions: $(A, B, O)$, $(A, B, -O)$, $(A, -B, O)$, $(-A, B, O)$, $(A, -B, -O)$, $(-A, B, -O)$, $(-A, -B, O)$, $(-A, -B, -O)$. These conditions would in turn allow us to estimate both two-way and three-way interactions, enumerated in Table \@ref(tab:design-three-way).
+
+```{r design-three-way}
+tribble(~Effect, ~`Term Type`,
+        "Affect", "Main effect",
+        "Belief", "Main effect",
+        "Outcome", "Main effect",
+        "Affect X Belief", "2-way interaction",
+        "Affect X Outcome", "2-way interaction",
+        "Belief X Outcome", "2-way interaction",
+        "Affect X Belief X Outcome", "3-way interaction") |>
+  knitr::kable(caption = "Possible effects in a hypothetical 2x2x2 experimental design with affect, belief, and outcome as factors.", booktabs = TRUE)
+```
+Three-way interactions are hard to think about! The affect X belief X outcome interaction tells you about the difference in permissability that's due to all three factors being present as opposed to what you'd predict on the basis of your estimates of the two-way interactions. 
+
+generalized M-factor designs. M factors with N levels gives you $M^N$ conditions. 
+
+In practice, such designs are difficult
+
+Broken designs
+
+Optimal designs. 
+
+### Between- vs. within-participant designs
 
 ```{r, fig.cap="A between-participants design."}
 g <- DiagrammeR::grViz("digraph {
@@ -65,7 +114,88 @@ g$height <- "100%"
 g
 ```
 
+```{r, fig.cap="A between-participants, repeated-measures design."}
+g <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = LR]
+  
+  node [shape = rectangle, style = filled, fillcolor = white]        
+  a [label = 'Participant 1']
+  b [label = 'Participant 2']
+  c [label = 'Participant 3']
+  d [label = 'Participant 4']
+  
+  node [fillcolor = pink]
+  c1a [label = 'Experimental Manipulation']
+  c1b [label = 'Experimental Manipulation']
+  
+  node [fillcolor = lightblue]
+  c2a [label = 'Control Manipulation']
+  c2b [label = 'Control Manipulation']
+  
+  node [fillcolor = white]
+  m1a [label =  'Measure']
+  m2a [label =  'Measure']
+  m3a [label =  'Measure']
+  m4a [label =  'Measure']
+  m1b [label =  'Measure']
+  m2b [label =  'Measure']
+  m3b [label =  'Measure']
+  m4b [label =  'Measure']
+  
+  # edge definitions with the node IDs
+  a -> m1a -> c1a -> m1b
+  b -> m2a -> c1b -> m2b
+  c -> m3a -> c2b -> m3b
+  d -> m4a -> c2a -> m4b
+  }")
 
+g$width <- "50%"
+g$height <- "100%"
+g
+```
+```{r, fig.cap="A within-participants design, counterbalanced for order."}
+g <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = LR]
+  
+  node [shape = rectangle, style = filled, fillcolor = white]        
+  a [label = 'Participant 1']
+  b [label = 'Participant 2']
+  c [label = 'Participant 3']
+  d [label = 'Participant 4']
+  
+  node [fillcolor = pink]
+  c1a [label = 'Experimental Manipulation']
+  c2a [label = 'Experimental Manipulation']
+  c3a [label = 'Experimental Manipulation']
+  c4a [label = 'Experimental Manipulation']
+  
+  node [fillcolor = lightblue]
+  c1b [label = 'Experimental Manipulation']
+  c2b [label = 'Experimental Manipulation']
+  c3b [label = 'Experimental Manipulation']
+  c4b [label = 'Experimental Manipulation']
+  
+  node [fillcolor = white]
+  m1a [label =  'Measure']
+  m2a [label =  'Measure']
+  m3a [label =  'Measure']
+  m4a [label =  'Measure']
+  m1b [label =  'Measure']
+  m2b [label =  'Measure']
+  m3b [label =  'Measure']
+  m4b [label =  'Measure']
+  
+  # edge definitions with the node IDs
+  a -> c1a -> m1a -> c1b -> m1b
+  b -> c2a -> m2a -> c2b -> m2b
+  c -> c3b -> m3a -> c3a -> m3b
+  d -> c4b -> m4a -> c4a -> m4b
+  }")
+
+g$width <- "50%"
+g$height <- "100%"
+g
+```
 
 between
 Main advantage
@@ -86,14 +216,80 @@ Not always possible: imagine trying a within-subjects design for surgery
 General contention: preferable when possible
 
 
-## Discrete and continuous experimental manipulations 
+### Discrete and continuous experimental manipulations 
+
+Most experimental designs in most subfields of psychology use discrete condition manipulations: treatment vs. control. In our view, this decision is often a lost opportunity. In our framework, the goal of an experiment is to estimate a causal effect; ideally, this estimate can be generalized to other contexts and used as a basis for theory. Measuring not just one effect but instead a **dose-response** relationship -- how the measure changes as the strength of the manipulation is changed -- has a number of benefits in helping to achieve this goal. 
+
+Many manipulations can be **titrated** -- that is, their strength can be varied continuously -- with a little creativity on the part of an experimenter. A curriculum intervention can be applied at different levels of intensity, perhaps by changing the number of sessions in which it is taught. For a priming manipulation, the frequency or duration of prime stimuli can be varied. Two stimuli can be morphed continuously so that categorization boundaries can be examined.^[These methods are extremely common in perception and psychophysics research, in part because the dimensions being studied are often continuous in nature. For exmaple, imagine trying to estimate a subject's visual contrast sensitivity *without* continuously manipulating the contrast of the stimulus, eliciting judgments at many different levels.] 
+
+```{r design-dose-schema, fig.cap="Three schematic designs. (A) Control and treatment are two levels of a nominal variable. (B) Control is compared to ordered levels of a treatment. (C) Treatment level is an interval or ratio variable such that points can be connected and a parametric curve can be extrapolated."}
+knitr::include_graphics("images/design/dose-response.png")
+```
+
+Dose-response designs are useful because they provide insight into the shape of the function mapping your manipulation to your measure. Knowing this shape can inform your theoretical understanding! Consider the examples given in Figure \@ref(design-dose-schema). If you only have two conditions in your experiment, then the most you can say about the relationship between your manipulation and your measure is that it produces an effect of a particular magnitude; in essence, you are assuming that condition is a nominal variable. If you have multiple ordered levels of treatment, you can start to speculate about the nature of the relationship between treatment and effect magnitude. But if you can measure the strength of your treatment, then you can start to describe the nature of the relationship between the strength of treatment and strength of effect via a parametric function (e.g., a linear regression, a sigmoid, or other function).^[These assumptions are theory-laden, of course -- the choice of a linear function or a sigmoid is not necessary: nothing guarantees that simple, smooth, or monotonic functions are the right ones. The important point from our perspective is that choosing a function makes explicit your assumptions about the nature of the treatment-effect relationship.] These parametric functions can in turn allow you to generalize from your experiment, making predictions about what would happen under intervention conditions that you didn't measure directly!
+
+This all can feel a bit abstract, so let's consider an example. @brennan1966 were interested in the relationship between visual complexity and infants' looking preferences. Do infants uniformly prefer complex stimuli, or do they search for stimuli at an appropriate level of complexity for their processing abilities. To test this hypothesis, they exposed infants in three different age groups (3, 8, and 14 weeks, N=30) to black and white checkerboard stimuli with three different levels of complexity (2x2, 8x8, and 24x24). Their findings are plotted in Figure \@ref(design-dose-ex): the youngest infants preferred the simplest stimuli, while infants at an intermediate age preferred stimuli of intermediate complexity, and the oldest infants preferred the most complex stimuli. These findings help to motivate the theory that infants attend preferentially to stimuli that provide appropriate learning input for their processing ability [@kidd2012].^[@brennan1966's experiment uses a quantitative manipulation of complexity (checkerboard density). But they treat this manipulation as an ordinal -- rather than an interval -- variable, presumably because they do not know precisely how checkerboard density translates into changes in the psychological construct they care about, namely complexity. Does doubling the number of squares on the board double complexity, or do you have to double the number of squares on each side? Does complexity saturate, such that a 128x128 checkerboard is not much more complex? These are just a few of the questions that the dose-response approach raises.]
+
+```{r design-dose-ex, fig.cap = "Infants' looking time, plotted by stimulus complexity and infant age. Data from Brennan et al., 1966.", fig.margin=TRUE}
+brennan <- tribble(~age, ~complexity, ~looking_time, 
+                   3, "2x2", 80.9,
+                   3, "8x8", 52.3,
+                   3, "24x24", 23.5,
+                   8, "2x2", 54.2, 
+                   8, "8x8", 112.0,
+                   8, "24x24", 74.9,
+                   14, "2x2", 43.3,
+                   14, "8x8", 69.7,
+                   14, "24x24", 91.0) |>
+  mutate(complexity = fct_relevel(complexity, "2x2", "8x8"))
+
+ggplot(brennan, aes(x = age, y = looking_time, col = complexity)) + 
+  geom_point() + 
+  geom_line(aes(group = complexity)) +
+  xlim(0,15) + 
+  xlab("Age (weeks)") + 
+  ylab("Total fixation time (sec)") +
+  scale_color_discrete(name = "Stimulus complexity")
+
+# from fig 1 via web-digitizer
+# 0.9157088122605361, 80.92485549132948 
+# 1.9731800766283523, 52.3121387283237
+# 2.9846743295019156, 23.526011560693647
+# 4.049808429118774, 14.855491329479776
+# 0.946360153256705, 54.21965317919076
+# 1.9042145593869733, 111.96531791907515
+# 2.9540229885057467, 74.85549132947978
+# 4.03448275862069, 10.346820809248555
+# 0.9540229885057467, 43.294797687861276
+# 1.9425287356321839, 69.65317919075144
+# 2.93103448275862, 90.98265895953757
 
 
-Continuous and discrete variables
+```
 
-Dose response relationships 
+If your goal is simply to detect whether an effect is zero or non-zero, then dose-response designs do not achieve the maximum statistical power. For example, if @brennan1966 simply wanted to achieve maximal statistical power, they probably should have only tested two age groups and two levels of complexity (say, 3 and 14 week infants and 2x2 and 24x24 checkerboards). That would have been enough to show an interaction of complexity and age, and their greater resources devoted to these four (as opposed to nine) conditions would mean more precise estimates of each (simulated in Figure \@ref(fig:design-dose-ex-2)). But their findings would be less clearly supportive of the view that infants prefer stimuli that are appropriate to their processing ability. By seeking to measure intermediate conditions, they provided a stronger constraint on their theory. 
 
-Multi-experiment design strategy: start simple? 
+```{r design-dose-ex-2, fig.cap = "Imagining the data from Brennan et al. 1966 if they had omitted intermediate conditions in search of the most extreme effect.", fig.margin=TRUE}
+brennan_minimal <- tribble(~age, ~complexity, ~looking_time, 
+                   3, "2x2", 80.9,
+                   3, "24x24", 23.5,
+                   14, "2x2", 43.3,
+                   14, "24x24", 91.0) |>
+  mutate(complexity = fct_relevel(complexity, "2x2", "8x8"))
+
+ggplot(brennan_minimal, aes(x = age, y = looking_time, col = complexity)) + 
+  geom_point() + 
+  geom_line(aes(group = complexity)) +
+  xlim(0,15) + 
+  xlab("Age (weeks)") + 
+  ylab("Total fixation time (sec)") +
+  scale_color_discrete(name = "Stimulus complexity")
+```
+
+<!-- Continuous and discrete variables -->
+
+<!-- Dose response relationships  -->
+
 
 
 
@@ -180,3 +376,4 @@ The advice is out there to
 🌿 Ethics box: Including the population being sampled in the design process. 
 :::
 
+Multi-experiment design strategy: start simple? 

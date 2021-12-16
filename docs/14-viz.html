@@ -30,8 +30,88 @@ MathJax.Hub.Config({
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="libs/viz-1.8.2/viz.js"></script>
+<link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+<script src="libs/grViz-binding-1.0.6.1/grViz.js"></script>
+<script src="libs/jquery-3.5.1/jquery.min.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.18/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 
 
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
 
 <style type="text/css">
@@ -107,6 +187,7 @@ div.csl-indent {
 <div class="col-sm-12">
 <div id="viz" class="section level1" number="14">
 <h1><span class="header-section-number">Chapter 14</span> Visualization</h1>
+<p><img src="images/viz/meme.jpg" width="\linewidth"  /></p>
 <div class="learning-goals">
 <p>🍎 Learning goals:</p>
 <ul>
@@ -120,12 +201,12 @@ div.csl-indent {
 <p>What makes visualizations so useful, and what role do they play in the toolkit of experimentology?
 Simply put, data visualization is the act of “making the invisible visible.”
 Our visual systems are remarkably powerful pattern detectors, and relationships that aren’t at all clear when scanning through rows of raw data can immediately jump out at us when presented in an appropriate graphical form <span class="citation">(<a href="#ref-zacks2020designing" role="doc-biblioref">Zacks &amp; Franconeri, 2020</a>)</span>.
-Good visualizations aim to delibrately harness this power and put it to work at every stage of the research process, from the quick sanity checks we run when first reading in our data to the publication-quality figures we design when we are ready to communicate our findings.
+Good visualizations aim to deliberately harness this power and put it to work at every stage of the research process, from the quick sanity checks we run when first reading in our data to the publication-quality figures we design when we are ready to communicate our findings.
 Yet our powerful pattern detectors can also be a liability; if we’re not careful, we can easily be fooled into seeing patterns that are unreliable or even misleading.
 As psychology moves into an era of bigger data and more complex behaviors, we become increasingly reliant on <strong>data visualization literacy</strong> <span class="citation">(<a href="#ref-borner2019data" role="doc-biblioref">Börner et al., 2019</a>)</span> to make sense of what is going on.</p>
 <div class="case-study">
 <p>🔬 Case study: Mapping a pandemic</p>
-<p><label for="tufte-mn-1" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-1" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/viz/snow_cholera_voronoi.jpeg"/> Mapping out a cholera epidemic (1854). Line shows region for which Broad Street pump is nearest.</span></span></p>
+<p><label for="tufte-mn-9" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-9" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/viz/snow_cholera_voronoi.jpeg"/> Mapping out a cholera epidemic (1854). Line shows region for which Broad Street pump is nearest.</span></span></p>
 <p>In 1854, a deadly outbreak of cholera was sweeping through London.
 The scientific consensus at the time was that diseases like cholera spread through breathing poisonous and foul-smelling vapors, an idea known as the “miasma theory” <span class="citation">(<a href="#ref-halliday2001death" role="doc-biblioref">Halliday, 2001</a>)</span>.
 An obstetrician and anesthesiologist named John Snow, however, had proposed an alternative theory: rather than spreading through foul air, he thought that it was spreading a polluted water supply <span class="citation">(<a href="#ref-snow1855mode" role="doc-biblioref">Snow, 1855</a>)</span>.
@@ -133,7 +214,7 @@ To make a public case for this idea, he started counting cholera deaths.
 He marked each case on a map of the area, and indicated the locations of the water pumps for reference.
 Furthermore, a line could be drawn representing the region that was closest to each water pump, a technique which is now known as a <a href="https://en.wikipedia.org/wiki/Voronoi_diagram">Voronoi diagram</a>.
 The resulting illustration clearly reveals that cases clustered around an area called Golden Square, which received water from a pump on Broad Street.
-Although the precise causal role of these maps in Snow’s own thinking is disputed, and it is likely that he produced them well after the incident <span class="citation">(<a href="#ref-brody2000map" role="doc-biblioref">Brody et al., 2000</a>)</span>, they have nonetheless played a significant role in the history of data visualization <span class="citation">(<a href="#ref-friendly2021history" role="doc-biblioref">Friendly &amp; Wainer, 2021</a>)</span>.<label for="tufte-sn-1" class="margin-toggle sidenote-number">1</label><input type="checkbox" id="tufte-sn-1" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">1</span> Actually, the use of disease maps goes back even further! <span class="citation">(<a href="#ref-seaman1798inquiry" role="doc-biblioref">Seaman, 1798</a>)</span> mapped an outbreak of yellow fever in New York City to argue that deaths clustered around a handful of waste sites. He turned out to be right, but for the wrong reasons! These waste sites were breeding grounds for mosquitos, which were the real culprits. Coincidentally, Seaman is also known as the first to introduce vaccines to the United States. He vaccinated his children against smallpox and later organized a program to provide free vaccines to the public.</span>.</p>
+Although the precise causal role of these maps in Snow’s own thinking is disputed, and it is likely that he produced them well after the incident <span class="citation">(<a href="#ref-brody2000map" role="doc-biblioref">Brody et al., 2000</a>)</span>, they have nonetheless played a significant role in the history of data visualization <span class="citation">(<a href="#ref-friendly2021history" role="doc-biblioref">Friendly &amp; Wainer, 2021</a>)</span>.<label for="tufte-sn-151" class="margin-toggle sidenote-number">151</label><input type="checkbox" id="tufte-sn-151" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">151</span> Actually, the use of disease maps goes back even further! <span class="citation">(<a href="#ref-seaman1798inquiry" role="doc-biblioref">Seaman, 1798</a>)</span> mapped an outbreak of yellow fever in New York City to argue that deaths clustered around a handful of waste sites. He turned out to be right, but for the wrong reasons! These waste sites were breeding grounds for mosquitos, which were the real culprits. Coincidentally, Seaman is also known as the first to introduce vaccines to the United States. He vaccinated his children against smallpox and later organized a program to provide free vaccines to the public.</span>.</p>
 <p>Nearly two centuries later, as the Covid-19 pandemic swept through the world, governmental agencies like the <a href="https://covid.cdc.gov/covid-data-tracker">CDC</a> produced maps of the outbreak that have become much more familiar:</p>
 <div class="figure"><span id="fig:viz-covid"></span>
 <p class="caption marginnote shownote">
@@ -169,7 +250,7 @@ In this chapter, we will explore how to use visualizations in our own carefully 
 </div>
 <div id="basic-principles-of-confirmatory-visualization" class="section level2" number="14.1">
 <h2><span class="header-section-number">14.1</span> Basic principles of (confirmatory) visualization</h2>
-<p>In this section, we begin by introducing a few simple guidelines to keep in mind when making informative visualizations in the context of experimental psychology<label for="tufte-sn-2" class="margin-toggle sidenote-number">2</label><input type="checkbox" id="tufte-sn-2" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">2</span> Given this relatively narrow focus, a full treatment of visualization is outside the scope of this book. The classic volumes are by <span class="citation"><a href="#ref-tukey1977exploratory" role="doc-biblioref">Tukey &amp; others</a> (<a href="#ref-tukey1977exploratory" role="doc-biblioref">1977</a>)</span> and <span class="citation"><a href="#ref-tufte1997visual" role="doc-biblioref">Edward R. Tufte &amp; Robins</a> (<a href="#ref-tufte1997visual" role="doc-biblioref">1997</a>)</span>, and we recommend <span class="citation"><a href="#ref-healy2018data" role="doc-biblioref">Healy</a> (<a href="#ref-healy2018data" role="doc-biblioref">2018</a>)</span> for a more contemporary guide. For the purposes of understanding the examples in this chapter, it should be sufficient to work through our R tutorials for data manipulation and visualization in Appendices C and D</span>.
+<p>In this section, we begin by introducing a few simple guidelines to keep in mind when making informative visualizations in the context of experimental psychology<label for="tufte-sn-152" class="margin-toggle sidenote-number">152</label><input type="checkbox" id="tufte-sn-152" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">152</span> Given this relatively narrow focus, a full treatment of visualization is outside the scope of this book. The classic volumes are by <span class="citation"><a href="#ref-tukey1977exploratory" role="doc-biblioref">John W. Tukey &amp; others</a> (<a href="#ref-tukey1977exploratory" role="doc-biblioref">1977</a>)</span> and <span class="citation"><a href="#ref-tufte1997visual" role="doc-biblioref">Edward R. Tufte &amp; Robins</a> (<a href="#ref-tufte1997visual" role="doc-biblioref">1997</a>)</span>, and we recommend <span class="citation"><a href="#ref-healy2018data" role="doc-biblioref">Healy</a> (<a href="#ref-healy2018data" role="doc-biblioref">2018</a>)</span> for a more contemporary guide. For the purposes of understanding the examples in this chapter, it should be sufficient to work through our R tutorials for data manipulation and visualization in Appendices C and D</span>.
 Remember that the needs may be distinct from other contexts, such as journalism or public policy.
 You may have seen beautiful and engaging full-page graphics with small print and a wealth of information.
 The art of designing and producing these graphics is typically known as <strong>infoviz</strong> and should be distinguished from what we call <strong>statistical visualization</strong> <span class="citation">(<a href="#ref-gelman2013" role="doc-biblioref">Gelman &amp; Unwin, 2013</a>)</span>.
@@ -217,14 +298,14 @@ The second principle is to <em>facilitate comparison</em> along the dimensions r
 For example, it is easier for our visual system to accurately compare the location of elements (e.g. noticing that one point is a certain distance away from another) than to compare their areas or colors (e.g. noticing that one point is bigger or brighter than another).
 To illustrate, suppose we have a simple pre-post design with two groups: a treatment group and a control group.</p>
 <p>We could always plot the means of each group as colors:</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-4-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-31-1.png" width="\linewidth"  /></p>
 <p>or areas:</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-5-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-32-1.png" width="\linewidth"  /></p>
 <p>These plots allow us to see that one condition is (qualitatively) bigger than others, but it’s hard to tell how much bigger.
 Additionally, this way of plotting the data places equal emphasis on phase and condition, but we may instead have in mind particular contrasts, like the <em>change</em> from pre- to post-tests and how that change differs across conditions.
 An alternative is to show four bars: two on the left showing the ‘pre’ phase and two on the right showing the ‘post’ phase.
 Maybe the control group is red and the treatment group is blue.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-6-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-33-1.png" width="\linewidth"  /></p>
 <p>This is slightly better: it’s easier to compare the heights of bars than the ‘blueness’ of squares, and mapping condition to color draws our eye to that contrast.
 However, we can do even better by noticing that the main question we are testing in our design is an <em>interaction</em>.
 Our statistic of interest is a difference of differences.
@@ -233,7 +314,7 @@ Some researchers have gotten proficient at reading off interactions from bar plo
 We have to look between the red bars, and then look between the blue bars and implicitly judge one difference against the other: the actual statistic isn’t explicitly shown anywhere!
 What could help facilitate this comparison?
 Consider the following line plot:</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-7-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-34-1.png" width="\linewidth"  /></p>
 <p>Now the contrast we want to interpret is highlighted visually.
 It is easier to directly compare the slope of two lines than mentally compute a difference of differences between four bars.
 A few corollaries of this principle <a href="https://www.biostat.wisc.edu/~kbroman/presentations/IowaState2013/graphs_combined.pdf">see this helpful presentation from Karl Broman</a>:</p>
@@ -253,24 +334,24 @@ This kind of plot adds very little beyond a sentence in the text reporting the m
 It hides real variation in the data, making a noisy effect based on a few data points look the same as a more systematic one based on a larger sample.
 Additionally, it collapses the <em>distribution</em> of the data, making a multi-modal distribution look the same as a unimodal one.
 The third principle of modern statistical visualization is therefore to <em>show the data</em> to visualize variability in some form.</p>
-<p>The most minimal form of this principle is to <em>always include error bars</em><label for="tufte-sn-3" class="margin-toggle sidenote-number">3</label><input type="checkbox" id="tufte-sn-3" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">3</span> And be sure to tell the reader what the error bars represent (a 95% confidence interval? a standard error of the mean?)</span>
+<p>The most minimal form of this principle is to <em>always include error bars</em><label for="tufte-sn-153" class="margin-toggle sidenote-number">153</label><input type="checkbox" id="tufte-sn-153" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">153</span> And be sure to tell the reader what the error bars represent (a 95% confidence interval? a standard error of the mean?)</span>
 Error bars turn a purely descriptive visualization (e.g showing COVID-19 case counts over time) into an inferential one.
 They represent a minimal form of uncertainty about the possible statistics that might have been observed, not just the one that was actually observed.
 As such, they allow the viewer to interpret the means as <em>estimates</em>.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-8-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-35-1.png" width="\linewidth"  /></p>
 <p>But we can do even better.
 By overlaying the distribution of the actual data points on the same plot, we can give the reader information not just about the statistical inferences but the underlying data supporting those inferences.
 There are many ways of showing the distribution.
 For example, a ‘boxplot’ shows the median (a horizontal line) in the center of a box extending from the lower quartile (25%) to the upper quartile (75%).
 Lines then extend out to the biggest and smallest values (excluding outliers, which are shown as dots).</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-9-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-36-1.png" width="\linewidth"  /></p>
 <p>We can also show the raw data as jittered values with low transparency:</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-10-1.png" width="\linewidth"  />
-Perhaps the format that takes this principle the furthest is the so-called “raincloud plot” <span class="citation">(<a href="#ref-allen2019raincloud" role="doc-biblioref">Allen et al., 2019</a>)</span>.
+<p><img src="experimentology_files/figure-html/unnamed-chunk-37-1.png" width="\linewidth"  />
+Perhaps the format that takes this principle the furthest is the so-called “raincloud plot” <span class="citation">(<a href="#ref-allen2019raincloud" role="doc-biblioref">Micah Allen et al., 2019</a>)</span>.
 A raincloud plot combines the raw data (the ‘rain’) with a smoothed density (the ‘cloud’) and a boxplot giving the median and quartiles of the distribution.</p>
 <div class="figure"><span id="fig:raincloud"></span>
 <p class="caption marginnote shownote">
-Figure 14.6: Example of a raincloud plot, reproduced from <span class="citation"><a href="#ref-allen2019raincloud" role="doc-biblioref">Allen et al.</a> (<a href="#ref-allen2019raincloud" role="doc-biblioref">2019</a>)</span>
+Figure 14.6: Example of a raincloud plot, reproduced from <span class="citation"><a href="#ref-allen2019raincloud" role="doc-biblioref">Micah Allen et al.</a> (<a href="#ref-allen2019raincloud" role="doc-biblioref">2019</a>)</span>
 </p>
 <img src="images/viz/raincloud.png" alt="Example of a raincloud plot, reproduced from @allen2019raincloud" width="\linewidth"  />
 </div>
@@ -290,7 +371,7 @@ For example, suppose you are working with a skewed response variable or a datase
 Or suppose you want to estimate proportions from categorical data, or a more <em>ad hoc</em> statistic like the AUC (area underneath the curve) in a hierarchical design where it is not clear how to aggregate across items or participants in a mixed-effects model.
 Analytic estimators of confidence intervals can in principle be derived for these statistics, subject to different assumptions, but it is often more transparent and reliable in practice to use the bootstrap.
 As long as you can write a code snippet to compute a value from a dataset, you can use the bootstrap.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-11-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-38-1.png" width="\linewidth"  /></p>
 <p>As we can see, the bootstrapped 95% CI looks similar to the analytic 95% CI derived from the standard error, except the upper and lower limits are slightly asymmetric (reflecting outliers in one direction or another).
 Of course, the boostrap is not a silver bullet and can be abused in particularly small samples.
 This is because the bootstrap is fundamentally limited to the sample we run it on.
@@ -326,7 +407,7 @@ The worst offenders have a very low density while also using a lot of excess ink
 </p>
 <p>The defaults in modern visualization libraries like <code>ggplot</code> prevent some of the worst offenses, but are still often suboptimal.
 For example: consider whether the visual complexity introduced by the default grey background and grid lines is justified, or whether a more minimal theme would be sufficient (see the <a href="https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/"><code>ggthemes</code></a> package for a good collection of themes).</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-12-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-39-1.png" width="\linewidth"  /></p>
 <p>A few additional tips:</p>
 <ul>
 <li><p>Make sure the font size of all text in your figures is legible and no smaller than other text in your paper (e.g. 10pt). This may require, for example, making the axis breaks sparser, rotating text, or changing the aspect ratio of the figure.</p></li>
@@ -335,9 +416,9 @@ For example: consider whether the visual complexity introduced by the default gr
 <li><p>Fix the axis labels. A common mistake is to keep the default shorthand you used to name variables in your plotting software instead of more descriptive labels. Use consistent terminology for different manipulations in the main text and figures. If anything might be clear, explain it in the caption.</p></li>
 <li><p>Different audiences may require different levels of specificity. Sometimes it is better to collapse over secondary variables (even if they are included in your statistical models) in order to control the density of the figure and draw attention to the key question of interest.</p></li>
 </ul>
-<div class="case-study">
-<p>🔬 Case study: Sklar et al. (2012) reported evidence of “unconscious” arithmetic. Further reanalyses didn’t support this finding (Moors and Hesselmann 2018). Rabagliati et al. (2018) also failed to replicate. Visualizations provide a framework for asking about the ways the measurements relate to the manipulation that might have shed light on the issues.</p>
-</div>
+<!-- ::: {.case-study} -->
+<!-- 🔬 Case study: Sklar et al. (2012) reported evidence of “unconscious” arithmetic. Further reanalyses didn’t support this finding (Moors and Hesselmann 2018). Rabagliati et al. (2018) also failed to replicate. Visualizations provide a framework for asking about the ways the measurements relate to the manipulation that might have shed light on the issues.  -->
+<!-- ::: -->
 </div>
 </div>
 <div id="exploratory-visualization" class="section level2" number="14.2">
@@ -395,10 +476,10 @@ If there is a weird artifact in our data, it will pop out if we just make the ri
 <p>So which visualizations should we start with?
 The best practice is to always start by making histograms of the raw data.
 For example, here are the histograms for the classic <code>iris</code> dataset containing measurements from different kinds of flowers.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-13-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-40-1.png" width="\linewidth"  /></p>
 <p>Immediately we can see that sepal length and width seem to be distributed roughly normally, but petal length and petal width look bimodal.
 We might then break out the data by species:</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-14-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-41-1.png" width="\linewidth"  /></p>
 <p>It looks like there is generally strong distributional separation across the different species.
 In the case of petal length and width, they barely overlap.</p>
 <p>While these data look clean, the same visualization often reveals outliers.
@@ -407,7 +488,7 @@ Or we might notice gaps in the data for a particular species, with lengths being
 Or we might might notice that the “species” attribute is missing for some values, and trace it back to a bug reading in our data (maybe there was a missing comma in our <code>csv</code> file).</p>
 <p>In addition to these histograms, it is natural to proceed to looking at pairwise relationships, which we aren’t able to determine from independent histograms.
 The <code>ggpairs</code> function in the <code>ggally</code> package makes this particularly straightforward.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-15-1.png" width="\linewidth"  /></p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-42-1.png" width="\linewidth"  /></p>
 <p>For example, we can immediately notice that petal length and width are strongly correlated with one another, and we might start to worry about co-linearity problems in a regression trying to tease them apart (see Chapter XX).
 Conversely, the bi-modality of the relationship between sepal length and petal length looks more complicated.
 There is one cloud of points that is strongly correlated, but another cloud of points that is not: they have the same short petal length regardless of sepal length.
@@ -423,7 +504,7 @@ One group of 19 students was given an explicit set of hypotheses to test (e.g. 
 Fourteen of these students failed to notice a gorilla, suggesting that they evaluated these hypotheses without ever visualizing their data.
 Another group of 14 students were simply asked what, if anything, they could conclude (without being given explicit hypotheses).
 More of these students apparently made the visualization, but five of them still failed to notice the gorilla!</p>
-<p><label for="tufte-mn-2" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-2" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/viz/gorilla.png"/> A dataset was constructed by <span class="citation"><span class="citation"><a href="#ref-yanai2020" role="doc-biblioref">Yanai &amp; Lercher</a> (<a href="#ref-yanai2020" role="doc-biblioref">2020</a>)</span></span> which revealed a picture of a gorilla when the raw data were plotted.</span></span></p>
+<p><label for="tufte-mn-10" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-10" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/viz/gorilla.png"/> A dataset was constructed by <span class="citation"><span class="citation"><a href="#ref-yanai2020" role="doc-biblioref">Yanai &amp; Lercher</a> (<a href="#ref-yanai2020" role="doc-biblioref">2020</a>)</span></span> which revealed a picture of a gorilla when the raw data were plotted.</span></span></p>
 <p>While it may not be surprising that a group of students would take the shortest path to completing their assignment, similar concerns have been raised in much more serious cases concerning how experienced researchers could fail to notice obviously fraudulent data.
 For example, when <span class="citation">(<a href="#ref-datacolada" role="doc-biblioref"><em>Evidence of Fraud in an Influential Field Experiment about Dishonesty</em>, 2021</a>)</span> made a simple histogram of the car mileage data reported in <span class="citation">(<a href="#ref-shu2012signing" role="doc-biblioref">Shu et al., 2012</a>)</span> and released publicly by <span class="citation">(<a href="#ref-kristal2020signing" role="doc-biblioref">Kristal et al., 2020</a>)</span>, they were immediately able to observe that it followed a perfectly uniform distribution, truncated at exactly 50,000 miles.
 Given a little thought, this pattern should be extremely puzzling.
@@ -431,7 +512,7 @@ Over a given period of time, we would typically expect something more bell-shape
 So it is highly surprising to find exactly the same number of drivers in every mileage bin.
 While further specialized analyses revealed further evidence of fraud (e.g. based on patterns of rounding and pairs of duplicated data points), this humble histogram was already enough to set off alarm bells.
 A recurring regret raised by the co-authors of this paper is that they never thought to making this visualization before reporting their statistical tests.</p>
-<p><label for="tufte-mn-3" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-3" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/viz/data_colada_uniform.png"/> A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!</span></span></p>
+<p><label for="tufte-mn-11" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-11" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/viz/data_colada_uniform.png"/> A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!</span></span></p>
 </div>
 </div>
 </div>
@@ -444,7 +525,7 @@ A recurring regret raised by the co-authors of this paper is that they never tho
 <h3>References</h3>
 <div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
 <div id="ref-allen2019raincloud" class="csl-entry">
-Allen, M., Poggiali, D., Whitaker, K., Marshall, T. R., &amp; Kievit, R. A. (2019). Raincloud plots: A multi-platform tool for robust data visualization. <em>Wellcome Open Research</em>, <em>4</em>.
+Allen, Micah, Poggiali, D., Whitaker, K., Marshall, T. R., &amp; Kievit, R. A. (2019). Raincloud plots: A multi-platform tool for robust data visualization. <em>Wellcome Open Research</em>, <em>4</em>.
 </div>
 <div id="ref-anscombe1973graphs" class="csl-entry">
 Anscombe, F. J. (1973). Graphs in statistical analysis. <em>The American Statistician</em>, <em>27</em>(1), 17–21.
@@ -501,7 +582,7 @@ Tufte, E. R. (1983). <em>The visual display of quantitative information</em>. Gr
 Tufte, Edward R., &amp; Robins, D. (1997). <em>Visual explanations</em>. Graphics Press.
 </div>
 <div id="ref-tukey1977exploratory" class="csl-entry">
-Tukey, J. W., &amp; others. (1977). <em>Exploratory data analysis</em> (Vol. 2). Reading, Mass.
+Tukey, John W., &amp; others. (1977). <em>Exploratory data analysis</em> (Vol. 2). Reading, Mass.
 </div>
 <div id="ref-wainer1984display" class="csl-entry">
 Wainer, H. (1984). How to display data badly. <em>The American Statistician</em>, <em>38</em>(2), 137–147.
