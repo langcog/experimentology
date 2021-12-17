@@ -19,7 +19,7 @@ We refer to different intervention states as **conditions** of the experiment. T
 
 To be useful, a measure must be a valid measure of a construct of interest. The same is true for a manipulation -- it must validly relate to the causal effect of interest. In the next part of the chapter, we'll discuss issues of **manipulation validity**, including both issues of ecological validity and **confounding**. We'll talk about how practices like **randomization** and **counterbalancing** can help remove nuisance confounds.^[This section will draw on our introduction of causal inference in Chapter \@ref(intro), so if you haven't read that, now's the time.] 
 
-We'll end the chapter by discussing some aspects of strategy in experimental design. How do you design an experiment to test a theory? What sorts of experimental designs are maximally efficient? 
+We'll end the chapter by discussing some aspects of strategy in experimental design. How do you design an experiment to test a theory? What sorts of experimental designs are maximally efficient? To preview our general approach: we think that your default experiment should have one or a maximum of two factors and should manipulate those factors continuously and within-subjects. This strategy is most likely to yield precise estimates of a particular effect that can be used to constrain future theorizing.
 
 ## Experimental designs
 
@@ -66,19 +66,17 @@ tribble(~Effect, ~`Term Type`,
         "Affect X Belief X Outcome", "3-way interaction") |>
   knitr::kable(caption = "Possible effects in a hypothetical 2x2x2 experimental design with affect, belief, and outcome as factors.", booktabs = TRUE)
 ```
-Three-way interactions are hard to think about! The affect X belief X outcome interaction tells you about the difference in permissability that's due to all three factors being present as opposed to what you'd predict on the basis of your estimates of the two-way interactions. 
+Three-way interactions are hard to think about! The affect X belief X outcome interaction tells you about the difference in moral permissibility that's due to all three factors being present as opposed to what you'd predict on the basis of your estimates of the two-way interactions. In addition to being hard to think about, higher order interactions tend to be hard to estimate, because estimating them accurately requires you to have a stable estimate of all of the lower-order interactions [@mcclelland1993]. For this reason, we recommend against experimental designs that rely on higher-order interactions unless you are in a situation where you both have strong predictions about these interactions and are confident in your ability to estimate them appropriately.^[We'll talk about how to understand sample size requirements of this type next in Chapter \@ref(sampling).]
 
-generalized M-factor designs. M factors with N levels gives you $M^N$ conditions. 
+Three-way interactions are just the beginning, though. If you have three factors with two levels each, you can estimate 7 total effects of interest, as in Table \@ref(tab:design-three-way). If you have four factors with two levels each, you get 15. Four factors with three levels each gets you a horrifying 80 different effects!^[The general formula for $N$ factors with $M$ levels each is $M^N-1$.] This way lies madness, at least from the perspective of estimating and interpreting individual effects in a reasonable sample. 
 
-In practice, such designs are difficult
-
-Broken designs
-
-Optimal designs. 
+So what should you do if you really do care about four or more factors -- in the sense that you want to estimate their effects and include them in your theory? The simplest strategy is to start your research off by measuring them independently by running a series of single-factor experiments. These experiments can yield a basis for judging which factors are most important for your outcome and hence which should be prioritized for experiments to estimate interactions.^[Another strategy is to use fancier methods. For example, the literature on optimal experiment design contains methods for choosing the most informative sequence of experiments to run in order to estimate the parameters in a model [e.g., @myung2009]. Going down this road typically means having an implemented computational theory of your domain, but it can be a very productive strategy for exploring a complex experimental space with many factors.]
 
 ### Between- vs. within-participant designs
 
-```{r, fig.cap="A between-participants design."}
+Once you have a sense of the factor or factors you would like to manipulate in your experiment, the next step is to consider how these will be presented to participants, and how that presentation will interact with your measurements. The biggest decision to be made is whether each participant will experience only one level of a factor -- a **between-participants** design -- or whether they will experience multiple levels -- a **within-participants** design. Figure \@ref(fig:design-between) shows a very simple example of between-participants design with four participants (two assigned to each condition), while Figure \@ref(fig:design-within) shows a within-participants version of the same design.^[The within-participants design is counterbalanced for the order of the conditions; we cover the issue of counterbalancing below.]
+
+```{r design-between, fig.cap="A between-participants design."}
 g <- DiagrammeR::grViz("digraph {
   graph [layout = dot, rankdir = LR]
   
@@ -114,45 +112,7 @@ g$height <- "100%"
 g
 ```
 
-```{r, fig.cap="A between-participants, repeated-measures design."}
-g <- DiagrammeR::grViz("digraph {
-  graph [layout = dot, rankdir = LR]
-  
-  node [shape = rectangle, style = filled, fillcolor = white]        
-  a [label = 'Participant 1']
-  b [label = 'Participant 2']
-  c [label = 'Participant 3']
-  d [label = 'Participant 4']
-  
-  node [fillcolor = pink]
-  c1a [label = 'Experimental Manipulation']
-  c1b [label = 'Experimental Manipulation']
-  
-  node [fillcolor = lightblue]
-  c2a [label = 'Control Manipulation']
-  c2b [label = 'Control Manipulation']
-  
-  node [fillcolor = white]
-  m1a [label =  'Measure']
-  m2a [label =  'Measure']
-  m3a [label =  'Measure']
-  m4a [label =  'Measure']
-  m1b [label =  'Measure']
-  m2b [label =  'Measure']
-  m3b [label =  'Measure']
-  m4b [label =  'Measure']
-  
-  # edge definitions with the node IDs
-  a -> m1a -> c1a -> m1b
-  b -> m2a -> c1b -> m2b
-  c -> m3a -> c2b -> m3b
-  d -> m4a -> c2a -> m4b
-  }")
 
-g$width <- "50%"
-g$height <- "100%"
-g
-```
 ```{r, fig.cap="A within-participants design, counterbalanced for order."}
 g <- DiagrammeR::grViz("digraph {
   graph [layout = dot, rankdir = LR]
@@ -197,23 +157,71 @@ g$height <- "100%"
 g
 ```
 
-between
-Main advantage
-No contamination by other exposure to experimental materials
-Disadvantages
-Requires many participants
-Individual differences create a lot of variability in groups
-Potential for assignment bias: need to control for differences between groups
-Other environmental group differences
+
+The decision whether to measure a particular factor between- or within-participants is consequential because people vary. Imagine we're estimating our treatment effect as before, simply by computing $\widehat{\Delta} = \widehat{\theta}_{T} - \widehat{\theta}_{C}$ with each of these estimates from different populations of participants. In this scenario, our estimate $\widehat{\Delta}$ contains three components: 1) the true differences between $\theta_{T}$ and $\theta_{C}$, 2) sampling-related variation in which participants from the population ended up in the samples for the two conditions, and 3) measurement error. Component #2 is present because any two samples of participants from a population will differ in their average on a measure -- this is precisely the kind of sampling variation we saw in the null distributions in Chapter \@ref(inference). 
+
+When our experimental design is within-participants, component #2 is not present, because participants in both conditions are sampled from the *same* population. If we get unlucky and all of our participants are lower than the population mean on our measure, that unluckiness affects our conditions equally. We discuss the specific consequences for sample size calculations in the next chapter but the consequences are fairly extreme. Between-participants designs typically require between two and eight times as many participants as within-participants designs! 
+
+Given these advantages, why would you consider using a between-participants design? A within-participants design is simply not possible for all experiments. For example, consider a medical intervention like an experimental surgical procedure. Patients likely cannot receive both two procedures, and so no within-participant comparison of procedures is possible. 
+
+Most treatment conditions in the behavioral sciences are not so extreme, but it may be impractical or inadvisable to deliver multiple conditions. @greenwald1976 distinguishes three types of undesirable effects: **practice**, **sensitization**, and **carry-over** effects^[We tend to think of all of these as being forms of carry-over effect, and sometimes use this as a catch-all description. Some people also use the picturesque description ["poisoning the well"](https://statmodeling.stat.columbia.edu/2017/11/25/poisoning-well-within-person-design-whats-risk/) -- earlier conditions "ruin" the data for later conditions.]: 
+
+* Practice effects occur when administering the measure or the treatment will lead to improvement. Imagine a curriculum intervention for teaching a math concept via a novel presentation  -- it would be hard to convince participating schools to teach the same topic to students twice, and the effect of the second round of teaching would likely be quite different than the first! 
+* Sensitization effects occur when seeing two versions of an intervention mean that you might respond differently to the second than the first because you have compared them and noticed the contrast. Greenwald's example is of a study on room lighting -- if the experimenters are constantly changing the lighting, participants may become aware that this is the point of the study. 
+* Carry-over effects refer to the case where one treatment might have a longer-lasting effect than the measurement period. For example, imagine a study in which one treatment was to make participants frustrated with an impossible puzzle; if a second condition were given after this first one, participants might still be frustrated, leading to spill-over. 
+
+All of these issues can lead to real concerns with respect to within-subject designs. On the other hand, following [Gelman's](https://statmodeling.stat.columbia.edu/2017/11/25/poisoning-well-within-person-design-whats-risk/) guidance, we worry that the desire for effect estimates that are completely unbiased by these concerns may lead to the overuse of between-participant designs. As we mentioned above, these designs come at a major cost in terms of power and precision. An alternative approach is simply to acknowledge the possibility of carry-over type effects and plan to analyze these within your statistical model (for example by estimating the interaction of condition and order).
+
+We summarize the state of affairs from our perspective in Figure \@ref(design-between-within). From our perspective, within-participant designs should be preferred whenever possible.
+
+```{r design-between-within, fig.cap="Pros and cons of between- vs. within-participant designs. We recommend within-participant designs when possible.", fig.margin=TRUE}
+knitr::include_graphics("images/design/between-within.png")
+```
+
+### Repeated measurements
 
 
-Main advantage
-Eliminates subject variability
-Relatively few participants needed, because of this lack of variability
-Disadvantages
-Carryover effects mean that ordering of conditions can be problematic
-Not always possible: imagine trying a within-subjects design for surgery
-General contention: preferable when possible
+
+```{r, fig.cap="A between-participants, repeated-measures design."}
+g <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = LR]
+  
+  node [shape = rectangle, style = filled, fillcolor = white]        
+  a [label = 'Participant 1']
+  b [label = 'Participant 2']
+  c [label = 'Participant 3']
+  d [label = 'Participant 4']
+  
+  node [fillcolor = pink]
+  c1a [label = 'Experimental Manipulation']
+  c1b [label = 'Experimental Manipulation']
+  
+  node [fillcolor = lightblue]
+  c2a [label = 'Control Manipulation']
+  c2b [label = 'Control Manipulation']
+  
+  node [fillcolor = white]
+  m1a [label =  'Measure']
+  m2a [label =  'Measure']
+  m3a [label =  'Measure']
+  m4a [label =  'Measure']
+  m1b [label =  'Measure']
+  m2b [label =  'Measure']
+  m3b [label =  'Measure']
+  m4b [label =  'Measure']
+  
+  # edge definitions with the node IDs
+  a -> m1a -> c1a -> m1b
+  b -> m2a -> c1b -> m2b
+  c -> m3a -> c2b -> m3b
+  d -> m4a -> c2a -> m4b
+  }")
+
+g$width <- "50%"
+g$height <- "100%"
+g
+```
+
 
 
 ### Discrete and continuous experimental manipulations 
