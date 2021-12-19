@@ -178,11 +178,63 @@ We summarize the state of affairs from our perspective in Figure \@ref(design-be
 knitr::include_graphics("images/design/between-within.png")
 ```
 
-### Repeated measurements
+### Repeated measurements and experimental items
 
+We just discussed decision-making about whether to administer multiple *manipulations* to a single participant. The exactly analogous decision comes up for *measures*! And our take-home will be similar: unless there are specific difficulties that come up, it's usually a very good idea to take multiple measurements from each participant, in what is called -- sensibly -- a **repeated measures** design.^[We're of course talking about taking mutliple measurements of the same construct! This is different from taking multiple measures of different constructs. As we discussed in Chapter \@ref(measurement), we tend to be against measuring lots of different things in a single experiment -- in part because of the concerns that we're articulating in this chapter: if you have time, it's better to make more precise measures of the one construct you care about most. Measuring one thing well is hard enough. Much better to do that than to measure many constructs badly.]
 
+In the last subsection, we described how variability in our estimates in a between-participants design depend on three components: 1) true condition differences, 2) sampling variation between conditions, and 3) measurement error. (The within-participants design is good because it doesn't have #2). Repeated measures designs help with measurement error. The more times you measure, the lower your measurement error. This is the the same thing as reliability, which we covered in Chapter \@ref(measurement). If you have a perfectly reliable measure, there is no measurement error. Repeated measurements increase reliability. 
 
-```{r, fig.cap="A between-participants, repeated-measures design."}
+The simplest way you can do a repeated measures design is by administering your treatment and then administering your measure -- multiple times. This scenario is pictured in a between-participants design in Figure \@ref(fig:design-rm-between). Somtimes this works quite well. For example, imagine a transcranial magnetic stimulation (TMS) experiment: participants receive neural stimulation for a period of time, targeted at a particular region. Then they perform some measurement task repeatedly until it wears off. The more times they perform it, the better the estimate of whatever effet (when compared to a control of TMS to another region, say).
+
+```{r design-rm-between, fig.cap="A between-participants, repeated-measures design."}
+g <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = LR]
+  
+  node [shape = rectangle, style = filled, fillcolor = white]        
+  a [label = 'Participant 1']
+  b [label = 'Participant 2']
+  c [label = 'Participant 3']
+  d [label = 'Participant 4']
+  
+  node [fillcolor = pink]
+  c1a [label = 'Experimental Manipulation']
+  c1b [label = 'Experimental Manipulation']
+  
+  node [fillcolor = lightblue]
+  c2a [label = 'Control Manipulation']
+  c2b [label = 'Control Manipulation']
+  
+  node [fillcolor = white]
+  m1a [label =  'Measure']
+  m2a [label =  'Measure']
+  m3a [label =  'Measure']
+  m4a [label =  'Measure']
+  m1b [label =  'Measure']
+  m2b [label =  'Measure']
+  m3b [label =  'Measure']
+  m4b [label =  'Measure']
+  m1c [label =  'Measure']
+  m2c [label =  'Measure']
+  m3c [label =  'Measure']
+  m4c [label =  'Measure']
+  
+  # edge definitions with the node IDs
+  a -> c1a -> m1b -> m1a -> m1c
+  b -> c1b -> m2b -> m2a -> m2c
+  c -> c2b -> m3b -> m3a -> m3c
+  d -> c2a -> m4b -> m4a -> m4c
+  }")
+
+g$width <- "50%"
+g$height <- "100%"
+g
+```
+
+The catch is exactly analogous to the between-participants design: some measures can't be repeated without altering the response. To take an obvious example, we can't give the same math problem twice! The general solution to this problem that is typically used is the **experimental item**. In the case of a math assessment, you create multiple problems that you believe test the same concept but have different numbers or other superficial characteristics. This practice is widespread, and we will have a lot to say about it in the next chapter, because the use of multiple experimental items can license generalizations across a population of items in the same way that the use of multiple participants can ideally license generalizations across a population of people [@clark1973]. 
+
+One variation on the repeated measures, between-participants design is a specific version where the measure is administered both before (pre-) and after (post-) intervention, as in Figure \@ref(fig:design-pre-post). This design is sometimes known as a **pre-post** design. It is extremely common in cases where the intervention is larger-scale and harder to give within-participants, such as in a field experiment where a policy or curriculum is given to one sample and not to another. The pre measurements can be used to subtract participant-level variability out and recover a more precise estimate of the treatment effect. Recall that our treatment effect in a pure between participants design is $\widehat{\Delta} = \widehat{\theta}_{T} - \widehat{\theta}_{C}$. In a pre-post design, we can do better by computing $\widehat{\Delta} = (\widehat{\theta_{T_{post}}} - \widehat{\theta_{T_{pre}}}) - (\widehat{\theta_{C_{post}}} - \widehat{\theta_{C_{pre}}})$. We could rephrase this as "how much more did the treatment group go up than the control group?^[This estimate is sometimes called a "difference in differences" and is very widely used in the field of econometrics, both in experimental and quasi-experimental cases [@cunningham21].]
+
+```{r design-pre-post, fig.cap="A between-participants, pre-post design."}
 g <- DiagrammeR::grViz("digraph {
   graph [layout = dot, rankdir = LR]
   
@@ -221,6 +273,54 @@ g$width <- "50%"
 g$height <- "100%"
 g
 ```
+
+Of course, repeated measurements are not limited to between-participants designs! The bread and butter of perception, psychophysics, and cognitive psychology is the type of within-participants repeated measure design shown in Figure \@ref(fig:design-rm-within). When both manipulations and measures can be repeated, these designs afford high measurement precision even with small sample sizes; they are recommended whenever they are possible. 
+
+
+```{r design-rm-within, fig.cap="A within-participants repeated-measures design with multiple trials."}
+g <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = LR]
+  
+  node [shape = rectangle, style = filled, fillcolor = white]        
+  a [label = 'Participant 1']
+  b [label = 'Participant 2']
+  c [label = 'Participant 3']
+  d [label = 'Participant 4']
+  
+  node [fillcolor = pink]
+  c1a [label = 'Experimental Manipulation']
+  c1b [label = 'Experimental Manipulation']
+  c3a [label = 'Experimental Manipulation']
+  c3b [label = 'Experimental Manipulation']
+  
+  node [fillcolor = lightblue]
+  c2a [label = 'Control Manipulation']
+  c2b [label = 'Control Manipulation']
+  c4a [label = 'Control Manipulation']
+  c4b [label = 'Control Manipulation']
+  
+  node [fillcolor = white]
+  m1a [label =  'Measure']
+  m2a [label =  'Measure']
+  m3a [label =  'Measure']
+  m4a [label =  'Measure']
+  m1b [label =  'Measure']
+  m2b [label =  'Measure']
+  m3b [label =  'Measure']
+  m4b [label =  'Measure']
+  
+  # edge definitions with the node IDs
+  a -> c1a -> m1a -> c4a -> m1b
+  b -> c1b -> m2a -> c4b -> m2b
+  c -> c2b -> m3a -> c3b -> m3b
+  d -> c2a -> m4a -> c3a -> m4b
+  }")
+
+g$width <- "50%"
+g$height <- "100%"
+g
+```
+
 
 
 
