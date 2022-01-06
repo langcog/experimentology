@@ -99,11 +99,13 @@ Three-way interactions are just the beginning, though. If you have three factors
 
 So what should you do if you really do care about four or more factors -- in the sense that you want to estimate their effects and include them in your theory? The simplest strategy is to start your research off by measuring them independently by running a series of single-factor experiments. This kind of setup is natural when there is a single reference level for each factor of interest, and such experiments can yield a basis for judging which factors are most important for your outcome and hence which should be prioritized for experiments to estimate interactions. 
 
-On the other hand, sometimes there is no reference level for a factor. For example, in the @kovacs2010 paradigm, it's not clear whether a positive or negative belief is the reference level. That's not a problem in a fully-crossed design like theirs, but this situation can pose a problem because if you have more than two such factors. Ideally you would want to run independent experiments, but you have to choose some level for all of the other variables. One solution for three factors is do a Latin-square type design.^[There's a variant called the "Greco-Latin square" for four factors, in case you need that.] A Latin square is an $n x n$ matrix in which each number occurs exactly once in each row and column, e.g. $$\begin{bmatrix} 
+On the other hand, sometimes there is no reference level for a factor. For example, in the @kovacs2010 paradigm, it's not clear whether a positive or negative belief is the reference level. That's not a problem in a fully-crossed design like theirs, but this situation can pose a problem because if you have more than two such factors. Ideally you would want to run independent experiments, but you have to choose some level for all of the other variables -- you can't just assume that one level is "neutral." 
+
+One solution that lets you compute main effects but not interactions is called a **Latin square**. Latin squares are a good solution for three-factor designs, which is the level at which a fully-crossed design typically gets overwhelming.^[There's a variant called the "Greco-Latin square" for four factors, in case you need that.] A Latin square is an $n x n$ matrix in which each number occurs exactly once in each row and column, e.g. $$\begin{bmatrix} 
 	1 & 2 & 3 \\
 	2 & 3 & 1\\
 	3 & 1 & 2 \\
-	\end{bmatrix}$$. This Latin square for $n=3$ gives the solution for a 3x3x3 experiment in which the row number is one factor, the column number is the second factor, and the number in that cell is the third factor. Although a fully-crossed design would require 27 cells to be run, the Latin square has only nine. Critically, the combinations of all each factor is balanced across the nine cells so that the average effect of each level of the three factors can be estimated.^[You can also check and see that no interactions can be estimated, because no factor co-occurs with two different levels of another factor.] 
+	\end{bmatrix}$$. This Latin square for $n=3$ gives the solution for how to balance factors across a 3x3x3 experiment. The row number is one factor, the column number is the second factor, and the number in the cell is the third factor. So one condition would be (1,1,1), the first level of all factors, shown in the upper left cell. Another would be (3,3,2), the lower right cell.  Although a fully-crossed design would require 27 cells to be run, the Latin square has only nine. Critically, the combinations of all each factor is balanced across the nine cells so that the average effect of each level of the three factors can be estimated.^[You can check and see that no interactions can be estimated, because no factor co-occurs with two different levels of another factor.] 
 
 There are also fancier methods available. For example, the literature on optimal experiment design contains methods for choosing the most informative sequence of experiments to run in order to estimate the parameters in a model [e.g., @myung2009]. Going down this road typically means having an implemented computational theory of your domain, but it can be a very productive strategy for exploring a complex experimental space with many factors.
 
@@ -144,12 +146,13 @@ g <- DiagrammeR::grViz("digraph {
 
 g$width <- "50%"
 g$height <- "100%"
-g
+# g
+knitr::include_graphics("images/design/between.png")
 ```
 
 
 ```{r design-within, fig.cap="A within-participants design, counterbalanced for order."}
-g <- DiagrammeR::grViz("digraph {
+g2 <- DiagrammeR::grViz("digraph {
   graph [layout = dot, rankdir = LR]
   
   node [shape = rectangle, style = filled, fillcolor = white]        
@@ -187,9 +190,10 @@ g <- DiagrammeR::grViz("digraph {
   d -> c4b -> m4a -> c4a -> m4b
   }")
 
-g$width <- "50%"
-g$height <- "100%"
-g
+g2$width <- "100%"
+g2$height <- "100%"
+# g2
+knitr::include_graphics("images/design/within.png")
 ```
 
 
@@ -201,7 +205,7 @@ Given these advantages, why would you consider using a between-participants desi
 
 Most treatment conditions in the behavioral sciences are not so extreme, but it may be impractical or inadvisable to deliver multiple conditions. @greenwald1976 distinguishes three types of undesirable effects: **practice**, **sensitization**, and **carry-over** effects^[We tend to think of all of these as being forms of carry-over effect, and sometimes use this as a catch-all description. Some people also use the picturesque description ["poisoning the well"](https://statmodeling.stat.columbia.edu/2017/11/25/poisoning-well-within-person-design-whats-risk/) -- earlier conditions "ruin" the data for later conditions.]: 
 
-* Practice effects occur when administering the measure or the treatment will lead to improvement. Imagine a curriculum intervention for teaching a math concept via a novel presentation  -- it would be hard to convince participating schools to teach the same topic to students twice, and the effect of the second round of teaching would likely be quite different than the first! 
+* Practice effects occur when administering the measure or the treatment will lead to improvement. Imagine a curriculum intervention for teaching a math concept  -- it would be hard to convince a school to teach the same topic to students twice, and the effect of the second round of teaching would likely be quite different than the first! 
 * Sensitization effects occur when seeing two versions of an intervention mean that you might respond differently to the second than the first because you have compared them and noticed the contrast. Greenwald's example is of a study on room lighting -- if the experimenters are constantly changing the lighting, participants may become aware that this is the point of the study. 
 * Carry-over effects refer to the case where one treatment might have a longer-lasting effect than the measurement period. For example, imagine a study in which one treatment was to make participants frustrated with an impossible puzzle; if a second condition were given after this first one, participants might still be frustrated, leading to spill-over. 
 
@@ -222,7 +226,7 @@ In the last subsection, we described how variability in our estimates in a betwe
 The simplest way you can do a repeated measures design is by administering your treatment and then administering your measure -- multiple times. This scenario is pictured in a between-participants design in Figure \@ref(fig:design-rm-between). Sometimes this works quite well. For example, imagine a transcranial magnetic stimulation (TMS) experiment: participants receive neural stimulation for a period of time, targeted at a particular region. Then they perform some measurement task repeatedly until it wears off. The more times they perform it, the better the estimate of whatever effect (when compared to a control of TMS to another region, say).
 
 ```{r design-rm-between, fig.cap="A between-participants, repeated-measures design."}
-g <- DiagrammeR::grViz("digraph {
+g3 <- DiagrammeR::grViz("digraph {
   graph [layout = dot, rankdir = LR]
   
   node [shape = rectangle, style = filled, fillcolor = white]        
@@ -261,8 +265,9 @@ g <- DiagrammeR::grViz("digraph {
   }")
 
 g$width <- "50%"
-g$height <- "100%"
-g
+g3$height <- "80%"
+# g3
+knitr::include_graphics("images/design/rm-between.png")
 ```
 
 The catch is exactly analogous to the between-participants design: some measures can't be repeated without altering the response. To take an obvious example, we can't give the same math problem twice! The general solution to this problem that is typically used is the **experimental item**. In the case of a math assessment, you create multiple problems that you believe test the same concept but have different numbers or other superficial characteristics. This practice is widespread, and we will have a lot to say about it in the next chapter, because the use of multiple experimental items can license generalizations across a population of items in the same way that the use of multiple participants can ideally license generalizations across a population of people [@clark1973]. 
@@ -270,7 +275,7 @@ The catch is exactly analogous to the between-participants design: some measures
 One variation on the repeated measures, between-participants design is a specific version where the measure is administered both before (pre-) and after (post-) intervention, as in Figure \@ref(fig:design-pre-post). This design is sometimes known as a **pre-post** design. It is extremely common in cases where the intervention is larger-scale and harder to give within-participants, such as in a field experiment where a policy or curriculum is given to one sample and not to another. The pre measurements can be used to subtract participant-level variability out and recover a more precise estimate of the treatment effect. Recall that our treatment effect in a pure between participants design is $\widehat{\Delta} = \widehat{\theta}_{T} - \widehat{\theta}_{C}$. In a pre-post design, we can do better by computing $\widehat{\Delta} = (\widehat{\theta_{T_{post}}} - \widehat{\theta_{T_{pre}}}) - (\widehat{\theta_{C_{post}}} - \widehat{\theta_{C_{pre}}})$. We could rephrase this as "how much more did the treatment group go up than the control group?^[This estimate is sometimes called a "difference in differences" and is very widely used in the field of econometrics, both in experimental and quasi-experimental cases [@cunningham2021].]
 
 ```{r design-pre-post, fig.cap="A between-participants, pre-post design."}
-g <- DiagrammeR::grViz("digraph {
+g4 <- DiagrammeR::grViz("digraph {
   graph [layout = dot, rankdir = LR]
   
   node [shape = rectangle, style = filled, fillcolor = white]        
@@ -304,58 +309,13 @@ g <- DiagrammeR::grViz("digraph {
   d -> m4a -> c2a -> m4b
   }")
 
-g$width <- "50%"
-g$height <- "100%"
-g
+g4$width <- "70%"
+g4$height <- "100%"
+# g4
+knitr::include_graphics("images/design/pre-post.png")
 ```
 
-Of course, repeated measurements are not limited to between-participants designs! The bread and butter of perception, psychophysics, and cognitive psychology is the type of within-participants repeated measure design shown in Figure \@ref(fig:design-rm-within). When both manipulations and measures can be repeated, these designs afford high measurement precision even with small sample sizes; they are recommended whenever they are possible. 
-
-
-```{r design-rm-within, fig.cap="A within-participants repeated-measures design with multiple trials."}
-g <- DiagrammeR::grViz("digraph {
-  graph [layout = dot, rankdir = LR]
-  
-  node [shape = rectangle, style = filled, fillcolor = white]        
-  a [label = 'Participant 1']
-  b [label = 'Participant 2']
-  c [label = 'Participant 3']
-  d [label = 'Participant 4']
-  
-  node [fillcolor = pink]
-  c1a [label = 'Experimental Manipulation']
-  c1b [label = 'Experimental Manipulation']
-  c3a [label = 'Experimental Manipulation']
-  c3b [label = 'Experimental Manipulation']
-  
-  node [fillcolor = lightblue]
-  c2a [label = 'Control Manipulation']
-  c2b [label = 'Control Manipulation']
-  c4a [label = 'Control Manipulation']
-  c4b [label = 'Control Manipulation']
-  
-  node [fillcolor = white]
-  m1a [label =  'Measure']
-  m2a [label =  'Measure']
-  m3a [label =  'Measure']
-  m4a [label =  'Measure']
-  m1b [label =  'Measure']
-  m2b [label =  'Measure']
-  m3b [label =  'Measure']
-  m4b [label =  'Measure']
-  
-  # edge definitions with the node IDs
-  a -> c1a -> m1a -> c4a -> m1b
-  b -> c1b -> m2a -> c4b -> m2b
-  c -> c2b -> m3a -> c3b -> m3b
-  d -> c2a -> m4a -> c3a -> m4b
-  }")
-
-g$width <- "50%"
-g$height <- "100%"
-g
-```
-
+Of course, repeated measurements are not limited to between-participants designs! All within-participants designs are repeated measures designs, which are the bread and butter of perception, psychophysics, and cognitive psychology research. When both manipulations and measures can be repeated, these designs afford high measurement precision even with small sample sizes; they are recommended whenever they are possible. 
 
 ### Discrete and continuous experimental manipulations 
 
