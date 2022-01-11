@@ -27,32 +27,42 @@ knitr::include_graphics("images/models/couldnt_help_it.png")
 
 <!-- MM: Important: Estimation chapter actually foreshadows *Welch's* t-test because it describes unequal vars. Inference chapter generically refers to a t-test without making distinction. Discuss with MCF. -->
 
-* Motivate the t-test as a regression model (nice segue from "Estimation")
 
 While there are many types of statistical models, this chapter will focus primarily on regression, a broad and extremely powerful class of models. A regression model is a model that relates a dependent variable to one or more independent variables. In fact, many common statistical estimators (like the sample mean) and methods of inference (like the $t$-test) are actually very simple regression models. Understanding this point will help you to see many statistical methods as merely special cases of the same regression framework, rather than as unrelated, ad hoc methods. 
 
 Let's start with one of these special cases, namely estimating a treatment effect, $\Delta$, in a two-group design. In Chapter \@ref(estimation), we did so for the tea-tasting experiment by positing a model in which the milk-first ratings were normally distributed with mean $\theta_{milkfirst} = \theta_{teafirst} + \Delta$ and with standard deviation $\sigma_{milkfirst}$. Let's now write that model more formally in terms of what it implies about each participant's tea rating, $Y_i$, given that person's treatment assignment, $X_i$, where $X_i=0$ represents the control (milk-first) group and $X_i=1$ represents the treatment (tea-first) group.
 
 <!-- MM: Not sure if align environment is supported in RMD. Might need to use this: https://stackoverflow.com/questions/47912278/align-environment-in-r-markdown-which-works-for-both-docx-and-pdf-output --> 
-\begin{align*}
+\begin{align}
+\label{eq:ols_ttest}
 Y_i &= \theta_{milkfirst} + \Delta X_i + \epsilon_i \\
 \epsilon_i &\sim N(0, \sigma^2)
-\end{align*}
+\end{align}
 
-In the first line, $\theta_{milkfirst} + \Delta X_i$ is called the **linear predictor**, and it describes the expected value of an individual's tea rating, $Y_i$, given that person's treatment group $X_i$. That is, for a participant in the control group, the linear predictor is just equal to $\theta_{milkfirst}$, which is indeed the mean for the control group. On the other hand, for a participant in the treatment group, the linear predictor is equal to $\theta_{milkfirst} + \Delta$, which is indeed the mean for the treatment group. The terms $\epsilon_i$ are **error terms**, referring to random variation of participants' ratings around their group mean. Note that this is a very specific kind of "error"; it not to "error" due to bias, for example. Instead, you can think of the error terms as capturing the "error" that would be associated with predicting any given participant's rating based on just the linear predictor. If you thus predicted a control group participant's rating as $\theta_{milkfirst}$, this would be a good guess, but you still expect the participant's rating to deviate somewhat from $\theta_{milkfirst}$ due to "error". In this model, the linear predictor and error terms together say that participants' ratings scatter randomly (actually, normally) around their group means with standard deviation $\sigma$. And that is exactly the model we posited earlier. 
+In the first line, $\theta_{milkfirst} + \Delta X_i$ is called the **linear predictor**, and it describes the expected value of an individual's tea rating, $Y_i$, given that person's treatment group $X_i$ (the single predictor variable in this model). That is, for a participant in the control group, the linear predictor is just equal to $\theta_{milkfirst}$, which is indeed the mean for the control group. On the other hand, for a participant in the treatment group, the linear predictor is equal to $\theta_{milkfirst} + \Delta$, which is indeed the mean for the treatment group. In regression jargon, $\Delta$ is a **regression coefficient**, representing the association of the predictor variable $X_i$ with the outcome $Y_i$.
 
-
-## Regression more generally
-
-* Describe basic anatomy of a GLM; remember to explain intercept as just another covariate
-* Describe the assumptions and amazing properties of OLS (e.g., BLUE, MLE, etc.)
-* Probably too much, but would be super cool to briefly show the beautiful geometry behind OLS? Maybe make a sidebar
+The terms $\epsilon_i$ are **error terms**, referring to random variation of participants' ratings around their group mean. Note that this is a very specific kind of "error"; it not to "error" due to bias, for example. Instead, you can think of the error terms as capturing the "error" that would be associated with predicting any given participant's rating based on just the linear predictor. If you thus predicted a control group participant's rating as $\theta_{milkfirst}$, this would be a good guess, but you still expect the participant's rating to deviate somewhat from $\theta_{milkfirst}$ due to "error". In this model, the linear predictor and error terms together say that participants' ratings scatter randomly (actually, normally) around their group means with standard deviation $\sigma$. And that is exactly the model we posited earlier. 
 
 
 ## Generalizing the linear predictor: Adding covariates
 
-* Show how the linear predictor can be generalized to add covariates
+
 * Include material below that's already written about whether and when to do this
+
+It turns out that much more flexible statistical models can also be written as regression models, similarly to what we did for the simple tea-tasting experiment via Equation (\ref{eq:ols_ttest}). For example, we might want to add another predictor variable, such as age. [USE EXISTING DYLAN EXAMPLE BELOW?] We could then add the new predictor variable and a corresponding regression coefficient to the model:
+
+\begin{align}
+\label{eq:ols_one_covariate}
+Y_i &= \theta_{milkfirst} + \Delta X_{i1} + \theta_{age} X_{i2}  + \epsilon_i \\
+\epsilon_i &\sim N(0, \sigma^2)
+\end{align}
+
+Now that we have multiple predictor variables, we've labeled them $X_{i1}$ (treatment group) and $X_{i2}$ (age in years). 
+
+To illustrate how to interpret the regression coefficients in this model, let's use the linear predictor to compare the predictions for two hypothetical participants who are both in the treatment group: 20-year-old Alice and 21-year old Bob. Alice's linear predictor tells us that her expected rating is $\theta_{milkfirst} + \Delta + \theta_{age} \cdot 20$. In contrast, Bob's linear predictor is $\theta_{milkfirst} + \Delta + \theta_{age} \cdot 21$. We could therefore calculate the expected difference in ratings for 30-year-olds versus 20-year olds by subtracting Alice's linear predictor from Bob's, yielding just $\theta_{age}$. How simple! This illustrates a key point about linear regression models in general: **the regression coefficient represents the average (i.e., expected) increase in $Y_i$ that is associated with a 1-unit increase in the corresponding predictor variable** (here, a 1-year increase in age).
+
+
+## Generalizing the linear predictor: Adding covariates
 
 
 ## Generalizing the link function: Accommodating other outcome types
@@ -62,6 +72,13 @@ In the first line, $\theta_{milkfirst} + \Delta X_i$ is called the **linear pred
 
 * Focus on random intercepts
 * Also mention GEE as an alternative approach that doesn't change the linear predictor
+
+## Regression more generally
+
+* As a finale, show fully general GLM and describe how it subsumes all the things above
+* Describe basic anatomy of a GLM; remember to explain intercept as just another covariate
+* Describe the assumptions and amazing properties of OLS (e.g., BLUE, MLE, etc.)
+* Probably too much, but would be super cool to briefly show the beautiful geometry behind OLS? Maybe make a sidebar
 
 
 ## Connection to Bayesian approaches
