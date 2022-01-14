@@ -72,6 +72,7 @@ The models shown above (Equations \ref{eq:ols_ttest} and \ref{eq:ols_one_covaria
 
 OLS is incredibly powerful. In fact, if the assumptions above are fulfilled, OLS is the best we can possibly do.[^models-2] However, it's important to be aware of situations where its assumptions might be violated. The most common such situations are: 
 
+[SHOULD STATE THE ASSUMPTIONS FIRST IN POSITIVE TERMS; COULD MAYBE TURN SOME OF THIS INTO A TABLE?]
 
 1. **The linear predictor is misspecified.** Notice that in our comparison of Alice's and Bob's expected outcomes based on their 1-year age difference, we were able to interpret the coefficient $\theta_{age}$ as the average difference in $Y_i$ when comparing participants who differ by 1 year of age, *regardless* of whether those ages are 20 vs. 21, 50 vs. 51, etc. This is because the way the linear predictor is specified in Equation \ref{eq:ols_one_covariate} embeds the assumption that age is *linearly* related to expected outcomes. For many scientific contexts, this assumption is reasonable, but in other contexts, it may be badly violated. For example, if we sampled participants whose ages ranged from 1 to 60 years and plotted participants' ages versus their vocabulary sizes, we would probably find that there is a much bigger difference in vocabulary between typical 1-year-olds vs. typical 2-year olds than between typical 50-year-olds vs. typical 51-year olds. One way to accommodate such **nonlinearities** is to modify the linear predictor to include polynomial terms, such as $age^2$, which then allow us to fit curves (e.g., parabolas) rather than just lines. It is always a good idea to use visualizations like scatterplots to look for possible problems with the specification of the linear predictor. It can be a helpful visual aid to superimpose on these plots a model-free (i.e., "nonparametric") estimate of the relationship, such as a LOESS curve. 
 
@@ -95,13 +96,65 @@ OLS is incredibly powerful. In fact, if the assumptions above are fulfilled, OLS
 
 
 
-## Generalizing the link function: Accommodating other outcome types
+## Generalizing the link function: Accommodating non-continuous outcomes
+
+So far we have considered continuous outcome measures, like tea ratings. What if we instead had a binary outcome, such as whether a participant liked or didn't like the tea, or a count outcome, such as the number of cups a participant chose to drink? These and other non-continuous outcomes often violate the assumptions of OLS, in particular because they often induce heteroskedastic errors. For example, count outcomes are often right-skewed because a count cannot be less than 0, creating heteroskedasticity for the same reasons discussed above for skewed continuous outcomes. Binary outcomes inherently violate heteroskedasticity because the variance of a binary variable depends directly on the success probability, such that the errors will be more variable for individuals whose covariate values place their expected success probability closer to 0.50.[^models-4] 
+
+Happily, there are regression models closely related to OLS that can handle non-continuous outcomes. These models are called **generalized linear models** (GLM), and OLS is one of many members of this large class of models. To see the connection, let's write an OLS model more generally in terms of what it says about the expected value of the outcome:
+
+\begin{align}
+\label{eq:ols_general_form}
+E[Y_i] &= \beta_0 + \sum_{j=1}^p \beta_j X_j
+\end{align}
+where $p$ is the number of predictor variables, $\beta_0$ is the intercept, and $\beta_j$ is the regression coefficient for the $j^{th}$ predictor variable.
+
+The linear predictor of a GLM (i.e., $\beta_0 + \sum_{j=1}^p \beta_j X_j$) looks exactly the same as for OLS, but instead of modeling $E[Y_i]$, a GLM models some *transformation*, $g(.)$, of the expectation:[^models-5] 
+
+\begin{align}
+\label{eq:glm_general_form}
+g( E[Y_i] ) &= \beta_0 + \sum_{j=1}^p \beta_j X_j 
+\end{align}
+
+It turns out that by choosing a transformation of $E[Y_i]$ that is suitable for the outcome type, we can still fit a linear model. This transformation is called the **link function**. For example, $g(x) = log(x)$ is usually a suitable link function for count or binary outcomes. GLMs also handle the error terms differently from OLS, but we won't cover that here. We have only scratched the surface of GLMs here, but the take-home point is simply that they are usually the tool of choice for fitting regression models with non-continuous outcomes. 
+
+
+[^models-4] Specifically, the variance of a binary variable with success probability $p$ is simply $p(1-p)$, which is maximized at $p=0.50$. 
+
+[^models-5] Note that GLMs involve transforming the *expectation* of the outcome, not the outcome itself! That is, we are not just taking the outcome variable in our dataset and transforming it before fitting an OLS model, but rather we are fitting a different model entirely, one that posits a fundamentally different relationship between the predictors and the expected outcomes.
+
 
 
 ## Generalizing the linear predictor: Accommodating clustering
 
-* Focus on random intercepts
-* Also mention GEE as an alternative approach that doesn't change the linear predictor
+As noted above, another common situation in which the assumptions of OLS are violated is when the error terms are not independent, for example in repeated-measures data in which participants' error terms across time points are likely to be clustered. We will discuss two classes of methods for accommodating clustering in regression. 
+
+The first class of methods is **linear mixed models** (LMM). In this approach, we modify the linear predictor itself to model differences across clusters. Suppose we modified the original tea-tasting experiment (without the age covariate) to collect repeated ratings from each participant, such that each participant tastes 5 milk-first and 5 tea-first cups. Then we could fit a LMM as follows:
+
+\begin{align}
+\label{eq:lmm}
+Y_i &= \theta_{milkfirst} + \gamma_i + \Delta X_{it} + \epsilon_{it} \\
+\gamma_i \sim N(0, \tau^2) \\
+\epsilon_{it} &\sim N(0, \sigma^2) \\
+\end{align}
+
+where $Y_{it}$ is participant $i$'s rating in trial $t$ and $X_{it}$ is the participant's assigned treatment in trial $t$ (i.e., milk-first or tea-first). Compare this model to the basic OLS model in Equation (\ref{eq:ols_ttest}). Here we've introduced another intercept coefficient, $\gamma_i$, and it's unlike the original intercept $\theta_{milkfirst}$ in that $\gamma_i$ varies across participants. As such, $\gamma_i$ is a **random intercept**, whereas $\theta_{milkfirst}$ is a **fixed intercept**. Specifically, we have assumed that each participant has their own typical "baseline" tea rating -- some participants generally like tea more than others -- and that these baseline ratings are normally distributed across participants. Thus, ratings are correlated within participants because ratings cluster around each participant's *unique* baseline tea rating. LMMs can be further extended to model clustering of covariate effects across subjects. To do so, we could introduce **random slopes** to the model, which represent differences across participants in the effects of covariates:
+
+\begin{align}
+\label{eq:lmm}
+Y_i &= \theta_{milkfirst} + \gamma_i + \Delta X_{it} + \gamma_j + X_{i1} + \epsilon_{it} \\
+\gamma_i \sim N(0, \tau^2) \\
+\epsilon_i &\sim N(0, \sigma^2) \\
+\end{align}
+
+LMM is a very common approach in psychology, but it does have limitations. Its validity relies on our ability to correctly specify the structure of the random intercepts and errors. This is particularly problematic when the correlation structure of the errors is misspecified, for example if observations within a participant are more correlated for participants in the treatment group than in the control group; in such cases, LMM estimates can be substantially biased [@bie]. It can be difficult to verify if the model specification is reasonable, especially with a small number of clusters or observations. Even if the model is correctly specified, LMM can severely underestimate standard errors (e.g., yielding too-small $p$-values) if the number of clusters is not quite large.[^models-6]
+
+
+A second class of methods that helps resolve these issues is **generalized estimating equations** (GEE). In this approach, we leave the linear predictor alone. We do not add random intercepts or slopes, nor do we assume anything about the distribution of the errors (i.e., we no longer assume that they are normal and independent). We instead provide the model with an initial "guess" about how we think the errors might be related to one another; for example, in a repeated-measures experiment, we might guess that the errors are exchangeable, meaning that they are correlated to the same degree within each participant but are uncorrelated across participants. Instead of *assuming* that our guess is correct, as does LMM, GEE estimates the correlation structure of the errors empirically, using our guess as a starting point, and it uses this correlation structure to arrive at point estimates and inference for the regression coefficients. Remarkably, as the number of clusters and observations become very large, GEE will *always* provide unbiased point estimates and valid inference, *even if* our guess about the correlation structure was bad. Additionally, with simple finite-sample corrections [@mancl2001covariance], GEE seems to provide valid inference at smaller numbers of clusters than does LMM. The price paid for these nice safeguards against model misspecification is that, in principle, GEE will typically have less statistical power than LMM **if** the LMM is in fact correctly specified, but the difference may be surprisingly slight in practice [@bie2021fitting]. For these reasons, we tend to prefer GEE with finite-sample corrections over LMM as the default model for clustered data. We tend to favor LMM only when the number of observations and clusters are quite large, and when careful diagnostics also indicate that distributional assumptions are fulfilled.
+
+[MBM to MCF: Above is my take on GEE vs. LMM, but happy to discuss and modify if you don't agree with this default recommendation.]
+
+[^models-6] How many clusters are enough for LMM to behave well? This is an active area of research, and the answer will depend also on the number of observations in each cluster and the model structure. However, caution is warranted given empirical findings suggesting that LMM can considerably underestimate standard errors even with, for example, 20 clusters each with 100 observations [@bie2021fitting].
+ 
 
 
 ## Regression more generally
