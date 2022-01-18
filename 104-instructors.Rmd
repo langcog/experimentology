@@ -1,3 +1,10 @@
+---
+output:
+  html_document:
+    theme: 
+      version: 4
+---
+
 # Instructor's guide {#instructors}
 
 
@@ -19,61 +26,32 @@ Over the years, we have observed many ways in which our replication-based course
 
 First, before we dive in, we want to acknowledge that a project-based course may look very different depending on student level (undergraduate vs. graduate/post-doc level) and availability of resources at your institution for a course like this, namely in terms of TA support and course funding (for data collection). For most of this guide, we will assume that you have a similar setup to ours (i.e., teaching at the graduate/post-doc level and have course funding and TAs to support the course), but we have also spent some time considering ways to adjust the course to fit different student levels and availability of resources. If this applies to you, please find the section at the end called "## Scenarios for different course layouts" where we lay out some ideas for how to adjust your course. 
 
-### Sample syllabus for a 10-week and 16-week version of the course
+### Syllabus considerations
 
-Depending on whether your university operates on a quarterly basis (as Stanford does), or on a semester basis (as most other universities do), the pace of the course will differ. For Psych 251, since we are on the quarter system, we use the 10-week syllabus shown below. However, we have also adapted this to a 16-week course given that it better represents a majority of other institutions' academic calendars. ^[For the 16-week course, we have assumed that classes meet twice a week.)]
+If it is your first time teaching this course, you may want to decide ahead of time whether your course will mainly focus on content, or whether you will cover *both* content and relevant practical skills. For instance, if the course is for undergraduate students, you may decide to focus mainly on content, whereas if the course is for graduate students, they may find it more useful if the course covers both content and practical skills they can use in their research. 
 
-**10-week syllabus:**
+Another important consideration is how long your course will be. Depending on whether your university operates on a quarterly basis (as Stanford does), or on a semester basis (as most other universities do), the pace of the course will differ. For Psych 251, since we are on the quarter system, we use the 10-week syllabus shown below. However, we have also adapted this to a 16-week course given that it better represents a majority of other institutions' academic calendars. ^[For the 16-week course, we have assumed that classes meet twice a week.)]
+
+For this reason, the sample syllabi laid out below are categorized along the following decisions: 1) Material: whether the course focuses on just content or both content and skills, and 2) Duration: whether the course is 10-weeks long or 16-weeks long.
+
+For undergraduate instructors, we have labelled advanced topics in purple. We expect that these topics are best suited for advanced undergraduate students. As for content around statistics (e.g., Estimation, Inference), instructors should decide how much of this content to teach, depending on how prepared students have been in previous classes. 
+
 ```{r}
 library(tidyverse)
-library(kableExtra)
-syllabus10Week <- read_csv("data/Syllabus10Week.csv")
-options(knitr.kable.NA = '')
-syllabus10Week %>% 
-  dplyr::select(-Week) %>% 
-  kbl() %>% 
-  kable_styling(bootstrap_options = c("hover", "condensed", "responsive")) %>%
-  pack_rows("Week 1", 1, 3, label_row_css = "background-color: #666; color: #fff;") %>%
-  pack_rows("Week 2", 4, 6, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 3", 7, 9, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 4", 10, 12, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 5", 13, 15, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 6", 16, 18, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 7", 19, 21, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 8", 22, 24, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 9", 25, 27, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 10", 28, 30, label_row_css = "background-color: #666; color: #fff;") %>% 
-  column_spec(3, border_right = T) %>% 
-  column_spec(4, border_right = T)
+library(bs4cards)
+
+syllabi <- read_csv("data/Syllabi.csv")
+
+syllabi %>% 
+  cards(
+    title = paste("Week", Week),
+    text = Topic,
+    tags = Category,
+    footer = paste("Reading:", Chapter),
+    label_colour = paste(Color)
+  )
 ```
 
-**16-week syllabus:**
-```{r}
-syllabus16Week <- read_csv("data/Syllabus16Week.csv")
-options(knitr.kable.NA = '')
-syllabus16Week %>% 
-  dplyr::select(-Week) %>% 
-  kbl() %>% 
-  kable_styling(bootstrap_options = c("hover", "condensed", "responsive")) %>%
-  pack_rows("Week 1", 1, 2, label_row_css = "background-color: #666; color: #fff;") %>%
-  pack_rows("Week 2", 3, 4, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 3", 5, 6, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 4", 7, 8, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 5", 9, 10, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 6", 11, 12, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 7", 13, 14, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 8", 15, 16, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 9", 17, 18, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 10", 19, 20, label_row_css = "background-color: #666; color: #fff;") %>% 
-  pack_rows("Week 11", 21, 22, label_row_css = "background-color: #666; color: #fff;") %>%
-  pack_rows("Week 12", 23, 24, label_row_css = "background-color: #666; color: #fff;") %>%
-  pack_rows("Week 13", 25, 26, label_row_css = "background-color: #666; color: #fff;") %>%
-  pack_rows("Week 14", 27, 28, label_row_css = "background-color: #666; color: #fff;") %>%
-  pack_rows("Week 15", 29, 30, label_row_css = "background-color: #666; color: #fff;") %>%
-  pack_rows("Week 16", 31, 32, label_row_css = "background-color: #666; color: #fff;") %>%
-  column_spec(3, border_right = T) %>% 
-  column_spec(4, border_right = T)
-```
 ### Grading
 
 Depending on your course format and teaching philosophy, you may have preferred grading criteria. As a point of reference, in Psych 251, we wanted to encompass both the assignments (problemsets and project components) as well as actual course attendance and participation. In addition, because the replication project is a central part of the course, we weighted the project components slightly more than the problemsets: 
