@@ -5,8 +5,6 @@
 knitr::include_graphics("images/models/couldnt_help_it.png")
 ```
 
-
-
 ::: {.learning-goals}
 🍎 Learning goals: 
 
@@ -18,12 +16,41 @@ knitr::include_graphics("images/models/couldnt_help_it.png")
 * Select models appropriate for different kinds of dependent variables
 :::
 
+In the previous two chapters, we introduced concepts surrounding estimation of an experimental effect and inference about its relationship to the effect in the population. The tools we introduced are very general, but they are limited in their applicability. Once you get beyond the world of two-condition experiments in which each participant contributes one data point from a continuous measure, the simple $t$-test is not sufficient.  
+
+In some statistics textbooks, the next step would be to present a whole host of other statistical tests that are designed for other special cases. We could even show a decision-tree: what if you have repeated measures? Or categorical data? Or three conditions? But this isn't a statistics book, and even if it were, we don't advocate that approach. The idea of finding a specific narrowly-tailored test for your situation is part and parcel of the dichotomous NHST approach that we tried to talk you out of in the last chapter. If all you want is your $p<.05$, then it makes sense to look up the test that can allow you to compute a $p$ value in your specific case. But we prefer an approach that is more focused on getting a good estimate of the magnitude of the causal effect -- and the relation of that estimate to the population mean. 
+
+In this chapter, we begin to explore how to to go about making these estimates and making inference about them -- and that brings us to the world of **statistical models**. A statistical model is a way of writing down a set of assumptions about how particular data are generated. Statistical models are the bread and butter tools for estimating particular **parameters** of interest -- like the magnitude of a causal effect associated with an experimental manipulation -- and making inferences about their relationship to the population parameter. 
+
+For example, a simple statistical model might assume that observed datapoints are generated via with the flip of a weighted coin. Then the process of estimation is to assess the most likely weight of the coin given the data. This model can then be used to make inferences about whether the coin's weight differs from some null model (a fair coin, perhaps). 
+
+This simple example sounds a lot like the kinds of simple inferential tests we talked about in the previous chapter; not very "model-y." But things get more interesting when there are multiple parameters to be estimated, as in most real-world scenarios. In the tea-tasting scenario we've belabored over the past two chapters, a real experiment might involve multiple people tasting different types of tea in different orders, all with some cups randomly assigned to be milk-first or tea-first. What we'll learn to do in this chapter is to make a model of this situation that allows us to reason about the magnitude of the milk-order effect while also estimating variation due to different people, orders, and tea types. 
+
+We'll begin by discussing the ubiquitous framework for building statistical models, **linear regression**, building up connections between regression and the $t$-test. This section will discuss how to add covariates to regression models, and when linear regression does and doesn't work. In the next section, we'll discuss the **generalized linear model**, an innovation that allows us to make models of a broader range of data types. We'll then briefly introduce **mixed models**, which allow us to model clustering in our dataasets (such as clusters of observations from a single individual or single stimulus item). We'll end with some opinionated practical advice on model building. 
+
+
 ::: {.case-study}
-🔬 Case study: Sometimes effects are driven by specific stimuli. The “language as fixed effects fallacy” (Clark, 1973) means that many early psycholinguistic effects didn’t take into account stimulus variability. This critique extends to a wide variety of other domains, e.g. task fMRI (Westfall, Nichols, and Yarkoni 2016).
+🔬 Case study: Stimulus-specific effects
+
+Imagine you're a psycholinguist who has the hypothesis that nouns are processed faster than verbs. You run an experiment where you pick out ten verbs and ten nouns, then measure a large sample of participants' reading time for each of these. You find strong evidence for the predicted effect and publish a paper on your claim. The only problem is that, at the same time, someone else has done exactly the same study -- with different nouns and verbs -- and published a paper making the opposite claim. The problem in this example is that each effect is driven by the specific experimental items that were chosen [@clark1973]. Out of hundreds of thousands of possible words, why these in particular? 
+
+The problem of generalization from sample to population is not new -- as we discussed in Chapter \@ref(inference), we are constantly doing this kind of inference with the  samples of people that participate in our experiments. Our classic statistical techniques are designe to generalize from sample to population and we are typically sensitive to the weakness of generalizations made from very small samples of experimental participants. 
+
+Not so with stimuli. 
+
+Many
+
+But in the case of stimuli, rather than participants, we rarely acknowledge that 
+
+
+
+Sometimes effects are driven by specific stimuli. The “language as fixed effects fallacy” (Clark, 1973) means that many early psycholinguistic effects didn’t take into account stimulus variability. This critique extends to a wide variety of other domains, e.g. task fMRI (Westfall, Nichols, and Yarkoni 2016).
 :::
 
+## Regression models
 
-## A simple regression model: Treatment effect estimation in a two-group experiment
+### A simple regression model
+<!-- : Treatment effect estimation in a two-group experiment -->
 
 <!-- MBM to MCF: Estimation chapter actually foreshadows *Welch's* t-test because it describes unequal vars. Inference chapter generically refers to a t-test without making distinction. Let's discuss. -->
 
@@ -46,13 +73,15 @@ A model like this is called a **linear regression of Y on X**. In the first line
 
 In the second line of Equation \ref{eq:ols_ttest}, the terms $\epsilon_i$ are **error terms**, referring to random variation of participants' ratings around their group mean. Note that this is a very specific kind of "error"; it not to "error" due to bias, for example. Instead, you can think of the error terms as capturing the "error" that would be associated with predicting any given participant's rating based on just the linear predictor. If you thus predicted a control group participant's rating as $\theta_{milkfirst}$, this would be a good guess, but you still expect the participant's rating to deviate somewhat from $\theta_{milkfirst}$ due to "error". In this model, the linear predictor and error terms together say that participants' ratings scatter randomly (in fact, normally) around their group means with standard deviation $\sigma$. And that is exactly the model we posited earlier. [NOT TRUE BECAUSE PREVIOUS MODEL USED UNEQUAL VARIANCES.] 
 
-Having posited this model, we would then want to estimate the regression coefficients $\theta_{milkfirst}$ and $\Delta$. The usual method to do so is called **ordinary least squares (OLS)**. Here is the basic idea. For any given regression coefficient estimates $\widehat{\theta}_{milkfirst}$ and $\widehat{\Delta}$, we would obtain different **predicted values**, $\widehat{Y}_i = \theta_{milkfirst} + \Delta X_i$ for each participant. Some regression coefficient estimates will yield better predictions than others. **OLS estimation is designed to find the values of the regression coefficients that optimize these predictions, meaning that the predictions are as close as possible to participants' true outcomes, $Y_i$.**[^models-1] 
+Having posited this model, we would then want to estimate the regression coefficients $\theta_{milkfirst}$ and $\Delta$. The usual method to do so is called **ordinary least squares (OLS)**. Here is the basic idea. For any given regression coefficient estimates $\widehat{\theta}_{milkfirst}$ and $\widehat{\Delta}$, we would obtain different **predicted values**, $\widehat{Y}_i = \theta_{milkfirst} + \Delta X_i$ for each participant. Some regression coefficient estimates will yield better predictions than others. 
+
+OLS estimation is designed to find the values of the regression coefficients that optimize these predictions, meaning that the predictions are as close as possible to participants' true outcomes, $Y_i$.[^models-1] 
 
 
 [^models-1]: Specifically, OLS minimizes squared error loss, in the sense that it will choose the regression coefficient estimates whose predictions minimize $\sum_{i=1}^n \left( Y_i - \widehat{Y}_i\right)^2$, where $n$ is the sample size. A wonderful thing about OLS is that those optimal regression coefficients (generically termed $\widehat{\mathbf{\beta}}$) turn out to have a very simple closed form: $\widehat{\mathbf{\beta}} = \left( \mathbf{X}'\mathbf{X} \right)^{-1} \mathbf{X}'\mathbf{y}$. We are using more general notation here because there could be multiple independent variables. Therefore, $\widehat{\mathbf{\beta}}$ is a vector, $\mathbf{X}$ is a matrix of independent variables for each subject, and $\mathbf{y}$ is a vector of participants' outcomes. As more good news, the standard error for $\widehat{\mathbf{\beta}}$ has a similarly simple closed form. 
 
 
-## Generalizing the linear predictor: Adding covariates
+### Adding covariates
 
 
 It turns out that much more complex estimation problems than this can also be written as regression models, essentially by extending what we did for the simple tea-tasting experiment in Equation (\ref{eq:ols_ttest}). For example, we might want to add another independent variable, such as age. [USE EXISTING DYLAN EXAMPLE BELOW?] We could then add this new independent variable and a corresponding regression coefficient to the model:
@@ -67,7 +96,7 @@ Now that we have multiple independent variables, we've labeled them $X_{i1}$ (tr
 
 To illustrate how to interpret the regression coefficients in this model, let's use the linear predictor to compare the model's predicted tea ratings for two hypothetical participants who are both in the treatment group: 20-year-old Alice and 21-year old Bob. Alice's linear predictor tells us that her expected rating is $\theta_{milkfirst} + \Delta + \theta_{age} \cdot 20$. In contrast, Bob's linear predictor is $\theta_{milkfirst} + \Delta + \theta_{age} \cdot 21$. We could therefore calculate the expected difference in ratings for 21-year-olds versus 20-year olds by subtracting Alice's linear predictor from Bob's, yielding just $\theta_{age}$. How simple! In fact, we would get the same result if Alice and Bob were instead 50 and 51 years old, respectively. Try this yourself. This equivalence illustrates a key point about linear regression models in general: **the regression coefficient represents the mean (i.e., expected) difference in $Y_i$ when comparing participants who differ by 1 unit of the corresponding independent variable** (here, comparing participants who differ by 1 year of age). In "Practical modeling considerations" below, we discuss whether and when to control for additional independent variables.
 
-## When does linear regression work?
+### When does linear regression work?
 
 
 The models shown above (Equations \ref{eq:ols_ttest} and \ref{eq:ols_one_covariate}) are a special type of linear regression model. These models are linear in the sense that they assume that expected outcomes scale linearly as any given independent variable increases or decreases (e.g., a 1-unit increase in age is associated with a constant change, $\theta_{age}$, in the expected outcome). OLS also assumes, critically, that the error terms ($\epsilon_i$) have the same normal distribution (i.e., mean 0 and variance $\sigma^2$) for *any* fixed values of the independent variables. This implies that the errors are equally variable for any fixed values of the independent variables, which is called **homoskedasticity**.
@@ -78,24 +107,23 @@ OLS is incredibly powerful. In fact, if the assumptions above are fulfilled, OLS
 
 1. **The linear predictor must be correctly specified.** Notice that in our comparison of Alice's and Bob's expected outcomes based on their 1-year age difference, we were able to interpret the coefficient $\theta_{age}$ as the average difference in $Y_i$ when comparing participants who differ by 1 year of age, *regardless* of whether those ages are 20 vs. 21, 50 vs. 51, etc. This is because the way the linear predictor is specified in Equation \ref{eq:ols_one_covariate} embeds the assumption that age is *linearly* related to expected outcomes. For many scientific contexts, this assumption is reasonable, but in other contexts, it may be badly violated. For example, if we sampled participants whose ages ranged from 1 to 60 years and plotted their ages versus their vocabulary sizes, we would probably find that there is a much bigger difference in vocabulary between typical 1-year-olds vs. typical 2-year olds than between typical 50-year-olds vs. typical 51-year olds. One way to accommodate such **nonlinearities** is to modify the linear predictor to include polynomial terms, such as $age^2$, which then allow us to fit a curve rather than just a straight line. It is always a good idea to use visualizations like scatterplots to look for possible problems with the specification of the linear predictor. It can be a helpful visual aid to superimpose on these plots a model-free (i.e., "nonparametric") estimate of the relationship, such as a LOESS curve. 
 
-[Suggested Figure. Panel A: Scatterplot showing a nice linear relationship with OLS fit superimposed. Panel B: Scatterplot showing a nonlinear relationship with OLS fit, OLS fit with x^2 term, and LOESS superimposed.]
+<!-- [Suggested Figure. Panel A: Scatterplot showing a nice linear relationship with OLS fit superimposed. Panel B: Scatterplot showing a nonlinear relationship with OLS fit, OLS fit with x^2 term, and LOESS superimposed.] -->
 
 
 2. **The errors must be independent.** This will hold if observations in the regression model (i.e., rows in the dataset) are sampled independently, for example if participants were independently recruited for a study, and each performed a single trial. On the other hand, suppose we have repeated-measures data in which we sample participants, and then obtain multiple outcome measurements over time for each participant. Usually, outcome measurements within a participant will be correlated: if we measure 10 participants' blood pressures every day for a week, some participants will typically have high values whereas others will typically have low values, even though any given participant will also have some variation in their own measurements over time.[^models-3] To help identify such situations, it can be helpful to plot the distribution of **residuals** for each participant (or a random sample thereof) to see whether this distribution seems to differ across participants. [YOU NEED TO EXPLAIN EARLIER WHAT RESIDUALS ARE]
 
-[Suggested Figure. Violin plots, or similar, showing residuals for different subjects. The residuals exhibit non-independence.]
+<!-- [Suggested Figure. Violin plots, or similar, showing residuals for different subjects. The residuals exhibit non-independence.] -->
 
 3. **The errors must be normal and homoskedastic.** In contrast, this could be violated if error terms are more variable for some values of the independent variables than for other values (the errors are **heteroskedastic**). This is often the case for highly skewed outcome variables. For example, if we regressed participants' incomes on their years of education, we will find that higher education is associated with higher income. However, because income is highly right-skewed in many samples (some people have extremely high incomes), income will typically be more variable for individuals with more education than for those with less education. For this reason, if we predicted incomes for individuals with 16 years of education (i.e., they completed 4-year college and then stopped) and also for individuals with 8 years (i.e., they completed middle school and then stopped), the errors in the former predictions will probably be more variable than the errors in the latter predictions. It is a good idea to plot each independent variable versus the residuals to see if the residuals are more variable for certain values of the independent variable than for others.
 
-[Suggested Figure. X vs. residuals, showing heteroskedasticity.]
+<!-- [Suggested Figure. X vs. residuals, showing heteroskedasticity.] -->
 
 
 [^models-2]: There is a precise sense in which OLS gives the *very best* predictions we could ever get from any model that posits linear relationships between the independent variables and the outcome. That is, you can come up with any other linear model you want, and yet if the assumptions of OLS are fulfilled, predictions from OLS will always be less noisy than those of your model. This is because of an elegant mathematical result called the Gauss-Markov Theorem. (MBM to MCF: Feel free to delete.)
 
 [^models-3] To be specific, it is not the blood pressure values ($Y_i$) themselves that must be independent, but rather the error terms ($\epsilon$). The error terms are what is "left over" after accounting for systematic variation that is predicted by the independent variables. If, in principle, we managed to include in the linear predictor all variables that might explain individual differences in typical blood pressure (e.g., genetic factors, sex, age, etc.), then the errors would be independent even though the outcomes themselves are not. However, as a heuristic, considering possible sources of correlation in the outcomes themselves is often a reasonable proxy for thinking about the error terms.
 
-
-## Generalizing the link function: Accommodating non-continuous outcomes
+## Generalized linear models
 
 So far we have considered continuous outcome measures, like tea ratings. What if we instead had a binary outcome, such as whether a participant liked or didn't like the tea, or a count outcome, such as the number of cups a participant chose to drink? These and other non-continuous outcomes often violate the assumptions of OLS, in particular because they often induce heteroskedastic errors. For example, count outcomes are often right-skewed because a count cannot be less than 0, creating heteroskedasticity for the same reasons discussed above when we considered skewed continuous outcomes. Binary outcomes inherently violate heteroskedasticity because the variance of a binary variable depends directly on the success probability; this means that the errors will be more variable for individuals whose covariate values place their expected success probability closer to 0.50.[^models-4] 
 
@@ -123,9 +151,11 @@ It turns out that by choosing a transformation of $E[Y_i]$ that is suitable for 
 
 
 
-## Generalizing the linear predictor: Accommodating clustering
+## Accommodating clustering in our models
 
 As noted above, another common situation in which the assumptions of OLS are violated is when the error terms are not independent, for example in repeated-measures data in which participants' error terms across time points are likely to be clustered. We will discuss two classes of methods for accommodating clustering in regression. 
+
+### Linear mixed models
 
 The first class of methods is **linear mixed models** (LMM). In this approach, we modify the linear predictor itself to model differences across clusters. Suppose we modified the original tea-tasting experiment (without the age covariate) to collect repeated ratings from each participant, such that each participant tastes 5 milk-first and 5 tea-first cups. Then we could fit a LMM as follows:
 
@@ -145,8 +175,9 @@ Y_i &= \theta_{milkfirst} + \gamma_i + \Delta X_{it} + \gamma_j + X_{i1} + \epsi
 \epsilon_i &\sim N(0, \sigma^2) \\
 \end{align}
 
-LMM is powerful and is a very common approach in psychology, but it does have limitations. Its validity relies on our ability to correctly specify the structure of the random intercepts and errors. This is particularly problematic when the correlation structure of the errors is misspecified, for example if observations within a participant are more correlated for participants in the treatment group than in the control group; in such cases, LMM estimates can be substantially biased [@bie]. It can be difficult to verify if the model specification is reasonable, especially with a small number of clusters or observations. Even if the model is correctly specified, LMM can severely underestimate standard errors (e.g., yielding too-small $p$-values) if the number of clusters is not large.[^models-6]
+LMM is powerful and is a very common approach in psychology, but it does have limitations. Its validity relies on our ability to correctly specify the structure of the random intercepts and errors. This is particularly problematic when the correlation structure of the errors is misspecified, for example if observations within a participant are more correlated for participants in the treatment group than in the control group; in such cases, LMM estimates can be substantially biased [@bie2021fitting]. It can be difficult to verify if the model specification is reasonable, especially with a small number of clusters or observations. Even if the model is correctly specified, LMM can severely underestimate standard errors (e.g., yielding too-small $p$-values) if the number of clusters is not large.[^models-6]
 
+### An alternative approach: Generalized estimating equations
 
 A second class of methods that helps resolve these issues is **generalized estimating equations** (GEE). In this approach, we leave the linear predictor alone. We do not add random intercepts or slopes, nor do we assume anything about the distribution of the errors (i.e., we no longer assume that they are normal, independent, and homoskedastic). We instead provide the model with an initial "guess" about how we think the errors might be related to one another; for example, in a repeated-measures experiment, we might guess that the errors are exchangeable, meaning that they are correlated to the same degree within each participant but are uncorrelated across participants. Instead of *assuming* that our guess is correct, as does LMM, GEE estimates the correlation structure of the errors empirically, using our guess as a starting point, and it uses this correlation structure to arrive at point estimates and inference for the regression coefficients. Remarkably, as the number of clusters and observations become very large, GEE will *always* provide unbiased point estimates and valid inference, *even if* our guess about the correlation structure was bad. Additionally, with simple finite-sample corrections [@mancl2001covariance], GEE seems to provide valid inference at smaller numbers of clusters than does LMM. The price paid for these nice safeguards against model misspecification is that, in principle, GEE will typically have less statistical power than LMM *if* the LMM is in fact correctly specified, but the difference may be surprisingly slight in practice [@bie2021fitting]. For these reasons, we tend to prefer GEE with finite-sample corrections over LMM as the default model for clustered data. In general, we tend to favor LMM over GEE only when the number of observations and clusters are quite large, and when careful diagnostics also indicate that distributional assumptions are fulfilled.
 
@@ -157,13 +188,21 @@ A second class of methods that helps resolve these issues is **generalized estim
 
 
 
-## Connection to Bayesian approaches
-
-* Say that what we have covered so far is essentially just the likelihood; formalize the intuition from "Estimation" about Bayesian inference to show how a prior affects the model specification
 
 
+## How do you use models to analyze data? 
 
-## Practical modeling considerations
+Estimating one quantity in isolation is often not the best thing to do. In almost any experiment, there will be variation in the estimate that has to do with other known sources. Imagine the Stroop effect, which has a fairly consistent effect on both fast and slow readers [@haaf2017]. But estimates of this effect will be more precise if we take into account that some readers are slower or faster, rather than just averaging across all this variation. That's why we need models that take into account different sources of variation. 
+
+**Make a simple model** that includes all of the key parts of the design (link to visualization). 
+
+**don't muck up your causal inference**
+
+
+**check the model against the data**
+
+**interpret the predictions of the model**
+
 
 ### When does it makes sense to include covariates in a model?
 
@@ -210,72 +249,70 @@ Don't condition on a post-treatment variable. As we discussed above, there are s
 
 Don't condition on a collider. This issue is a little bit off-topic for the current post, since it's primarily an issue in observational designs, but here's a really good blogpost about it.
 
-Conclusions
-
 Covariates and confounds are some of the most basic concepts underlying experimental design and analysis in psychology, yet they are surprisingly complicated to explain. Often the issues seem clear until it comes time to do the data analysis, at which point different assumptions lead to different default analytic strategies. I'm especially concerned that these strategies vary by culture, for example with some psychologists always conditioning on confounders, and others never doing so. (We haven't even talked about mediation and moderation!). Hopefully this post has been useful in using the vocabulary of causal models to explain some of these issues.
 
----
-* The definitive resource on causal graphical models is Pearl (2009). It's not easy going, but it's very important stuff. Even just starting to read it will strengthen your methods/stats muscles.
-** Importantly, it's a lot like adding random effects to your model – you model sources of structure in your data so that you can better estimate the particular effects of interest.
-*** The advice not to model covariates that aren't very correlated with your outcome is very frequentist, with the idea being that you lose power when you condition on too many things. In contrast, Gelman & Hill (2006) give more Bayesian advice: if you think a variable matters to your outcome, keep it in the model. This advice is consistent with the idea of modeling experimental covariates, even if they don't have a big correlation with the outcome. In the Bayesian framework, including this extra information should (maybe only marginally) improve your precision but you aren't "spending degrees of freedom" in the same way.
+
+<!-- ## Connection to Bayesian approaches -->
+
+<!-- * Say that what we have covered so far is essentially just the likelihood; formalize the intuition from "Estimation" about Bayesian inference to show how a prior affects the model specification -->
+
+
+## Chapter summary: Models
+
+
+
+<!-- structure in your data so that you can better estimate the particular effects of interest. -->
+<!-- *** The advice not to model covariates that aren't very correlated with your outcome is very frequentist, with the idea being that you lose power when you condition on too many things. In contrast, Gelman & Hill (2006) give more Bayesian advice: if you think a variable matters to your outcome, keep it in the model. This advice is consistent with the idea of modeling experimental covariates, even if they don't have a big correlation with the outcome. In the Bayesian framework, including this extra information should (maybe only marginally) improve your precision but you aren't "spending degrees of freedom" in the same way. -->
 
 
 
 
 
-## FROM PREVIOUS STRUCTURE: Inference and estimation for two-group designs
+<!-- ## FROM PREVIOUS STRUCTURE: Inference and estimation for two-group designs -->
 
-Throughout this book we've taken the position that the goal of experiments is to estimate a causal effect of interest, ideally as part of some theory of how different constructs relate to one another. All this talk of hypotheses and inferences above is only indirectly related to that goal. 
+<!-- Throughout this book we've taken the position that the goal of experiments is to estimate a causal effect of interest, ideally as part of some theory of how different constructs relate to one another. All this talk of hypotheses and inferences above is only indirectly related to that goal.  -->
 
-
-
-
-
-- Intuition builder: For very large n, or flat prior, Bayes and frequentist coincide. 
+<!-- - Intuition builder: For very large n, or flat prior, Bayes and frequentist coincide.  -->
 
 
-### Simple models of between-group differences
+<!-- ### Simple models of between-group differences -->
 
-Introducing simple inference models:
+<!-- Introducing simple inference models: -->
 
-- The chi-squared test for inferring whether two samples come from the same distribution
-- The t-test for inferring whether a single group’s effect differs from 0
-- The t-test for inferring whether two groups differ from one another
-- The paired t-test as a first glimpse at how we might account for participant-level random effects (see Chapter 7).
+<!-- - The chi-squared test for inferring whether two samples come from the same distribution -->
+<!-- - The t-test for inferring whether a single group’s effect differs from 0 -->
+<!-- - The t-test for inferring whether two groups differ from one another -->
+<!-- - The paired t-test as a first glimpse at how we might account for participant-level random effects (see Chapter 7). -->
 
 
-::: {.accident-report}
-⚠️ Accident report: Once you have the basic t-test under your belt, it might feel natural to compare each group to 0 and conclude that one group is different from 0 and the other one isn’t. But “the difference between significant and not significant is not necessarily itself statistically significant” (Nieuwenhuis, Forstmann, and Wagenmakers 2011). 
-:::
+<!-- ::: {.accident-report} -->
+<!-- ⚠️ Accident report: Once you have the basic t-test under your belt, it might feel natural to compare each group to 0 and conclude that one group is different from 0 and the other one isn’t. But “the difference between significant and not significant is not necessarily itself statistically significant” (Nieuwenhuis, Forstmann, and Wagenmakers 2011).  -->
+<!-- ::: -->
 
 
 
-How to go from theory to hypotheses to statistical model
+<!-- How to go from theory to hypotheses to statistical model -->
 
-Re-casting the t-test as a regression model 
+<!-- Re-casting the t-test as a regression model  -->
 
-::: {.interactive}
-⌨️ Interactive box: Visualizing how different tests are variants of linear models.
-:::
+<!-- ::: {.interactive} -->
+<!-- ⌨️ Interactive box: Visualizing how different tests are variants of linear models. -->
+<!-- ::: -->
 
-- Discrete data and logistic regression. Same thing, different linking function. (lead-in to GLM: probit, Poisson, beta, etc.).
+<!-- - Discrete data and logistic regression. Same thing, different linking function. (lead-in to GLM: probit, Poisson, beta, etc.). -->
 
-Multilevel regression models of a difference between two groups, controlling for experimental items and subject
+<!-- Multilevel regression models of a difference between two groups, controlling for experimental items and subject -->
 
-  - Sidebar: what should you control for? Different subcultures in psychology either post-hoc control for or look for moderation by demographic factors. We discuss the consequences of these decisions for both precision and causal inference. 
+<!--   - Sidebar: what should you control for? Different subcultures in psychology either post-hoc control for or look for moderation by demographic factors. We discuss the consequences of these decisions for both precision and causal inference.  -->
 
-Causality revisited: what can and can’t be concluded from an experiment
+<!-- Causality revisited: what can and can’t be concluded from an experiment -->
 
-::: {.accident-report}
-⚠️ Accident report: Mediation going wrong: even when you have a randomized experiment, you can still mess up your causal inference (Montgomery, Nyhan, and Torres 2018). 
-:::
+<!-- ::: {.accident-report} -->
+<!-- ⚠️ Accident report: Mediation going wrong: even when you have a randomized experiment, you can still mess up your causal inference (Montgomery, Nyhan, and Torres 2018).  -->
+<!-- ::: -->
 
-- Dropping subjects who fail a manipulation check can be problematic (Aronow, Baron, and Pinson 2019).
-- Mediation requires more confounding assumptions than causal inference about total effects, and these assumptions may be violated even in randomized experiments. 
-
-
-Estimating one quantity in isolation is often not the best thing to do. In almost any experiment, there will be variation in the estimate that has to do with other known sources. Imagine the Stroop effect, which has a fairly consistent effect on both fast and slow readers [@haaf2017]. But estimates of this effect will be more precise if we take into account that some readers are slower or faster, rather than just averaging across all this variation. That's why we need models that take into account different sources of variation. 
-
+<!-- - Dropping subjects who fail a manipulation check can be problematic (Aronow, Baron, and Pinson 2019). -->
+<!-- - Mediation requires more confounding assumptions than causal inference about total effects, and these assumptions may be violated even in randomized experiments.  -->
 
 
 
