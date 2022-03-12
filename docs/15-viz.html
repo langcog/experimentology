@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="Chapter 15 Visualization | Experimentology" />
+<meta property="og:type" content="book" />
+
+
+
+
+
+<meta name="author" content="Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke, Robert Hawkins, Maya Mathur, and Rondeline Williams" />
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<meta name="description" content="Chapter 15 Visualization | Experimentology">
+
+<title>Chapter 15 Visualization | Experimentology</title>
+
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="libs/jquery-3.5.1/jquery.min.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.18/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+<link rel="stylesheet" href="toc/toc.css" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul>
+<li class="part"><span><b>I Preliminaries</b></span></li>
+<li><a href="1-experiments.html#experiments"><span class="toc-section-number">1</span> Experiments</a></li>
+<li><a href="2-theories.html#theories"><span class="toc-section-number">2</span> Theories</a></li>
+<li><a href="3-replication.html#replication"><span class="toc-section-number">3</span> Replication and reproducibility</a></li>
+<li><a href="4-ethics.html#ethics"><span class="toc-section-number">4</span> Ethics</a></li>
+<li class="part"><span><b>II Statistics</b></span></li>
+<li><a href="5-estimation.html#estimation"><span class="toc-section-number">5</span> Estimation</a></li>
+<li><a href="6-inference.html#inference"><span class="toc-section-number">6</span> Inference</a></li>
+<li><a href="7-models.html#models"><span class="toc-section-number">7</span> Models</a></li>
+<li class="part"><span><b>III Design and Planning</b></span></li>
+<li><a href="8-measurement.html#measurement"><span class="toc-section-number">8</span> Measurement</a></li>
+<li><a href="9-design.html#design"><span class="toc-section-number">9</span> Design of experiments</a></li>
+<li><a href="10-sampling.html#sampling"><span class="toc-section-number">10</span> Sampling</a></li>
+<li><a href="11-prereg.html#prereg"><span class="toc-section-number">11</span> Preregistration</a></li>
+<li class="part"><span><b>IV Execution</b></span></li>
+<li><a href="12-selection.html#selection"><span class="toc-section-number">12</span> Experimental strategy</a></li>
+<li><a href="13-collection.html#collection"><span class="toc-section-number">13</span> Data collection</a></li>
+<li><a href="14-management.html#management"><span class="toc-section-number">14</span> Project management</a></li>
+<li class="part"><span><b>V Analysis and Reporting</b></span></li>
+<li><a href="15-viz.html#viz"><span class="toc-section-number">15</span> Visualization</a></li>
+<li><a href="16-eda.html#eda"><span class="toc-section-number">16</span> Exploratory data analysis</a></li>
+<li><a href="17-writing.html#writing"><span class="toc-section-number">17</span> Reproducible writing</a></li>
+<li><a href="18-meta.html#meta"><span class="toc-section-number">18</span> Meta-analysis</a></li>
+<li><a href="19-conclusions.html#conclusions"><span class="toc-section-number">19</span> Conclusions</a></li>
+<li class="part"><span><b>VI Appendices</b></span></li>
+<li><a href="20-git.html#git"><span class="toc-section-number">20</span> GitHub Tutorial</a></li>
+<li><a href="21-rmarkdown.html#rmarkdown"><span class="toc-section-number">21</span> R Markdown Tutorial</a></li>
+<li><a href="22-tidyverse.html#tidyverse"><span class="toc-section-number">22</span> Tidyverse Tutorial</a></li>
+<li><a href="23-ggplot.html#ggplot"><span class="toc-section-number">23</span> ggplot Tutorial</a></li>
+<li><a href="24-instructors.html#instructors"><span class="toc-section-number">24</span> Instructor’s guide</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="viz" class="section level1" number="15">
+<h1><span class="header-section-number">Chapter 15</span> Visualization</h1>
+<p><img src="images/viz/meme.jpg" width="\linewidth"  /></p>
+<div class="learning-goals">
+<p>🍎 Learning goals:</p>
+<ul>
+<li>Analyze the principles behind informative visualizations</li>
+<li>Incorporate visualization into analysis workflow</li>
+<li>Learn to make “the design plot”</li>
+<li>Select different visualizations of variability and distribution</li>
+<li>Connect visualization concepts to measurement principles.</li>
+</ul>
+</div>
+<p>What makes visualizations so useful, and what role do they play in the toolkit of experimentology?
+Simply put, data visualization is the act of “making the invisible visible.”
+Our visual systems are remarkably powerful pattern detectors, and relationships that aren’t at all clear when scanning through rows of raw data can immediately jump out at us when presented in an appropriate graphical form <span class="citation">(<a href="#ref-zacks2020designing" role="doc-biblioref">Zacks &amp; Franconeri, 2020</a>)</span>.
+Good visualizations aim to deliberately harness this power and put it to work at every stage of the research process, from the quick sanity checks we run when first reading in our data to the publication-quality figures we design when we are ready to communicate our findings.
+Yet our powerful pattern detectors can also be a liability; if we’re not careful, we can easily be fooled into seeing patterns that are unreliable or even misleading.
+As psychology moves into an era of bigger data and more complex behaviors, we become increasingly reliant on <strong>data visualization literacy</strong> <span class="citation">(<a href="#ref-borner2019data" role="doc-biblioref">Börner et al., 2019</a>)</span> to make sense of what is going on.</p>
+<div class="case-study">
+<p>🔬 Case study: Mapping a pandemic</p>
+<p><label for="tufte-mn-9" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-9" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/viz/snow_cholera_voronoi.jpeg"/> Mapping out a cholera epidemic (1854). Line shows region for which Broad Street pump is nearest.</span></span></p>
+<p>In 1854, a deadly outbreak of cholera was sweeping through London.
+The scientific consensus at the time was that diseases like cholera spread through breathing poisonous and foul-smelling vapors, an idea known as the “miasma theory” <span class="citation">(<a href="#ref-halliday2001death" role="doc-biblioref">Halliday, 2001</a>)</span>.
+An obstetrician and anesthesiologist named John Snow, however, had proposed an alternative theory: rather than spreading through foul air, he thought that it was spreading a polluted water supply <span class="citation">(<a href="#ref-snow1855mode" role="doc-biblioref">Snow, 1855</a>)</span>.
+To make a public case for this idea, he started counting cholera deaths.
+He marked each case on a map of the area, and indicated the locations of the water pumps for reference.
+Furthermore, a line could be drawn representing the region that was closest to each water pump, a technique which is now known as a <a href="https://en.wikipedia.org/wiki/Voronoi_diagram">Voronoi diagram</a>.
+The resulting illustration clearly reveals that cases clustered around an area called Golden Square, which received water from a pump on Broad Street.
+Although the precise causal role of these maps in Snow’s own thinking is disputed, and it is likely that he produced them well after the incident <span class="citation">(<a href="#ref-brody2000map" role="doc-biblioref">Brody et al., 2000</a>)</span>, they have nonetheless played a significant role in the history of data visualization <span class="citation">(<a href="#ref-friendly2021history" role="doc-biblioref">Friendly &amp; Wainer, 2021</a>)</span>.<label for="tufte-sn-182" class="margin-toggle sidenote-number">182</label><input type="checkbox" id="tufte-sn-182" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">182</span> Actually, the use of disease maps goes back even further! <span class="citation">(<a href="#ref-seaman1798inquiry" role="doc-biblioref">Seaman, 1798</a>)</span> mapped an outbreak of yellow fever in New York City to argue that deaths clustered around a handful of waste sites. He turned out to be right, but for the wrong reasons! These waste sites were breeding grounds for mosquitos, which were the real culprits. Coincidentally, Seaman is also known as the first to introduce vaccines to the United States. He vaccinated his children against smallpox and later organized a program to provide free vaccines to the public.</span>.</p>
+<p>Nearly two centuries later, as the Covid-19 pandemic swept through the world, governmental agencies like the <a href="https://covid.cdc.gov/covid-data-tracker">CDC</a> produced maps of the outbreak that have become much more familiar:</p>
+<div class="figure"><span id="fig:viz-covid"></span>
+<p class="caption marginnote shownote">
+Figure 15.1: Map showing the known locations of cumulative coronavirus cases by share of the population in each county (reproduced from the New York Times)
+</p>
+<img src="images/viz/covid-hot-spots.png" alt="Map showing the known locations of cumulative coronavirus cases by share of the population in each county (reproduced from the New York Times)" width="\linewidth"  />
+</div>
+<p>These maps make abstract statistics visible: By assigning higher cumulative case rates to darker colors, we can see at a glance which areas have been most affected.
+And we’re not limited by the spatial layout of a map.
+We’re now also used to seeing the horizontal axis correspond to <em>time</em> and the vertical axis correspond to some value at that time.
+Curves like the following, showing the 7-day average of new cases, allow us to see other patterns, like the <em>rate of change</em>.
+Even though more and more cases accumulate every day, we can see at a glance the different ‘waves’ of cases, and when they peaked.</p>
+<div class="figure"><span id="fig:viz-cases"></span>
+<p class="caption marginnote shownote">
+Figure 15.2: 7-day average of new reported COVID cases (reproduced from the New York Times)
+</p>
+<img src="images/viz/covid-cases.png" alt="7-day average of new reported COVID cases (reproduced from the New York Times)" width="\linewidth"  />
+</div>
+<p>While these visualizations capture purely descriptive statistics, we often want our visualizations to answer more specific questions.
+For example, we may ask about the effectiveness of vaccinations: how do case rates differ across vaccinated and unvaccinated populations?
+In this case, we may talk about ``breaking out’’ a curve by some other variable, like vaccination status:</p>
+<div class="figure"><span id="fig:viz-cases2"></span>
+<p class="caption marginnote shownote">
+Figure 15.3: Rates of COVID cases by vaccination status (reproduced from <a href="https://covid.cdc.gov/covid-data-tracker/#rates-by-vaccine-status"><code>covid.cdc.gov</code></a>)
+</p>
+<img src="images/viz/vaccination.png" alt="Rates of COVID cases by vaccination status (reproduced from [`covid.cdc.gov`](https://covid.cdc.gov/covid-data-tracker/#rates-by-vaccine-status))" width="\linewidth"  />
+</div>
+<p>From this visualization, we can see that unvaccinated individuals are about 6x more likely to test positive.
+At the same time, these visualizations were produced using <em>observational</em> data, and therefore make it challenging to draw causal inferences.
+For example, people were not randomly assigned to vaccination conditions, and those who have avoided vaccinations may differ in other ways than those who sought out vaccinations.
+Additionally, you may have noticed that these visualizations typically do not give a sense of the raw data, the sample sizes of each group, or uncertainty about the estimates.
+In this chapter, we will explore how to use visualizations in our own carefully controlled behavioral experiments that license causal inferences.</p>
+</div>
+<div id="basic-principles-of-confirmatory-visualization" class="section level2" number="15.1">
+<h2><span class="header-section-number">15.1</span> Basic principles of (confirmatory) visualization</h2>
+<p>In this section, we begin by introducing a few simple guidelines to keep in mind when making informative visualizations in the context of experimental psychology<label for="tufte-sn-183" class="margin-toggle sidenote-number">183</label><input type="checkbox" id="tufte-sn-183" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">183</span> Given this relatively narrow focus, a full treatment of visualization is outside the scope of this book. The classic volumes are by <span class="citation"><a href="#ref-tukey1977exploratory" role="doc-biblioref">John W. Tukey &amp; others</a> (<a href="#ref-tukey1977exploratory" role="doc-biblioref">1977</a>)</span> and <span class="citation"><a href="#ref-tufte1997visual" role="doc-biblioref">Edward R. Tufte &amp; Robins</a> (<a href="#ref-tufte1997visual" role="doc-biblioref">1997</a>)</span>, and we recommend <span class="citation"><a href="#ref-healy2018data" role="doc-biblioref">Healy</a> (<a href="#ref-healy2018data" role="doc-biblioref">2018</a>)</span> for a more contemporary guide. For the purposes of understanding the examples in this chapter, it should be sufficient to work through our R tutorials for data manipulation and visualization in Appendices C and D</span>.
+Remember that the needs may be distinct from other contexts, such as journalism or public policy.
+You may have seen beautiful and engaging full-page graphics with small print and a wealth of information.
+The art of designing and producing these graphics is typically known as <strong>infoviz</strong> and should be distinguished from what we call <strong>statistical visualization</strong> <span class="citation">(<a href="#ref-gelman2013" role="doc-biblioref">Gelman &amp; Unwin, 2013</a>)</span>.
+Roughly, infoviz aims to construct rich and immersive worlds to visually explore: a reader can spend hours pouring over the most intricate graphics and continue to find new and intriguing patterns.
+Statistical visualization, on the other hand, aims to crisply convey the logic of a specific inference at a glance.</p>
+<p>In this section, we review several basic principles of making statistical visualizations.
+These are the production-ready figures that anchor the results section of a paper and accompany the key, pre-registered analyses of interest.
+We then return below to the role of visualization in more exploratory analyses.</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:viz-infoviz"></span>
+<img src="images/viz/viz_infoviz.jpeg" alt="Unlike statistical visualization, which aims to clearly expose the logic of an experiment at a glance, infoviz aims to provide a rich world of patterns to explore [reproduced from @infoviz]." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 15.4: Unlike statistical visualization, which aims to clearly expose the logic of an experiment at a glance, infoviz aims to provide a rich world of patterns to explore <span class="citation">(reproduced from <a href="#ref-infoviz" role="doc-biblioref"><span>“Relativity’s Reach,”</span> 2015</a>)</span>.<!--</p>-->
+<!--</div>--></span>
+</p>
+<div id="principle-1-show-the-design" class="section level3" number="15.1.1">
+<h3><span class="header-section-number">15.1.1</span> Principle 1: Show the design</h3>
+<p>There are so many different kinds of graphs (bar graphs, line graphs, scatter plots, and pie charts) and so many different possible attributes of those graphs (colors, sizes, line types).
+How do we begin to decide how to navigate these decisions?
+The first principle guiding good statistical visualizations is to <em>show the design</em> of your experiment.
+There are strong (unwritten) conventions about how your analysis should map onto graphical elements, and following these conventions can minimize confusion.
+Start with the variables you manipulate, and make sure they are clearly visible.
+Conventionally, the primary manipulation of interest (e.g. condition) goes on the x-axis, and the primary measurement of interest (e.g. responses) goes on the y-axis.
+Other critical variables of interest (e.g. secondary manipulations, demographics) are then assigned to “visual variables” (e.g. color or size)
+Visualization libraries like <code>ggplot</code> help you think about exposing the design by asking you to make these assignments in an <code>aesthetics</code> layer that goes at the very top:</p>
+<pre><code>ggplot(aes(x = condition, y = response, color = ..., linetype = ..., ))</code></pre>
+</div>
+<div id="principle-2-facilitate-comparison" class="section level3" number="15.1.2">
+<h3><span class="header-section-number">15.1.2</span> Principle 2: Facilitate comparison</h3>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:viz-hierarchy"></span>
+<img src="images/viz/viz_hierarchy.png" alt="Principles of visual perception can help guide visualization choices." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 15.5: Principles of visual perception can help guide visualization choices.<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>Now that you’ve mapped your design clearly to the figure’s axes, how do you decide which graphical elements to display?
+In principle, you might think, these assignments are all arbitrary anyway: as long as we clearly label our choices, it doesn’t matter whether we use lines, points, bars, colors, textures, or shapes.
+While it’s true that there are many ways to show the same data, being thoughtful about our choices can make it much easier for readers to interpret our findings.
+The second principle is to <em>facilitate comparison</em> along the dimensions relevant to our scientific questions.
+For example, it is easier for our visual system to accurately compare the location of elements (e.g. noticing that one point is a certain distance away from another) than to compare their areas or colors (e.g. noticing that one point is bigger or brighter than another).
+To illustrate, suppose we have a simple pre-post design with two groups: a treatment group and a control group.</p>
+<p>We could always plot the means of each group as colors:</p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-29-1.png" width="\linewidth"  /></p>
+<p>or areas:</p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-30-1.png" width="\linewidth"  /></p>
+<p>These plots allow us to see that one condition is (qualitatively) bigger than others, but it’s hard to tell how much bigger.
+Additionally, this way of plotting the data places equal emphasis on phase and condition, but we may instead have in mind particular contrasts, like the <em>change</em> from pre- to post-tests and how that change differs across conditions.
+An alternative is to show four bars: two on the left showing the ‘pre’ phase and two on the right showing the ‘post’ phase.
+Maybe the control group is red and the treatment group is blue.</p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-31-1.png" width="\linewidth"  /></p>
+<p>This is slightly better: it’s easier to compare the heights of bars than the ‘blueness’ of squares, and mapping condition to color draws our eye to that contrast.
+However, we can do even better by noticing that the main question we are testing in our design is an <em>interaction</em>.
+Our statistic of interest is a difference of differences.
+To what extent is the pre-post change for the control group different than the pre-post change for the treatment group?
+Some researchers have gotten proficient at reading off interactions from bar plots, but they also require a complex set of eye movements.
+We have to look between the red bars, and then look between the blue bars and implicitly judge one difference against the other: the actual statistic isn’t explicitly shown anywhere!
+What could help facilitate this comparison?
+Consider the following line plot:</p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-32-1.png" width="\linewidth"  /></p>
+<p>Now the contrast we want to interpret is highlighted visually.
+It is easier to directly compare the slope of two lines than mentally compute a difference of differences between four bars.
+A few corollaries of this principle <a href="https://www.biostat.wisc.edu/~kbroman/presentations/IowaState2013/graphs_combined.pdf">see this helpful presentation from Karl Broman</a>:</p>
+<ul>
+<li><p>It is easier to compare values that are adjacent to one another. This is especially important when there are many different conditions included on the same plot. If particular sets of conditions are of theoretical interest, place them close to one another. Otherwise, sort conditions by a meaningful value (rather than alphabetically).</p></li>
+<li><p>When possible, put labels directly next to data rather than in a legend. Legends force readers to glance back and forth to remember what different colors or lines mean.</p></li>
+<li><p>When making histograms or density plots, it is challenging to compare distributions when they are place side-by-side. Instead, facilitate comparison of distributions by vertically aligning them, or making them transparent and placed on the same axes. v</p></li>
+<li><p>If the scale makes it hard to see important differences, consider transforming the data (e.g. taking the logarithm).</p></li>
+<li><p>If a key variable from your design is mapped to color, choose the color scale carefully. For example, if the variable is binary or categorical, choose visually distinct colors to maximize contrast (e.g. black, blue, and orange). If the variable is ordinal or continuous, use a color gradient. If there is a natural midpoint (e.g. if some values are negative and some are positive), consider using a diverging scale (e.g. different colors at each extreme). Remember also that a portion of your audience may be color-blind. Palettes like <a href="https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html">viridis</a> have been designed to be colorblind-friendly and also perceptually uniform (i.e. the perceived difference between 0.1 and 0.2 is approximately the same as the difference between 0.8 and 0.9). Finally, if the same manipulation or variable appears across multiple figures in your paper, keep the color mapping consistent: it is confusing if ‘red’ means something different from figure to figure.</p></li>
+</ul>
+<p><img src="images/viz/ggplot_meme.jpg" width="\linewidth"  /></p>
+</div>
+<div id="principle-3-show-the-data" class="section level3" number="15.1.3">
+<h3><span class="header-section-number">15.1.3</span> Principle 3: Show the data</h3>
+<p>Looking at older papers, you may be alarmed to notice how little information is contained in the graphs.
+The worst offenders might show just two bars, representing averaged values for two conditions.
+This kind of plot adds very little beyond a sentence in the text reporting the means, but it can also be seriously misleading.
+It hides real variation in the data, making a noisy effect based on a few data points look the same as a more systematic one based on a larger sample.
+Additionally, it collapses the <em>distribution</em> of the data, making a multi-modal distribution look the same as a unimodal one.
+The third principle of modern statistical visualization is therefore to <em>show the data</em> to visualize variability in some form.</p>
+<p>The most minimal form of this principle is to <em>always include error bars</em><label for="tufte-sn-184" class="margin-toggle sidenote-number">184</label><input type="checkbox" id="tufte-sn-184" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">184</span> And be sure to tell the reader what the error bars represent (a 95% confidence interval? a standard error of the mean?)</span>
+Error bars turn a purely descriptive visualization (e.g showing COVID-19 case counts over time) into an inferential one.
+They represent a minimal form of uncertainty about the possible statistics that might have been observed, not just the one that was actually observed.
+As such, they allow the viewer to interpret the means as <em>estimates</em>.</p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-33-1.png" width="\linewidth"  /></p>
+<p>But we can do even better.
+By overlaying the distribution of the actual data points on the same plot, we can give the reader information not just about the statistical inferences but the underlying data supporting those inferences.
+There are many ways of showing the distribution.
+For example, a ‘boxplot’ shows the median (a horizontal line) in the center of a box extending from the lower quartile (25%) to the upper quartile (75%).
+Lines then extend out to the biggest and smallest values (excluding outliers, which are shown as dots).</p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-34-1.png" width="\linewidth"  /></p>
+<p>We can also show the raw data as jittered values with low transparency:</p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-35-1.png" width="\linewidth"  />
+Perhaps the format that takes this principle the furthest is the so-called “raincloud plot” <span class="citation">(<a href="#ref-allen2019raincloud" role="doc-biblioref">Micah Allen et al., 2019</a>)</span>.
+A raincloud plot combines the raw data (the ‘rain’) with a smoothed density (the ‘cloud’) and a boxplot giving the median and quartiles of the distribution.</p>
+<div class="figure"><span id="fig:raincloud"></span>
+<p class="caption marginnote shownote">
+Figure 15.6: Example of a raincloud plot, reproduced from <span class="citation"><a href="#ref-allen2019raincloud" role="doc-biblioref">Micah Allen et al.</a> (<a href="#ref-allen2019raincloud" role="doc-biblioref">2019</a>)</span>
+</p>
+<img src="images/viz/raincloud.png" alt="Example of a raincloud plot, reproduced from @allen2019raincloud" width="\linewidth"  />
+</div>
+<div class="interactive">
+<p>⌨️ Interactive box: Visualizing uncertainty with error bars</p>
+<p>One common misconception is that error bars are a measure of variance <em>in the data</em>, like the standard deviation of the response variable.
+Instead, they typically represent a measure of precision extracted from the statistical model.
+In older papers, for example, it was common to use the standard error of the mean (SEM; see Chapter XXX).
+Remember that this is not the standard deviation of the data distribution but of the <em>sampling distribution</em> of the mean that is being estimated.
+Given the central limit theorem, which tells us that this sampling distribution is asymptotically normal, it was straightforward to estimate the standard error analytically using the empirical standard deviation of the data divided by the square root of the sample size: <code>sd(x) / sqrt(length(x))</code>.
+Error bars based on the SEM often looked misleadingly small, as they only represent a 68% interval of the sampling distribution and go to zero quickly as a function of sample size.
+As a result, it became more common to show the 95% confidence interval instead: [-1.96 <span class="math inline">\(\times\)</span> SEM, 1.96 <span class="math inline">\(\times\)</span> SEM].</p>
+<p>While these analytic equations remain common, an increasingly popular alternative is to <em>bootstrap</em> confidence intervals.
+A deep theoretical understanding of the bootstrap technique is outside the scope of this text, but you can think of it as a way of deriving a sampling distribution from your dataset using <em>simulations</em> instead of mathematical derivations about the properties of the sampling distribution.
+The bootstrap is a powerfully generic technique, especially when you want to show error bars for summary statistics that are more complex than means, where we do not have such convenient asymptotic guarantees and “closed-form” equations.
+For example, suppose you are working with a skewed response variable or a dataset with clear outliers, and you want to estimate medians and quartiles.<br />
+Or suppose you want to estimate proportions from categorical data, or a more <em>ad hoc</em> statistic like the AUC (area underneath the curve) in a hierarchical design where it is not clear how to aggregate across items or participants in a mixed-effects model.
+Analytic estimators of confidence intervals can in principle be derived for these statistics, subject to different assumptions, but it is often more transparent and reliable in practice to use the bootstrap.
+As long as you can write a code snippet to compute a value from a dataset, you can use the bootstrap.</p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-36-1.png" width="\linewidth"  /></p>
+<p>As we can see, the bootstrapped 95% CI looks similar to the analytic 95% CI derived from the standard error, except the upper and lower limits are slightly asymmetric (reflecting outliers in one direction or another).
+Of course, the boostrap is not a silver bullet and can be abused in particularly small samples.
+This is because the bootstrap is fundamentally limited to the sample we run it on.
+It can be expected to be reasonably accurate if the sample is reasonably representative of the population.
+But at the end of the day, as they say, “there’s no such thing as a free lunch.”
+In other words, we cannot magically pull more information out of a small sample without making additional assumptions about the data generating process.</p>
+</div>
+</div>
+<div id="principle-4-maximize-information-minimize-ink" class="section level3" number="15.1.4">
+<h3><span class="header-section-number">15.1.4</span> Principle 4: Maximize information, minimize ink</h3>
+<p>Now that we have the basic graphical elements in place to show our design and data, it might seem like the rest is purely a matter of aesthetic preference, like choosing a pretty color scheme or font.
+However, even at this stage there are well-founded principles to make the difference between an effective visualization and a confusing one.
+Simply put, we should try to use the simplest possible presentation of the maximal amount of information: we should maximize the “data-ink ratio.”
+To calculate the amount of information shown, <span class="citation"><a href="#ref-tufte2001visual" role="doc-biblioref">E. R. Tufte</a> (<a href="#ref-tufte2001visual" role="doc-biblioref">1983</a>)</span> suggested a measure called the “data density index” (ddi), the “numbers plotted per square inch.”
+The worst offenders have a very low density while also using a lot of excess ink.</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:viz-bad"></span>
+<img src="images/viz/bad-viz1.png" alt="This figure uses a lot to ink to show exactly three numbers, for a &quot;ddi&quot; of $0.2$ [This came from the Washington Post, 1978; see @wainer1984display for other examples]." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 15.7: This figure uses a lot to ink to show exactly three numbers, for a “ddi” of <span class="math inline">\(0.2\)</span> <span class="citation">(This came from the Washington Post, 1978; see <a href="#ref-wainer1984display" role="doc-biblioref">Wainer, 1984</a> for other examples)</span>.<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:viz-bad2"></span>
+<img src="images/viz/roeder_badviz.jpeg" alt="This figure uses complicated 3D ribbons to compare distributions across four countries [from @roeder1994dna]. How could the same data have been presented more legibly?" width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 15.8: This figure uses complicated 3D ribbons to compare distributions across four countries <span class="citation">(from <a href="#ref-roeder1994dna" role="doc-biblioref">Roeder, 1994</a>)</span>. How could the same data have been presented more legibly?<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>The defaults in modern visualization libraries like <code>ggplot</code> prevent some of the worst offenses, but are still often suboptimal.
+For example: consider whether the visual complexity introduced by the default grey background and grid lines is justified, or whether a more minimal theme would be sufficient (see the <a href="https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/"><code>ggthemes</code></a> package for a good collection of themes).</p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-37-1.png" width="\linewidth"  /></p>
+<p>A few additional tips:</p>
+<ul>
+<li><p>Make sure the font size of all text in your figures is legible and no smaller than other text in your paper (e.g. 10pt). This may require, for example, making the axis breaks sparser, rotating text, or changing the aspect ratio of the figure.</p></li>
+<li><p>An important tool to keep in your visualization arsenal is the <em>facet plot</em>. When your experimental design becomes more complex, consider breaking variables out into a <em>grid</em> of facets instead of packing more and more colors and line-styles onto the same axis. In other words, while higher ‘information density’ is typically a good thing, you want to aim for the sweet spot before it becomes too dense and confusing. Remember Principle 2. When there is too much going on in every square inch, it is difficult to guide your readers eye to the comparisons that actually matter, and spreading it out across facets gives you additional control over the salient patterns.</p></li>
+<li><p>Sometimes these principles come into conflict, and you may need to prioritize legibility over, for example, showing all of the data. For example, suppose there is an outlier orders of magnitude away from the summary statistics. If the axis limits are zoomed out to show that point, then most of the plot will be blank space! It is reasonable to decide that it is not worth compressing the key statistical question of your visualization the bottom centimeter just to show one point. It may suffice to truncate the axes and note in the caption that a single point was excluded.</p></li>
+<li><p>Fix the axis labels. A common mistake is to keep the default shorthand you used to name variables in your plotting software instead of more descriptive labels. Use consistent terminology for different manipulations in the main text and figures. If anything might be clear, explain it in the caption.</p></li>
+<li><p>Different audiences may require different levels of specificity. Sometimes it is better to collapse over secondary variables (even if they are included in your statistical models) in order to control the density of the figure and draw attention to the key question of interest.</p></li>
+</ul>
+<!-- ::: {.case-study} -->
+<!-- 🔬 Case study: Sklar et al. (2012) reported evidence of “unconscious” arithmetic. Further reanalyses didn’t support this finding (Moors and Hesselmann 2018). Rabagliati et al. (2018) also failed to replicate. Visualizations provide a framework for asking about the ways the measurements relate to the manipulation that might have shed light on the issues.  -->
+<!-- ::: -->
+</div>
+</div>
+<div id="exploratory-visualization" class="section level2" number="15.2">
+<h2><span class="header-section-number">15.2</span> Exploratory visualization</h2>
+<p>So far in this chapter we have focused on principles of <em>confirmatory</em> data visualization: how to make ‘production-quality’ figures that convey the key pre-registered analyses without hiding sources of variablility or misleading readers about the reliability of the results.
+Yet this is only one role that data visualization plays when doing science.
+An equally important role is called <em>exploratory visualization</em>: the more routine practice of understanding one’s own data by visualizing it.
+In a sense, this role is analogous to the sense of exploratory analyses in Chapter XX.
+We typically do not pre-register exploratory visualizations, and when we decide to include them in a paper they are typically in the service of a secondary argument (e.g. checking the robustness of an effect or validating that some assumption is satisfied).</p>
+<p>But, at least in our experience, this kind of visualization plays a much more ubiquitous role in the analyst’s day-to-day activities.
+While confirmatory visualization is primarily audience-driven and concerned with visual communication, exploratory visualization is first and foremost a “cognitive tool” for the analyst.
+The first time we load in a new dataset, we start up a new feedback loop.
+We ask ourselves questions and answer them by making pictures.
+These pictures then raise furher questions and are often our best tool for debugging our code.
+In this section, we consider best practices for exploratory visualization.</p>
+<div id="distributional-information" class="section level3" number="15.2.1">
+<h3><span class="header-section-number">15.2.1</span> Distributional information</h3>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:viz-anscome"></span>
+<img src="images/viz/viz_anscombe.png" alt="Anscombe's quartet [@anscombe1973graphs]." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 15.9: Anscombe’s quartet <span class="citation">(<a href="#ref-anscombe1973graphs" role="doc-biblioref">Anscombe, 1973</a>)</span>.<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>The central insight of exploratory visualization – the reason it is uniquely important for data science – is that it gives us access to holistic, distributional information that cannot be captured in any single summary statistic.
+The most famous example is known as “Anscombe’s quartet,” a set of four datasets with identical statistics.
+They have the same means, the same variances, the same correlation, the same regression line, and the same <span class="math inline">\(R^2\)</span> value.
+Yet when they are plotted, they reveal striking structural differences.
+The first looks like a noisy linear relationship – the kind of idealized relationship we imagine when we imagine a regression line.
+But the second is a perfect quadratic arc, the third is a perfectly noiseless line with a single outlier, and the fourth is nearly categorical: every observation except one shares exactly the same x-value.</p>
+<p>If our analyses are supposed to help us distinguish between different data-generating processes, corresponding to different psychological theories, it is clear that these four datasets would correspond to dramatically different theories even though they share the same statistics.
+Of course, there are arbitrarily many datasets with the same statistics, and most of these differences don’t matter (this is why they are called “summary” statistics, after all!)
+The problem arises when we operationalize a theory’s predictions in terms of a single statistic (e.g. a difference between groups) and lose track of the bigger pattern.
+Visualization forces us to zoom out and see the bigger picture.</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:viz-datasaurus"></span>
+<img src="images/viz/datasaurus.png" alt="Originally inspired by a figure constructed by [@datasaurus](http://www.thefunctionalart.com/2016/08/download-datasaurus-never-trust-summary.html) using the (drawMyData)[http://robertgrantstats.co.uk/drawmydata.html] tool, we can actually construct an arbitrary number of different graphs with exactly the same statistics [@matejka2017same,@murray2021generating]. This set, known as the [The Datasaurus Dozen](https://www.autodesk.com/research/publications/same-stats-different-graphs), even has the same set of boxplots." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 15.10: Originally inspired by a figure constructed by <span class="citation">(<a href="#ref-datasaurus" role="doc-biblioref">Cairo, n.d.</a>)</span>(<a href="http://www.thefunctionalart.com/2016/08/download-datasaurus-never-trust-summary.html" class="uri">http://www.thefunctionalart.com/2016/08/download-datasaurus-never-trust-summary.html</a>) using the (drawMyData)[<a href="http://robertgrantstats.co.uk/drawmydata.html" class="uri">http://robertgrantstats.co.uk/drawmydata.html</a>] tool, we can actually construct an arbitrary number of different graphs with exactly the same statistics <span class="citation"><a href="#ref-murray2021generating" role="doc-biblioref">Murray &amp; Wilson</a> (<a href="#ref-murray2021generating" role="doc-biblioref">2021</a>)</span>. This set, known as the <a href="https://www.autodesk.com/research/publications/same-stats-different-graphs">The Datasaurus Dozen</a>, even has the same set of boxplots.<!--</p>-->
+<!--</div>--></span>
+</p>
+</div>
+<div id="data-diagnostics" class="section level3" number="15.2.2">
+<h3><span class="header-section-number">15.2.2</span> Data diagnostics</h3>
+<p>Our data is always messier than we expect.
+There might be a bug in our coding scheme, a column might be mislabeled, or might contain a range of values that we didn’t expect.
+Maybe our design wasn’t perfectly balanced, or something went wrong with a particular participant’s keyboard presses.<br />
+Most of the time, it’s not tractable to manually scroll through our raw data looking for such problems.
+Visualization is our first line of defense for the all-important process of running “data diagnostics.”
+If there is a weird artifact in our data, it will pop out if we just make the right visualizations.</p>
+<p>So which visualizations should we start with?
+The best practice is to always start by making histograms of the raw data.
+For example, here are the histograms for the classic <code>iris</code> dataset containing measurements from different kinds of flowers.</p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-38-1.png" width="\linewidth"  /></p>
+<p>Immediately we can see that sepal length and width seem to be distributed roughly normally, but petal length and petal width look bimodal.
+We might then break out the data by species:</p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-39-1.png" width="\linewidth"  /></p>
+<p>It looks like there is generally strong distributional separation across the different species.
+In the case of petal length and width, they barely overlap.</p>
+<p>While these data look clean, the same visualization often reveals outliers.
+For example, we might notice a datapoint with a negative value, which shouldn’t be possible (these are lengths and widths!)
+Or we might notice gaps in the data for a particular species, with lengths being clustered around integer values, which might indicate that the researcher in charge of doing data entry for that species was rounding in a different way than the other species.
+Or we might might notice that the “species” attribute is missing for some values, and trace it back to a bug reading in our data (maybe there was a missing comma in our <code>csv</code> file).</p>
+<p>In addition to these histograms, it is natural to proceed to looking at pairwise relationships, which we aren’t able to determine from independent histograms.
+The <code>ggpairs</code> function in the <code>ggally</code> package makes this particularly straightforward.</p>
+<p><img src="experimentology_files/figure-html/unnamed-chunk-40-1.png" width="\linewidth"  /></p>
+<p>For example, we can immediately notice that petal length and width are strongly correlated with one another, and we might start to worry about co-linearity problems in a regression trying to tease them apart (see Chapter XX).
+Conversely, the bi-modality of the relationship between sepal length and petal length looks more complicated.
+There is one cloud of points that is strongly correlated, but another cloud of points that is not: they have the same short petal length regardless of sepal length.
+Reporting a single correlation and claiming a relationship between petal length and sepal length (<span class="math inline">\(r=.87, p&lt;0.001\)</span>) might therefore be misleading.
+Instead, we might want to be careful to break this relationship out by species and test whether it is stronger for some species than others.</p>
+<div class="accident-report">
+<p>⚠️ Accident report: [Distributional] gorillas in our midst.</p>
+<p>Many data scientists don’t bother checking what their data looks like before proceeding to test specific hypotheses.
+<span class="citation"><a href="#ref-yanai2020" role="doc-biblioref">Yanai &amp; Lercher</a> (<a href="#ref-yanai2020" role="doc-biblioref">2020</a>)</span> cleverly designed an artificial dataset for their students to test for such blindness.
+Each row of the dataset contained an individual’s body mass index (BMI) and the number of steps they walked on a given day.
+While the spreadsheet looked innocuous, the data was constructed such that simply plotting the raw data revealed a picture of a gorilla.
+One group of 19 students was given an explicit set of hypotheses to test (e.g. about the relationship between BMI and steps).
+Fourteen of these students failed to notice a gorilla, suggesting that they evaluated these hypotheses without ever visualizing their data.
+Another group of 14 students were simply asked what, if anything, they could conclude (without being given explicit hypotheses).
+More of these students apparently made the visualization, but five of them still failed to notice the gorilla!</p>
+<p><label for="tufte-mn-10" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-10" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/viz/gorilla.png"/> A dataset was constructed by <span class="citation"><span class="citation"><a href="#ref-yanai2020" role="doc-biblioref">Yanai &amp; Lercher</a> (<a href="#ref-yanai2020" role="doc-biblioref">2020</a>)</span></span> which revealed a picture of a gorilla when the raw data were plotted.</span></span></p>
+<p>While it may not be surprising that a group of students would take the shortest path to completing their assignment, similar concerns have been raised in much more serious cases concerning how experienced researchers could fail to notice obviously fraudulent data.
+For example, when <span class="citation">(<a href="#ref-datacolada" role="doc-biblioref"><em>Evidence of Fraud in an Influential Field Experiment about Dishonesty</em>, 2021</a>)</span> made a simple histogram of the car mileage data reported in <span class="citation">(<a href="#ref-shu2012signing" role="doc-biblioref">Shu et al., 2012</a>)</span> and released publicly by <span class="citation">(<a href="#ref-kristal2020signing" role="doc-biblioref">Kristal et al., 2020</a>)</span>, they were immediately able to observe that it followed a perfectly uniform distribution, truncated at exactly 50,000 miles.
+Given a little thought, this pattern should be extremely puzzling.
+Over a given period of time, we would typically expect something more bell-shaped: a small number of people will drive very little (e.g. 1000 miles), a small number of people will drive a lot (e.g. 50,000 miles), and most people will fall between these tails.
+So it is highly surprising to find exactly the same number of drivers in every mileage bin.
+While further specialized analyses revealed further evidence of fraud (e.g. based on patterns of rounding and pairs of duplicated data points), this humble histogram was already enough to set off alarm bells.
+A recurring regret raised by the co-authors of this paper is that they never thought to making this visualization before reporting their statistical tests.</p>
+<p><label for="tufte-mn-11" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-11" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/viz/data_colada_uniform.png"/> A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!</span></span></p>
+</div>
+</div>
+</div>
+<div id="conclusion" class="section level2" number="15.3">
+<h2><span class="header-section-number">15.3</span> Conclusion</h2>
+<p>Summary.</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-allen2019raincloud" class="csl-entry">
+Allen, Micah, Poggiali, D., Whitaker, K., Marshall, T. R., &amp; Kievit, R. A. (2019). Raincloud plots: A multi-platform tool for robust data visualization. <em>Wellcome Open Research</em>, <em>4</em>.
+</div>
+<div id="ref-anscombe1973graphs" class="csl-entry">
+Anscombe, F. J. (1973). Graphs in statistical analysis. <em>The American Statistician</em>, <em>27</em>(1), 17–21.
+</div>
+<div id="ref-borner2019data" class="csl-entry">
+Börner, K., Bueckle, A., &amp; Ginda, M. (2019). Data visualization literacy: Definitions, conceptual frameworks, exercises, and assessments. <em>Proceedings of the National Academy of Sciences</em>, <em>116</em>(6), 1857–1864.
+</div>
+<div id="ref-brody2000map" class="csl-entry">
+Brody, H., Rip, M. R., Vinten-Johansen, P., Paneth, N., &amp; Rachman, S. (2000). Map-making and myth-making in broad street: The london cholera epidemic, 1854. <em>The Lancet</em>, <em>356</em>(9223), 64–68.
+</div>
+<div id="ref-datasaurus" class="csl-entry">
+Cairo, A. (n.d.). <em>Download the datasaurus: Never trust summary statistics alone; always visualize your data.</em> <a href="http://www.thefunctionalart.com/2016/08/downloaddatasaurus-never-trust-summary.html">http://www.thefunctionalart.com/2016/08/downloaddatasaurus-never-trust-summary.html</a>
+</div>
+<div id="ref-datacolada" class="csl-entry">
+<em>Evidence of fraud in an influential field experiment about dishonesty</em>. (2021). <a href="https://datacolada.org/98">https://datacolada.org/98</a>
+</div>
+<div id="ref-friendly2021history" class="csl-entry">
+Friendly, M., &amp; Wainer, H. (2021). <em>A history of data visualization and graphic communication</em>. Harvard University Press.
+</div>
+<div id="ref-gelman2013" class="csl-entry">
+Gelman, A., &amp; Unwin, A. (2013). Infovis and statistical graphics: Different goals, different looks. <em>J. Comput. Graph. Stat.</em>, <em>22</em>(1), 2–28.
+</div>
+<div id="ref-halliday2001death" class="csl-entry">
+Halliday, S. (2001). Death and miasma in victorian london: An obstinate belief. <em>British Medical Journal</em>, <em>323</em>(7327), 1469–1471.
+</div>
+<div id="ref-healy2018data" class="csl-entry">
+Healy, K. (2018). <em>Data visualization: A practical introduction</em>. Princeton University Press.
+</div>
+<div id="ref-kristal2020signing" class="csl-entry">
+Kristal, A. S., Whillans, A. V., Bazerman, M. H., Gino, F., Shu, L. L., Mazar, N., &amp; Ariely, D. (2020). Signing at the beginning versus at the end does not decrease dishonesty. <em>Proceedings of the National Academy of Sciences</em>, <em>117</em>(13), 7103–7107.
+</div>
+<div id="ref-murray2021generating" class="csl-entry">
+Murray, L. L., &amp; Wilson, J. G. (2021). Generating data sets for teaching the importance of regression analysis. <em>Decision Sciences Journal of Innovative Education</em>, <em>19</em>(2), 157–166.
+</div>
+<div id="ref-infoviz" class="csl-entry">
+Relativity’s reach. (2015). In <em>Scientific American</em> (No. 3; Vol. 313, pp. 56–59).
+</div>
+<div id="ref-roeder1994dna" class="csl-entry">
+Roeder, K. (1994). DNA fingerprinting: A review of the controversy. <em>Statistical Science</em>, 222–247.
+</div>
+<div id="ref-seaman1798inquiry" class="csl-entry">
+Seaman, V. (1798). <em>An inquiry into the cause of the prevalence of the yellow fever in new-york</em>. T.; J. Swords.
+</div>
+<div id="ref-shu2012signing" class="csl-entry">
+Shu, L. L., Mazar, N., Gino, F., Ariely, D., &amp; Bazerman, M. H. (2012). Signing at the beginning makes ethics salient and decreases dishonest self-reports in comparison to signing at the end. <em>Proceedings of the National Academy of Sciences</em>, <em>109</em>(38), 15197–15200.
+</div>
+<div id="ref-snow1855mode" class="csl-entry">
+Snow, J. (1855). <em>On the mode of communication of cholera</em>. John Churchill.
+</div>
+<div id="ref-tufte2001visual" class="csl-entry">
+Tufte, E. R. (1983). <em>The visual display of quantitative information</em>. Graphics Press.
+</div>
+<div id="ref-tufte1997visual" class="csl-entry">
+Tufte, Edward R., &amp; Robins, D. (1997). <em>Visual explanations</em>. Graphics Press.
+</div>
+<div id="ref-tukey1977exploratory" class="csl-entry">
+Tukey, John W., &amp; others. (1977). <em>Exploratory data analysis</em> (Vol. 2). Reading, Mass.
+</div>
+<div id="ref-wainer1984display" class="csl-entry">
+Wainer, H. (1984). How to display data badly. <em>The American Statistician</em>, <em>38</em>(2), 137–147.
+</div>
+<div id="ref-yanai2020" class="csl-entry">
+Yanai, I., &amp; Lercher, M. (2020). A hypothesis is a liability. <em>Genome Biology</em>, <em>21</em>(1), 231–231.
+</div>
+<div id="ref-zacks2020designing" class="csl-entry">
+Zacks, J. M., &amp; Franconeri, S. L. (2020). Designing graphs for decision-makers. <em>Policy Insights from the Behavioral and Brain Sciences</em>, <em>7</em>(1), 52–63.
+</div>
+</div>
+<p style="text-align: center;">
+<a href="14-management.html"><button class="btn btn-default">Previous</button></a>
+<a href="16-eda.html"><button class="btn btn-default">Next</button></a>
+</p>
+</div>
+</div>
+
+<script src="toc/toc.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="Chapter 10 Sampling | Experimentology" />
+<meta property="og:type" content="book" />
+
+
+
+
+
+<meta name="author" content="Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke, Robert Hawkins, Maya Mathur, and Rondeline Williams" />
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<meta name="description" content="Chapter 10 Sampling | Experimentology">
+
+<title>Chapter 10 Sampling | Experimentology</title>
+
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="libs/jquery-3.5.1/jquery.min.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.18/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+<link rel="stylesheet" href="toc/toc.css" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul>
+<li class="part"><span><b>I Preliminaries</b></span></li>
+<li><a href="1-experiments.html#experiments"><span class="toc-section-number">1</span> Experiments</a></li>
+<li><a href="2-theories.html#theories"><span class="toc-section-number">2</span> Theories</a></li>
+<li><a href="3-replication.html#replication"><span class="toc-section-number">3</span> Replication and reproducibility</a></li>
+<li><a href="4-ethics.html#ethics"><span class="toc-section-number">4</span> Ethics</a></li>
+<li class="part"><span><b>II Statistics</b></span></li>
+<li><a href="5-estimation.html#estimation"><span class="toc-section-number">5</span> Estimation</a></li>
+<li><a href="6-inference.html#inference"><span class="toc-section-number">6</span> Inference</a></li>
+<li><a href="7-models.html#models"><span class="toc-section-number">7</span> Models</a></li>
+<li class="part"><span><b>III Design and Planning</b></span></li>
+<li><a href="8-measurement.html#measurement"><span class="toc-section-number">8</span> Measurement</a></li>
+<li><a href="9-design.html#design"><span class="toc-section-number">9</span> Design of experiments</a></li>
+<li><a href="10-sampling.html#sampling"><span class="toc-section-number">10</span> Sampling</a></li>
+<li><a href="11-prereg.html#prereg"><span class="toc-section-number">11</span> Preregistration</a></li>
+<li class="part"><span><b>IV Execution</b></span></li>
+<li><a href="12-selection.html#selection"><span class="toc-section-number">12</span> Experimental strategy</a></li>
+<li><a href="13-collection.html#collection"><span class="toc-section-number">13</span> Data collection</a></li>
+<li><a href="14-management.html#management"><span class="toc-section-number">14</span> Project management</a></li>
+<li class="part"><span><b>V Analysis and Reporting</b></span></li>
+<li><a href="15-viz.html#viz"><span class="toc-section-number">15</span> Visualization</a></li>
+<li><a href="16-eda.html#eda"><span class="toc-section-number">16</span> Exploratory data analysis</a></li>
+<li><a href="17-writing.html#writing"><span class="toc-section-number">17</span> Reproducible writing</a></li>
+<li><a href="18-meta.html#meta"><span class="toc-section-number">18</span> Meta-analysis</a></li>
+<li><a href="19-conclusions.html#conclusions"><span class="toc-section-number">19</span> Conclusions</a></li>
+<li class="part"><span><b>VI Appendices</b></span></li>
+<li><a href="20-git.html#git"><span class="toc-section-number">20</span> GitHub Tutorial</a></li>
+<li><a href="21-rmarkdown.html#rmarkdown"><span class="toc-section-number">21</span> R Markdown Tutorial</a></li>
+<li><a href="22-tidyverse.html#tidyverse"><span class="toc-section-number">22</span> Tidyverse Tutorial</a></li>
+<li><a href="23-ggplot.html#ggplot"><span class="toc-section-number">23</span> ggplot Tutorial</a></li>
+<li><a href="24-instructors.html#instructors"><span class="toc-section-number">24</span> Instructor’s guide</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="sampling" class="section level1" number="10">
+<h1><span class="header-section-number">Chapter 10</span> Sampling</h1>
+<div class="learning-goals">
+<p>🍎 Learning goals:</p>
+<ul>
+<li>Learn how to choose an appropriate sample size</li>
+<li>Generalize notion of sample size to other axes of generalizability</li>
+<li>Reason about limitations of different samples</li>
+</ul>
+</div>
+<p>As we keep reminding you, experiments are designed to yield measurements of a causal effect. But a causal effect of what, and on whom? These are questions that are often given surprisingly little air time in our papers. Titles in our top journals read “Daxy thinking promotes fribbles,” “Doing fonzy improves smoodling,” or “Blicket practice produces more foozles than smonkers.”<label for="tufte-sn-144" class="margin-toggle sidenote-number">144</label><input type="checkbox" id="tufte-sn-144" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">144</span> Titles changed to protect the original authors. These researchers might very well have said more specific things in the text of their paper.</span> Each of these uses <strong>generic language</strong> to state a claim that is implied to be generally true <span class="citation">(<a href="#ref-dejesus2019" role="doc-biblioref">DeJesus et al., 2019</a>)</span>,<label for="tufte-sn-145" class="margin-toggle sidenote-number">145</label><input type="checkbox" id="tufte-sn-145" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">145</span> Generic language is a fascinating linguistic phenomenon. When we say things like “mosquitoes transmit malaria,” we don’t mean that <em>all</em> mosquitos do it, only something like “it’s a valid and diagnostic generalization about mosquitoes in contrast to other relevant insects or other creatures that they are spreaders of malaria” <span class="citation">(<a href="#ref-tessler2019" role="doc-biblioref">Tessler &amp; Goodman, 2019</a>)</span>.</span> but for each of these, we could reasonably ask “doing fonzy improves smoodling <em>for whom</em>?” Is it everyone? Or a particular set of people? And similarly, we might want to ask “<em>how much</em> and <em>what kind</em> of fonzy reading?” These are questions about the <strong>generalizability of research</strong>.<label for="tufte-sn-146" class="margin-toggle sidenote-number">146</label><input type="checkbox" id="tufte-sn-146" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">146</span> Imagine for a second what a non-generic version of one of these titles might look like: “Reading one particular selection of fonzy for fifteen minutes in the lab improved 36 college students’ smoodling scores on a questionnaire.” It seems pretty clear that we wouldn’t let the authors get away with a fully general version of their claim: “Doing [<em>any</em>] fonzy improves smoodling [<em>for anyone</em>].” That’s just a bad generalization.</span></p>
+<p>We’ve already run into generalizability in our treatment of statistical estimation and inference. When we estimated a particular quantity (say, the effect of fonzy), we did so in our own sample. But we then used inferential tools to reason about how this <strong>sample</strong>’s estimate related to the <strong>population</strong> as a whole. How do we link up these statistical tools for generalization to the scientific questions we have about the generalizability of our findings? That’s the question of this chapter.</p>
+<p>The first key set of decisions in experiment planning is what population to sample from and how to sample. We’ll start by talking about the basics of <strong>sampling theory</strong>: different ways of sampling and the generalizations they do and don’t license. In this context, we also discuss <strong>stimulus sampling</strong>, a pervasive and under-appreciated challenge to the generalizability of behavioral research. A second set of key decisions is about <strong>sample size</strong> planning. We’ll start with classic <strong>power analysis</strong> but then introduce several other ways that an experimenter can plan and justify their sample size. In the final section, we’ll consider some of the broader issues that come up in sampling, including several sampling biases that can lead to biases in the experimental effect. We’ll end with a discussion of some broader questions about generalizability in behavioral research.</p>
+<div class="case-study">
+<p>🔬 Case study: Is everyone as bad at describing smells as I am?</p>
+<p>Since Darwin, scientists have assumed that smell is a vestigial sense in humans – one that we don’t even bother to encode in language. In English we don’t even have consistent words for odors. We can say something is “stinky,” “fragrant, or maybe”musty," but beyond these, all our words for smells are about the <em>source</em> of the smell, not the qualities of it. Bananas, roses, and skunks all have distinctive smells, but we don’t have any vocabulary for naming what is common or uncommon about them. And when we make up ad-hoc vocabulary, it’s typically quite inconsistent <span class="citation">(<a href="#ref-majid2014" role="doc-biblioref">Majid &amp; Burenhult, 2014</a>)</span>. The same situation applies across many languages.</p>
+<p>So, would it be a good generalization about human beings – all people – that olfaction as a sense is de-emphasized relative to vision? This inference has a classic sample-to-population structure. We notice that, within several samples of participants using widely-spoken languages, we observe limited and inconsistent vocabulary for smells, as well as poor discrimination. We use these samples to license an inference to the population – in this case, the entire human population.</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:sampling-majid2014"></span>
+<img src="images/sampling/majid2014.png" alt="Data from Majid and Burenhult (2014) on the consistency of color and odor naming in English and Jahai speakers. Higher values indicate more consistent descriptions. Pie charts indicate the type of language being used." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 10.1: Data from Majid and Burenhult (2014) on the consistency of color and odor naming in English and Jahai speakers. Higher values indicate more consistent descriptions. Pie charts indicate the type of language being used.<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>But these inferences about the universal lack of olfactory vocabulary are likely based on choosing the wrong sample. Multiple hunter-gatherer groups appear to have large vocabularies for consistent smell description. For example, the Jahai, a hunter-gatherer group on the Malay Peninsula, have a vocabulary that includes at least twelve words for distinct odors, for example /cŋεs/, which names odors with a “stinging smell” like gasoline, smoke, or bat droppings. When Jahai speakers are asked to name odors, they produce shorter and much more consistent descriptions than English speakers – in fact, their smell descriptions were as consistent as their color descriptions (Figure <a href="10-sampling.html#fig:sampling-majid2014">10.1</a>). Further studies implicate the hunter-gatherer lifestyle as a factor: while several hunter-gatherer groups show good odor naming, nearby horticulturalist groups don’t <span class="citation">(<a href="#ref-majid2018" role="doc-biblioref">Majid &amp; Kruspe, 2018</a>)</span>.</p>
+<p>Generalizations about humans are tricky. If you want to estimate the average odor naming ability, you could take a random sample of humans and evaluate their odor naming. Most of the individuals in the sample would likely speak English, Mandarin, Hindi, or Spanish. Almost certainly, none of them would speak Jahai, which spoken by only a little more than a thousand people and is listed as <a href="https://www.ethnologue.com/language/jhi">Threatened</a> by Ethnologue. Your estimate of low odor naming stability would be a good guess for the majority of the world’s population.</p>
+<p>On the other hand, it’s more complicated to jump from a statistical generalization about average ability to a richer claim, like “as humans evolved, they lost olfactory ability and gained visual ability.” Such claims about <em>what humans are like</em> require much more care and much stronger evidence <span class="citation">(<a href="#ref-piantadosi2014" role="doc-biblioref">Piantadosi &amp; Gibson, 2014</a>)</span>. From a sampling perspective, human behavior and cognition show immense and complex <strong>heterogeneity</strong> – variability of individuals and variability across clusters. As a result, naive random samples will have very high variance, leading to problematic generalizations. Put simply, if we want to know what people in general are like, we can’t just choose a bunch of English speakers on a college campus in the United States.</p>
+</div>
+<div id="sampling-theory" class="section level2" number="10.1">
+<h2><span class="header-section-number">10.1</span> Sampling theory</h2>
+<p>But we can only measure that effect in a finite number of participants</p>
+<p>The question we consider in this chapter are: for what <strong>population</strong> do we want to estimate the causal effect, and what <strong>sampling</strong> strategy should we pursue in order to make that measurement.</p>
+<div id="generalization-and-the-goals-of-sampling" class="section level3" number="10.1.1">
+<h3><span class="header-section-number">10.1.1</span> Generalization and the goals of sampling</h3>
+<p>The goal of sampling is generalization: but who do we want to generalize to?</p>
+<ul>
+<li>Ubiquitous convenience sampling</li>
+<li>The WEIRD framework (and its weaknesses)</li>
+<li>Representative sampling and stratification for variance reduction</li>
+<li>Ethical implications of representation in experimental samples</li>
+</ul>
+</div>
+<div id="beyond-participants-sampling-items" class="section level3" number="10.1.2">
+<h3><span class="header-section-number">10.1.2</span> Beyond participants: sampling items</h3>
+<ul>
+<li>What if your effect is generalizable across participants but not across stimuli (Clark 1973).</li>
+</ul>
+</div>
+</div>
+<div id="sample-planning" class="section level2" number="10.2">
+<h2><span class="header-section-number">10.2</span> Sample planning</h2>
+<div id="classic-power-analysis" class="section level3" number="10.2.1">
+<h3><span class="header-section-number">10.2.1</span> Classic power analysis</h3>
+<p>Sample size planning</p>
+<ul>
+<li>Classic power analysis</li>
+<li>Smallest effect size of interest (SESOI analysis)</li>
+<li>Precision-based sample size planning (Bland 2009; Lash and Kaufman 2015) (malcolmbarrett.shinyapps.io/precisely)</li>
+<li>Simulation based</li>
+<li>Sequential analysis (Schönbrodt et al. 2017)</li>
+</ul>
+</div>
+<div id="other-approaches-to-sample-size-planning" class="section level3" number="10.2.2">
+<h3><span class="header-section-number">10.2.2</span> Other approaches to sample size planning</h3>
+<p>sample calculations for within/between subjects
+<a href="http://daniellakens.blogspot.com/2016/11/why-within-subject-designs-require-less.html" class="uri">http://daniellakens.blogspot.com/2016/11/why-within-subject-designs-require-less.html</a>
+<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6640316/" class="uri">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6640316/</a></p>
+</div>
+</div>
+<div id="issues-in-sampling" class="section level2" number="10.3">
+<h2><span class="header-section-number">10.3</span> Issues in sampling</h2>
+<div id="sampling-biases" class="section level3" number="10.3.1">
+<h3><span class="header-section-number">10.3.1</span> Sampling biases</h3>
+<ul>
+<li>Attrition/survivorship bias (connection to directed acyclic graphs [DAGs] as described earlier)
+<ul>
+<li>Selection bias (connection to DAGs again)</li>
+</ul></li>
+</ul>
+</div>
+<div id="heterogeneity-and-stratification" class="section level3" number="10.3.2">
+<h3><span class="header-section-number">10.3.2</span> Heterogeneity and stratification</h3>
+<p>Where sampling goes wrong:</p>
+</div>
+<div id="limitations-statements" class="section level3" number="10.3.3">
+<h3><span class="header-section-number">10.3.3</span> Limitations statements</h3>
+</div>
+</div>
+<div id="summary-sampling" class="section level2" number="10.4">
+<h2><span class="header-section-number">10.4</span> Summary: Sampling</h2>
+<div class="exercise">
+<p><span id="exr:unlabeled-div-7" class="exercise"><strong>Exercise 10.1  </strong></span>Form an argument about this controversial position: We want to understand human cognition generally, but it’s a more efficient research strategy to start by studying certain features of cognition (perception, for example) in WEIRD convenience populations and then later check our generalizations in non-WEIRD groups.</p>
+</div>
+<div class="exercise">
+<p><span id="exr:unlabeled-div-8" class="exercise"><strong>Exercise 10.2  </strong></span>Form an argument about this controversial position: The most influential experiments aren’t generalizations of some number to a population, they are demonstration experiments that show that some particular effect is possible under some circumstances (think Milgram’s conformity studies, where people apparently shocked a confederate at an experimenter’s prompting), so often specific population sampling is secondary.</p>
+</div>
+<div class="exercise">
+<p><span id="exr:unlabeled-div-9" class="exercise"><strong>Exercise 10.3  </strong></span>Form an argument about this controversial position: Nothing you learn from US college undergraduates is likely to generalize to the US population as a whole, so we should dramatically decrease the use of this convenience population.</p>
+</div>
+<div class="exercise">
+<p><span id="exr:unlabeled-div-10" class="exercise"><strong>Exercise 10.4  </strong></span>Form an argument about this controversial position: We can’t ever make generalizations about the human mind because so much of the historical human population is simply inaccessible to us (we can’t do experiments on ancient Greek psychology). Psychological samples are also sampling a particular moment in time.</p>
+</div>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-dejesus2019" class="csl-entry">
+DeJesus, J. M., Callanan, M. A., Solis, G., &amp; Gelman, S. A. (2019). Generic language in scientific communication. <em>Proceedings of the National Academy of Sciences</em>, <em>116</em>(37), 18370–18377.
+</div>
+<div id="ref-majid2014" class="csl-entry">
+Majid, A., &amp; Burenhult, N. (2014). Odors are expressible in language, as long as you speak the right language. <em>Cognition</em>, <em>130</em>(2), 266–270.
+</div>
+<div id="ref-majid2018" class="csl-entry">
+Majid, A., &amp; Kruspe, N. (2018). Hunter-gatherer olfaction is special. <em>Current Biology</em>, <em>28</em>(3), 409–413.
+</div>
+<div id="ref-piantadosi2014" class="csl-entry">
+Piantadosi, S. T., &amp; Gibson, E. (2014). Quantitative standards for absolute linguistic universals. <em>Cognitive Science</em>, <em>38</em>(4), 736–756.
+</div>
+<div id="ref-tessler2019" class="csl-entry">
+Tessler, M. H., &amp; Goodman, N. D. (2019). The language of generalization. <em>Psychological Review</em>, <em>126</em>(3), 395.
+</div>
+</div>
+<p style="text-align: center;">
+<a href="9-design.html"><button class="btn btn-default">Previous</button></a>
+<a href="11-prereg.html"><button class="btn btn-default">Next</button></a>
+</p>
+</div>
+</div>
+
+<script src="toc/toc.js"></script>
+
+
+</body>
+</html>
