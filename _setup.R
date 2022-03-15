@@ -6,8 +6,8 @@ library(shiny)
 library(metafor)
 library(ggrepel) # viz
 library(GGally) # viz
-require(BayesFactor) # inference
-require(papaja)
+library(BayesFactor) # inference
+library(papaja)
 
 
 opts_chunk$set(
@@ -28,6 +28,10 @@ kable <- function(...) knitr::kable(..., booktabs = TRUE, linesep = "")
 set.seed(42)
 
 .font <- "Source Sans Pro"
+if (!(.font %in% sysfonts::font_families()))
+  sysfonts::font_add_google(.font, .font)
+showtext::showtext_auto()
+
 theme_set(theme_bw(base_size = 14, base_family = .font))
 theme_update(panel.grid = ggplot2::element_blank(),
              strip.background = ggplot2::element_blank(),
