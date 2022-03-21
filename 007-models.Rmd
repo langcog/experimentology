@@ -218,7 +218,11 @@ The linear predictor of a GLM (i.e., $\beta_0 + \sum_{j=1}^p \beta_j X_j$) looks
 g( E[Y_i] ) &= \beta_0 + \sum_{j=1}^p \beta_j X_j 
 \end{align}
 
-It turns out that by choosing a transformation of $E[Y_i]$ that is suitable for the outcome type, we can still fit a linear model. This transformation is called the **link function**. For example, $g(x) = log(x)$ is usually a suitable link function for count or binary outcomes. GLMs also handle the error terms differently from OLS, but we won't cover that here. We have only scratched the surface of GLMs here, but the take-home point is simply that they are usually the tool of choice for fitting regression models with non-continuous outcomes. 
+It turns out that by choosing a transformation of $E[Y_i]$ that is suitable for the outcome type, we can still fit a linear model. This transformation is called the **link function**. For example, $g(x) = log(x)$ is usually a suitable link function for count or binary outcomes; the model is then called a **log-binomial** regression. When using this link function, exponentiating the coefficients (i.e., taking the inverse of the link function) yields **risk ratios**. A risk ratio (e.g., $\exp(\beta_j)$) represent the *multiplicative* increase in the probability of $Y_i=1$ that is associated with a one-unit increase in the relevant predictor variable (e.g., $X_j$).
+
+Another common link function for binary data is the logit link, $g(x) = \log \left( \frac{x}{1 - x} \right)$; the model is then called **logistic regression**. The term $\frac{x}{1 - x}$ is called an **odds** and represents the probability of an event occurring divided by the probability of its not occurring. Exponentiating the coefficients would yield **odds ratios**, which are the *multiplicative* increase in the odds of $Y_i=1$ that is associated with a one-unit increase in the relevant predictor variable.
+
+GLMs differ from OLS not only in their link functions, but also in how they handle the error terms; however, we won't cover that here. We have only scratched the surface of GLMs here, but the take-home point is simply that they are usually the tool of choice for fitting regression models with non-continuous outcomes. 
 
 
 [^models-4] Specifically, the variance of a binary variable with success probability $p$ is simply $p(1-p)$, which is maximized at $p=0.50$. 
