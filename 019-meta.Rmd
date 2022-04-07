@@ -189,7 +189,7 @@ There are also statistical methods to help assess how robust the results may be 
 
 Here is an example of one type of funnel plot [@sapb] for a simulated meta-analysis of 100 studies with no publication bias:
 
-```{r meta-funnel-unbiased, fig.cap = "Significance funnel plot for a meta-analysis simulated to have no publication bias. Orange points: studies with $p < 0.05$ and positive estimates. Grey points: studies with $p$ $\\ge$ $0.05$ or negative estimates. Black diamond: random-effects estimate of $\\widehat{\\mu}$ within all studies."}
+```{r meta-funnel-unbiased, fig.cap = "Significance funnel plot for a meta-analysis simulated to have no publication bias. Orange points: studies with $p < 0.05$ and positive estimates. Grey points: studies with $p$ $\\ge$ $0.05$ or negative estimates. Black diamond: random-effects estimate of $\\widehat{\\mu}$."}
 # simulate meta with publication bias, but keep all studies
 set.seed(451)
 d.all = sim_data2( data.frame( k = 100,
@@ -215,12 +215,6 @@ meta.all = rma(yi = yi,
             method = "REML",
             knha = TRUE)
 
-meta.NA = rma(yi = yi,
-            vi = vi,
-            data = d.all %>% filter(pval > 0.05 | yi < 0),
-            method = "REML",
-            knha = TRUE)
-
 foo <- significance_funnel(yi = meta.all$yi,
                     vi = meta.all$vi,
                     favor.positive = TRUE,
@@ -241,12 +235,6 @@ meta.p = rma(yi = yi,
             method = "REML",
             knha = TRUE)
 
-meta.p.NA = rma(yi = yi,
-            vi = vi,
-            data = dp %>% filter(pval > 0.05 | yi < 0),
-            method = "REML",
-            knha = TRUE)
-
 funnel(meta.all, 
        xlab = "Standardized mean difference")
 ```
@@ -262,7 +250,7 @@ foo <- significance_funnel(yi = meta.p$yi,
                     favor.positive = TRUE,
                     plot.pooled = TRUE,
                     est.all = meta.p$b,
-                    est.N = meta.p.NA$b,
+                    est.N = NA,
                     xmin = -8, xmax = 8) 
 
 #p2 + scale_x_continuous( breaks = seq(-1, 3.5, 0.5) )
