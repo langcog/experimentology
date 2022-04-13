@@ -23,32 +23,5 @@ jobs:
         run: Rscript -e 'rmarkdown::render_site()'
       - uses: actions/upload-artifact@v1
         with:
-          name: _build
-          path: _build/
-  
-# Need to first create an empty gh-pages branch
-# see https://pkgdown.r-lib.org/reference/deploy_site_github.html
-# and also add secrets for a GH_PAT and EMAIL to the repository
-# gh-action from Cecilapp/GitHub-Pages-deploy
-  checkout-and-deploy:
-   runs-on: ubuntu-latest
-   needs: bookdown
-   steps:
-     - name: Checkout
-       uses: actions/checkout@v2
-     - name: Download artifact
-       uses: actions/download-artifact@v1.0.0
-       with:
-         # Artifact name
-         name: _build # optional
-         # Destination path
-         path: _build # optional
-     - name: Deploy to GitHub Pages
-       uses: Cecilapp/GitHub-Pages-deploy@v3
-       env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-       with:
-          email: ${{ secrets.EMAIL }}
-          build_dir: _build
-    
- 
+          name: docs
+          path: docs/
