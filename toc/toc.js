@@ -1,15 +1,15 @@
 const hover = (target, element, property) => window.addEventListener('load', () => {
-  let isShown = false;
-  const size = element.getBoundingClientRect()[property];
-  const hide = () => { 
-	  element.style[property] = '0px';
-    isShown = false;
-  }
-  const show = () => {
-    element.style[property] = size + 'px';
-    isShown = true;
-  }
-  const toggle = () => {isShown ? hide() : show()};
+	let isShown = false;
+	const size = element.getBoundingClientRect()[property];
+	const hide = () => { 
+		element.style[property] = '0px';
+		isShown = false;
+	}
+	const show = () => {
+		element.style[property] = size + 'px';
+		isShown = true;
+	}
+	const toggle = () => {isShown ? hide() : show()};
 
 	target.addEventListener('mouseenter', show);
 	target.addEventListener('mouseleave', hide);
@@ -35,14 +35,15 @@ header.append(bookTitle);
 const nav = document.createElement('nav');
 header.append(nav);
 
-TOC.querySelectorAll('li')
+[...TOC.querySelectorAll('li')]
+.filter(({firstChild: {textContent}}) => textContent)
 .forEach(({classList, firstChild: {textContent, href}}) => {
 //	const [title] = textContent.match(/(?<=\s).+/g);
 // this is a hack to split PART titles to create the title as their first word
-    const [title] = textContent.match(/\s.+/g); // safari fix
+	const [title] = textContent.match(/\s.+/g); // safari fix
 
-  // | classList.contains('appendix') 
-  // add this to parse appendix parts
+	// | classList.contains('appendix') 
+	// add this to parse appendix parts
 	if (classList.contains('part')) {
 		const [, first, rest] = title.match(/([A-z]+)(.*)/);
 
