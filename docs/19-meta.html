@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="Chapter 19 Meta-analysis | Experimentology" />
+<meta property="og:type" content="book" />
+
+
+
+
+
+<meta name="author" content="Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke, Robert Hawkins, Maya Mathur, and Rondeline Williams" />
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<meta name="description" content="Chapter 19 Meta-analysis | Experimentology">
+
+<title>Chapter 19 Meta-analysis | Experimentology</title>
+
+<script src="libs/header-attrs-2.13/header-attrs.js"></script>
+<link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.21/datatables.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="libs/dt-core-1.11.3/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.11.3/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.11.3/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+<link rel="stylesheet" href="toc/toc.css" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul>
+<li class="part"><span><b>I Preliminaries</b></span></li>
+<li><a href="1-experiments.html#experiments"><span class="toc-section-number">1</span> Experiments</a></li>
+<li><a href="2-theories.html#theories"><span class="toc-section-number">2</span> Theories</a></li>
+<li><a href="3-replication.html#replication"><span class="toc-section-number">3</span> Replication and reproducibility</a></li>
+<li><a href="4-ethics.html#ethics"><span class="toc-section-number">4</span> Ethics</a></li>
+<li class="part"><span><b>II Statistics</b></span></li>
+<li><a href="5-estimation.html#estimation"><span class="toc-section-number">5</span> Estimation</a></li>
+<li><a href="6-inference.html#inference"><span class="toc-section-number">6</span> Inference</a></li>
+<li><a href="7-models.html#models"><span class="toc-section-number">7</span> Models</a></li>
+<li class="part"><span><b>III Design and Planning</b></span></li>
+<li><a href="8-measurement.html#measurement"><span class="toc-section-number">8</span> Measurement</a></li>
+<li><a href="9-design.html#design"><span class="toc-section-number">9</span> Design of experiments</a></li>
+<li><a href="10-sampling.html#sampling"><span class="toc-section-number">10</span> Sampling</a></li>
+<li><a href="11-strategy.html#strategy"><span class="toc-section-number">11</span> Experimental strategy</a></li>
+<li class="part"><span><b>IV Execution</b></span></li>
+<li><a href="12-prereg.html#prereg"><span class="toc-section-number">12</span> Preregistration</a></li>
+<li><a href="13-consent.html#consent"><span class="toc-section-number">13</span> Recruitment and Consent</a></li>
+<li><a href="14-collection.html#collection"><span class="toc-section-number">14</span> Data collection</a></li>
+<li><a href="15-management.html#management"><span class="toc-section-number">15</span> Project management</a></li>
+<li class="part"><span><b>V Analysis and Reporting</b></span></li>
+<li><a href="16-viz.html#viz"><span class="toc-section-number">16</span> Visualization</a></li>
+<li><a href="17-eda.html#eda"><span class="toc-section-number">17</span> Exploratory data analysis</a></li>
+<li><a href="18-writing.html#writing"><span class="toc-section-number">18</span> Writing</a></li>
+<li><a href="19-meta.html#meta"><span class="toc-section-number">19</span> Meta-analysis</a></li>
+<li><a href="20-conclusions.html#conclusions"><span class="toc-section-number">20</span> Conclusions</a></li>
+<li class="part"><span><b>VI Appendices</b></span></li>
+<li><a href="21-git.html#git"><span class="toc-section-number">21</span> GitHub Tutorial</a></li>
+<li><a href="22-rmarkdown.html#rmarkdown"><span class="toc-section-number">22</span> R Markdown Tutorial</a></li>
+<li><a href="23-tidyverse.html#tidyverse"><span class="toc-section-number">23</span> Tidyverse Tutorial</a></li>
+<li><a href="24-ggplot.html#ggplot"><span class="toc-section-number">24</span> ggplot Tutorial</a></li>
+<li><a href="25-instructors.html#instructors"><span class="toc-section-number">25</span> Instructor’s guide</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="meta" class="section level1" number="19">
+<h1><span class="header-section-number">Chapter 19</span> Meta-analysis</h1>
+<div class="learning-goals">
+<p>🍎 Learning goals:</p>
+<ul>
+<li>Discuss the benefits of synthesizing evidence across studies</li>
+<li>Conduct a simple fixed- or random-effects meta analysis</li>
+<li>Reason about the role of within- and across-study biases in meta-analysis</li>
+</ul>
+</div>
+<p>Throughout this book, we have focused on how to design individual experiments that maximize the precision of our effect size estimates and minimize their bias. But even when we do our best to get a precise, unbiased estimate in an individual experiment, we must also acknowledge that one study can never be definitive. For example, variability in participant demographics, stimuli, and experimental methods may limit the generalizability of our findings. Additionally, even well-powered individual studies have some amount of statistical error, limiting their precision.</p>
+<p>For this reason, synthesizing evidence across studies is critical for developing a balanced and appropriately evolving view of the overall evidence on an effect of interest and for understanding sources of variation in the effect. Synthesizing evidence rigorously is not simply a matter of throwing a search term into Google Scholar, downloading articles that look topical or interesting, and qualitatively summarizing your impressions of those studies. While this ad hoc method can be an essential first step in performing a review of the literature <span class="citation">(<a href="#ref-grant2009typology" role="doc-biblioref">Grant &amp; Booth, 2009</a>)</span>, it is not systematic, and it doesn’t provide any kind of quantitative summary of a particular effect. Further, it doesn’t tell you anything about potential biases in the literature – for example, a bias for the publication of positive effects.</p>
+<p>To address these issues, a more systematic, quantitative review of the literature is often more informative. This chapter focuses on a specific type of quantitative review called <strong>meta-analysis</strong>. Meta-analysis is a method for combining effect sizes across different measurements. (If you need a refresher on effect size, see Chapter <a href="5-estimation.html#estimation">5</a>, where we introduce the concept).<label for="tufte-sn-192" class="margin-toggle sidenote-number">192</label><input type="checkbox" id="tufte-sn-192" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">192</span> We’ll primarily be using Cohen’s <span class="math inline">\(d\)</span>, the standardized difference between means, which we introduced in Chapter <a href="5-estimation.html#estimation">5</a>. There are many more varieties of effect size available, but we focus here on <span class="math inline">\(d\)</span> because it’s common and easy to reason about in the context of the statistical tools we introduced in the earlier sections of the book.</span></p>
+<p>By combining information from multiple studies, meta-analysis often provides more precise estimates of an effect size than any single study. In addition, meta-analysis also allows the researcher to look at the extent to which an effect varies across studies. If an effect does vary across studies, meta-analysis also can be used to test whether certain study characteristics systematically produce different results (e.g., whether an effect is larger in certain populations).</p>
+<div class="case-study">
+<p>🔬 Case study: Towel reuse by hotel guests</p>
+<p>Imagine you are staying in a hotel and you have just taken a shower. Do you throw the towels on the floor or hang them back up again? In a widely-cited study on the power of social norms, <span class="citation">Goldstein et al. (<a href="#ref-goldstein2008room" role="doc-biblioref">2008</a>)</span> manipulated whether a sign encouraging guests to reuse towels focused environmental impacts (e.g., “help reduce water use”) or social norms (e.g., “most guests re-use their towels”). Across two studies, they found that guests were significantly more likely to reuse their towels after receiving the social norm message (Study 1: odds ratio [OR] = 1.46, 95% CI [1.00, 2.16], <span class="math inline">\(p = .05\)</span>; Study 2: OR = 1.35, 95% CI [1.04, 1.77], <span class="math inline">\(p = .03\)</span>).</p>
+<p>However, five subsequent studies by other researchers did not find significant evidence of that social norm messaging increased towel reuse (with ORs ranging from 0.22 to 1.34, and no hypothesis-consistent <span class="math inline">\(p\)</span>-values was less than .05). This caused many researchers to wonder if there is any effect at all. To examine this question, <span class="citation">Scheibehenne et al. (<a href="#ref-scheibehenne2016" role="doc-biblioref">2016</a>)</span> statistically combined all the evidence via meta-analysis. When they did, they found that the social norm messages did have a significant average effect on hotel towel reuse (OR = 1.26, 95% CI [1.07, 1.46], <span class="math inline">\(p &lt; .005\)</span>). This study demonstrates an important strength of meta-analysis: by pooling evidence from multiple studies, meta-analysis can generate more powerful insights than any one study alone. We will also see how meta-analysis can be used to assess variability in effects across studies.</p>
+</div>
+<!-- All ES's come from Wagenmakers et al. SI -->
+<p>Meta-analysis often teaches us something about a body of evidence that we do not intuitively grasp when we casually read through a bunch of articles. In this example, merely reading the individual studies might give the impression that social norm messages do not increase hotel towel re-use. But meta-analysis indicated that the average effect is beneficial, although there might be substantial variation in effect sizes across studies.<label for="tufte-sn-193" class="margin-toggle sidenote-number">193</label><input type="checkbox" id="tufte-sn-193" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">193</span> Given the number of hotel bookings worldwide – 1.7 billion in the European Union alone in 2013 <span class="citation">(<a href="#ref-kotzeva2015eurostat" role="doc-biblioref">Kotzeva et al., 2015</a>)</span> – the insight provided by the meta-analysis is not trivial!</span></p>
+<div id="the-basics-of-evidence-synthesis" class="section level2" number="19.1">
+<h2><span class="header-section-number">19.1</span> The basics of evidence synthesis</h2>
+<p>As we explore the details of conducting a meta-analysis, we’ll turn to another example: a meta-analysis of studies investigating the “contact hypothesis” on intergroup relations.</p>
+<p>According to the contact hypothesis, prejudice towards members of minority groups can be reduced through intergroup contact interventions, in which members of majority and minority groups work together to pursue a common goal <span class="citation">(<a href="#ref-allport1954nature" role="doc-biblioref">Allport, 1954</a>)</span>.To test this, <span class="citation">Paluck et al. (<a href="#ref-paluck2019contact" role="doc-biblioref">2019</a>)</span> meta-analyzed randomized studies that tested the effects of intergroup contact interventions on long-term prejudice-related outcomes. Using a systematic literature search, they tried to identify all published papers that tested these effects and then extracted effect size estimates from each paper. Because not every paper reports standardized effect sizes – or even means and standard deviations for every group – this process can often involve scraping information from plots, tables, and statistical tests to try to reconstruct effect sizes. This book will not cover the process of conducting a systematic literature search and extracting effect sizes, but these topics are critical to understand if you plan to conduct a meta-analysis or other evidence synthesis.</p>
+<p>As we’ve seen throughout this book, visualizing data before and after analysis helps benchmark and check our intuitions about the formal statistical results. In a meta-analysis, a common way to do so is the <strong>forest plot</strong>, which depicts individual studies’ estimates and confidence intervals.<label for="tufte-sn-194" class="margin-toggle sidenote-number">194</label><input type="checkbox" id="tufte-sn-194" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">194</span> You can ignore for now the column of percentages and the final line, “RE Model”; we will return to these later.</span> In the forest plot in Figure <a href="19-meta.html#fig:meta-forest">19.1</a>, the larger squares correspond to more precise studies; notice how much narrower their confidence intervals are than the confidence intervals of less precise studies.</p>
+<div class="figure"><span style="display:block;" id="fig:meta-forest"></span>
+<p class="caption marginnote shownote">
+Figure 19.1: Forest plot for Paluck et al. meta-analysis. Studies are ordered from smallest to largest standard error.
+</p>
+<img src="experimentology_files/figure-html/meta-forest-1.png" alt="Forest plot for Paluck et al. meta-analysis. Studies are ordered from smallest to largest standard error." width="\linewidth"  />
+</div>
+<!-- Cohen's $d$ -- which, if you recall from Chapter \@ref(estimation), represents the standardized mean difference -- was used as the effect size index. As we show in the remainder of the chapter, the meta-analytic tools @paluck2019contact used provide several useful insights about this proposed prejudice-reduction intervention. -->
+<div id="how-not-to-synthesize-evidence" class="section level3" number="19.1.1">
+<h3><span class="header-section-number">19.1.1</span> How not to synthesize evidence</h3>
+<p>Many people’s first instinct to synthesize evidence is to count how many studies support versus did not support the hypothesis under investigation. This technique usually amounts to counting the number of studies with “significant” <span class="math inline">\(p\)</span>-values, since – for better or for worse – “significance” is largely what drives the take-home conclusions researchers report <span class="citation">(<a href="#ref-mcshane2017statistical" role="doc-biblioref">McShane &amp; Gal, 2017</a>; <a href="#ref-nelson1986interpretation" role="doc-biblioref">N. Nelson et al., 1986</a>)</span>. In meta-analysis, we call this practice of counting the number of significant <span class="math inline">\(p\)</span>-values <strong>vote-counting</strong> <span class="citation">(<a href="#ref-borenstein2021introduction" role="doc-biblioref">Borenstein et al., 2021</a>)</span>. For example, in the <span class="citation">Paluck et al. (<a href="#ref-paluck2019contact" role="doc-biblioref">2019</a>)</span> meta-analysis, all studies had positive effect sizes, but only 12 of 27 were significant. So, based on this vote-count, we would have the impression that most studies do not support the contact hypothesis.</p>
+<p>Many qualitative literature reviews use this vote-counting approach, although often not explicitly. Despite its intuitive appeal, vote-counting can be very misleading because it characterizes evidence solely in terms of dichotomized <span class="math inline">\(p\)</span>-values, while entirely ignoring effect sizes. In Chapter <a href="3-replication.html#replication">3</a>, we saw how fetishizing statistical significance can mislead us when we consider individual studies. These problems also apply when considering multiple studies.</p>
+<p>For example, small studies may consistently produce non-significant effects due to their limited power. But when many such studies are combined in a meta-analysis, the meta-analysis may provide strong evidence of a positive average effect. Inversely, many studies might have statistically significant effects, but if their effect sizes are small, then a meta-analysis might might indicate that the average effect size is too small to be practically meaningful. In these cases, vote-counting based on statistical significance can lead us badly astray <span class="citation">(<a href="#ref-borenstein2021introduction" role="doc-biblioref">Borenstein et al., 2021</a>)</span>. To avoid these pitfalls, meta-analysis combines the effect sizes estimates from each study (not just their <span class="math inline">\(p\)</span>-values), weighting them in a principled way.</p>
+</div>
+<div id="fixed-effects-meta-analysis" class="section level3" number="19.1.2">
+<h3><span class="header-section-number">19.1.2</span> Fixed-effects meta-analysis</h3>
+<p>If vote-counting is a bad idea, how should we combine results across studies? Another intuitive approach might be to average effect sizes from each study. For example, in Paluck et al.’s meta-analysis, the mean of the studies’ effect size estimates is 0.44. This averaging approach is a step in the right direction, but it has an important limitation: averaging effect size estimates gives equal weight to each study. A small study <span class="citation">(e.g., <a href="#ref-clunies1989changing" role="doc-biblioref">Clunies-Ross &amp; O’meara, 1989</a> with N=30)</span> contributes as much to the mean effect size as a large study <span class="citation">(e.g., <a href="#ref-boisjoly2006empathy" role="doc-biblioref">Boisjoly et al., 2006</a> with N=1243)</span>. Larger studies provide more precise estimates of effect sizes than small studies, so weighting all studies equally is not ideal. Instead, larger studies should carry more weight in the analysis.</p>
+<p>To address this issue, <strong>fixed-effects meta-analysis</strong> uses a <strong>weighted average</strong> approach. Larger, more precise studies are given more weight in the calculation of the overall effect size. Specifically, each study is weighted by the inverse of its variance (i.e., the inverse of its squared standard error). This makes sense because larger, more precise studies have smaller variances, and thus get more weight in the analysis.</p>
+<p>In general terms, the fixed-effect pooled estimate is:</p>
+<p><span class="math display">\[\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}\]</span> where <span class="math inline">\(k\)</span> is the number of studies, <span class="math inline">\(\widehat{\theta}_i\)</span> is the point estimate of the <span class="math inline">\(i^{th}\)</span> study, and <span class="math inline">\(w_i = 1/\widehat{\sigma}^2_i\)</span> is study <span class="math inline">\(i\)</span>’s weight in the analysis (i.e., the inverse of its variance).<label for="tufte-sn-195" class="margin-toggle sidenote-number">195</label><input type="checkbox" id="tufte-sn-195" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">195</span> If you are curious, the standard error of the fixed-effect <span class="math inline">\(\widehat{\mu}\)</span> is <span class="math inline">\(\frac{1}{\sum_{i=1}^k w_i}\)</span>. This standard error can be used to construct a confidence interval or <span class="math inline">\(p\)</span>-value, as described in Chapter <a href="6-inference.html#inference">6</a>.</span></p>
+<!-- In Paluck et al.'s meta-analysis, we would calculate the fixed-effect estimate, $\widehat{\mu}$, as: -->
+<!-- <!-- hard-coded from DF$d[1:2] and DF$se_d[1:2] -->
+<!-- $$\widehat{\mu} = \frac{ \frac{\widehat{\theta}_{study1}}{\widehat{\sigma}^2_{study1}} + \frac{\widehat{\theta}_{study2}}{\widehat{\sigma}^2_{study2}} + \cdots}{ \frac{1}{\widehat{\sigma}^2_{study1}} + \frac{1}{\widehat{\sigma}^2_{study2}} + \cdots } = -->
+<!-- \frac{ \frac{0.03}{0.08^2} + \frac{0.30}{0.08^2} + \cdots }{ \frac{1}{0.08^2} + \frac{1}{0.08^2} + \cdots }$$ -->
+<p>We can use the fixed-effects formula to estimate that the overall effect size in Paluck et al.’s meta-analysis studies is a standardized mean difference of <span class="math inline">\(\widehat{\mu}\)</span> = 0.28; 95% confidence interval [0.23, 0.34]; <span class="math inline">\(p &lt; .001\)</span>. Because Cohen’s <span class="math inline">\(d\)</span> is our effect size index, this estimate means that intergroup contact decreased prejudice by 0.28 standard deviations.</p>
+</div>
+<div id="limitations-of-fixed-effects-meta-analysis" class="section level3" number="19.1.3">
+<h3><span class="header-section-number">19.1.3</span> Limitations of fixed-effects meta-analysis</h3>
+<p>One of the limitations of fixed-effect meta-analysis is that it assumes that the true effect size is, well, <em>fixed</em>! In other words, fixed-effect meta-analysis assumes that there is a single effect size that all studies are estimating. This is a stringent assumption. For example, imagine that intergroup contact decreases prejudice when the group succeeds at its goal, but <em>increases</em> prejudice when the group fails at its goal. If we meta-analyzed two studies, one in which intergroup contact substantially increased prejudice, and one in which intergroup contact substantially decreased prejudice, it might appear that the true effect of intergroup contact is close to zero, when in fact both of the meta-analyzed studies have large effects.</p>
+<p>In Paluck et al.’s meta-analysis, studies differed in several ways that could lead to different true effects. For example, some studies recruited adult participants while others recruited children. If intergroup contact is more or less effective for adults versus children, then it is misleading to talk about a single (i.e., fixed) intergroup contact effect. Instead, we would say that the effects of intergroup contact vary across studies, an idea called <strong>heterogeneity</strong>.</p>
+<p>Does the concept of heterogeneity remind you of anything from when we analyzed repeated-measures data in Chapter <a href="7-models.html#models">7</a> on models? Yes! Recall that, with repeated-measures data, we had to deal with the possibility of heterogeneity across participants – and of the ways we did so was by introducing participant-level random intercepts to our regression model. It turns out that we can do a similar thing in meta-analysis, dealing with heterogeneity across studies.</p>
+</div>
+<div id="random-effects-meta-analysis" class="section level3" number="19.1.4">
+<h3><span class="header-section-number">19.1.4</span> Random-effects meta-analysis</h3>
+<p>While fixed-effect meta-analysis essentially assumes that all studies in the meta-analysis have the same population effect size, <span class="math inline">\(\mu\)</span>, random-effects meta-analysis instead postulates that studies’ population effects come from a normal distribution with mean <span class="math inline">\(\mu\)</span> and standard deviation <span class="math inline">\(\tau\)</span>.<label for="tufte-sn-196" class="margin-toggle sidenote-number">196</label><input type="checkbox" id="tufte-sn-196" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">196</span> Technically, other specifications of random-effects meta-analysis are possible. For example, robust variance estimation does not require making assumptions about the distribution of effects across studies <span class="citation">(<a href="#ref-hedges2010robust" role="doc-biblioref">Hedges et al., 2010</a>)</span>. These approaches also have other substantial advantages, like their ability to handle effects that are clustered [e.g., because some papers contribute multiple estimates; <span class="citation">Hedges et al. (<a href="#ref-hedges2010robust" role="doc-biblioref">2010</a>)</span>; <span class="citation">Pustejovsky &amp; Tipton (<a href="#ref-pustejovsky2021meta" role="doc-biblioref">2021</a>)</span>] and their ability to provide better inference in meta-analyses with relatively few studies <span class="citation">(<a href="#ref-tipton2015small" role="doc-biblioref">Tipton, 2015</a>)</span>. For these reasons, the authors of this book prefer to use these robust methods by default when conducting meta-analyses.</span> The larger the standard deviation, <span class="math inline">\(\tau\)</span>, the more heterogeneous the effects are across studies. A random-effects model then estimates both <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\tau\)</span>, for example by maximum likelihood <span class="citation">(<a href="#ref-brockwell2001comparison" role="doc-biblioref">Brockwell &amp; Gordon, 2001</a>; <a href="#ref-dersimonian1986meta" role="doc-biblioref">DerSimonian &amp; Laird, 1986</a>)</span>.<label for="tufte-sn-197" class="margin-toggle sidenote-number">197</label><input type="checkbox" id="tufte-sn-197" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">197</span> A confidence interval and <span class="math inline">\(p\)</span>-value for the random-effects estimate <span class="math inline">\(\widehat{\mu}\)</span> can be obtained using standard theory for maximum likelihood estimates with an additional adjustment that helps account for uncertainty in estimating <span class="math inline">\(\tau\)</span> <span class="citation">(<a href="#ref-knapp2003improved" role="doc-biblioref">Knapp &amp; Hartung, 2003</a>)</span>.</span></p>
+<p>Like fixed-effect meta-analysis, the random-effects estimate of <span class="math inline">\(\widehat{\mu}\)</span> is still a weighted average of studies’ effect size estimates: <span class="math display">\[\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}\]</span></p>
+<p>However, in random-effects meta-analysis, the inverse-variance weights now incorporate heterogeneity: <span class="math inline">\(w_i = 1/\left(\widehat{\tau}^2 + \widehat{\sigma}^2_i \right)\)</span>. Where before we had one term in our weights, now we have two. That is because these weights represent the inverse of studies’ <em>marginal</em> variances, taking into account both statistical error due to their finite sample sizes (<span class="math inline">\(\widehat{\sigma}^2_i\)</span>) and also genuine effect heterogeneity (<span class="math inline">\(\widehat{\tau}^2\)</span>).<label for="tufte-sn-198" class="margin-toggle sidenote-number">198</label><input type="checkbox" id="tufte-sn-198" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">198</span> The estimate of <span class="math inline">\(\widehat{\tau}^2\)</span> is a bit more complicated, but is essentially a weighted average of studies’ residuals, <span class="math inline">\(\widehat{\theta_i} - \widehat{\mu}\)</span>, while subtracting away variation due to statistical error, <span class="math inline">\(\widehat{\sigma}^2_i\)</span> <span class="citation">(<a href="#ref-brockwell2001comparison" role="doc-biblioref">Brockwell &amp; Gordon, 2001</a>; <a href="#ref-dersimonian1986meta" role="doc-biblioref">DerSimonian &amp; Laird, 1986</a>)</span>.</span></p>
+<p>Conducting a random-effects meta-analysis of Paluck et al.’s dataset yields <span class="math inline">\(\widehat{\mu}\)</span> = 0.4; 95% confidence interval [0.2, 0.61]; <span class="math inline">\(p &lt; .001\)</span>. That is, they estimated that, <em>on average across studies</em>, intergroup contact was associated with a decrease in prejudice of 0.4 standard deviations. This meta-analytic estimate is shown as the bottom line of Figure <a href="19-meta.html#fig:meta-forest">19.1</a>.</p>
+<p>However, these effects appeared to differ across studies. Paluck et al. estimated that the standard deviation of effects across studies was <span class="math inline">\(\widehat{\tau}\)</span> = 0.44 ; 95% confidence interval [0.25, 0.57]. This estimate indicates a substantial amount of heterogeneity! To conveniently visualize these results, we can plot the estimated density of the population effects, which is just a normal distribution with mean <span class="math inline">\(\widehat{\mu}\)</span> and standard deviation <span class="math inline">\(\widehat{\tau}\)</span> (Figure <a href="19-meta.html#fig:meta-densities">19.2</a>).</p>
+<p>This meta-analysis highlights an important point:that the overall effect size estimate <span class="math inline">\(\widehat{\mu}\)</span> represents only the <em>mean</em> population effect across studies. It tells us nothing about how much the effects <em>vary</em> across studies. Thus, we recommend always reporting the heterogeneity estimate <span class="math inline">\(\widehat{\tau}\)</span>, preferably along with other related metrics that help summarize the distribution of effect sizes across studies <span class="citation">(<a href="#ref-mathur_mam" role="doc-biblioref">Mathur &amp; VanderWeele, 2019</a>, <a href="#ref-npphat" role="doc-biblioref">2020b</a>; <a href="#ref-riley2011interpretation" role="doc-biblioref">Riley et al., 2011</a>; <a href="#ref-wang2019simple" role="doc-biblioref">Wang &amp; Lee, 2019</a>)</span>. Reporting the heterogeneity helps readers know how consistent or inconsistent the effects are across studies, which may point to the need to investigate <em>moderators</em> of the effect (i.e., factors that are associated with larger or smaller effects, such as whether participants were adults or children).<label for="tufte-sn-199" class="margin-toggle sidenote-number">199</label><input type="checkbox" id="tufte-sn-199" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">199</span> One common approach to investigating moderators in meta-analysis is meta-regression, in which moderators (e.g., type of intergroup contact) are included as covariates in a random-effects meta-analysis model <span class="citation">(<a href="#ref-thompson2002should" role="doc-biblioref">Thompson &amp; Higgins, 2002</a>)</span>. As in standard regression, coefficients can then be estimated for each moderator, representing the mean difference in population effect between studies with versus without the moderator.</span></p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span style="display:block;" id="fig:meta-densities"></span>
+<img src="experimentology_files/figure-html/meta-densities-1.png" alt="Estimated distribution of population effects from random-effects meta-analysis of Paluck et. al's dataset (heavy red curve) and estimated density of studies' point estimates (thin black curve)." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 19.2: Estimated distribution of population effects from random-effects meta-analysis of Paluck et. al’s dataset (heavy red curve) and estimated density of studies’ point estimates (thin black curve).<!--</p>-->
+<!--</div>--></span>
+</p>
+</div>
+</div>
+<div id="bias-in-meta-analysis" class="section level2" number="19.2">
+<h2><span class="header-section-number">19.2</span> Bias in meta-analysis</h2>
+<p>Meta-analysis is an invaluable tool for synthesizing evidence across studies. However, the accuracy of meta-analysis can be compromised by two categories of bias: <strong>within-study biases</strong> and <strong>across-study biases</strong>. Either type can lead to meta-analysis estimates that are too large, too small, or in the wrong direction. We will now discuss examples of each type of bias as well as ways to address these biases when conducting a meta-analysis. This includes mitigating the biases at the outset through sound meta-analysis design and also assessing the robustness of the ultimate conclusions to possible remaining bias.</p>
+<div id="within-study-biases" class="section level3" number="19.2.1">
+<h3><span class="header-section-number">19.2.1</span> Within-study biases</h3>
+<p>Within-study biases – such as demand characteristics, confounds, and order effects – not only impact the validity of individual studies, but also any attempt to synthesize those studies. In other words: garbage in, garbage out. For example, <span class="citation">Paluck et al. (<a href="#ref-paluck2019contact" role="doc-biblioref">2019</a>)</span> noted that early studies on intergroup contact almost exclusively used non-randomized designs. Imagine a hypothetical study where researchers studied a completely ineffective intergroup contact intervention, and non-randomly assigned low-prejudice people to the intergroup contact condition and high-prejudice people to the control condition. In a scenario like this, the researcher will, of course, find that the prejudice was lower in the intergroup contact condition. However, this is not a true effect of the contact intervention, but rather a spurious effect of non-random assignment (i.e., confounding). Now imagine meta-analyzing many studies with similarly poor designs. The meta-analyst would find impressive evidence of an intergroup contact effect, but this is simply driven by systematic non-random assignment.</p>
+<p>To mitigate this problem, meta-analysts often exclude studies that may be affected by within-study bias. For example, <span class="citation">Paluck et al. (<a href="#ref-paluck2019contact" role="doc-biblioref">2019</a>)</span> excluded non-randomized studies to minimize concerns about confounding. Preferably, inclusion and exclusion criteria for meta-analyses should be preregistered to ensure that these decisions are applied in a systematic and uniform way, rather than being applied after looking at the results.</p>
+<p>Sometimes, though, certain sources of bias cannot be eliminated through exclusion criteria, for example because it is not possible or ethical to randomize the independent variable. After data have been collected, meta-analysts should also assess studies’ risks of bias qualitatively using established rating tools <span class="citation">(<a href="#ref-sterne2016robins" role="doc-biblioref">Sterne et al., 2016</a>)</span>. Doing so allows the meta-analyst to communicate how much within-study bias there may be.<label for="tufte-sn-200" class="margin-toggle sidenote-number">200</label><input type="checkbox" id="tufte-sn-200" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">200</span> <span class="citation">Paluck et al. (<a href="#ref-paluck2019contact" role="doc-biblioref">2019</a>)</span> did not use this tool, but they could have used it to communicate, for example, the extent to which participants might have differentially dropped out of the study.</span> Meta-analysts can also conduct sensitivity analyses to assess how much results might be affected by different within-study biases or by excluding certain types of studies <span class="citation">(<a href="#ref-art" role="doc-biblioref">Mathur &amp; VanderWeele, 2022</a>)</span>. For example, if nonrandom assignment is a concern, a meta-analysts may run the analyses including only randomized studies, versus including all studies, in order to determine if including nonrandomized studies changes the meta-analysis results. These two options parallel our discussion of experimental preregistration in Chapter <a href="12-prereg.html#prereg">12</a>: To allay concerns about results-dependent meta-analysis, researchers can either pre-register their analyses ahead of time or else be transparent about their choices after the fact. Sensitivity analyses can allay concerns that a specific choice of exclusion criteria is critically related to the reported results.</p>
+<!-- It might be nice to show the reader an example of a risk of bias rating scale. Doing so would also help clarify what types of within-study biases meta-analysts are typically concerned about. https://drive.google.com/file/d/1Q4Fk3HCuBRwIDWTGZa5oH11OdR4Gbhdo/view-->
+</div>
+<div id="across-study-biases" class="section level3" number="19.2.2">
+<h3><span class="header-section-number">19.2.2</span> Across-study biases</h3>
+<p>Across-study biases occur if, for example, researchers <strong>selectively report</strong> certain types of findings or selectively publishing certain types of findings (<strong>publication bias</strong>). Often, these across-study biases favor statistically significant positive results, which means the meta-analysis of the available results will be inflated. For example, if researchers publish only the studies that yield statistically significant positive results and hide the studies that don’t, statistically combining the published studies via meta-analysis will obviously lead to exaggerated effect size estimates.</p>
+<div class="accident-report">
+<p>🔬 Accident Report: Quantifying publication bias in the social sciences</p>
+<p>In 2014, <span class="citation">Franco et al. (<a href="#ref-franco2014" role="doc-biblioref">2014</a>)</span> and colleagues examined the population of 221 studies conducted through a funding initiative called TESS (“time-sharing experiments in the social sciences”) that helps researchers run experiments on nationally-representative samples in the U.S. This sample of studies was unique in that everyone that used TESS had to register their study with the group. That meant that Franco et al. knew the whole universe of studies that had been conducted using TESS – a key piece of information that meta-analysts almost never have available.</p>
+<p>Using this information, Franco and colleagues examined the records of these studies to determine whether the researchers found statistically significant results, a mixture of statistically significant and non-significant results, or only non-significant results. Then, they examined the likelihood that these results were published in the scientific literature.</p>
+<p>Which results do you think were most likely to be published? If you guessed “significant results,” then you have a good intuition about publication bias. Over 60% of studies with statistically significant results were published, compared to the mere 25% of studies that produced only statistically non-significant results. This finding was important because it quantified how strong that bias was, at least for one sample of studies.</p>
+</div>
+<p>Like within-study biases, meta-analysts often try to mitigate across-study biases by being careful about what studies make it into the meta-analysis. Meta-analysts don’t only want to capture high-profile, published studies on their effect of interest, but also studies published in low-profile journals and the so-called “gray literature” [i.e., unpublished dissertations and theses; <span class="citation">Lefebvre et al. (<a href="#ref-lefebvre2019searching" role="doc-biblioref">2019</a>)</span>].<label for="tufte-sn-201" class="margin-toggle sidenote-number">201</label><input type="checkbox" id="tufte-sn-201" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">201</span> We’ll be using R and RStudio in the future. If you do not yet have those downloaded, you can open up a text editor and do the same thing.</span></p>
+<p>There are also statistical methods to help assess how robust the results may be to across-study biases. Among the most popular tools to assess and correct for publication bias is the <strong>funnel plot</strong> <span class="citation">(<a href="#ref-duval2000trim" role="doc-biblioref">Duval &amp; Tweedie, 2000</a>; <a href="#ref-egger1997bias" role="doc-biblioref">Egger et al., 1997</a>)</span>. A funnel plot shows the relationship between studies’ effect estimates and their precision (usually their standard error). They are called “funnel plots” because if there is no publication bias, then as precision increases, the effects “funnel” towards the meta-analytic estimate. As the precision is smaller, they spread out more because of greater measurement error.</p>
+<p>Here is an example of one type of funnel plot <span class="citation">(<a href="#ref-sapb" role="doc-biblioref">Mathur &amp; VanderWeele, 2020c</a>)</span> for a simulated meta-analysis of 100 studies with no publication bias:</p>
+<div class="figure"><span style="display:block;" id="fig:meta-funnel-unbiased"></span>
+<p class="caption marginnote shownote">
+Figure 19.3: Significance funnel plot for a meta-analysis simulated to have no publication bias. Orange points: studies with <span class="math inline">\(p &lt; 0.05\)</span> and positive estimates. Grey points: studies with <span class="math inline">\(p\)</span> <span class="math inline">\(\ge\)</span> <span class="math inline">\(0.05\)</span> or negative estimates. Black diamond: random-effects estimate of <span class="math inline">\(\widehat{\mu}\)</span>.
+</p>
+<img src="experimentology_files/figure-html/meta-funnel-unbiased-1.png" alt="Significance funnel plot for a meta-analysis simulated to have no publication bias. Orange points: studies with $p &lt; 0.05$ and positive estimates. Grey points: studies with $p$ $\ge$ $0.05$ or negative estimates. Black diamond: random-effects estimate of $\widehat{\mu}$." width="\linewidth"  />
+</div>
+<p>As implied by the “funnel” moniker, our plot looks a little like a funnel. Larger studies (those with smaller standard errors) cluster more closely around the mean of 0.34 than do smaller studies, but large and small studies alike have point estimates centered around the mean. That is, the funnel plot is symmetric.<label for="tufte-sn-202" class="margin-toggle sidenote-number">202</label><input type="checkbox" id="tufte-sn-202" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">202</span> Classic funnel plots look more like Figure <a href="19-meta.html#fig:meta-classic-funnel">19.4</a>. Our version is different in a couple of ways. Most prominently, we don’t have the vertical axis reversed (which we think is confusing), and we don’t have the left boundary highlighted (because we think folks don’t typically select for negative studies).</span></p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span style="display:block;" id="fig:meta-classic-funnel"></span>
+<img src="experimentology_files/figure-html/meta-classic-funnel-1.png" alt="Classic funnel plot." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 19.4: Classic funnel plot.<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>Not all funnel plots are symmetric! Figure <a href="19-meta.html#fig:meta-funnel-biased">19.5</a> is what happens to our hypothetical meta-analysis if all studies with <span class="math inline">\(p&lt;0.05\)</span> and positive estimates are published, but only 10% of studies with <span class="math inline">\(p \ge 0.05\)</span> or with negative estimates are published. The introduction of publication bias dramatically inflates the pooled estimate from 0.34 to 1.15. Also, there appears to be a correlation between studies’ estimates and their standard errors, such that smaller studies tend to have larger estimates than do larger studies. This correlation is often called <strong>funnel plot asymmetry</strong> because the funnel plot starts to look like a right triangle rather than a funnel. Funnel plot asymmetry <em>can</em> be a diagnostic for publication bias, though it isn’t always a perfect indicator, as we’ll see in the next subsection.</p>
+<div class="figure"><span style="display:block;" id="fig:meta-funnel-biased"></span>
+<p class="caption marginnote shownote">
+Figure 19.5: Significance funnel plot for the same simulated meta-analysis after publication bias has occurred. Orange points: studies with <span class="math inline">\(p &lt; 0.05\)</span> and positive estimates. Grey points: studies with <span class="math inline">\(p\)</span> <span class="math inline">\(\ge\)</span> <span class="math inline">\(0.05\)</span> or negative estimates. Black diamond: random-effects estimate of <span class="math inline">\(\widehat{\mu}\)</span>.
+</p>
+<img src="experimentology_files/figure-html/meta-funnel-biased-1.png" alt="Significance funnel plot for the same simulated meta-analysis after publication bias has occurred. Orange points: studies with $p &lt; 0.05$ and positive estimates. Grey points: studies with $p$ $\ge$ $0.05$ or negative estimates. Black diamond: random-effects estimate of $\widehat{\mu}$." width="\linewidth"  />
+</div>
+</div>
+<div id="across-study-bias-correction" class="section level3" number="19.2.3">
+<h3><span class="header-section-number">19.2.3</span> Across-study bias correction</h3>
+<p>How do we identify and correct bias across studies? Given that some forms of publication bias induce a correlation between studies’ point estimates and their standard errors, several popular statistical methods, such as Trim-and-Fill <span class="citation">(<a href="#ref-duval2000trim" role="doc-biblioref">Duval &amp; Tweedie, 2000</a>)</span> and Egger’s regression <span class="citation">(<a href="#ref-egger1997bias" role="doc-biblioref">Egger et al., 1997</a>)</span> are designed to quantify funnel plot asymmetry.</p>
+<p>However, it is important to note that funnel plot asymmetry does not always imply that there is publication bias, nor does publication bias always cause funnel plot asymmetry. Sometimes funnel plot asymmetry is driven by genuine differences in the effects being studied in small and large studies <span class="citation">(<a href="#ref-egger1997bias" role="doc-biblioref">Egger et al., 1997</a>; <a href="#ref-lau2006case" role="doc-biblioref">Lau et al., 2006</a>)</span>. For example, in a meta-analysis of intervention studies, if the most effective interventions are also the most expensive or difficult to implement, these highly effective interventions might be used primarily in the smallest studies (“small study effects”). Essentially, funnel plots and related methods are best suited to detecting publication bias in which (1) small studies with large positive point estimates are more likely to be published than small studies with small or negative point estimates; and (2) the largest studies are published regardless of the magnitude of their point estimates. That model of publication bias is sometimes what is happening, but not always!</p>
+<p>A more flexible approach for detecting publication bias uses <strong>selection models</strong>. These models can detect other forms of publication bias that funnel plots may not detect, such as publication bias that favors <em>significant</em> results. We won’t cover these methods in detail here, but we think they are a better approach to the question, along with related sensitivity analyses.<label for="tufte-sn-203" class="margin-toggle sidenote-number">203</label><input type="checkbox" id="tufte-sn-203" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">203</span> High-level overviews of selection models are given in <span class="citation">McShane et al. (<a href="#ref-mcshane2016adjusting" role="doc-biblioref">2016</a>)</span> and <span class="citation">Maier et al. (<a href="#ref-smt" role="doc-biblioref">in press</a>)</span>. For more methodological detail, see <span class="citation">Hedges (<a href="#ref-hedges1984estimation" role="doc-biblioref">1984</a>)</span>, <span class="citation">Iyengar &amp; Greenhouse (<a href="#ref-iyengar1988" role="doc-biblioref">1988</a>)</span>, and <span class="citation">Vevea &amp; Hedges (<a href="#ref-vevea1995" role="doc-biblioref">1995</a>)</span>. For a tutorial on fitting and interpreting selection models, see <span class="citation">Maier et al. (<a href="#ref-smt" role="doc-biblioref">in press</a>)</span>. For sensitivity analyses, see <span class="citation">Mathur &amp; VanderWeele (<a href="#ref-sapb" role="doc-biblioref">2020c</a>)</span>.</span></p>
+<p>You may also have heard of “<span class="math inline">\(p\)</span>-methods” to detect across-study biases such as <span class="math inline">\(p\)</span>-curve and <span class="math inline">\(p\)</span>-uniform <span class="citation">(<a href="#ref-simonsohn2014p" role="doc-biblioref">Simonsohn et al., 2014b</a>, <a href="#ref-simonsohn2014b" role="doc-biblioref">2014a</a>; <a href="#ref-van2015meta" role="doc-biblioref">Van Assen et al., 2015</a>)</span>. These methods essentially assess whether the significant <span class="math inline">\(p\)</span>-values “bunch up” just under 0.05, which is taken to indicate publication bias. These methods are increasingly popular in psychology and have their merits. However, it is important to note that these methods are actually simplified versions of selection models <span class="citation">(e.g., <a href="#ref-hedges1984estimation" role="doc-biblioref">Hedges, 1984</a>)</span> that work only under considerably more restrictive settings than do the original selection models [for example, when there is not heterogeneity across studies; <span class="citation">McShane et al. (<a href="#ref-mcshane2016adjusting" role="doc-biblioref">2016</a>)</span>]. For this reason, it is usually (although not always) better to use selection models in place of the more restrictive <span class="math inline">\(p\)</span>-methods.</p>
+<p>Paluck et al. used a regression-based approach to assess and correct for publication bias. This approach provided significant evidence of a relationship between the standard error and effect size (i.e., an asymmetric funnel plot). Again, this asymmetry could reflect publication bias or other sources of correlation between studies’ estimates and their standard errors. Paluck et al. also used this same regression-based approach to try to correct for potential publication bias. Results from this model indicated that the bias-corrected effect size estimate was close to zero. In other words, even though all studies estimated that intergroup contact decreased prejudice, it is possible that there are unpublished studies that did not find this (or found that intergroup contact increased prejudice).</p>
+<div class="accident-report">
+<p>⚠️ Garbage in, garbage out? Meta-analyzing bad research</p>
+<p>Botox can help eliminate wrinkles. But some researchers have also suggested that it may help treat clinical depression when used to paralyze the muscles associated with frowning. As crazy as they may sound, a quick examination of the literature would lead many to conclude that this treatment works. Studies that randomly assign depressed patients to either receive Botox injections or saline injections do indeed find that Botox recipients exhibit decreases in depression. And when you combine all available evidence in a meta-analysis, you find that this difference is quite large: <span class="math inline">\(\widehat{d}\)</span> = 0.83, 95% CI [0.52, 1.14]. Unfortunately, this meta-analytic result has problems with both within- and between-study bias <span class="citation">(<a href="#ref-coles2019does" role="doc-biblioref">Coles et al., 2019</a>)</span>.</p>
+<p>First, participants are not supposed to know whether they have been randomly assigned to receive Botox or a control saline injections. However, only one of these treatments leads the upper half of your face to be paralyzed! After a couple of weeks you’re pretty likely to figure out whether you received the Botox treatment or control saline injection. Thus, the apparent effect of Botox on depression could very well be a placebo effect, a clear within-study bias issue.</p>
+<p>Second, 51% of the outcomes measured were found not to have been reported by the study authors. This finding raises concerns about selective reporting: perhaps researchers examining the effects of Botox on depression only report the outcomes that demonstrate an effect, but not those that do not. In this scenario, any meta-analytic conclusions are potentially undermined by between-study bias.</p>
+</div>
+</div>
+</div>
+<div id="chapter-summary-meta-analysis" class="section level2" number="19.3">
+<h2><span class="header-section-number">19.3</span> Chapter summary: Meta-analysis</h2>
+<p>Taken together, Paluck and colleagues’ use of meta-analysis provided several important insights that would have been easy to miss in a non-quantitative review. First, despite a preponderance of non-significant findings, intergroup contact interventions were estimated to decrease prejudice by on average 0.4 standard deviations. On the other hand, there was considerable heterogeneity in intergroup contact effects, suggesting that there are important moderators of the effectiveness of these interventions. And finally, publication bias was a substantial concern, suggesting the need for follow-up research that will be published regardless of the outcome.</p>
+<p>Overall, meta-analysis is a key technique for aggregating evidence across studies. Meta-analysis allows researchers to move beyond the bias of naive techniques like vote counting and towards a more quantitative summary of an experimental effect. Unfortunately, a meta-analysis is only as good as the literature it’s based on, so the aspiring meta-analyst must be aware of both within- and between-study biases!</p>
+<div class="exercise">
+<p><span id="exr:unlabeled-div-13" class="exercise"><strong>Exercise 19.1  </strong></span>Imagine that you read the following result in the abstract of a meta-analysis: “In 83 randomized studies of middle school children, replacing one hour of class time with mindfulness meditation significantly improved standardized test scores (standardized mean difference <span class="math inline">\(\widehat{\mu} = 0.05\)</span>; 95% confidence interval: [<span class="math inline">\(0.01, 0.09\)</span>]; <span class="math inline">\(p&lt;0.05\)</span>).” Why is this a problematic way to report on meta-analysis results? Suggest a better sentence to replace this one.</p>
+<p>As you read the rest of the meta-analysis, you find that the authors conclude that “These findings demonstrate robust benefits of meditation for children, suggesting that test scores improve even when the meditation is introduced as a replacement for normal class time.” You recall that the heterogeneity estimate was <span class="math inline">\(\widehat{\tau} = 0.90\)</span>. Do you think that this result regarding the heterogeneity tends to support, or rather tends to undermine, the concluding sentence of the meta-analysis? Why?</p>
+<p>What kinds of within-study biases would concern you in this meta-analysis? How might you assess the credibility of the meta-analyzed studies and of the meta-analysis as whole in light of these possible biases?</p>
+</div>
+<div class="exercise">
+<p><span id="exr:unlabeled-div-14" class="exercise"><strong>Exercise 19.2  </strong></span>Imagine you conduct a meta-analysis on a literature in which statistically significant results in either direction are much more likely to be published that non-significant results. Draw the funnel plot you would expect to see. Is the plot funnel symmetric or asymmetric?</p>
+</div>
+<div class="exercise">
+<p><span id="exr:unlabeled-div-15" class="exercise"><strong>Exercise 19.3  </strong></span>Why do you think small studies receive more weight in random-effects meta-analysis than in fixed-effects meta-analysis? Can you see why this is true mathematically based on the equations given above, and can you also explain the intuition in simple language?</p>
+</div>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-allport1954nature" class="csl-entry">
+Allport, G. W. (1954). <em>The nature of prejudice</em>.
+</div>
+<div id="ref-boisjoly2006empathy" class="csl-entry">
+Boisjoly, J., Duncan, G. J., Kremer, M., Levy, D. M., &amp; Eccles, J. (2006). Empathy or antipathy? The impact of diversity. <em>American Economic Review</em>, <em>96</em>(5), 1890–1905.
+</div>
+<div id="ref-borenstein2021introduction" class="csl-entry">
+Borenstein, M., Hedges, L. V., Higgins, J. P., &amp; Rothstein, H. R. (2021). <em>Introduction to meta-analysis</em>. John Wiley &amp;amp; Sons.
+</div>
+<div id="ref-brockwell2001comparison" class="csl-entry">
+Brockwell, S. E., &amp; Gordon, I. R. (2001). A comparison of statistical methods for meta-analysis. <em>Statistics in Medicine</em>, <em>20</em>(6), 825–840.
+</div>
+<div id="ref-clunies1989changing" class="csl-entry">
+Clunies-Ross, G., &amp; O’meara, K. (1989). Changing the attitudes of students towards peers with disabilities. <em>Australian Psychologist</em>, <em>24</em>(2), 273–284.
+</div>
+<div id="ref-coles2019does" class="csl-entry">
+Coles, N. A., Larsen, J. T., Kuribayashi, J., &amp; Kuelz, A. (2019). Does blocking facial feedback via botulinum toxin injections decrease depression? A critical review and meta-analysis. <em>Emotion Review</em>, <em>11</em>(4), 294–309.
+</div>
+<div id="ref-dersimonian1986meta" class="csl-entry">
+DerSimonian, R., &amp; Laird, N. (1986). Meta-analysis in clinical trials. <em>Controlled Clinical Trials</em>, <em>7</em>(3), 177–188.
+</div>
+<div id="ref-duval2000trim" class="csl-entry">
+Duval, S., &amp; Tweedie, R. (2000). Trim and fill: A simple funnel-plot–based method of testing and adjusting for publication bias in meta-analysis. <em>Biometrics</em>, <em>56</em>(2), 455–463. <a href="https://doi.org/10.1111/j.0006-341X.2000.00455.x">https://doi.org/10.1111/j.0006-341X.2000.00455.x</a>
+</div>
+<div id="ref-egger1997bias" class="csl-entry">
+Egger, M., Smith, G. D., Schneider, M., &amp; Minder, C. (1997). Bias in meta-analysis detected by a simple, graphical test. <em>BMJ</em>, <em>315</em>(7109), 629–634. <a href="https://doi.org/10.1136/bmj.315.7109.629">https://doi.org/10.1136/bmj.315.7109.629</a>
+</div>
+<div id="ref-franco2014" class="csl-entry">
+Franco, A., Malhotra, N., &amp; Simonovits, G. (2014). Publication bias in the social sciences: Unlocking the file drawer. In <em>Science</em> (No. 6203; Vol. 345, pp. 1502–1505).
+</div>
+<div id="ref-goldstein2008room" class="csl-entry">
+Goldstein, N. J., Cialdini, R. B., &amp; Griskevicius, V. (2008). A room with a viewpoint: Using social norms to motivate environmental conservation in hotels. <em>Journal of Consumer Research</em>, <em>35</em>(3), 472–482.
+</div>
+<div id="ref-grant2009typology" class="csl-entry">
+Grant, M. J., &amp; Booth, A. (2009). A typology of reviews: An analysis of 14 review types and associated methodologies. <em>Health Information &amp; Libraries Journal</em>, <em>26</em>(2), 91–108.
+</div>
+<div id="ref-hedges1984estimation" class="csl-entry">
+Hedges, L. V. (1984). Estimation of effect size under nonrandom sampling: The effects of censoring studies yielding statistically insignificant mean differences. <em>Journal of Educational Statistics</em>, <em>9</em>(1), 61–85. <a href="https://doi.org/10.3102/10769986009001061">https://doi.org/10.3102/10769986009001061</a>
+</div>
+<div id="ref-hedges2010robust" class="csl-entry">
+Hedges, L. V., Tipton, E., &amp; Johnson, M. C. (2010). Robust variance estimation in meta-regression with dependent effect size estimates. <em>Research Synthesis Methods</em>, <em>1</em>(1), 39–65.
+</div>
+<div id="ref-iyengar1988" class="csl-entry">
+Iyengar, S., &amp; Greenhouse, J. B. (1988). Selection models and the file drawer problem. <em>Statistical Science</em>, 109–117.
+</div>
+<div id="ref-knapp2003improved" class="csl-entry">
+Knapp, G., &amp; Hartung, J. (2003). Improved tests for a random effects meta-regression with a single covariate. <em>Statistics in Medicine</em>, <em>22</em>(17), 2693–2710.
+</div>
+<div id="ref-kotzeva2015eurostat" class="csl-entry">
+Kotzeva, M., Brandmüller, T., &amp; Önnerfors, Å. (2015). <em>Eurostat regional yearbook 2015</em>. Publications Office of the European Union.
+</div>
+<div id="ref-lau2006case" class="csl-entry">
+Lau, J., Ioannidis, J. P., Terrin, N., Schmid, C. H., &amp; Olkin, I. (2006). The case of the misleading funnel plot. <em>BMJ</em>, <em>333</em>(7568), 597–600. <a href="https://doi.org/10.1136/bmj.333.7568.597">https://doi.org/10.1136/bmj.333.7568.597</a>
+</div>
+<div id="ref-lefebvre2019searching" class="csl-entry">
+Lefebvre, C., Glanville, J., Briscoe, S., Littlewood, A., Marshall, C., Metzendorf, M.-I., Noel-Storr, A., Rader, T., Shokraneh, F., Thomas, J.others. (2019). Searching for and selecting studies. <em>Cochrane Handbook for Systematic Reviews of Interventions</em>, 67–107.
+</div>
+<div id="ref-smt" class="csl-entry">
+Maier, M., VanderWeele, T. J., &amp; Mathur, M. B. (in press). Using selection models to assess sensitivity to publication bias: A tutorial and call for more routine use. <em>Campbell Systematic Reviews</em>.
+</div>
+<div id="ref-mathur_mam" class="csl-entry">
+Mathur, M. B., &amp; VanderWeele, T. J. (2019). New metrics for meta-analyses of heterogeneous effects. <em>Statistics in Medicine</em>, <em>38</em>(8), 1336–1342.
+</div>
+<div id="ref-npphat" class="csl-entry">
+Mathur, M. B., &amp; VanderWeele, T. J. (2020b). Robust metrics and sensitivity analyses for meta-analyses of heterogeneous effects. <em>Epidemiology</em>, <em>31</em>(3), 356–358.
+</div>
+<div id="ref-sapb" class="csl-entry">
+Mathur, M. B., &amp; VanderWeele, T. J. (2020c). Sensitivity analysis for publication bias in meta-analyses. <em>Journal of the Royal Statistical Society: Series C</em>, <em>5</em>(69), 1091–1119.
+</div>
+<div id="ref-art" class="csl-entry">
+Mathur, M. B., &amp; VanderWeele, T. J. (2022). Methods to address confounding and other biases in meta-analyses: Review and recommendations. <em>Annual Review of Public Health</em>, <em>1</em>(43).
+</div>
+<div id="ref-mcshane2016adjusting" class="csl-entry">
+McShane, B. B., Böckenholt, U., &amp; Hansen, K. T. (2016). Adjusting for publication bias in meta-analysis: An evaluation of selection methods and some cautionary notes. <em>Perspectives on Psychological Science</em>, <em>11</em>(5), 730–749. <a href="https://doi.org/10.1177/1745691616662243">https://doi.org/10.1177/1745691616662243</a>
+</div>
+<div id="ref-mcshane2017statistical" class="csl-entry">
+McShane, B. B., &amp; Gal, D. (2017). Statistical significance and the dichotomization of evidence. <em>Journal of the American Statistical Association</em>, <em>112</em>(519), 885–895. <a href="https://doi.org/10.1080/01621459.2017.1289846">https://doi.org/10.1080/01621459.2017.1289846</a>
+</div>
+<div id="ref-nelson1986interpretation" class="csl-entry">
+Nelson, N., Rosenthal, R., &amp; Rosnow, R. L. (1986). Interpretation of significance levels and effect sizes by psychological researchers. <em>American Psychologist</em>, <em>41</em>(11), 1299.
+</div>
+<div id="ref-paluck2019contact" class="csl-entry">
+Paluck, E. L., Green, S. A., &amp; Green, D. P. (2019). The contact hypothesis re-evaluated. <em>Behavioural Public Policy</em>, <em>3</em>(2), 129–158.
+</div>
+<div id="ref-pustejovsky2021meta" class="csl-entry">
+Pustejovsky, J. E., &amp; Tipton, E. (2021). Meta-analysis with robust variance estimation: Expanding the range of working models. <em>Prevention Science</em>, 1–14.
+</div>
+<div id="ref-riley2011interpretation" class="csl-entry">
+Riley, R. D., Higgins, J. P., &amp; Deeks, J. J. (2011). Interpretation of random effects meta-analyses. <em>BMJ</em>, <em>342</em>.
+</div>
+<div id="ref-scheibehenne2016" class="csl-entry">
+Scheibehenne, B., Jamil, T., &amp; Wagenmakers, E.-J. (2016). Bayesian evidence synthesis can reconcile seemingly inconsistent results: The case of hotel towel reuse. <em>Psychol. Sci.</em>, <em>27</em>(7), 1043–1046.
+</div>
+<div id="ref-simonsohn2014b" class="csl-entry">
+Simonsohn, U., Nelson, L. D., &amp; Simmons, J. P. (2014a). P-curve and effect size: Correcting for publication bias using only significant results. <em>Perspectives on Psychological Science</em>, <em>9</em>(6), 666–681.
+</div>
+<div id="ref-simonsohn2014p" class="csl-entry">
+Simonsohn, U., Nelson, L. D., &amp; Simmons, J. P. (2014b). P-curve: A key to the file-drawer. <em>Journal of Experimental Psychology: General</em>, <em>143</em>(2), 534.
+</div>
+<div id="ref-sterne2016robins" class="csl-entry">
+Sterne, J. A., Hernán, M. A., Reeves, B. C., Savović, J., Berkman, N. D., Viswanathan, M., Henry, D., Altman, D. G., Ansari, M. T., Boutron, I.others. (2016). ROBINS-i: A tool for assessing risk of bias in non-randomised studies of interventions. <em>Bmj</em>, <em>355</em>.
+</div>
+<div id="ref-thompson2002should" class="csl-entry">
+Thompson, S. G., &amp; Higgins, J. P. (2002). How should meta-regression analyses be undertaken and interpreted? <em>Statistics in Medicine</em>, <em>21</em>(11), 1559–1573.
+</div>
+<div id="ref-tipton2015small" class="csl-entry">
+Tipton, E. (2015). Small sample adjustments for robust variance estimation with meta-regression. <em>Psychological Methods</em>, <em>20</em>(3), 375.
+</div>
+<div id="ref-van2015meta" class="csl-entry">
+Van Assen, M. A., Aert, R. van, &amp; Wicherts, J. M. (2015). Meta-analysis using effect size distributions of only statistically significant studies. <em>Psychological Methods</em>, <em>20</em>(3), 293.
+</div>
+<div id="ref-vevea1995" class="csl-entry">
+Vevea, J. L., &amp; Hedges, L. V. (1995). A general linear model for estimating effect size in the presence of publication bias. <em>Psychometrika</em>, <em>60</em>(3), 419–435.
+</div>
+<div id="ref-wang2019simple" class="csl-entry">
+Wang, C.-C., &amp; Lee, W.-C. (2019). A simple method to estimate prediction intervals and predictive distributions: Summarizing meta-analyses beyond means and confidence intervals. <em>Research Synthesis Methods</em>, <em>10</em>(2), 255–266.
+</div>
+</div>
+<p style="text-align: center;">
+<a href="18-writing.html"><button class="btn btn-default">Previous</button></a>
+<a href="20-conclusions.html"><button class="btn btn-default">Next</button></a>
+</p>
+</div>
+</div>
+
+<script src="toc/toc.js"></script>
+
+
+</body>
+</html>
