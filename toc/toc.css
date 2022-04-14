@@ -4,7 +4,7 @@
   margin-top: 3em;
   color: dimgray;
   --darker: #111;
-  counter-reset: part chapter;
+  counter-reset: part chapter appendix;
 }
 #TOC * {
   transition-duration: 0.5s;
@@ -47,16 +47,23 @@
 #TOC .part-container:hover .part-title * {
   color: var(--darker);
 }
-#TOC :is(.book-title, .chapter-title):hover {
-  color: var(--darker);
-}
-#TOC .part-title-first::before {
+#TOC .part-container .part-title-first::before {
   --counter: part;
   --style: upper-roman;
 }
-#TOC .chapter-title::before {
+#TOC .part-container .chapter-title::before {
   --counter: chapter;
   --style: decimal;
+}
+#TOC .part-container:last-child .chapter-title::before {
+  --counter: appendix;
+  --style: upper-latin;
+}
+#TOC .part-container:last-child .part-title-first::before {
+  --style: none;
+}
+#TOC :is(.book-title, .chapter-title):hover {
+  color: var(--darker);
 }
 #TOC ::before {
   content: counter(var(--counter), var(--style));
