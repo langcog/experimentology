@@ -11,6 +11,7 @@
 
 
 
+
 <meta name="author" content="Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke, Robert Hawkins, Maya Mathur, and Rondeline Williams" />
 
 
@@ -25,12 +26,13 @@ MathJax.Hub.Config({
 
 <title>Chapter 6 Inference | Experimentology</title>
 
+<script src="libs/header-attrs-2.13/header-attrs.js"></script>
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
 <script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
 <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-<script src="libs/datatables-binding-0.22/datatables.js"></script>
+<script src="libs/datatables-binding-0.21/datatables.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <link href="libs/dt-core-1.11.3/css/jquery.dataTables.min.css" rel="stylesheet" />
 <link href="libs/dt-core-1.11.3/css/jquery.dataTables.extra.css" rel="stylesheet" />
@@ -204,10 +206,7 @@ div.csl-indent {
 <p>Question (1) is associated with one particular type of statistical inference method – <strong>null hypothesis significance testing</strong> (NHST) in the <strong>frequentist</strong> statistical tradition. NHST has become synonymous with data analysis, such that in the vast majority of research papers (and research methods courses), all of the reported analyses are tests of this type. Yet the equivalence of NHST – in particular, the dichotomous inference that something is “significant” or not – and the idea of data analysis more generally has been quite problematic.</p>
 <p>The instinct to “go test for significance” before visualizing your data and trying to understand sources of variation (participants, items, manipulations, etc.) is one of the most unhelpful things an experimenter can do. Whether <span class="math inline">\(p &lt; .05\)</span> or not, a test of this sort gives you literally <em>one bit</em> of information about your data.<label for="tufte-sn-63" class="margin-toggle sidenote-number">63</label><input type="checkbox" id="tufte-sn-63" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">63</span> In the information theoretic sense, as well as the common sense!</span> Considering effect sizes and their variation more holistically, including using the kinds of visualizations we advocate in Chapter <a href="16-viz.html#viz">16</a>, gives you a much richer sense of what happened in your experiment!</p>
 <p>In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. All practicing experimentalists need to understand NHST, both to read the literature and also to apply this method in appropriate situations. For example, NHST may be a reasonable tool for testing whether an intervention leads to a difference between a treatment condition and an appropriate control, although it still doesn’t tell you about the size of the intervention effect! But we will also try to contextualize NHST as a very special case of a broader set of strategies around modeling and inference. Further, we will continue to flesh out our account of how some of the pathologies of NHST have been a driver of the replication crisis.</p>
-<p><label for="tufte-mn-2" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-2" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/inference/krushke.png"/> Clarifying the distinctions
-between Bayesian and Frequentist paradigms and the ways that they
-approach inference and estimation. For many settings, we think the
-estimation mindset is more useful. From Kruschke and Liddell (2018).</span></span></p>
+<p><label for="tufte-mn-2" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-2" class="margin-toggle"><span class="marginnote"><span style="display: block;"><img src="images/inference/krushke.png"/> Clarifying the distinctions between Bayesian and Frequentist paradigms and the ways that they approach inference and estimation. For many settings, we think the estimation mindset is more useful. From Kruschke and Liddell (2018).</span></span></p>
 <p>What should replace NHST? There has been a recent move towards the use of Bayes Factors to quantify the evidence in support of a hypothesis. Bayes Factors can help answer questions like (2). We introduce these tools, and believe that they have broader applicability than the NHST framework and should be known by students. On the other hand, Bayes Factors are not a panacea. They have the same problems as NHST when they are applied dichotomously.</p>
 <p>Instead of dichotomous frequentist or Bayesian inference, we advocate for <strong>estimation</strong> and <strong>modeling</strong> strategies, which are more suited towards questions (3) and (4) <span class="citation">(<a href="#ref-cumming2014" role="doc-biblioref">Cumming, 2014</a>; <a href="#ref-kruschke2018" role="doc-biblioref">Kruschke &amp; Liddell, 2018</a>)</span>. The goal of these strategies is to yield an accurate and precise estimate of the relationships underlying observed variation in the data. One of these estimates is the causal effect of the experimental manipulation(s), which we introduced in the last chapter. That explains our affection for these approaches: if a good theory predicts these kinds of causal effects, it makes sense that we’d want to estimate them precisely! What we’ll do in this chapter is build on that estimation strategy to understand what we learn about the population we’re trying to measure from our sample estimate.</p>
 <p>This isn’t a statistics book and we won’t attempt to teach the full array of important statistical concepts that will allow students to build good models of a broad array of datasets. (Sorry!).<label for="tufte-sn-64" class="margin-toggle sidenote-number">64</label><input type="checkbox" id="tufte-sn-64" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">64</span> If you’re interested in going deeper, here are two books that have been really influential for us. The first is <span class="citation">Gelman &amp; Hill (<a href="#ref-gelman2006b" role="doc-biblioref">2006</a>)</span> and its successor <span class="citation">Gelman et al. (<a href="#ref-gelman2020" role="doc-biblioref">2020</a>)</span>, which teach regression and multi-level modeling from the perspective of data description. The second is <span class="citation">McElreath (<a href="#ref-mcelreath2018" role="doc-biblioref">2018</a>)</span>, a course on building Bayesian models of the causal structure of your data. Honestly, neither is an easy book to sit down and read (unless you are the kind of person who reads stats books on the subway for fun) but both really reward detailed study. We encourage you to get together a reading group and go through the exercises together. It’ll be well worth while in its impact on your statistical and scientific thinking.</span> But we do want you to be able to reason about inference and modeling. In this chapter, we’ll start by doing some inferences about our tea-tasting example from the last chapter, using this example to build up intuitions about inference and estimation. Then in Chapter <a href="7-models.html#models">7</a>, we’ll start to look at more sophisticated models.</p>
@@ -682,7 +681,7 @@ Gelman, A., &amp; Hill, J. (2006). <em>Data analysis using regression and multil
 Gelman, A., Hill, J., &amp; Vehtari, A. (2020). <em>Regression and other stories</em>. Cambridge University Press.
 </div>
 <div id="ref-probmods2" class="csl-entry">
-Goodman, N. D., Tenenbaum, J. B., &amp; Contributors, T. P. (2016). <em><span class="nocase">Probabilistic Models of Cognition</span></em> (Second). <a href="http://probmods.org/v2" class="uri">http://probmods.org/v2</a>.
+Goodman, N. D., Tenenbaum, J. B., &amp; Contributors, T. P. (2016). <em><span class="nocase">Probabilistic Models of Cognition</span></em> (Second). <a href="http://probmods.org/v2">http://probmods.org/v2</a>.
 </div>
 <div id="ref-goodman2008" class="csl-entry">
 Goodman, S. (2008). A dirty dozen: Twelve p-value misconceptions. <em>Seminars in Hematology</em>, <em>45</em>, 135–140.
