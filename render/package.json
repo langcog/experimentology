@@ -2,16 +2,17 @@
   "type": "module",
   "scripts": {
     "dev": "node server",
-    "build": "npm-run-all setup:* clean:* build:*",
     "serve": "serve ../docs",
-    "setup:public": "cp -R r/*/ public",
-    "setup:contents": "node contents",
+    "build": "npm-run-all clean:* setup:* build:*",
+    "clean:public": "rimraf public",
     "clean:dist": "rimraf dist",
     "clean:docs": "rimraf ../docs",
+    "setup:public": "mkdir public && mv -f r/*/ public/",
+    "setup:contents": "node contents",
     "build:client": "vite build",
     "build:server": "vite build --ssr",
     "build:prerender": "vite-plugin-ssr prerender --noExtraDir",
-    "build:copy": "cp -R dist/client ../docs"
+    "build:copy": "mv -f dist/client ../docs"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
