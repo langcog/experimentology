@@ -1,4 +1,4 @@
-import TOC                       from './toc'
+import TOC                       from '/src/toc'
 import { routes }                from '/contents.json'
 import { readFile }              from 'fs/promises'
 import { basename, format }      from 'path'

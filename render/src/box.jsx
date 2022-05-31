@@ -1,9 +1,9 @@
-import './box.scss'
+import '/src/box.scss'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Interweave }      from 'interweave'
 import render              from 'preact-render-to-string'
-import icons               from './icons'
+import icons               from '/src/icons'
 
 const Box = ({ content, type }) => {
 	const transform = (_, [ text ]) => {
