@@ -201,6 +201,8 @@ If any of these three conditions are violated, estimates and inferences from you
 
 So far we have considered continuous outcome measures, like tea ratings. What if we instead had a binary outcome, such as whether a participant liked or didn't like the tea, or a count outcome, such as the number of cups a participant chose to drink? These and other non-continuous outcomes often violate the assumptions of OLS, in particular because they often induce heteroskedastic errors. For example, count outcomes are often right-skewed because a count cannot be less than 0, creating heteroskedasticity for the same reasons discussed above when we considered skewed continuous outcomes. Binary outcomes inherently violate heteroskedasticity because the variance of a binary variable depends directly on the success probability; this means that the errors will be more variable for individuals whose covariate values place their expected success probability closer to 0.50.[^models-4] 
 
+[^models-4]: Specifically, the variance of a binary variable with success probability $p$ is simply $p(1-p)$, which is maximized at $p=0.50$. 
+
 Happily, there are regression models closely related to OLS that can handle non-continuous outcomes. These models are called **generalized linear models** (GLM), and OLS is one of many members of this large class of models. To see the connection, let's first write an OLS model more generally in terms of what it says about the expected value of the outcome:
 
 \begin{align}
@@ -211,6 +213,8 @@ where $p$ is the number of independent variables, $\beta_0$ is the intercept, an
 
 The linear predictor of a GLM (i.e., $\beta_0 + \sum_{j=1}^p \beta_j X_j$) looks exactly the same as for OLS, but instead of modeling $E[Y_i]$, a GLM models some **transformation**, $g(.)$, of the expectation:[^models-5] 
 
+[^models-5]: Note that GLMs involve transforming the *expectation* of the outcome, not the outcome itself! That is, we are not just taking the outcome variable in our dataset and transforming it before fitting an OLS model, but rather we are fitting a different model entirely, one that posits a fundamentally different relationship between the predictors and the expected outcomes.
+
 \begin{align}
 \label{eq:glm_general_form}
 g( E[Y_i] ) &= \beta_0 + \sum_{j=1}^p \beta_j X_j 
@@ -220,13 +224,7 @@ It turns out that by choosing a transformation of $E[Y_i]$ that is suitable for 
 
 Another common link function for binary data is the logit link, $g(x) = \log \left( \frac{x}{1 - x} \right)$; the model is then called **logistic regression**. The term $\frac{x}{1 - x}$ is called an **odds** and represents the probability of an event occurring divided by the probability of its not occurring. Exponentiating the coefficients would yield **odds ratios**, which are the *multiplicative* increase in the odds of $Y_i=1$ that is associated with a one-unit increase in the relevant predictor variable.
 
-GLMs differ from OLS not only in their link functions, but also in how they handle the error terms; however, we won't cover that here. We have only scratched the surface of GLMs here, but the take-home point is simply that they are usually the tool of choice for fitting regression models with non-continuous outcomes. 
-
-
-[^models-4] Specifically, the variance of a binary variable with success probability $p$ is simply $p(1-p)$, which is maximized at $p=0.50$. 
-
-[^models-5] Note that GLMs involve transforming the *expectation* of the outcome, not the outcome itself! That is, we are not just taking the outcome variable in our dataset and transforming it before fitting an OLS model, but rather we are fitting a different model entirely, one that posits a fundamentally different relationship between the predictors and the expected outcomes.
-
+GLMs differ from OLS not only in their link functions, but also in how they handle the error terms; however, we won't cover that here. We have only scratched the surface of GLMs here, but the take-home point is simply that they are usually the tool of choice for fitting regression models with non-continuous outcomes.
 
 
 ## Accommodating clustering in our models
@@ -261,7 +259,7 @@ A second class of methods that helps resolve these issues is **generalized estim
 
 [MBM to MCF: Above is what I usually say as my default recommendation for GEE vs. LMM, but happy to discuss and modify if you don't agree. I also haven't touched the marginal vs. conditional interpretation issue since this has been about LMM and not GLMM.]
 
-[^models-6] How many clusters are enough for LMM to behave well? This is an active area of research, and the answer will depend on the number of observations in each cluster and the model structure. However, some empirical findings suggest that, at least for certain models, LMM can considerably underestimate standard errors even with, for example, 20 clusters each with 100 observations [@bie2021fitting].
+[^models-6]: How many clusters are enough for LMM to behave well? This is an active area of research, and the answer will depend on the number of observations in each cluster and the model structure. However, some empirical findings suggest that, at least for certain models, LMM can considerably underestimate standard errors even with, for example, 20 clusters each with 100 observations [@bie2021fitting].
  
 
 
