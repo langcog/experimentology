@@ -37,7 +37,7 @@ As with all developmental research, there are many constraints on measurement th
 
 
 ```{marginfigure, echo=TRUE}
-<img src="images/measurement/measurement/cdi.jpg"/>
+<img src="images/measurement/cdi.jpg"/>
 The first page of the MacArthur-Bates Communicative Development Inventory, a parent report instrument for measuring children's early language.
 ```
 
@@ -46,7 +46,7 @@ To decide which of these methods to use for a specific study, we need to think t
 We don't want to use CDI questionnaires if they are a bad measurement instrument. How can we tell? This is where assessment of reliability and validity are critical. In practice, the task of selecting and justifying a measurement instrument comes down to an argument about reliability and validity.
 
 
-```{r measurement-reliability}
+```{r load-ws, eval=FALSE}
 library(wordbankr)
 ws <- wordbankr::get_instrument_data(language = "English (American)", 
                                      form = "WS", administrations = TRUE, 
@@ -54,12 +54,17 @@ ws <- wordbankr::get_instrument_data(language = "English (American)",
 
 ws_mat <- ws |>
   filter(!longitudinal, type == "word") |>
-  mutate(value = value == "produces", 
-         even_item = ifelse(num_item_id %% 2 == 0, "even","odd")) |>
+  mutate(value = value == "produces",
+         even_item = if_else(num_item_id %% 2 == 0, "even","odd")) |>
   group_by(data_id, even_item) |>
   summarise(prop = mean(value)) |>
-  pivot_wider(names_from = even_item, values_from = prop) 
+  ungroup() |>
+  pivot_wider(names_from = even_item, values_from = prop)
+saveRDS(ws_mat, "data/ws_mat.rds")
+```
 
+```{r measurement-reliability}
+ws_mat <- readRDS("data/ws_mat.rds")
 n <- length(unique(ws_mat$data_id))
 test_retest <- cor.test(ws_mat$even, ws_mat$odd)$estimate
 ```
