@@ -35,10 +35,8 @@ Anyone who has worked with little children or had children of their own can atte
 
 As with all developmental research, there are many constraints on measurement that are imposed by the age of the children you want to work with. You can't give toddlers a multiple-choice test! So to measure early language ability (to be concrete, let's say for children under two and a half years old), you have roughly three options open. First, you can do some kind of observation of them and transcribe their language production -- this could be a play session in the lab or at home, with an experimenter or with a parent or other caregiver. Second, you could do some kind of direct assessment, e.g. by asking them to point or look at the referent of a word (e.g. "look at the kitty") and record their responses using video, a tablet, or even eye-tracking technology [@frank2016b]. Or, you could ask their parents about their language, for example sending a questionnaire like the MacArthur Bates Communicative Development Inventory (CDI for short), which asks parents to mark words that their child says or understands. CDI forms are basically long checklists of words (and other items, which we'll ignore for now); the first page of an English form is shown in the margin.
 
-
-```{marginfigure, echo=TRUE}
-<img src="images/measurement/cdi.jpg"/>
-The first page of the MacArthur-Bates Communicative Development Inventory, a parent report instrument for measuring children's early language.
+```{r cdi, fig.margin=TRUE, fig.cap="The first page of the MacArthur-Bates Communicative Development Inventory, a parent report instrument for measuring children's early language."}
+knitr::include_graphics("images/measurement/cdi.jpg")
 ```
 
 To decide which of these methods to use for a specific study, we need to think through the properties of these measurement instruments -- both in terms of reliability and validity and also in terms of their practicality for a specific research situation. Practicalities matter! For example, observational measurement can be extremely costly in both time and money because it not only requires a visit of some sort (to the home or the lab) but also transcription of speech, which is quite time-consuming -- often taking 5-10 minutes of work to transcribe a single minute of speech. Direct assessment still requires a lab or home visit, but scoring is typically more straightforward. Finally, parent report -- (e)mailing a questionnaire to the parent -- is extremely time- and cost-effective. 
@@ -71,19 +69,16 @@ test_retest <- cor.test(ws_mat$even, ws_mat$odd)$estimate
 
 How reliable is the CDI? As we'll discuss more below, there's no single answer to this question. Not only are there multiple ways to compute reliability, but also reliability in practice is going to depend on the population being measured, the fidelity with which the instrument is administered, and other factors. That said, a quick and dirty thing we can do is called a **split half correlation**. We can take a dataset of CDI data [from Wordbank; @frank2017] and split each test in half. Since there are 680 words on the CDI, that means we pretend that each of our `r n` participants took two versions of the CDI, each with 340 items -- one test consists of only the even-numbered items and the other is the odd numbered items. Then we just compute the correlation between each participant's score on the even CDI and the odd CDI. The resulting correlation is very high: $r = `r round(test_retest, digits = 3)`$. So that gives us a sense that CDIs are pretty reliable. 
 
-
-```{marginfigure, echo=TRUE}
-<img src="images/measurement/psycho-cors.png"/>
-Longitudinal correlations between a child's score on one administration of the CDI and another one several months later. 
+```{r psycho-cors, fig.margin=TRUE, fig.cap="Longitudinal correlations between a child's score on one administration of the CDI and another one several months later."}
+knitr::include_graphics("images/measurement/psycho-cors.png")
 ```
 
 On the other hand, a stronger test of reliability is a **test-retest** correlation. Our split-half number only tells us about what was happening within a single administration session, but lots of things vary between administration sessions. For example, maybe the child was having a bad day and not producing as much complex language. Comparing correlations across different days removes this source of correlation -- at a cost. The longer you wait between observations the more the child has changed! The figure in the margin shows longitudinal test-retest correlations for two CDIs, showing how correlations start off high and drop off as the gap between observations increases [@frank2021]. Overall, this evidence is comforting. It looks like the CDI shows good reliability ($>.9$) across several methods. 
 
 Given that CDI forms are relatively reliable instruments, are they valid? Well, as a starting point, they certainly have reasonable **face validity** -- they look like they are measuring the construct that they purport to measure. They also arguably have some **ecological validity** in that they measure the child's language (as observed by the parent) in their day-to-day experiences, rather than in a particular lab situation. But how well do they really measure the construct of interest, namely children's early language ability? 
 
-```{marginfigure, echo=TRUE}
-<img src="images/measurement/cdi-validity.png"/>
-Relations between an early form of the CDI (the ELI) and several other measurements of children's early language from both transcripts and direct assessments. Arrows indicate loadings of different measures (boxes) onto a single construct (circle). Numbers give standardized weights [@bornstein1998].
+```{r cdi-validity, fig.margin=TRUE, fig.cap="Relations between an early form of the CDI (the ELI) and several other measurements of children's early language from both transcripts and direct assessments. Arrows indicate loadings of different measures (boxes) onto a single construct (circle). Numbers give standardized weights [@bornstein1998]."}
+knitr::include_graphics("images/cdi-validity.png")
 ```
 
 A study by @bornstein1998 answered this question via a common measure validation strategy: concurrently administering a variety of measures that are hypothesized to relate to the same construct. The figure in the the margin shows the results of a structural equation model that measures the shared variance between a variety of different measures (critically including examples of the other two methods of assessment we discussed, direct assessment and observational, transcript-based assessments) and a single hypothesized central construct. The relation between the ELI (an early version of the CDI) and the central construct is quite strong: the ELI score correlated closely with the shared variance among all the different measures. Taken together with the reliability evidence, this kind of **concurrent validity** evidence suggests that, if you want to measure early language, the CDI is a pretty good way to do so. 
@@ -94,9 +89,8 @@ The story of the CDI is a success story -- it's a relatively inexpensive measure
 
 ## Reliability
 
-```{marginfigure, echo=TRUE}
-<img src="images/measurement/elife-35718-fig1-v2.jpg"/>
-Precision and bias visualized. The expected precision of measurements from an instrument is its reliabilty. The bias of measurements from an instrument also provide a metaphor for its validity. Figure from @brandmaier2018.
+```{r brandmaier, fig.margin=TRUE, fig.cap="Precision and bias visualized. The expected precision of measurements from an instrument is its reliabilty. The bias of measurements from an instrument also provide a metaphor for its validity. Figure from @brandmaier2018."}
+knitr::include_graphics("images/measurement/elife-35718-fig1-v2.jpg")
 ```
 
 Having looked at the CDI as an example, we can now talk more generally about what it means for a measure to be reliable. Reliability is a way of describing the extent to which a measure yields signal relative to noise. Intuitively, if there's less noise, then there will be more similarity between different measurements of the same quantity.^[As the graphic above illustrates, a reliable measure that yields high-precision observations can still be highly biased. We'll talk about bias in a moment when we discuss validity.] Here's the trouble. How do we measure signal and noise? 
@@ -196,7 +190,6 @@ The idea of "argument-based validity" is really just a reminder for researchers 
 Table \@ref(tab:flake-questions) gives our adaptation of the set of questions they offer up to try and provoke thoughtful reporting of measurement practices. One big thing on their mind is that researchers have been known to modify their scales and their scale scoring practices (say, omitting items from a survey or rescaling responses) after data collection. This doesn't have to be a bad thing -- sometimes it is justified -- but it clearly needs to be disclosed, and it may call statistical inferences into question (see Chapter \@ref(prereg)). 
 
 ```{r flake-questions}
-# <img src="images/validity-questions.jpg"/>
 # Questions about validity. From @flake2020.
 flake <- tribble(~Question, ~`Information to Report`,
                  "What is your construct?", "Define construct, describe theory and research.",
@@ -215,9 +208,8 @@ knitr::kable(flake, caption = "Questions about measurement that every reseacher 
 
 The Competitive Reaction Time Task (CRTT) is a lab-based measure of aggression. Participants are told that they are playing a reaction-time game against another player and are asked to set the parameters of a noise blast that will be played to their opponent. Unfortunately, in an analysis of the literature using CRTT, @elson2014 found that different papers using the CRTT use dramatically different methods for scoring the task. Across trials, both the volume and duration of the noise blast were sometimes analyzed. Sometimes these scores were transformed (via logarithms) or thresholded. Sometimes they were combined into a single score. Elson was so worried by this flexibility, he created a website, [http://flexiblemeasures.com](), to document the variation he observed. 
 
-```{marginfigure, echo=TRUE}
-<img src="images/measurement/CRTT.png"/>
-Data on the number of publications using CRTT and the number of different quantifications of CRTT, plotted cumulatively until 2016. Image from [http://flexiblemeasures.com]().
+```{r crtt, fig.margin=TRUE, fig.cap="Data on the number of publications using CRTT and the number of different quantifications of CRTT, plotted cumulatively until 2016. Image from [http://flexiblemeasures.com]()."}
+knitr::include_graphics("images/measurement/CRTT.png")
 ```
 
 As of 2016, Elson had found 130 papers using the CRTT. And across these papers, he documented an astonishing 157 quantification strategies. One paper reported ten different strategies for extracting numbers from this measure! More worrisome still, in their work, Elson and colleagues found that these decisions made a major difference to whether the findings of studies were statistically significant. 
@@ -235,9 +227,8 @@ We can measure almost anything about experimental participants' behavior or even
 
 There's no hard and fast rule about what aspect of behavior to measure, but here we will focus on two dimensions that can help us organize the broad space of possible measure targets.^[Some authors differentiate between "self-report" and "observational" measures. This distinction seems simple on its face, but actually gets kind of complicated. Is a facial expression a "self-report"? Language is not the only way that people communicate with one another -- many actions are intended to be communicative [@shafto2012].] The first of these is the continuum between simple and complex behaviors (visualized in the margin figure). The second is the focus on explicit, voluntary behaviors vs. implicit or involuntary behaviors.  
 
-```{marginfigure, echo=TRUE}
-<img src="images/measurement/measure-considerations.png"/>
-Often choosing a measure can be consolidated into a choice along a continuum from simple measures that provide a small amount of information but are quick and easy to repeat and those that provide much richer information but require more time. 
+```{r measure-considerations, fig.margin=TRUE, fig.cap="Often choosing a measure can be consolidated into a choice along a continuum from simple measures that provide a small amount of information but are quick and easy to repeat and those that provide much richer information but require more time."}
+knitr::include_graphics("images/measurement/measure-considerations.png")
 ```
 
 The simplest measurable behaviors tend to be button presses, for example:
