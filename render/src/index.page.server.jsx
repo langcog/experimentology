@@ -7,8 +7,25 @@ import parse                     from 'html-react-parser'
 import renderToString            from 'preact-render-to-string'
 import * as library              from 'preact'
 
+const descendants = node => [
+	node.children,
+	node.children?.map(descendants),
+].flat(Infinity).filter(Boolean)
+
+const textContent = node => descendants(node)
+.filter(({ type }) => type == 'text')
+.map(({ data }) => data)
+.join('')
+
 const replace = node => {
 	if (node?.attribs?.id == 'TOC') return <TOC/>;
+
+	if (
+		node.name == 'p' && descendants(node)
+		.some(node => node.name == 'button' && descendants(node)
+			.some(node => node.data.match(/^(Next|Previous)$/))
+		)
+	) return <></>;
 }
 
 export const prerender = () => routes
