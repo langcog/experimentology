@@ -58,11 +58,11 @@ ws_mat <- ws |>
   summarise(prop = mean(value)) |>
   ungroup() |>
   pivot_wider(names_from = even_item, values_from = prop)
-saveRDS(ws_mat, "data/ws_mat.rds")
+saveRDS(ws_mat, "data/measurement/ws_mat.rds")
 ```
 
 ```{r measurement-reliability}
-ws_mat <- readRDS("data/ws_mat.rds")
+ws_mat <- readRDS("data/measurement/ws_mat.rds")
 n <- length(unique(ws_mat$data_id))
 test_retest <- cor.test(ws_mat$even, ws_mat$odd)$estimate
 ```
@@ -78,7 +78,7 @@ On the other hand, a stronger test of reliability is a **test-retest** correlati
 Given that CDI forms are relatively reliable instruments, are they valid? Well, as a starting point, they certainly have reasonable **face validity** -- they look like they are measuring the construct that they purport to measure. They also arguably have some **ecological validity** in that they measure the child's language (as observed by the parent) in their day-to-day experiences, rather than in a particular lab situation. But how well do they really measure the construct of interest, namely children's early language ability? 
 
 ```{r cdi-validity, fig.margin=TRUE, fig.cap="Relations between an early form of the CDI (the ELI) and several other measurements of children's early language from both transcripts and direct assessments. Arrows indicate loadings of different measures (boxes) onto a single construct (circle). Numbers give standardized weights [@bornstein1998]."}
-knitr::include_graphics("images/cdi-validity.png")
+knitr::include_graphics("images/measurement/cdi-validity.png")
 ```
 
 A study by @bornstein1998 answered this question via a common measure validation strategy: concurrently administering a variety of measures that are hypothesized to relate to the same construct. The figure in the the margin shows the results of a structural equation model that measures the shared variance between a variety of different measures (critically including examples of the other two methods of assessment we discussed, direct assessment and observational, transcript-based assessments) and a single hypothesized central construct. The relation between the ELI (an early version of the CDI) and the central construct is quite strong: the ELI score correlated closely with the shared variance among all the different measures. Taken together with the reliability evidence, this kind of **concurrent validity** evidence suggests that, if you want to measure early language, the CDI is a pretty good way to do so. 
@@ -135,7 +135,7 @@ $$ICC = \frac{\sigma^2_b}{\sigma^2_w + \sigma^2_b}$$
 
 If you think about it, this is more or less what we were doing when we computed both **split-half** and **test-retest** reliabilities for the CDI in our case study above. In the split half case, we took the correlation between two halves of the test, computed across individuals. That correlation looks at the covariance between the two halves, scaled by the variance *across individuals* of each half. So now we know why that split half reliability number was so high ($r = `r round(test_retest, digits = 3)`$)! We were looking at the comparison of the variation between one individual's answers and the variation between tons of different kids whose answers are all over the place.^[If this intuition about the correlation doesn't make sense, @rodgers1988 give a really nice treatment of different ways of looking at a correlation.] Same thing was true with the test-retest example: we were computing the covariation between this individual's two CDI scores, scaled by the variation across *all the individuals in the sample.*
 
-```{r measurement-reliability-redux}
+```{r measurement-reliability-redux, eval=FALSE}
 ws_mat_16 <- ws |>
   filter(!longitudinal, type == "word", age == 16, 
          mom_ed %in% c("Primary","Some Secondary","Secondary")) |>
@@ -143,8 +143,12 @@ ws_mat_16 <- ws |>
          even_item = ifelse(num_item_id %% 2 == 0, "even","odd")) |>
   group_by(data_id, even_item) |>
   summarise(prop = mean(value)) |>
-  pivot_wider(names_from = even_item, values_from = prop) 
+  pivot_wider(names_from = even_item, values_from = prop)
+saveRDS(ws_mat_16, "data/measurement/ws_mat_16.rds")
+```
 
+```{r}
+ws_mat_16 <- readRDS("data/measurement/ws_mat_16.rds")
 test_retest_16 <- cor.test(ws_mat_16$even, ws_mat_16$odd)$estimate
 ```
 
