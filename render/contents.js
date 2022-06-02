@@ -4,8 +4,7 @@ import { writeFile } from 'fs/promises'
 const dom = await JSDOM.fromFile('r/index.html');
 const { window: { document } } = dom;
 
-const url = 'about:blank';
-dom.reconfigure({ url });
+dom.reconfigure({ url: 'about:blank' });
 
 const [ title, subtitle ] = [ '.title', '.subtitle' ]
 .map(_ => document.querySelector(_).textContent);
@@ -13,13 +12,13 @@ const [ title, subtitle ] = [ '.title', '.subtitle' ]
 const parts = [ ... document.querySelectorAll('#TOC li') ]
 .reduce((parts, { firstChild: { textContent: title, href } }) => {
 	title = title.replace(/^\S+?\s/, '');
-	href  = href.replace(url, '').replace(/(\.html)?#.+/, '');
 
 	if (! href) {
 		const [ , first, rest ] = title.match(/([A-z]+)(.*)/);
 
 		parts.push({ first, rest, chapters: [] });
 	} else {
+		href = href.replace(/\.html.*$/, '');
 		parts.at(-1).chapters.push({ title, href });
 	}
 
