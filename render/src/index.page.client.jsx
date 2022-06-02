@@ -1,10 +1,10 @@
-// import 'preact/debug'
-
-import '/src/global.scss'
-
 import { hydrate } from 'preact'
-import TOC         from '/src/toc'
+import { getPage } from 'vite-plugin-ssr/client'
 
-hydrate(<TOC/>, document.querySelector('#toc').parentNode)
+const render = async () => {
+	const { url, body, Page } = await getPage();
 
-import '/src/box'
+	hydrate(<Page url={ url } body={ body }/>, document.body);
+}
+
+render();

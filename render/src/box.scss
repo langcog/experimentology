@@ -1,4 +1,4 @@
-@use 'sass:map';
+// @use 'sass:map';
 
 $yellow:  #b58900;
 $orange:  #cb4b16;
@@ -21,18 +21,43 @@ examples               $yellow,
 
 @each $class, $color in $types {
 	.#{$class} {
-		border: 2px solid $color;
+		border: 4px solid $color;
+		border-radius: 8px;
 
-		.type { background: $color; }
+		.Collapsible__trigger { background: $color; }
 	}
 }
 
 .box {
 	width: 55%;
+	margin: 1em 0;
 
-	.content {
-		margin: 1em;
-		box-sizing: border-box;
+	.Collapsible {
+		&__contentInner { margin: 1em; }
+
+		&__trigger {
+			display: flex;
+			font-variant: small-caps;
+			font-family: Source Sans Pro;
+			cursor: pointer;
+			font-size: 1.4em;
+			color: white;
+			padding: 0.5em 0;
+
+			> * { padding: 0 0.5em; }
+
+			> :last-child {
+				margin-left: auto;
+				transition: transform 300ms;
+			}
+
+			&.is-open > :last-child { transform: rotateZ(180deg); }
+		}
+	}
+
+	.title {
+		font-size: 1.5em;
+		font-weight: bold;
 	}
 
 	p, ul, ol {
@@ -53,22 +78,5 @@ examples               $yellow,
 
 	@media screen and (max-width: 760px) {
 		width: 85%;
-	}
-
-	.type {
-		font-variant: small-caps;
-		font-family: Source Sans Pro;
-		font-size: 1.4em;
-		color: white;
-		padding: 0.4em 0;
-	}
-
-	.icon {
-		padding: 0 0.5em;
-	}
-
-	.title {
-		font-size: 1.5em;
-		font-weight: bold;
 	}
 }
