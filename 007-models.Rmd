@@ -63,7 +63,7 @@ tea_data <- make_tea_data(n = 24)
 
 <!-- MBM to MCF: Estimation chapter actually foreshadows *Welch's* t-test because it describes unequal vars. Inference chapter generically refers to a t-test without making distinction. Let's discuss. -->
 
-Let's start with one of these special cases, namely estimating a treatment effect, $\beta$, in a two-group design. In Chapter \@ref(estimation), we solved this exact challenge for the tea-tasting experiment. We posited a model in which the milk-first ratings were normally distributed with mean $\theta_{milkfirst} = \theta_{teafirst} + \beta$ and with standard deviation $\sigma_{milkfirst}$.^[Here's a quick reminder that "model" here is a way of saying "set of assumptions about the data generating procedure." So saying that some equation is a "model" is the same as saying, we think this is where the data came from. We can "turn the crank" -- generate data through the process that's specified in those equations, e.g., pulling numbers from a normal distribution with mean $\theta_{milkfirst}$ and standard deviation $\sigma_{milkfirst}$. In essence, we're committing to the idea that this process will give us data that are substantively similar to the ones we have already.]
+Let's start with one of these special cases, namely estimating a treatment effect, $\beta$, in a two-group design. In Chapter \@ref(estimation), we solved this exact challenge for the tea-tasting experiment. We posited a model in which the milk-first ratings were normally distributed with mean $\theta_{milkfirst} = \theta_{teafirst} + \beta_{teafirst}$ and with standard deviation $\sigma_{milkfirst}$.^[Here's a quick reminder that "model" here is a way of saying "set of assumptions about the data generating procedure." So saying that some equation is a "model" is the same as saying, we think this is where the data came from. We can "turn the crank" -- generate data through the process that's specified in those equations, e.g., pulling numbers from a normal distribution with mean $\theta_{milkfirst}$ and standard deviation $\sigma_{milkfirst}$. In essence, we're committing to the idea that this process will give us data that are substantively similar to the ones we have already.]
 
 Let's now write that model as a regression model, that is, as a model relating each participant's tea rating, $Y_i$, given that participant's treatment assignment, $X_i$. $X_i=0$ represents the control (milk-first) group and $X_i=1$ represents the treatment (tea-first) group. Here, $Y_i$ is the dependent variable, and $X_i$ is the independent variable. $i$s are an index variable for each of the participants. To make this concrete, you can see some sample tea-tasting data (N=24 for simplicity) below, with the index $i$, the condition and its predictor $X_i$, and the rating $Y$.
 
@@ -83,7 +83,7 @@ Here's the model:
 <!-- MM: Not sure if align environment is supported in RMD. Might need to use this: https://stackoverflow.com/questions/47912278/align-environment-in-r-markdown-which-works-for-both-docx-and-pdf-output --> 
 \begin{align}
 \label{eq:ols_ttest}
-Y_i &= \theta_{milkfirst} + \beta X_i + \epsilon_i \\
+Y_i &= \theta_{milkfirst} + \beta_{teafirst} X_i + \epsilon_i \\
 \end{align}
 
 A model like this is called a **linear regression of Y on X**. $\theta_{milkfirst} + \beta X_i$ is called the **linear predictor**, and it describes the expected value of an individual's tea rating, $Y_i$, given that participant's treatment group $X_i$ (the single independent variable in this model). That is, for a participant in the control group ($X_i=0$), the linear predictor is just equal to $\theta_{milkfirst}$, which is indeed the mean for the control group that we specified above. On the other hand, for a participant in the treatment group, the linear predictor is equal to $\theta_{milkfirst} + \beta$, which is the mean for the treatment group that we specified. In regression jargon, $\beta$ is a **regression coefficient**, representing the association of the independent variable $X_i$ with the outcome $Y_i$.
@@ -151,36 +151,38 @@ Now we have the model. How do we estimate the regression coefficients $\theta_{m
 
 Figure \@ref(fig:models-ols-plot) gives a graphical illustration of the tea tasting data for each condition (the dots) along with the model predictions for each condition $\theta_{milkfirst}$ and $\theta_{milkfirst} + \beta$ (blue lines). The distance of each point to the predictions (the thing that OLS wants to minimize) is shown by the dotted lines. Another name for these errors is **residuals**: they are the "residual variation" that is not predicted by the model.
 
-The left-hand plot shows the best coefficient values -- the ones that move the model as close as possible to each point, minimizing the total squared length of the dashed lines. The right-hand plot shows a substantially worse solution. The amazing thing about OLS is that it is a simple way to find the best solution for a wide range of useful models.^[You'll notice that we haven't talked at all about $p$-values in this chapter. Regression models can be used to produce $p$-values on specific coefficients, representing inferences about the likelihood of a particular coefficient magnitude relative to some null hypothesis. You can also compute Bayes Factors on specific regression coefficients. We won't talk much about either of these computations though. As we said, we're not really trying to teach you statistics, just how to think about data!]
+The left-hand plot shows the best coefficient values -- the ones that move the model as close as possible to each point, minimizing the total squared length of the dashed lines. The right-hand plot shows a substantially worse solution. The amazing thing about OLS is that it is a simple way to find the best solution for a wide range of useful models.
+
+You'll notice that we aren't talking much about $p$-values in this chapter. Regression models can be used to produce $p$-values on specific coefficients, representing inferences about the likelihood of a particular coefficient magnitude relative to some null hypothesis. You can also compute Bayes Factors on specific regression coefficients, or use Bayesian inference to fit these coefficients under some prior expectation about their distribution. We won't talk much about this, or more generally how to fit the models we describe. As we said, we're not going to give a full treatment of all the relevant statistical topics. Instead we want to help you begin thinking about making models of your data.
 
 ### Adding predictors
 
-The regresson model we just wrote down is the same thing as the $t$-test from Chapter \@ref(inference). But the beauty of regression modeling is that much more complex estimation problems than this can also be written as regression models, essentially by extending what we did above. For example, we might want to add another predictor variable, such as the age of the participant.^[The ability to estimate multiple coefficients at once is a huge strength of regression modeling, so much so that sometimes people use the label **multiple regression** to denote that there is more than one predictor + coefficient pair.]
+The regression model we just wrote down is the same thing as the $t$-test from Chapter \@ref(inference). But the beauty of regression modeling is that much more complex estimation problems can also be written as regression models, essentially by extending the model we made above. For example, we might want to add another predictor variable, such as the age of the participant.^[The ability to estimate multiple coefficients at once is a huge strength of regression modeling, so much so that sometimes people use the label **multiple regression** to denote that there is more than one predictor + coefficient pair.]
 
 Let's add this new independent variable and a corresponding regression coefficient to our model:
 
 \begin{align}
 \label{eq:ols_one_covariate}
-Y_i &= \theta_{milkfirst} + \beta X_{i1} + \theta_{age} X_{i2}  + \epsilon_i \\
+Y_i &= \theta_{milkfirst} + \beta_{teafirst} X_{i1} + \theta_{age} X_{i2}  + \epsilon_i \\
 \end{align}
 <!-- \epsilon_i &\sim N(0, \sigma^2) -->
-<!-- WHY ARE WE USING THETA FOR THE CONTINUOUS PREDICTORS INSTEAD OF BETA? -->
+<!-- WHY ARE WE USING THETA INSTEAD OF BETA FOR COEFS. LET'S FIX THIS. -->
 
-Now that we have multiple independent variables, we've labeled them $X_{i1}$ (treatment group) and $X_{i2}$ (age) for clarity.
+Now that we have multiple independent variables, we've labeled them $X_{group}$ (treatment group) and $X_{age}$ for clarity.
 
-To illustrate how to interpret the regression coefficients in this model, let's use the linear predictor to compare the model's predicted tea ratings for two hypothetical participants who are both in the treatment group: 20-year-old Alice and 21-year old Bob. Alice's linear predictor tells us that her expected rating is $\theta_{milkfirst} + \beta + \theta_{age} \cdot 20$. In contrast, Bob's linear predictor is $\theta_{milkfirst} + \beta + \theta_{age} \cdot 21$. We could therefore calculate the expected difference in ratings for 21-year-olds versus 20-year olds by subtracting Alice's linear predictor from Bob's, yielding just $\theta_{age}$. How simple! 
+To illustrate how to interpret the regression coefficients in this model, let's use the linear predictor to compare the model's predicted tea ratings for two hypothetical participants who are both in the treatment group: 20-year-old Alice and 21-year old Bob. Alice's linear predictor tells us that her expected rating is $\theta_{milkfirst} + \beta_{teafirst} + \theta_{age} \cdot 20$. In contrast, Bob's linear predictor is $\theta_{milkfirst} + \beta_{teafirst} + \theta_{age} \cdot 21$. We could therefore calculate the expected difference in ratings for 21-year-olds versus 20-year olds by subtracting Alice's linear predictor from Bob's, yielding just $\theta_{age}$. How simple! 
 
-In fact, we would get the same result if Alice and Bob were instead 50 and 51 years old, respectively. Try this yourself. This equivalence illustrates a key point about linear regression models in general: *the regression coefficient represents the mean (i.e., expected) difference in $Y_i$ when comparing participants who differ by 1 unit of the corresponding independent variable* (here, comparing participants who differ by 1 year of age). In "Practical modeling considerations" below, we discuss whether and when to "control for" additional variables (i.e., when to add them to your model) .
+We would get the same result if Alice and Bob were instead 50 and 51 years old, respectively. This equivalence illustrates a key point about linear regression models in general: *the regression coefficient represents the expected difference in outocme when comparing participants who differ by 1 unit of the  independent variable* (here, comparing participants who differ by 1 year of age). In "Practical modeling considerations" below, we discuss whether and when to "control for" additional variables (i.e., when to add them to your model).
 
 ### When does linear regression work?
 
 Linear regression modeling with OLS is an incredibly powerful technique for creating models to estimate the influence of multiple predictors on a single dependent variable. In fact, OLS is in a mathematical sense the *best* way to fit a linear model!^[There is a precise sense in which OLS gives the *very best* predictions we could ever get from any model that posits linear relationships between the independent variables and the outcome. That is, you can come up with any other linear model you want, and yet if the assumptions of OLS are fulfilled, predictions from OLS will always be less noisy than those of your model. This is because of an elegant mathematical result called the Gauss-Markov Theorem.] But OLS only "works" -- in the sense of yielding good estimates -- if three big conditions are met. 
 
-1. **The predictor relationships being modeled must be linear.** In our comparison of Alice's and Bob's expected outcomes based on their 1-year age difference, we were able to interpret the coefficient $\theta_{age}$ as the average difference in $Y_i$ when comparing participants who differ by 1 year of age, *regardless* of whether those ages are 20 vs. 21 or 50 vs. 51. But that's not always true: plenty of things vary **non-linearly** with age -- for example, imagine growth in height over age! Linear regression will give bad answers in such cases.^[One way to accommodate **nonlinearities** is to modify the linear predictor to include polynomial terms, such as $age^2$, which then allow us to fit a curve rather than just a straight line. It is always a good idea to use visualizations like scatterplots to look for possible problems with linearity.]
+1. **The predictor relationships being modeled must be linear.** In our comparison of Alice's and Bob's expected outcomes based on their 1-year age difference, we were able to interpret the coefficient $\theta_{age}$ as the average difference in $Y_i$ when comparing participants who differ by 1 year of age, *regardless* of whether those ages are 20 vs. 21 or 50 vs. 51. But that's not always true: plenty of things vary **non-linearly** with age -- for example, imagine growth in height over age! Linear regression will give bad answers in such cases.^[One way to accommodate **non-linearities** is to modify the linear predictor to include polynomial terms, such as $age^2$, which then allow us to fit a curve rather than just a straight line. It is always a good idea to use visualizations like scatterplots to look for possible problems with linearity.]
 
 <!-- [Suggested Figure. Panel A: Scatterplot showing a nice linear relationship with OLS fit superimposed. Panel B: Scatterplot showing a nonlinear relationship with OLS fit, OLS fit with x^2 term, and LOESS superimposed.] -->
 
-2. **Errors must be independent.** In our example, observations in the regression model (i.e., rows in the dataset) were sampled independently: each participant was recruited independently to the study and each performed a single trial. On the other hand, suppose we have repeated-measures data in which we sample participants, and then obtained multiple measurements for each participant. Within each participant, measurements would likely be correlated (perhaps due to their general level of tea enjoyment). This correlation in turn invalidates inferences from a model that does not include it. 
+2. **Errors must be independent.** In our example, observations in the regression model (i.e., rows in the dataset) were sampled independently: each participant was recruited independently to the study and each performed a single trial. On the other hand, suppose we have repeated-measures data in which we sample participants, and then obtained multiple measurements for each participant. Within each participant, measurements would likely be correlated (perhaps due to their general level of tea enjoyment). This correlation invalidates inferences from a model that does not include it. We'll discuss this problem in detail below.
 
 <!-- Usually, outcome measurements within a participant will be correlated: if we measure 10 participants' blood pressures every day for a week, some participants will typically have high values whereas others will typically have low values, even though any given participant will also have some variation in their own measurements over time.[^models-3] To help identify such situations, it can be helpful to plot the distribution of **residuals** for each participant (or a random sample thereof) to see whether this distribution seems to differ across participants.  -->
 
@@ -189,7 +191,7 @@ Linear regression modeling with OLS is an incredibly powerful technique for crea
 
 <!-- [Suggested Figure. Violin plots, or similar, showing residuals for different subjects. The residuals exhibit non-independence.] -->
 
-3. **Errors must be normal and unrelated to the predictor.** Imagine older people have very strong tea-ordering preferences while younger people do not. In that case, the models' error term would be more variable for older participants than younger ones. This issue is called **heteroskedasticity**. It is a good idea to plot each independent variable versus the residuals to see if the residuals are more variable for certain values of the independent variable than for others.
+3. **Errors must be normal and unrelated to the predictor.** Imagine older people have very strong tea-ordering preferences while younger people do not. In that case, the models' error term would be more variable for older participants than younger ones. This issue is called **heteroskedasticity**. It is a good idea to plot each independent variable versus the residuals to see if the residuals are more variable for certain values of the independent variable than for others. 
  
  <!-- This is often the case for highly skewed outcome variables. For example, if we regressed participants' incomes on their years of education, we will find that higher education is associated with higher income. However, because income is highly right-skewed in many samples (some people have extremely high incomes), income will typically be more variable for individuals with more education than for those with less education. For this reason, if we predicted incomes for individuals with 16 years of education (i.e., they completed 4-year college and then stopped) and also for individuals with 8 years (i.e., they completed middle school and then stopped), the errors in the former predictions will probably be more variable than the errors in the latter predictions.  -->
 
@@ -199,73 +201,119 @@ If any of these three conditions are violated, estimates and inferences from you
 
 ## Generalized linear models
 
-So far we have considered continuous outcome measures, like tea ratings. What if we instead had a binary outcome, such as whether a participant liked or didn't like the tea, or a count outcome, such as the number of cups a participant chose to drink? These and other non-continuous outcomes often violate the assumptions of OLS, in particular because they often induce heteroskedastic errors. For example, count outcomes are often right-skewed because a count cannot be less than 0, creating heteroskedasticity for the same reasons discussed above when we considered skewed continuous outcomes. Binary outcomes inherently violate heteroskedasticity because the variance of a binary variable depends directly on the success probability; this means that the errors will be more variable for individuals whose covariate values place their expected success probability closer to 0.50.[^models-4] 
+So far we have considered continuous outcome measures, like tea ratings. What if we instead had a binary outcome, such as whether a participant liked or didn't like the tea, or a count outcome, such as the number of cups a participant chose to drink? These and other non-continuous outcomes often violate the assumptions of OLS, in particular because they often induce heteroskedastic errors. 
 
-Happily, there are regression models closely related to OLS that can handle non-continuous outcomes. These models are called **generalized linear models** (GLM), and OLS is one of many members of this large class of models. To see the connection, let's first write an OLS model more generally in terms of what it says about the expected value of the outcome:
+Binary outcomes inherently violate heteroskedasticity because the variance of a binary variable depends directly on the success probability. Errors will be more variable when the expected success probability closer to 0.50, and much less variable for when the expected success is probability is closer to 0 or 1.^[Specifically, the variance of a binary variable with success probability $p$ is simply $p(1-p)$, which is maximized at $p=0.50$.] This hederoskedasticity in turn means that inferences from the model (e.g., $p$-values) can be incorrect; sometimes just a little bit off but sometimes dramatically incorrect.^[There's a whole school of thought in economics that claims that it's OK to use linear regression for binary outcomes. One commentator described this as "wrong but super useful" because the coefficients are simple to interpret as probabilities. Our position is that the linear probability model is an approximation that can be useful but should only be deployed with care by researchers who have given some thought to its weaknesses.]
+
+Happily, **generalized linear models** (GLM) are regression models closely related to OLS that can handle non-continuous outcomes. These models are called "generalized" because OLS is one of many members of this large class of models. To see the connection, let's first write an OLS model more generally in terms of what it says about the expected value of the outcome, which we notate as $E[Y_i]$:
 
 \begin{align}
 \label{eq:ols_general_form}
 E[Y_i] &= \beta_0 + \sum_{j=1}^p \beta_j X_j
 \end{align}
-where $p$ is the number of independent variables, $\beta_0$ is the intercept, and $\beta_j$ is the regression coefficient for the $j^{th}$ independent variable.
+where $p$ is the number of independent variables, $\beta_0$ is the intercept, and $\beta_j$ is the regression coefficient for the $j^{th}$ independent variable. This equation is just a math-y way of saying that you predict from a regression model by adding up each of the predictors independently.
 
-The linear predictor of a GLM (i.e., $\beta_0 + \sum_{j=1}^p \beta_j X_j$) looks exactly the same as for OLS, but instead of modeling $E[Y_i]$, a GLM models some **transformation**, $g(.)$, of the expectation:[^models-5] 
+The linear predictor of a GLM (i.e., $\beta_0 + \sum_{j=1}^p \beta_j X_j$) looks exactly the same as for OLS, but instead of modeling $E[Y_i]$, a GLM models some **transformation**, $g(.)$, of the expectation:
 
 \begin{align}
 \label{eq:glm_general_form}
 g( E[Y_i] ) &= \beta_0 + \sum_{j=1}^p \beta_j X_j 
 \end{align}
 
-It turns out that by choosing a transformation of $E[Y_i]$ that is suitable for the outcome type, we can still fit a linear model. This transformation is called the **link function**. For example, $g(x) = log(x)$ is usually a suitable link function for count or binary outcomes; the model is then called a **log-binomial** regression. When using this link function, exponentiating the coefficients (i.e., taking the inverse of the link function) yields **risk ratios**. A risk ratio (e.g., $\exp(\beta_j)$) represent the *multiplicative* increase in the probability of $Y_i=1$ that is associated with a one-unit increase in the relevant predictor variable (e.g., $X_j$).
+GLMs involve transforming the *expectation* of the outcome, not the outcome itself! That is, we are not just taking the outcome variable in our dataset and transforming it before fitting an OLS model, but rather we are fitting a different model entirely, one that posits a fundamentally different relationship between the predictors and the expected outcomes. This transformation is called the **link function**. In other words, to fit different kinds of outcomes, all we need to do is construct a standard linear model and then just transform its output via the appropriate link function. 
 
-Another common link function for binary data is the logit link, $g(x) = \log \left( \frac{x}{1 - x} \right)$; the model is then called **logistic regression**. The term $\frac{x}{1 - x}$ is called an **odds** and represents the probability of an event occurring divided by the probability of its not occurring. Exponentiating the coefficients would yield **odds ratios**, which are the *multiplicative* increase in the odds of $Y_i=1$ that is associated with a one-unit increase in the relevant predictor variable.
+Perhaps the most common link function is the **logit** link, which is suitable for binary data. This link function looks like this:
 
-GLMs differ from OLS not only in their link functions, but also in how they handle the error terms; however, we won't cover that here. We have only scratched the surface of GLMs here, but the take-home point is simply that they are usually the tool of choice for fitting regression models with non-continuous outcomes. 
+$$g(x) = \log \left( \frac{x}{1 - x} \right)$$
 
+The resulting model is called **logistic regression**. The term $\frac{x}{1 - x}$ is called an **odds** and represents the probability of an event occurring divided by the probability of its not occurring. Exponentiating the coefficients would yield **odds ratios**, which are the *multiplicative* increase in the odds of $Y_i=1$ that is associated with a one-unit increase in the relevant predictor variable.
 
-[^models-4] Specifically, the variance of a binary variable with success probability $p$ is simply $p(1-p)$, which is maximized at $p=0.50$. 
+```{r models-logistic-ex, fig.margin=TRUE, fig.cap="An example of how logistic regression transforms a change in the predictor x into a change in the outcome y. The same change results in a large difference in outcome in the middle of the logistic curve (blue) vs. a small outcome at the top (red) or bottom."}
+x <- seq(-5,5,.1)
+y <- boot::inv.logit(x)
+d_ex <- tibble(x = x, 
+               y = y) 
 
-[^models-5] Note that GLMs involve transforming the *expectation* of the outcome, not the outcome itself! That is, we are not just taking the outcome variable in our dataset and transforming it before fitting an OLS model, but rather we are fitting a different model entirely, one that posits a fundamentally different relationship between the predictors and the expected outcomes.
+ggplot(d_ex, aes(x = x, y = y)) + 
+  geom_line() + 
+  geom_line(data = filter(d_ex, x >= -.5, x <= .5), col = "blue", size = 2) + 
+  geom_line(data = filter(d_ex, x >= 3.5, x <= 4.5), col = "red", size = 2) +
+  geom_segment(aes(x = -.5, y = 0, xend = .5, yend = 0),
+                  arrow = arrow(length = unit(0.25, "cm")), col = "blue") + 
+  geom_segment(aes(x = 3.5, y = 0, xend = 4.5, yend = 0),
+                 arrow = arrow(length = unit(0.25, "cm")), col = "red") + 
+  xlab("X (linear predictor)") + 
+  ylab("Y (outcome probability)")
 
+```
 
+Figure \@ref(fig:models-logistic-ex) shows the way that a logistic regression model transforms a predictor ($x$) into an outcome probability that is bounded at 0 and 1. Critically, although the predictor is still linear, the logit link means that the same change in $x$ can result in a different change in $y$ depending on where you are on the $x$ scale. In this example, if you are in the middle of the predictor range, a one unit change in $x$ results in a `r round(y[x == .5] - y[x == -.5], 2)` change in probability (blue). At a higher value, the change is much smaller (`r round(y[x == 4.5] - y[x == 3.5], 2)`). Notice how this is different from the linear regression model above, where the same change in age always resulted in the same change in preference!
+
+We have only scratched the surface of GLMs here. First, there are many different link functions that are suitable for different outcome types. And second, GLMs differ from OLS not only in their link functions, but also in how they handle the error terms. Our broader goal in this chapter is to show you how regression models are *models of data*. In that context, GLMs use link functions as a way to make models that generate many different times types of outcome data.^[We sometimes think of linear models as a set of tinker toys you can snap together to stack up a set of predictors. In that context, link functions are an extra "attachment" that you can snap onto your linear model to make it generate a different response type.]
 
 ## Accommodating clustering in our models
 
-As noted above, another common situation in which the assumptions of OLS are violated is when the error terms are not independent, for example in repeated-measures data in which participants' error terms across time points are likely to be clustered. We will discuss two classes of methods for accommodating clustering in regression. 
+Experimental data often contain multiple measurements for each participant (so-called **repeated measures**). In addition, as we discussed in our case study, these measurements are often based on a sample of stimulus items (which then each have multiple measures as well). Table \@ref(tab:models-crossed-rm) gives an example of what the outcome data $y$ might look like in this case. This clustering is problematic for OLS models, because the error terms for each datapoint are not independent. 
 
-### Linear mixed models
+```{r models-crossed-rm, fig.margin = TRUE, fig.cap = "Outcome data $y$ with indices indicating both participant and stimulus."}
 
-The first class of methods is **linear mixed models** (LMM). In this approach, we modify the linear predictor itself to model differences across clusters. Suppose we modified the original tea-tasting experiment (without the age covariate) to collect repeated ratings from each participant, such that each participant tastes 5 milk-first and 5 tea-first cups. Then we could fit a LMM as follows:
+crossed_ex <- data.frame(`Stimulus1` = c("y~1,1~", "y~2,1~", "y~3,1~"),
+                     `Stimulus2` = c("y~1,2~", "y~2,2~", "y~3,2~"),
+                     `Stimulus3` = c("y~1,3~", "y~2,3~", "y~3,3~")) 
+rownames(crossed_ex) <- c("Participant1","Participant2","Participant3")
 
-\begin{align}
-\label{eq:lmm}
-Y_i &= \theta_{milkfirst} + \gamma_i + \beta X_{it} + \epsilon_{it} \\
-\gamma_i \sim N(0, \tau^2) \\
-\epsilon_{it} &\sim N(0, \sigma^2) \\
-\end{align}
+kable(crossed_ex, row.names = TRUE)
+```
 
-where $Y_{it}$ is participant $i$'s rating in trial $t$ and $X_{it}$ is the participant's assigned treatment in trial $t$ (i.e., milk-first or tea-first). Compare this model to the basic OLS model in Equation (\ref{eq:ols_ttest}). Here we've introduced another intercept coefficient, $\gamma_i$, and it's unlike the original intercept $\theta_{milkfirst}$ in that $\gamma_i$ varies across participants. As such, $\gamma_i$ is a **random intercept**, whereas $\theta_{milkfirst}$ is a **fixed intercept**. Specifically, we have assumed that each participant has their own typical "baseline" tea rating -- some participants generally like tea more than others -- and that these baseline ratings are normally distributed across participants. Thus, ratings are correlated within participants because ratings cluster around each participant's *unique* baseline tea rating. LMMs can be further extended to model clustering of the independent variables' effects across subjects. To do so, we could introduce **random slopes** ($\gamma_i$) to the model, which represent differences across participants in the effects of independent variables:
+```{r models-tea-ols}
+tea_mod <- lm(rating ~ condition, data = tea_data)
+```
 
-\begin{align}
-\label{eq:lmm}
-Y_i &= \theta_{milkfirst} + \gamma_i + \beta X_{it} + \gamma_j + X_{i1} + \epsilon_{it} \\
-\gamma_i \sim N(0, \tau^2) \\
-\epsilon_i &\sim N(0, \sigma^2) \\
-\end{align}
+Non-independence of datapoints may seem at first glance like a small issue, but it present a deep problem for making inferences. Take the tea-tasting data we looked at above, where we had 24 observations in each condition. If we fit an OLS model, we observe a highly significant tea-first effect. Here are the inferential statistics for that coefficient: `r papaja::apa_print(tea_mod)$statistic$conditiontea_first`. Based on what we talked about in the previous chapter, it seems like we'd be licensed in rejecting the null hypothesis that this effect is due to sampling variation and interpret this instead as evidence for a generalizable difference in tea preference in our sampled population.
 
-LMM is powerful and is a very common approach in psychology, but it does have limitations. Its validity relies on our ability to correctly specify the structure of the random intercepts and errors. This is particularly problematic when the correlation structure of the errors is misspecified, for example if observations within a participant are more correlated for participants in the treatment group than in the control group; in such cases, LMM estimates can be substantially biased [@bie2021fitting]. It can be difficult to verify if the model specification is reasonable, especially with a small number of clusters or observations. Even if the model is correctly specified, LMM can severely underestimate standard errors (e.g., yielding too-small $p$-values) if the number of clusters is not large.[^models-6]
+But suppose we told you that all of those 48 total observations (24 in each condition) were from one individual named George. That would change the picture considerably. Now we'd have no idea whether the big effect we observed reflected a difference in the population, but we would have a very good sense of what George's preference is!^[We discuss the strengths and weaknesses of repeated-measures designs like this in Chapter \@ref(design) and the statistical tradeoffs of having many people with a small number of observations vs. a small number of people with many observations in Chapter \@ref(sampling).] Our OLS model would be wrong now because all of the error terms would be highly correlated -- they would all reflect George's preferences.
 
-### An alternative approach: Generalized estimating equations
+## Linear mixed effects models
 
-A second class of methods that helps resolve these issues is **generalized estimating equations** (GEE). In this approach, we leave the linear predictor alone. We do not add random intercepts or slopes, nor do we assume anything about the distribution of the errors (i.e., we no longer assume that they are normal, independent, and homoskedastic). We instead provide the model with an initial "guess" about how we think the errors might be related to one another; for example, in a repeated-measures experiment, we might guess that the errors are exchangeable, meaning that they are correlated to the same degree within each participant but are uncorrelated across participants. Instead of *assuming* that our guess is correct, as does LMM, GEE estimates the correlation structure of the errors empirically, using our guess as a starting point, and it uses this correlation structure to arrive at point estimates and inference for the regression coefficients. Remarkably, as the number of clusters and observations become very large, GEE will *always* provide unbiased point estimates and valid inference, *even if* our guess about the correlation structure was bad. Additionally, with simple finite-sample corrections [@mancl2001covariance], GEE seems to provide valid inference at smaller numbers of clusters than does LMM. The price paid for these nice safeguards against model misspecification is that, in principle, GEE will typically have less statistical power than LMM *if* the LMM is in fact correctly specified, but the difference may be surprisingly slight in practice [@bie2021fitting]. For these reasons, we tend to prefer GEE with finite-sample corrections over LMM as the default model for clustered data. In general, we tend to favor LMM over GEE only when the number of observations and clusters are quite large, and when careful diagnostics also indicate that distributional assumptions are fulfilled.
+How can we make models that deal with clustered data? There are a number of widely-used approaches for solving this problem including **linear mixed effects models**, **generalized estimating equations**, and **clustered standard errors** (often used in economics). Here we will illustrate how the problem gets solved in linear mixed models, which are an extension of OLS models that are fast becoming a standard in many areas of psychology [@bates2014].
 
-[MBM to MCF: Above is what I usually say as my default recommendation for GEE vs. LMM, but happy to discuss and modify if you don't agree. I also haven't touched the marginal vs. conditional interpretation issue since this has been about LMM and not GLMM.]
+In linear mixed effects models, we modify the linear predictor itself to model differences across clusters. Instead of just measuring George's preferences, suppose we modified the original tea-tasting experiment (without the age covariate) to collect ten ratings from each participant: five milk-first and five tea-first. We define the model the same way as we did before, with some minor differences:
 
-[^models-6] How many clusters are enough for LMM to behave well? This is an active area of research, and the answer will depend on the number of observations in each cluster and the model structure. However, some empirical findings suggest that, at least for certain models, LMM can considerably underestimate standard errors even with, for example, 20 clusters each with 100 observations [@bie2021fitting].
+$$
+Y_{it} = \theta_{milkfirst} + \beta_{teafirst} X_{it} + \gamma_i + \epsilon_{it} 
+$$
+
+where $Y_{it}$ is participant $i$'s rating in trial $t$ and $X_{it}$ is the participant's assigned treatment in trial $t$ (i.e., milk-first or tea-first).
+
+If you compare this equation to the OLS equation above, you will notice that we added two things. First, we've added subscripts for trials that distinguish trials from participants. But the big one is that we added $\gamma_i$, a separate intercept value for each participant. We call this a **random intercept** because it varies across participants (who are randomly selected from the population).^[Formally, we'd notate this random variation by saying that $$\gamma_i \sim N(0, \tau^2)$$, in other words, that participants' random intercepts are sampled with a normal distribution with standard deviation $\tau$.]
+  
+The random intercept means that we have assumed that each participant has their own typical "baseline" tea rating -- some participants generally like tea more than others -- and these baseline ratings are normally distributed across participants. Thus, ratings are correlated within participants because ratings cluster around each participant's *unique* baseline tea rating. 
+
+Following the same logic, we could fit random intercepts for different stimulus items. The addition of these **crossed** random intercepts of participants and items would begin to address the challenge posed by @clark1973 in our case study above. We model participants as having  normally distributed variation; we can model stimulus variation the same way, with each stimulus item assumed to produce a particular average level of performance sampled from a normally distributed population. 
+
+### Random slopes and the challenges of mixed effects modelss
+
+Linear mixed effects models can be further extended to model clustering of the independent variables' effects across subjects.  To do so, we can introduce **random slopes** ($\delta_i$) to the model, which are multiplied by the condition variable $X$ and represent differences across participants in the effect of tea-tasting:
+
+$$Y_i = \theta_{milkfirst} + \beta_{teafirst} X_{it} + \gamma_i + \delta_{i} X_{it} + \epsilon_{it}$$
+Just like the random intercepts, these random slopes will be assumed to vary as a normal distribution.^[These random slopes and intercepts can be fit independently, or assumed to be correlated with one another.] 
+
+This model now describes random variation in both overall how much someone likes tea *and* how strong their preference is. Both of these likely do vary in the population and so it seems like a good thing to put these in your model. Indeed under some circumstances, adding random slopes is argued to be very important for making appropriate inferences [@barr2013]. On the other hand, the model is much more complicated. When we had a simple OLS model above, we had only two parameters to fit ($\theta_{milkfirst}$ and $\beta_teafirst$) but now we have those two plus 48: 24 different individual participant intercepts and 24 participant slopes. This complexity can lead to problems in fitting the models, especially with very small datasets (where these parameters are not very well-constrained by the data) or very large datasets (where computing all these parameters can be tricky).^[Many R users may be familiar with the widely-used `lme4` package for fitting mixed effects models using frequentist tools related to maximum likelihood. Such models can also be fit using Bayesian inference with the `brms` package, which provides many powerful methods for specifying complex models.]
+
+More generally, linear mixed effects models are very powerful and they have become quite common in psychology. But they do have significant limitations. As we discussed, they can be tricky to fit in standard software packages. Further, the inferences we make using these models relies on our ability to specify the structure of the random effects correctly.^[One particularly problematic situation is when the correlation structure of the errors is mis-specified, for example if observations within a participant are more correlated for participants in the treatment group than in the control group; in such cases, mixed model estimates can be substantially biased [@bie2021fitting].] If we write an incorrect model our inferences are wrong, but it is sometimes difficult to know how to check whether your model is reasonable, especially with a small number of clusters or observations. 
+
+<!-- Even if the model is correctly specified, LMM can severely underestimate standard errors (e.g., yielding too-small $p$-values) if the number of clusters is not large. -->
+
+<!-- ^[ How many clusters are enough for LMM to behave well? This is an active area of research, and the answer will depend on the number of observations in each cluster and the model structure. However, some empirical findings suggest that, at least for certain models, LMM can considerably underestimate standard errors even with, for example, 20 clusters each with 100 observations [@bie2021fitting]. -->
+<!-- ] -->
+
+<!-- ### An alternative approach: Generalized estimating equations -->
+
+<!-- A second class of methods that helps resolve these issues is **generalized estimating equations** (GEE). In this approach, we leave the linear predictor alone. We do not add random intercepts or slopes, nor do we assume anything about the distribution of the errors (i.e., we no longer assume that they are normal, independent, and homoskedastic). We instead provide the model with an initial "guess" about how we think the errors might be related to one another; for example, in a repeated-measures experiment, we might guess that the errors are exchangeable, meaning that they are correlated to the same degree within each participant but are uncorrelated across participants. Instead of *assuming* that our guess is correct, as does LMM, GEE estimates the correlation structure of the errors empirically, using our guess as a starting point, and it uses this correlation structure to arrive at point estimates and inference for the regression coefficients. Remarkably, as the number of clusters and observations become very large, GEE will *always* provide unbiased point estimates and valid inference, *even if* our guess about the correlation structure was bad. Additionally, with simple finite-sample corrections [@mancl2001covariance], GEE seems to provide valid inference at smaller numbers of clusters than does LMM. The price paid for these nice safeguards against model misspecification is that, in principle, GEE will typically have less statistical power than LMM *if* the LMM is in fact correctly specified, but the difference may be surprisingly slight in practice [@bie2021fitting]. For these reasons, we tend to prefer GEE with finite-sample corrections over LMM as the default model for clustered data. In general, we tend to favor LMM over GEE only when the number of observations and clusters are quite large, and when careful diagnostics also indicate that distributional assumptions are fulfilled. -->
+
+<!-- [MBM to MCF: Above is what I usually say as my default recommendation for GEE vs. LMM, but happy to discuss and modify if you don't agree. I also haven't touched the marginal vs. conditional interpretation issue since this has been about LMM and not GLMM.] MCF TO MBM: Sorry - I think it's too much detail because we can't really present these methods. I prefer to mention them and point people to them, since our exposition fits nicely with LMMs. -->
+
  
-
-
-
 
 
 ## How do you use models to analyze data? 
