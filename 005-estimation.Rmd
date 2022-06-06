@@ -23,7 +23,10 @@ The birth of modern statistical inference came from a single, epochal act of man
 
 The basic schema of the experiment was that the lady would have to judge a set of new cups of tea and sort them into milk-first vs. tea-first sets. Her data would then be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, it seems unremarkable only because it literally established the way science was done for the next century.
 
-One important and unusual element of the experiment was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounders. Fisher recognized that this strategy was insufficient. Random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk). We discussed the causal power of random assignment in Chapter \@ref(experiments) -- this experiment is a key touchstone in the popularization of randomized experiments![^4]
+One important and unusual element of the experiment was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounds. Fisher recognized that this strategy was insufficient. Random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk). We discussed the causal power of random assignment in Chapter \@ref(experiments) -- this experiment is a key touchstone in the popularization of randomized experiments![^4]
+
+<!-- Julie's comments: "One important and unusual element of the experiment was its treatment of design confounds such as pouring order or cup material" -- isn't pouring order (milk first vs. tea first) *the* experimental manipulation? Maybe "presentation order" would be better wording if what we mean is the order in which the cups were presented. Also, the sentence states that the treatment of design confounds was unusual, but it doesn't say *what* Fisher did (i.e., randomize), and I was left wondering by the end of the paragraph whether Fisher actually randomized those factors (since it was never explicitly stated). Maybe it would be clearer if you were to say, "One important and unusual element of the experiment was the fact that it addressed design confounds such as presentation order or cup material by randomizing them." -->
+
 :::
 
 [^2]: An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed Social Darwinist who believed fervently in Eugenic legislation. These views are repugnant.
@@ -36,7 +39,7 @@ One important and unusual element of the experiment was its treatment of design 
 
 If experiments are about estimating effects, how do we actually use our experimental data to make these estimates? With apologies to Fisher, for our example we'll design a slightly more modern version of his experiment using a Likert scale (1--7 ratings) and a between-participants design (so each participant gets only one cup of tea). Each of these elements will be discussed in more detail in future chapters. 
 
-Our causal theory is that the tea quality is affected by milk ordering, so we'll test that by rating tea quality both milk-first and tea-first. We'll do this as a field trial in an English tea cafe: when people order tea with milk, we'll randomly present it milk-first or tea-first and then elicit a rating on a Likert scale from 1 (terrible) to 7 (delicious). We'll do this for 48 customers and then take a look at the data.[^5]
+Our causal theory is that the tea quality is affected by milk-tea ordering, so we'll test that by rating tea quality both milk-first and tea-first. We'll do this as a field trial in an English tea cafe: when people order tea with milk, we'll randomly present it milk-first or tea-first and then elicit a rating on a Likert scale from 1 (terrible) to 7 (delicious). We'll do this for 48 customers and then take a look at the data.[^5]
 
 [^5]: Right now we're going to assume that our ratings are just simple numerical values and not worry about the fact that they come from a rating scale. This is what people often do, though it can cause problems in certain cases. If you're curious about Likert scales, we'll talk a bit more about them in Chapter \@ref(measurement).
 
@@ -52,7 +55,7 @@ We'll try to go easy on notation but some amount will make things clearer. We wi
 
 ### Maximum likelihood estimation
 
-OK, you are probably saying, if we we want our estimate of milk-first quality, shouldn't we just take the average rating across the 24 cups of milk-first tea? The answer is yes. But let's unpack that choice: taking the sample mean as our estimate $\widehat{\theta}_{\text{milk-first}}$ is an example of an estimation approach called **maximum likelihood estimation**. In general terms, maximum likelihood estimation is a two-step process.
+OK, you are probably saying, if we want our estimate of milk-first quality, shouldn't we just take the average rating across the 24 cups of milk-first tea? The answer is yes. But let's unpack that choice: taking the sample mean as our estimate $\widehat{\theta}_{\text{milk-first}}$ is an example of an estimation approach called **maximum likelihood estimation**. In general terms, maximum likelihood estimation is a two-step process.
 
 First, we assume a **model** for how the data were generated. This model is specified in terms of certain population parameters. In our example, the "model" is as simple as they come: we just assume there is some average level of tea quality and that the measurements vary around it.
 
@@ -158,6 +161,8 @@ ggplot(bayes, aes(x = x, y = h_norm)) +
 
 Figure \@ref(fig:inference-bayes-demo) gives an example of the combination of prior and data. In this example, we look at what difference the prior makes after observing `r n` ratings.  If we go in assuming that the tea is likely to be bad, we are biased downward in our highest posterior probability estimate of `r bayes$map[bayes$label == "Prior: low rating"][1]`; if we go in assuming good discrimination, we end up biased upwards to `r bayes$map[bayes$label == "Prior: high rating"][1]`.
 
+<!-- Julie's comment: For last sentence above, it states low prior as "tea is likely to be bad," whereas high prior is "good discrimination" -- this dichotomy isn't intuitive, particularly the "good discrimination" end because if I understand correctly, we aren't yet comparing milk-first to tea-first (we are just looking within milk-first), and discrimination makes it sound like there is a comparison of the teas. Maybe it would be more straight forward to say, "if we go in assuming that the tea is likely to be great, we end up biased upwards..." -->
+
 ```{r inference-bayes-demo2, fig.cap="Bayesian inference about tea ratings under two different priors with the full dataset."}
 
 n <- length(td$rating)
@@ -196,7 +201,9 @@ ggplot(bayes_full, aes(x = x, y = h_norm)) +
 
 Contrast that figure with Figure \@ref(fig:inference-bayes-demo2), which runs the same Bayesian estimation but with the full dataset of `r n` observations. Now the posterior distribution is much more peaked. The prior also makes much less difference to our highest-probability estimates. With the low prior, our estimate is `r bayes_full$map[bayes_full$label == "Prior: low rating"][1]`; with the high prior it is `r bayes_full$map[bayes_full$label == "Prior: high rating"][1]` also! 
 
-Bayesian estimation is most important when you have strong beliefs and not a lot of data. That can be a case where you have just a few participants in your experiment, but it's also good -- and perhaps more common -- to use Bayesian methods when you have a lot of data, but maybe not that much data about particular units that you care about. For example, you might have a large dataset about the effects of an educational intervention but not that much data about how it affects a particular subgroup. In general, though, Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior or as you get infinite data. 
+Bayesian estimation is most important when you have strong beliefs and not a lot of data. That can be a case where you have just a few participants in your experiment, but it's also good -- and perhaps more common -- to use Bayesian methods when you have a lot of data, but maybe not that much data about particular units that you care about. For example, you might have a large dataset about the effects of an educational intervention but not that much data about how it affects a particular subgroup. In general, though, Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior or as you get infinite data.
+
+<!-- Julie's comment: In last sentence above, maybe add a footnote thing explaining in one sentence what a "flat prior" is (e.g., "a prior that represents no prior belief")? I know you go into it more in the next section but at this point readers may be unfamiliar with what it represents. -->
 
 ## Estimating and comparing effects
 
@@ -204,7 +211,7 @@ We've now covered estimating a single parameter (the mean in just the milk-first
 
 ### Estimating the treatment effect 
 
-Let's refer to the causal effect we care about as our **treatment effect**, called. In practice, estimating $\beta_{\text{milk-first}}$ is going to be a pretty straightforward extension to what we did before.
+Let's refer to the causal effect we care about as our **treatment effect**. In practice, estimating $\beta_{\text{milk-first}}$ is going to be a pretty straightforward extension to what we did before.
 
 In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution, but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let's term the parameters for the tea-first group $\theta_{\text{milk-first}}_{teafirst}$ and $\sigma$. To estimate the treatment effect, we are positing a **model** in which the milk-first ratings are normally distributed with mean $\theta_{\text{milk-first}} = \theta_{\text{tea-first}} + \beta_{\text{milk-first}}$ and with standard deviation $\sigma$.[^17] 
 
@@ -263,7 +270,7 @@ For example, imagine we conducted our tea experiment again, but this time with (
 
 $${d_{kids}} = \frac{\theta_{\text{milk-first}}_1 - \theta_{\text{milk-first}}_2}{\sigma_{pooled}} = \frac{5- 4}{2.5} = \frac{1}{2.5} =  .4$$
 
-This example highlights some of the challenges with standardization. If we focused on the fact that both adults and children experienced a 1-point change in excitement levels ($\widehat{\beta_{\text{milk-first}}} = 1$), we would conclude that milk-first tea is equally tasty for adults and kids If we focused on the standardized effect sizes, however, we would conclude that the effect of tea is twice as big for adults.
+This example highlights some of the challenges with standardization. If we focused on the fact that both adults and children experienced a 1-point change in excitement levels ($\widehat{\beta_{\text{milk-first}}} = 1$), we would conclude that milk-first tea is equally tasty for adults and kids. If we focused on the standardized effect sizes, however, we would conclude that the effect of tea is twice as big for adults.
 
 So which is better: describing raw measures or standardized effect sizes? In general our response is "Why not both?" But if you wanted to pick one or the other, we recommend focusing on raw scores when working with measures that yield measurements that are likely to be comparable across studies already. If your study uses standard units such as milliseconds (e.g., for reaction times) or counts (e.g., for a study tracking an outcome like utterances), these measurements are already comparable across studies. Reporting raw measurements can allow you to check whether your measurements make sense -- for example, a reaction time of 70 milliseconds is inhumanly fast, while a reaction time of 10 seconds might be extremely slow (at least, for many speeded tasks).
 
