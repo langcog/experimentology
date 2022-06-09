@@ -277,6 +277,8 @@ But suppose we told you that all of those 48 total observations (24 in each cond
 
 How can we make models that deal with clustered data? There are a number of widely-used approaches for solving this problem including **linear mixed effects models**, **generalized estimating equations**, and **clustered standard errors** (often used in economics). Here we will illustrate how the problem gets solved in linear mixed models, which are an extension of OLS models that are fast becoming a standard in many areas of psychology [@bates2014].
 
+## Modeling random variation in clusters
+
 In linear mixed effects models, we modify the linear predictor itself to model differences across clusters. Instead of just measuring George's preferences, suppose we modified the original tea-tasting experiment (without the age covariate) to collect ten ratings from each participant: five milk-first and five tea-first. We define the model the same way as we did before, with some minor differences:
 
 $$
@@ -313,24 +315,49 @@ More generally, linear mixed effects models are very powerful and they have beco
 
 <!-- [MBM to MCF: Above is what I usually say as my default recommendation for GEE vs. LMM, but happy to discuss and modify if you don't agree. I also haven't touched the marginal vs. conditional interpretation issue since this has been about LMM and not GLMM.] MCF TO MBM: Sorry - I think it's too much detail because we can't really present these methods. I prefer to mention them and point people to them, since our exposition fits nicely with LMMs. -->
 
- 
-
-
 ## How do you use models to analyze data? 
 
-Estimating one quantity in isolation is often not the best thing to do. In almost any experiment, there will be variation in the estimate that has to do with other known sources. Imagine the Stroop effect, which has a fairly consistent effect on both fast and slow readers [@haaf2017]. But estimates of this effect will be more precise if we take into account that some readers are slower or faster, rather than just averaging across all this variation. That's why we need models that take into account different sources of variation. 
+In the first part of this chapter, we've described a suite of regression-based techniques -- standard OLS, the generalized linear model, and linear mixed effects models -- that can be used to model the data resulting from randomized experiments (as well as many other kinds of data). Further, when used appropriately, the regression-based estimates give an unbiased estimate of a causal effect of interest, the estimation of which is our main goal in doing an experiment. The advantage of regression models over the simpler estimation and inference methods we described in the prior two chapters is that these models can more effectively take into account a range of different kinds of variation including covariates, multiple manipulations, and clustered structure. 
 
-**Make a simple model** that includes all of the key parts of the design (link to visualization). 
+But -- practically speaking -- how should go you about building a model for your experiment? What should you put in and what should you leave out? There are many ways to use models to explore datasets (see Chapter \@ref(eda)), but in this section we will try to sketch a default approach for the use of models to estimate causal effects in experiments in the most straightforward way. Think of this as a starting point or default. We'll begin this section by giving a set of rules of thumb, then discuss a worked example. Our final subsection will deal with the complex issue of covariate adjustment and when you should include covariates in your model. 
 
-**don't muck up your causal inference**
+### Modeling rules of thumb
+
+Our approach to building statistical modeling is to start with what we call the "default model." 
+
+The "default" model of an experiment should include the full design of the experiment, and nothing else. If you are manipulating a variable, include it in your model. If you are manipulating two, include them both and their interaction. If your design includes repeated measurements for participants, include a random effect of participant; if it includes experimental items for which repeated measurements are made, include a random effect of stimulus. But 
+don't include lots of other stuff in the default model. You are doing a randomized experiment, and the strength of randomized experiments is that you don't have to worry about confounding based on the population (see Chapter \@ref(experiments)).^[One corollary to having this kind of default perspective on data analysis: When you see an analysis that deviates substantially from the default, these deviations should provoke some questions. If someone drops a manipulation from their analysis, adds a covariate or two, or fails to control for some clustering in the data, did they deviate because of different norms in their sub-field, or was there some other rationale? This line of reasoning sometimes leads to questions about the extent to which particular analytic decisions are post-hoc and driven by the data (in other words, $p$-hacked).] 
+
+This default model then represents a simple summary of your experimental results. Its coefficients can be interpreted as estimates of the effects of interest, and it can be used as the basis for inferences about the relation of the experimental effect to the population using either frequentist or Bayesian tools. Here's a bit more guidance about this default modeling strategy.
+
+1. **Preregister your model**. If you adjust your analysis after you see your data, you risk $p$-hacking -- choosing an analysis that inflates the estimate of your effect of interest. As we discussed in Chapter \@ref(replication) and as we will discuss in more detail in Chapter \@ref(prereg), one important strategy for avoiding this problem is to **preregister** your analysis.^[A side benefit of preregistration is it makes you think through whether your experimental design is appropriate -- that is, is there an analysis that estimates the effect you want from the data you intend to collect?]
+
+2. **Don't compromise your causal inference**. The logic of randomization is that you cut all causal links between features of the sample and the condition manipulation. But you can "uncut" these links by accident by adding variables into your model that are related to group status. For example, imagine you had a drug trial (placebo vs. drug) and you  ^[This problem is generically called **post-treatment** variables (things that are measured after assignment to condition), and this mistake is called "conditioning on post-treatment variables."]
+
+3. **Check the model against the data**. Visualization.
+
+4. **Interpret the predictions of the model**
 
 
-**check the model against the data**
+### A worked example
 
-**interpret the predictions of the model**
+```{r}
+tea_data |> 
+  mutate(i = 1:n(),
+         X = ifelse(condition == "tea first", 1, 0)) |>
+  rename(`rating (Y)` = rating) |>
+  select(i, condition, X, `rating (Y)`) |>
+  DT::datatable(rownames=FALSE, 
+                caption = "Example tea tasting data in a regression format.")
+
+```
 
 
 ### When does it makes sense to include covariates in a model?
+
+In almost any experiment, there will be variation in the estimate that has to do with other known sources. The Stroop effect -- the interference you feel when you have to name the font color of an incongruent color word (e.g., saying "red" when you read $\color{red}{blue}$) -- has a fairly consistent effect on both fast and slow readers [@haaf2017]. But estimates of this effect will be more precise if we take into account that some readers are slower or faster, rather than just averaging across all this variation. That's why we need models that take into account different sources of variation. 
+
+
 
 - adjusting models for unhappy randomization?
 
@@ -373,19 +400,16 @@ Don't condition on covariates post-hoc. The previous example is a special case o
 
 Don't condition on a post-treatment variable. As we discussed above, there are some reasons to condition on highly-correlated covariates in general. But there's an exception to this rule. There are some variables that are never OK to condition on – in particular, any variable that is collected after treatment. For example, we might think that another good covariate would be someone's enjoyment of Bob Dylan. So, after the writing measurements are done, we do a Dylan Appreciation Questionnaire (DAQ). The problem is, imagine that having a bad experience writing while listening to Dylan might actually change your DAQ score. So then people in the Dylan condition would have lower DAQ on average. If we control for DAQ in our regression (Y ~ X + DAQ), we then distort our estimate of the effects of Dylan. Because DAQ and X (Dylan condition) are correlated, DAQ will end up soaking up some variance that is actually due to condition. This is bad news. Here's a nice paper that explains this issue in more detail.
 
-Don't condition on a collider. This issue is a little bit off-topic for the current post, since it's primarily an issue in observational designs, but here's a really good blogpost about it.
 
-Covariates and confounds are some of the most basic concepts underlying experimental design and analysis in psychology, yet they are surprisingly complicated to explain. Often the issues seem clear until it comes time to do the data analysis, at which point different assumptions lead to different default analytic strategies. I'm especially concerned that these strategies vary by culture, for example with some psychologists always conditioning on confounders, and others never doing so. (We haven't even talked about mediation and moderation!). Hopefully this post has been useful in using the vocabulary of causal models to explain some of these issues.
+
+## Chapter summary: Models
+
+In the last three chapters, we have spelled out a framework for data analysis that focuses on the key experimental goal: a measurement of a particular causal effect. We began with basic techniques for estimating 
 
 
 <!-- ## Connection to Bayesian approaches -->
 
 <!-- * Say that what we have covered so far is essentially just the likelihood; formalize the intuition from "Estimation" about Bayesian inference to show how a prior affects the model specification -->
-
-
-## Chapter summary: Models
-
-
 
 <!-- structure in your data so that you can better estimate the particular effects of interest. -->
 <!-- *** The advice not to model covariates that aren't very correlated with your outcome is very frequentist, with the idea being that you lose power when you condition on too many things. In contrast, Gelman & Hill (2006) give more Bayesian advice: if you think a variable matters to your outcome, keep it in the model. This advice is consistent with the idea of modeling experimental covariates, even if they don't have a big correlation with the outcome. In the Bayesian framework, including this extra information should (maybe only marginally) improve your precision but you aren't "spending degrees of freedom" in the same way. -->
