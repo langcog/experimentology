@@ -326,20 +326,29 @@ But -- practically speaking -- how should go you about building a model for your
 Our approach to building statistical modeling is to start with what we call the "default model." 
 
 The "default" model of an experiment should include the full design of the experiment, and nothing else. If you are manipulating a variable, include it in your model. If you are manipulating two, include them both and their interaction. If your design includes repeated measurements for participants, include a random effect of participant; if it includes experimental items for which repeated measurements are made, include a random effect of stimulus. But 
-don't include lots of other stuff in the default model. You are doing a randomized experiment, and the strength of randomized experiments is that you don't have to worry about confounding based on the population (see Chapter \@ref(experiments)).^[One corollary to having this kind of default perspective on data analysis: When you see an analysis that deviates substantially from the default, these deviations should provoke some questions. If someone drops a manipulation from their analysis, adds a covariate or two, or fails to control for some clustering in the data, did they deviate because of different norms in their sub-field, or was there some other rationale? This line of reasoning sometimes leads to questions about the extent to which particular analytic decisions are post-hoc and driven by the data (in other words, $p$-hacked).] 
+don't include lots of other stuff in the default model. You are doing a randomized experiment, and the strength of randomized experiments is that you don't have to worry about confounding based on the population (see Chapter \@ref(experiments)). So don't put a lot of covariates in your default model -- usually don't put in any!^[One corollary to having this kind of default perspective on data analysis: When you see an analysis that deviates substantially from the default, these deviations should provoke some questions. If someone drops a manipulation from their analysis, adds a covariate or two, or fails to control for some clustering in the data, did they deviate because of different norms in their sub-field, or was there some other rationale? This line of reasoning sometimes leads to questions about the extent to which particular analytic decisions are post-hoc and driven by the data (in other words, $p$-hacked).] 
 
 This default model then represents a simple summary of your experimental results. Its coefficients can be interpreted as estimates of the effects of interest, and it can be used as the basis for inferences about the relation of the experimental effect to the population using either frequentist or Bayesian tools. Here's a bit more guidance about this default modeling strategy.
 
 1. **Preregister your model**. If you adjust your analysis after you see your data, you risk $p$-hacking -- choosing an analysis that inflates the estimate of your effect of interest. As we discussed in Chapter \@ref(replication) and as we will discuss in more detail in Chapter \@ref(prereg), one important strategy for avoiding this problem is to **preregister** your analysis.^[A side benefit of preregistration is it makes you think through whether your experimental design is appropriate -- that is, is there an analysis that estimates the effect you want from the data you intend to collect?]
 
-2. **Don't compromise your causal inference**. The logic of randomization is that you cut all causal links between features of the sample and the condition manipulation. But you can "uncut" these links by accident by adding variables into your model that are related to group status. For example, imagine you had a drug trial (placebo vs. drug) and you  ^[This problem is generically called **post-treatment** variables (things that are measured after assignment to condition), and this mistake is called "conditioning on post-treatment variables."]
+2. **Don't compromise your causal inference**. The logic of randomization is that you cut all causal links between features of the sample and the condition manipulation. But you can "uncut" these links by accident by adding variables into your model that are related to group status. If you control for (i.e., add to your regression) anything that you measure after randomization, you can contaminate your estimate of the causal effect. This problem is generically called **conditioning on post-treatment variables** and a full discussion of  is out of the scope of this book, but it's something to avoid [and read up on if you're worried about it; @montgomery2018].
 
-3. **Check the model against the data**. Visualization.
+```{r fig.margin=TRUE, fig.cap = "Raw data, means, and confidence intervals for the tea-tasting experiment."}
+ggplot(tea_data, aes(x = condition, y = rating)) + 
+  geom_jitter(width = .025, height = .1, alpha = .5) +
+  stat_summary(fun.data = "mean_cl_boot", col = "red") + 
+  xlab("Condition") +
+  ylab("Rating")
+```
 
-4. **Interpret the predictions of the model**
+3. **Visualize the model against the data**. As we'll discuss in Chapter \@ref(viz), the "default model" for an experiment should go alongside a "default visualization" that similarly reflects the full design structure of the experiment and the primary clusters. In visualizing data like those from our tea-tasting experiment, show individual participants' average ratings (as in Figure \@ref(fig:models-ex-viz)). The best way to check whether a model fits your data is then to plot it on top of those data. Sometimes this combination of model and data can be as simple as a scatter plot with a regression line. But seeing the model plotted alongside the data can often reveal a mismatch between the two. A model that does not describe the data very well is not a good source of generalizable inferences!
 
+4. **Interpret the predictions of the model**. Once you have a model, don't just read off the $p$-values for your coefficients of interest. Walk through the each coefficient, considering how it relates to your outcome variable. For a simple two group design like we've been considering, the condition coefficient is the estimate of the causal effect that you intended to measure! Consider its sign, its magnitude, and its precision (standard error). 
 
 ### A worked example
+
+This advice may seem abstract, so let's put it into practice on a simple example. Yes, you guessed it - it'll be about tea tasting. 
 
 ```{r}
 tea_data |> 
@@ -355,44 +364,13 @@ tea_data |>
 
 ### When does it makes sense to include covariates in a model?
 
-In almost any experiment, there will be variation in the estimate that has to do with other known sources. The Stroop effect -- the interference you feel when you have to name the font color of an incongruent color word (e.g., saying "red" when you read $\color{red}{blue}$) -- has a fairly consistent effect on both fast and slow readers [@haaf2017]. But estimates of this effect will be more precise if we take into account that some readers are slower or faster, rather than just averaging across all this variation. That's why we need models that take into account different sources of variation. 
+Let's come back to one piece of advice that we gave above about making a "default" model of an experiment: not including covariates. This advice can seem surprising. Many demographic factors are of interest to psychologists and other behavioral scientists, and in observational studies these factors will almost always be related to important life outcomes. So why not put them into our experimental models? 
 
+The first reason is simply because we don't need to. Because randomization cuts causal links, our experimental estimate is an unbiased estimate of the causal effect of interest. We are guaranteed that, in the limit of many different experiments, even though people with different ages will be in the different tea tasting conditions, this source of variation will be averaged out.
 
+The second reason is that, on average, including more covariates into models actually (slightly) decreases the probability that the model can detect a true effect. Just by chance covariates can "soak up" variation in the outcome, leaving less to be accounted for by the true effect! 
 
-- adjusting models for unhappy randomization?
-
-Going back to our example, now we have two variables – age and order – that are no longer confounded with our primary relationship of interest (i.e., Dylan and writing). But they may still be related to our outcome measure. Here's what the picture looks like, repeated from above.
-
-
-Even if they are not confounding our experimental manipulation, age and experimental condition order may still be correlated with our outcome measure, writing skill. How does this work? Well, the average treatment effect of Dylan on writing is still given by the regression Y ~ X.  But we also know that there is some variance in Y that is due to X' and Z.
-
-That's because age and order are covariates: they may – by virtue of their potential causal links with the outcome variable – have some correlation with outcomes, even in a case where the predictor is experimentally manipulated. This should be intuitive for the external (age) covariate, but it's true for both: they may account for variance in Y over and above that controlled by the experimental manipulation of X.
-
-What should we do about our covariates?
-
-Option 1. Nothing! We are totally safe in ignoring all of our covariates, regressing Y on X and treating the estimate as an unbiased estimate of the the effect (the ATE). This is why randomization is awesome. We are guaranteed that, in the limit of many different experiments, even though people with different ages will be in the different Dylan conditions, this source of variation will be averaged out.
-
-The first fallacy of covariates is that, because you have a known covariate, you have to adjust for it. Not true. You can just ignore it and your estimate of the ATE is unbiased. This is the norm in cognitive psychology, for example: variation between individuals is treated as noise and averaged out. Of course, there are weaknesses in this strategy – you will not learn about the relationship of your treatment to those covariates! – but it is sound.
-
-Option 2. If you have a small handful of covariates that you believe are meaningfully related to the outcome, you can plan in advance to adjust for them in your regression. In our Dylan example, this would be a pre-registered plan to add Z as a predictor: Y ~ X + Z. If age (Z) is highly correlated with writing ability (Y), then this will give us a more precise estimate of the ATE, while remaining unbiased.
-
-When should we do this? Well, it turns out that you need a pretty strong correlation to make a big difference. There's some nice code to simulate the effects of covariate adjustment on precision in this useful blogpost on covariate adjustment; I lightly adapted it. Here's the result:
-
-
-
-Root mean squared error (RMSE; lower RMSE means greater precision, in other words) is plotted as a function of the sample size (N). Different colors show the increase in precision when you control for covariates with different levels of correlation with the outcome variable. For low levels of correlation with the covariate, you don't get much increase in precision (pink and red lines). Only as the correlation is .6 or above do we see noticeable increases in precision; and it only really makes a big difference with correlations in the range of .8.
-
-Considering these numbers in light of our Dylan study, I would bet that age and writing skill are not correlated with writing skill > .8 (unless we're looking at ages from kindergarten to college!). I would guess that in an adult population this correlation would be much, much lower. So maybe it's not worth controlling for age in our analyses.
-
-And the same is probably true for order, our other covariate. Although perhaps we do think that our order has a strong correlation with our skill measure. For example, maybe our experiment is long and  there are big fatigue effects. In that case, we would want to condition.
-
-So these are are options: if the covariate is known to be very strong, we can condition. Otherwise we should probably not worry about it.
-
-What shouldn't we do with our covariates?
-
-Don't condition on lots and lots of covariates because you think they are theoretically important. There are lots of things that people do with covariates that they shouldn't be doing. My participantal hunch is that this is because a lot of researchers think that covariates (especially demographic ones like age, gender, socioeconomic status, race, ethnicity, etc.) are important. That's true: these are important variables. But that doesn't mean you need to control for them in every regression. This leads us to the second fallacy.
-
-The second fallacy of covariates is that, because you think covariates are in general meaningful, it is not harmful to control for them in your regression model. In fact, if you control for meaningless covariates in a standard regression model, you will on average reduce your ability to see differences in your treatment effect. Just by chance your noise covariates will "soak up" variation in the response, leaving less to be accounted for by the true treatment effect! Even if you strongly suspect something is a covariate, you should be careful before throwing it into your regression model.
+The third reason is that covariate inclusion can get you into other trouble.
 
 Don't condition on covariates because your groups are unbalanced. People often talk about "unhappy randomization": you randomize adults to the different Dylan groups, for example, but then it turns out the mean age is a bit different between groups. Then you do a t-test or some other statistical test and find out that you actually have a significant age difference. But this makes no sense: because you randomized, you know that the difference in ages occurred by chance, so why are you using a t-test to test if the variation is due to chance? In addition, if your covariate isn't highly correlated with the outcome, this difference won't matter (see above). Finally, if you adjust for this covariate because of such a statistical test, you can actually end up biasing estimates of the ATE across the literature. Here's a really useful blogpost from the Worldbank that has more details on why you shouldn't follow this practice.
 
@@ -401,6 +379,62 @@ Don't condition on covariates post-hoc. The previous example is a special case o
 Don't condition on a post-treatment variable. As we discussed above, there are some reasons to condition on highly-correlated covariates in general. But there's an exception to this rule. There are some variables that are never OK to condition on – in particular, any variable that is collected after treatment. For example, we might think that another good covariate would be someone's enjoyment of Bob Dylan. So, after the writing measurements are done, we do a Dylan Appreciation Questionnaire (DAQ). The problem is, imagine that having a bad experience writing while listening to Dylan might actually change your DAQ score. So then people in the Dylan condition would have lower DAQ on average. If we control for DAQ in our regression (Y ~ X + DAQ), we then distort our estimate of the effects of Dylan. Because DAQ and X (Dylan condition) are correlated, DAQ will end up soaking up some variance that is actually due to condition. This is bad news. Here's a nice paper that explains this issue in more detail.
 
 
+
+That was a lot of reasons why you shouldn't put covariates in your default model! That said, if you have one or small handful of covariates that you believe are meaningfully related to the outcome, you *can* plan in advance to put them in your model. Including these can increase the precision of your estimates by reducing "noise" in your outcome. What's surprising though is how *little* this adjustment does to increase your overall precision unless the correlation between covariate and outcome is very big. Figure \@ref(fig:models-precision) shows this relationship in a simple simulation. Only when the correlation between covariate and outcome (e.g., age and tea rating) is greater than .8 does this adjustment really help.^[A relationship that strong is very unusual for most experiments in psychology, not least because our outcome measures are very unlikely to even be reliable enough to correlate with *themselves* at $r > .8$ let alone with another variable; see Chapter \@ref(measurement) for more details on this point.] 
+
+```{r models-precision, fig.cap="Decreases in estimation error (root mean squared error) due to adjusting for covariates, plotted by the N participants in each group and the correlation between the covariate and the outcome."}
+# based on http://egap.org/methods-guides/10-things-know-about-covariate-adjustment
+# library(MASS)  # for mvrnorm()
+# library(tidyverse)
+
+set.seed(1234567)
+num.reps = 1000
+
+# True treatment effect is 0 for every unit
+
+adj.est = function(n, cov.matrix, treated) {
+  Y.and.X  =  MASS::mvrnorm(n, mu = c(0, 0), Sigma = cov.matrix)
+  Y   =  Y.and.X[, 1]
+  X   =  Y.and.X[, 2]
+  coef(lm(Y ~ treated + X))[2]
+}
+
+unadj.est = function(n, treated) {
+  Y = rnorm(n)
+  coef(lm(Y ~ treated))[2]
+}
+
+rmse = function(half.n, rho = 0, control = TRUE) {
+  treated  =  rep(c(0, 1), half.n)
+  n = 2 * half.n
+
+  if (control) {
+    cov.matrix  =  matrix(c(1, rho, rho, 1), nrow = 2, ncol = 2)
+    return( sqrt(mean(replicate(num.reps, adj.est(n, cov.matrix, treated)) ^ 2)) )
+  }
+  else {
+    return( sqrt(mean(replicate(num.reps, unadj.est(n, treated)) ^ 2)) )
+  }
+}
+
+d <- expand.grid(half_n =  c(5, 10, 20, 50, 100, 200),
+                 rho = seq(0, .8, .2)) %>%
+  rowwise() %>%
+  mutate(rmse = rmse(half_n, rho))
+
+ggplot(d, aes(x = half_n, y = rmse, 
+              col = factor(rho))) +
+  geom_line() + 
+  theme_classic() + 
+  ggthemes::scale_color_solarized(name = "corr(X, Z)") + 
+  xlab("N per group") +
+  ylab("Root mean squared error") + 
+  theme(legend.position = "bottom")
+```
+
+
+
+So these are are options: if a covariate is known to be very strongly related to our outcome, we can include it in our default model. Otherwise, we avoid a lot of trouble by leaving covariates out.
 
 ## Chapter summary: Models
 
