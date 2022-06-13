@@ -8,6 +8,8 @@ library(ggrepel) # viz
 library(GGally) # viz
 library(BayesFactor) # inference
 library(papaja)
+library(lme4)
+library(boot) # for inv.logit
 
 
 opts_chunk$set(
