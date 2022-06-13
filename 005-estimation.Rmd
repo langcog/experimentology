@@ -2,10 +2,6 @@
 
 # Estimation {#estimation}
 
-<!-- ```{r estimation-meme} -->
-<!-- knitr::include_graphics("images/estimation/meme.jpg") -->
-<!-- ``` -->
-
 ::: learning-goals
 🍎 Learning goals:
 
@@ -23,9 +19,7 @@ The birth of modern statistical inference came from a single, epochal act of man
 
 The basic schema of the experiment was that the lady would have to judge a set of new cups of tea and sort them into milk-first vs. tea-first sets. Her data would then be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, it seems unremarkable only because it literally established the way science was done for the next century.
 
-One important and unusual element of the experiment was its treatment of design confounds such as pouring order or cup material. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounds. Fisher recognized that this strategy was insufficient. Random assignment was critical for making strong causal inferences about the treatment (milk then tea vs. tea then milk). We discussed the causal power of random assignment in Chapter \@ref(experiments) -- this experiment is a key touchstone in the popularization of randomized experiments![^4]
-
-<!-- Julie's comments: "One important and unusual element of the experiment was its treatment of design confounds such as pouring order or cup material" -- isn't pouring order (milk first vs. tea first) *the* experimental manipulation? Maybe "presentation order" would be better wording if what we mean is the order in which the cups were presented. Also, the sentence states that the treatment of design confounds was unusual, but it doesn't say *what* Fisher did (i.e., randomize), and I was left wondering by the end of the paragraph whether Fisher actually randomized those factors (since it was never explicitly stated). Maybe it would be clearer if you were to say, "One important and unusual element of the experiment was the fact that it addressed design confounds such as presentation order or cup material by randomizing them." -->
+One important and unusual element of the experiment was its treatment of potential design confounds such which cup of tea was prepared first, which cup of tea was presented first, or the material that the cups were made out of. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounds. Fisher recognized that this strategy was insufficient. Only by randomizing all other aspects of the experiment could he make strong causal inferences about the treatment (milk then tea vs. tea then milk). We discussed the causal power of random assignment in Chapter \@ref(experiments) -- this experiment is a key touchstone in the popularization of randomized experiments![^4]
 
 :::
 
@@ -45,25 +39,22 @@ Our causal theory is that the tea quality is affected by milk-tea ordering, so w
 
 Eventually, we'll want to estimate the effect of milk-first preparation on quality ratings (our effect of interest). But for now, our goal will be to estimate the quality of the tea when it is milk-first [the better way, according to some data; @kennedy2003]. More formally, we want to use our **sample** of 24 milk-first tea judgments to estimate a **population parameter** that we can't directly observe, namely the true perceived quality of all possible milk-first cups. 
 
-We'll try to go easy on notation but some amount will make things clearer. We will use $\theta_{\text{milk-first}}$ ("theta") to denote the parameter we want to estimate (the **population parameter** or "estimand", though we will try not to say that word too much) and $\widehat{\theta}_{\text{milk-first}}$, its **sample estimate**.[^7] 
+We'll try to go easy on notation but some amount will make things clearer. We will use $\theta_{\textrm{milk-first}}$ ("theta") to denote the parameter we want to estimate (the **population parameter**) and $\widehat{\theta}_{\textrm{milk-first}}$, its **sample estimate**.[^7] 
 
-[^7]: Statisticians use "hats" like this to denote sample estimates. One way to remember this is that the "person in the hat" is wearing a hat to dress up as the actual quantity. Feel free to ignore this mnemonic; it helps us.
+[^7]: Statisticians use "hats" like this to denote estimates from a specific sample. One way to remember this is that the "person in the hat" is wearing a hat to dress up as the actual quantity. Feel free to ignore this mnemonic; it helps us.
 
-<!-- [^8]: Out of date -->
-
-<!-- \[Note from NC: we do not currently use the terms "sample estimate", "point estimate" and "estimands" consistently in this chapter. For example, in the section on the precision of mean estimates, we refer to "point estimates" and "population parameters", but here we talk about "estimands" and "sample estimates")\] -->
 
 ### Maximum likelihood estimation
 
-OK, you are probably saying, if we want our estimate of milk-first quality, shouldn't we just take the average rating across the 24 cups of milk-first tea? The answer is yes. But let's unpack that choice: taking the sample mean as our estimate $\widehat{\theta}_{\text{milk-first}}$ is an example of an estimation approach called **maximum likelihood estimation**. In general terms, maximum likelihood estimation is a two-step process.
+OK, you are probably saying, if we want our estimate of milk-first quality, shouldn't we just take the average rating across the 24 cups of milk-first tea? The answer is yes. But let's unpack that choice: taking the sample mean as our estimate $\widehat{\theta}_{\textrm{milk-first}}$ is an example of an estimation approach called **maximum likelihood estimation**. In general terms, maximum likelihood estimation is a two-step process.
 
 First, we assume a **model** for how the data were generated. This model is specified in terms of certain population parameters. In our example, the "model" is as simple as they come: we just assume there is some average level of tea quality and that the measurements vary around it.
 
-Second, we try to find the values of the population parameters that make our observed data as likely as possible. For example, if our sample mean is $\widehat{\theta}_{\text{milk-first}} = 4.5$, what underlying value of $\widehat{\theta}_{\text{milk-first}}$ would make these data most likely to occur? Well, suppose the underlying parameter were $\widehat{\theta}_{\text{milk-first}}=2.5$. Then it would be pretty unlikely that our sample mean would be so much bigger. So $\widehat{\theta}_{\text{milk-first}}=2.5$ is a poor guess for the population parameter based on these data. Conversely, if the parameter were $\widehat{\theta}_{\text{milk-first}}=6.5$, it would be a bit unlikely that our sample mean would be so much *smaller*. The value of $\widehat{\theta}_{\text{milk-first}}$ that makes these data most likely is just 4.5 itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate.
+Second, we try to find the values of the population parameters that make our observed data as likely as possible. For example, if our sample mean is $\widehat{\theta}_{\textrm{milk-first}} = 4.5$, what underlying value of $\widehat{\theta}_{\textrm{milk-first}}$ would make these data most likely to occur? Well, suppose the underlying parameter were $\widehat{\theta}_{\textrm{milk-first}}=2.5$. Then it would be pretty unlikely that our sample mean would be so much bigger. So $\widehat{\theta}_{\textrm{milk-first}}=2.5$ is a poor guess for the population parameter based on these data. Conversely, if the parameter were $\widehat{\theta}_{\textrm{milk-first}}=6.5$, it would be a bit unlikely that our sample mean would be so much *smaller*. The value of $\widehat{\theta}_{\textrm{milk-first}}$ that makes these data most likely is just 4.5 itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate.
 
 ### Estimating variation in ratings
 
-Let's visualize our 24 milk-first tea ratings. Since ratings on our scale are discrete, Figure \@ref(fig:estimation-milk-first) shows them as a histogram. Our estimate of the mean, $\widehat{\theta}_{\text{milk-first}}$, is shown as a blue dashed line.
+Let's visualize our 24 milk-first tea ratings. Since ratings on our scale are discrete, Figure \@ref(fig:estimation-milk-first) shows them as a histogram. Our estimate of the mean, $\widehat{\theta}_{\textrm{milk-first}}$, is shown as a blue dashed line.
 
 ```{r estimation-data}
 source("helper/tea_helper.R")
@@ -90,31 +81,31 @@ ggplot(td, aes(x = rating)) +
 
 Our observations are clustered around the mean, but they also show some variation. Some are higher and some are lower. Variation of this type is a feature of every data set. This variation can be summarized via a **probability distribution**, a mathematical entity that describes the properties of possible datasets. The only probability distribution we'll discuss here is the ubiquitous **normal distribution** (also sometimes called a "Gaussian distribution"). A normal distribution has two **parameters**, a **mean** and a **standard deviation**. These two parameters define the shape of the curve. The mean describes where its center goes, and the standard deviation describes how wide it is.
 
-The blue curve shown in Figure \@ref(fig:estimation-milk-first) is the normal distribution that is closest to the data in our milk-first condition. Its mean is of course $\widehat{\theta}_{\text{milk-first}}$, the parameter we just estimated. But to plot this curve, we also had to estimate the standard deviation. It turns out that the standard deviation is just exactly what its name says: the average deviation between the mean and any given observation. We won't discuss how to estimate the standard deviation for your sample here; you can do this computation easily in any software package. What's important for now is just that the standard deviation gives us a way to describe the width of the normal distribution.
+The blue curve shown in Figure \@ref(fig:estimation-milk-first) is the normal distribution that is closest to the data in our milk-first condition. Its mean is of course $\widehat{\theta}_{\textrm{milk-first}}$, the parameter we just estimated. But to plot this curve, we also had to estimate the standard deviation. It turns out that the standard deviation is just exactly what its name says: the average deviation between the mean and any given observation. We won't discuss how to estimate the standard deviation for your sample here; you can do this computation easily in any software package. What's important for now is just that the standard deviation gives us a way to describe the width of the normal distribution.
 
 ### Bayesian estimation
 
-The  maximum likelihood estimation example above describes a common approach to estimating values, where the researcher completely puts aside their prior expectations about what these values might be. Often this approach makes sense, especially when we have no prior expectations about the values we are estimating. But sometimes we *do* have relevant beliefs about the value. For example, before we perform our tea experiment, we don't know exactly what $\theta_{\text{milk-first}}$ will be, but it seems a bit unlikely that tea would be consistently rated as either horrible (1) or perfect (7). We have what you might call *weak prior expectations* about the kinds of ratings we'll receive.
+The  maximum likelihood estimation example above describes a common approach to estimating values, where the researcher completely puts aside their prior expectations about what these values might be. Often this approach makes sense, especially when we have no prior expectations about the values we are estimating. But sometimes we *do* have relevant beliefs about the value. For example, before we perform our tea experiment, we don't know exactly what $\theta_{\textrm{milk-first}}$ will be, but it seems a bit unlikely that tea would be consistently rated as either horrible (1) or perfect (7). We have what you might call *weak prior expectations* about the kinds of ratings we'll receive.
 
 These kind of expectations are most useful when we have a very small amount of data. For example, if our very first participant in the experiment rated their tea as terrible, we wouldn't want to jump to the conclusion that the tea was actually bad. Instead, we might speculate that the participant was having a bad day or just brushed their teeth. On the other hand, if all of our participants gave bad ratings to their tea, the data would be more persuasive; in that case, we might want to tell the cafe that they are serving substandard tea. With a little data, our prior expectations should moderate our conclusions; as we get more, we should put greater weight on the data.
 
-How do we quantify this tradeoff between our prior expectations and our current observations? We can do this via **Bayesian estimation** of $\widehat{\theta}_{\text{milk-first}}$. Bayesian estimation provides a principled framework for integrating prior beliefs and data. These estimation techniques can be very helpful in cases where data are sparse or prior beliefs are strong.
+How do we quantify this tradeoff between our prior expectations and our current observations? We can do this via **Bayesian estimation** of $\widehat{\theta}_{\textrm{milk-first}}$. Bayesian estimation provides a principled framework for integrating prior beliefs and data. These estimation techniques can be very helpful in cases where data are sparse or prior beliefs are strong.
 
 In Bayesian estimation, we observe some data $d$, consisting of the set of correct and incorrect responses in the experiment. Now we can use **Bayes' rule**, a tool from basic probability theory, to estimate this number. Bayes' rule says:
 
 $$
-\color{purple}{p(\theta_{\text{milk-first}} | d)} = \frac{\color{red}{p(d | \theta_{\text{milk-first}} )} \color{blue}{p(\theta_{\text{milk-first}} )}}{\color{black}{p(d)}}.
+\color{purple}{p(\theta_{\textrm{milk-first}} | d)} = \frac{\color{red}{p(d | \theta_{\textrm{milk-first}} )} \color{blue}{p(\theta_{\textrm{milk-first}} )}}{\color{black}{p(d)}}.
 $$
 
-\noindent Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(\theta_{\text{milk-first}} |d)$) is called the **posterior probability** -- it tell us what we should believe about the population parameter on tea quality, given the data we observed.[^11]
+\noindent Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(\theta_{\textrm{milk-first}} |d)$) is called the **posterior probability** -- it tell us what we should believe about the population parameter on tea quality, given the data we observed.[^11]
 
 [^11]: We're making the posterior `r colorize("purple","purple")` to indicate the combination of likelihood (`r colorize("red","red")`) and prior (`r colorize("blue","blue")`).
 
-The first part of the numerator is $p(d|h)$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.[^12] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the tea is of high quality (say $\theta_{\text{milk-first}} = 6.5$) then the probability of a bunch of low accuracy observations will be fairly low.
+The first part of the numerator is $p(d|h)$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.[^12] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the tea is of high quality (say $\theta_{\textrm{milk-first}} = 6.5$) then the probability of a bunch of low accuracy observations will be fairly low.
 
 [^12]: Speaking informally, "likelihood" is just a synonym for probability, but this is a technical meaning for the term, which can get a bit confusing.
 
-The second term in the numerator, $p(\theta_{\text{milk-first}} )$, is called the **prior**. This term encodes our beliefs about the likely distribution of tea quality. Intuitively, if we think that the tea is likely of high quality, we should require more evidence to convince us that it's bad. In contrast, if we think it's probably bad, a few examples of low ratings might serve to convince us.
+The second term in the numerator, $p(\theta_{\textrm{milk-first}} )$, is called the **prior**. This term encodes our beliefs about the likely distribution of tea quality. Intuitively, if we think that the tea is likely of high quality, we should require more evidence to convince us that it's bad. In contrast, if we think it's probably bad, a few examples of low ratings might serve to convince us.
 
 ```{r inference-bayes-demo, fig.cap="Examples of Bayesian inference about tea ratings under two different priors (facets) and just a little bit of data. Blue lines give the prior probability distribution, red lines give the likelihood of the data, and purple lines give the posterior distribution from combining likelihood and prior."}
 
@@ -159,9 +150,8 @@ ggplot(bayes, aes(x = x, y = h_norm)) +
 ```
 
 
-Figure \@ref(fig:inference-bayes-demo) gives an example of the combination of prior and data. In this example, we look at what difference the prior makes after observing `r n` ratings.  If we go in assuming that the tea is likely to be bad, we are biased downward in our highest posterior probability estimate of `r bayes$map[bayes$label == "Prior: low rating"][1]`; if we go in assuming good discrimination, we end up biased upwards to `r bayes$map[bayes$label == "Prior: high rating"][1]`.
+Figure \@ref(fig:inference-bayes-demo) gives an example of the combination of prior and data. In this example, we look at what difference the prior makes after observing `r n` ratings.  If we go in assuming that the tea is likely to be bad, we are biased downward in our highest posterior probability estimate of `r bayes$map[bayes$label == "Prior: low rating"][1]`; if we go in that tea is likely to be good, we end up biased upwards to `r bayes$map[bayes$label == "Prior: high rating"][1]`.^[Note that this prior is operating only over on ratings -- estimates on tea quality. Later on when we talk about comparing milk-first and tea-first cups, we can consider putting a prior on tea discrimination.]
 
-<!-- Julie's comment: For last sentence above, it states low prior as "tea is likely to be bad," whereas high prior is "good discrimination" -- this dichotomy isn't intuitive, particularly the "good discrimination" end because if I understand correctly, we aren't yet comparing milk-first to tea-first (we are just looking within milk-first), and discrimination makes it sound like there is a comparison of the teas. Maybe it would be more straight forward to say, "if we go in assuming that the tea is likely to be great, we end up biased upwards..." -->
 
 ```{r inference-bayes-demo2, fig.cap="Bayesian inference about tea ratings under two different priors with the full dataset."}
 
@@ -201,9 +191,7 @@ ggplot(bayes_full, aes(x = x, y = h_norm)) +
 
 Contrast that figure with Figure \@ref(fig:inference-bayes-demo2), which runs the same Bayesian estimation but with the full dataset of `r n` observations. Now the posterior distribution is much more peaked. The prior also makes much less difference to our highest-probability estimates. With the low prior, our estimate is `r bayes_full$map[bayes_full$label == "Prior: low rating"][1]`; with the high prior it is `r bayes_full$map[bayes_full$label == "Prior: high rating"][1]` also! 
 
-Bayesian estimation is most important when you have strong beliefs and not a lot of data. That can be a case where you have just a few participants in your experiment, but it's also good -- and perhaps more common -- to use Bayesian methods when you have a lot of data, but maybe not that much data about particular units that you care about. For example, you might have a large dataset about the effects of an educational intervention but not that much data about how it affects a particular subgroup. In general, though, Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior or as you get infinite data.
-
-<!-- Julie's comment: In last sentence above, maybe add a footnote thing explaining in one sentence what a "flat prior" is (e.g., "a prior that represents no prior belief")? I know you go into it more in the next section but at this point readers may be unfamiliar with what it represents. -->
+Bayesian estimation is most important when you have strong beliefs and not a lot of data. That can be a case where you have just a few participants in your experiment, but it's also good -- and perhaps more common -- to use Bayesian methods when you have a lot of data, but maybe not that much data about particular units that you care about. For example, you might have a large dataset about the effects of an educational intervention but not that much data about how it affects a particular subgroup. In general, though, Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior (a prior that makes any value equally likely) or as you get infinite data.
 
 ## Estimating and comparing effects
 
@@ -211,13 +199,13 @@ We've now covered estimating a single parameter (the mean in just the milk-first
 
 ### Estimating the treatment effect 
 
-Let's refer to the causal effect we care about as our **treatment effect**. In practice, estimating $\beta_{\text{milk-first}}$ is going to be a pretty straightforward extension to what we did before.
+Let's refer to the causal effect we care about as our **treatment effect**. In practice, estimating $\beta_{\textrm{milk-first}}$ is going to be a pretty straightforward extension to what we did before.
 
-In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution, but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let's term the parameters for the tea-first group $\theta_{\text{milk-first}}_{teafirst}$ and $\sigma$. To estimate the treatment effect, we are positing a **model** in which the milk-first ratings are normally distributed with mean $\theta_{\text{milk-first}} = \theta_{\text{tea-first}} + \beta_{\text{milk-first}}$ and with standard deviation $\sigma$.[^17] 
+In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution, but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let's term the parameters for the tea-first group $\theta_{\textrm{tea-first}}$ and $\sigma$. To estimate the treatment effect, we are positing a **model** in which the milk-first ratings are normally distributed with mean $\theta_{\textrm{milk-first}} = \theta_{\textrm{tea-first}} + \beta_{\textrm{milk-first}}$ and with standard deviation $\sigma$.[^17] 
 
-As in the one-sample case (i.e., estimating the mean of just the milk-first group), maximum likelihood estimation would then proceed by finding the value of $\beta_{\text{milk-first}}$ that makes the data most likely under the assumed model. As you'd probably expect, this estimate $\widehat{\beta_{\text{milk-first}}}$ turns out to be simply the difference in sample means, $\theta_{\text{milk-first}} - \theta_{\text{tea-first}}$.
+As in the one-sample case (i.e., estimating the mean of just the milk-first group), maximum likelihood estimation would then proceed by finding the value of $\beta_{\textrm{milk-first}}$ that makes the data most likely under the assumed model. As you'd probably expect, this estimate $\widehat{\beta_{\textrm{milk-first}}}$ turns out to be simply the difference in sample means, $\theta_{\textrm{milk-first}} - \theta_{\textrm{tea-first}}$.
 
-In the Bayesian framework, we would again specify a prior $p(\beta_{\text{milk-first}} )$ that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could  specify a flat prior, $p(\beta_{\text{milk-first}} ) \propto 1$. If we believe the treatment effect is likely to favor milk-first pouring ($\beta_{\text{milk-first}}>0$), we could specify a normal prior centered at some positive value (e.g., $\beta_{\text{milk-first}}=0.5$); the standard deviation of this prior would encode how certain we are about our prior beliefs. And if we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at 0, which has the effect of "shrinking" the estimates closer to 0.[^16] 
+In the Bayesian framework, we would again specify a prior $p(\beta_{\textrm{milk-first}} )$ that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could  specify a flat prior, $p(\beta_{\textrm{milk-first}} ) \propto 1$. If we believe the treatment effect is likely to favor milk-first pouring ($\beta_{\textrm{milk-first}}>0$), we could specify a normal prior centered at some positive value (e.g., $\beta_{\textrm{milk-first}}=0.5$); the standard deviation of this prior would encode how certain we are about our prior beliefs. And if we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at 0, which has the effect of "shrinking" the estimates closer to 0.[^16] 
 
 [^16]: The measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Of course, this is only one kind of uncertainty! A more holistic view of the overall credibility of an estimate should also account for other things outside of the model, like study design issues and bias.
 
@@ -227,19 +215,21 @@ As in our example above, maximum likelihood estimates and Bayesian estimates are
 
 ### Measures of effect size
 
-Once we have measured something, we need to make a decision about how to describe this effect to the world. Sometimes we are working with fairly intuitive relationships that are easy to describe. A researcher might say, for example, that people who received milk-first tea drank the tea, on average, 5 minutes quicker than people who received tea-first tea (i.e., that $\widehat{\beta_{\text{milk-first}}}_{time} = 5$). Time is measured in units like minutes and seconds and so we all have a shared understanding of what 5 minutes means.
+Once we have measured something, we need to make a decision about how to describe this effect to the world. Sometimes we are working with fairly intuitive relationships that are easy to describe. A researcher might say, for example, that people who received milk-first tea drank the tea, on average, 5 minutes quicker than people who received tea-first tea (i.e., that $\widehat{\beta_{\textrm{milk-first}}}_{time} = 5$). Time is measured in units like minutes and seconds and so we all have a shared understanding of what 5 minutes means.
 
-But what about our participants' ratings of tea quality, which were provided on an arbitrary 7-point rating scale that we devised? What does it mean to that participants who drank milk-first tea rated it 1 point higher than participants who drank tea-first tea (i.e., that $\widehat{\beta_{\text{milk-first}}}_{rating} = 1$)? And how is this difference comparable to, for instance, a 1-point change on a scale that has similar anchors ("terrible" and "delicious") but uses a 100-point rating system?
+But what about our participants' ratings of tea quality, which were provided on an arbitrary 7-point rating scale that we devised? What does it mean to that participants who drank milk-first tea rated it 1 point higher than participants who drank tea-first tea (i.e., that $\widehat{\beta_{\textrm{milk-first}}}_{rating} = 1$)? And how is this difference comparable to, for instance, a 1-point change on a scale that has similar anchors ("terrible" and "delicious") but uses a 100-point rating system?
 
 To provide a common language for describing these relationships, some researchers use *standardized effect sizes.* A common standardized effect size is Cohen's *d*, which provides a standardized estimate of the difference between two means. There are many different ways to calculate Cohen's *d* [@lakens2013], but all approaches are usually some variant of the following formula:
 
-$$d = \frac{\theta_{\text{milk-first}}_1 - \theta_{\text{milk-first}}_2}{\sigma_{pooled}}$$
+$$
+d = \frac{\theta_{\textrm{milk-first}} - \theta_{\textrm{tea-first}}}{\sigma_{pooled}}
+$$
 
-\noindent where the difference between means ($\theta_{\text{milk-first}}_1$ and $\theta_{\text{milk-first}}_2$) is divided by the pooled standard deviation $\sigma_{pooled}$.^[We're dropping the hats here because we're now working with a whole bunch of estimates, so everything would have a hat!] Intuitively, what you're doing is taking the study effect ($\beta_{\text{milk-first}}$) and dividing it -- scaling it -- by the variation we saw between individuals in the study. 
+\noindent where the difference between means ($\theta_{\textrm{tea-first}}$ and $\theta_{\textrm{milk-first}}$) is divided by the pooled standard deviation $\sigma_{pooled}$.^[We're dropping the hats here because we're now working with a whole bunch of estimates, so everything would have a hat!] Intuitively, what you're doing is taking the study effect ($\beta_{\textrm{milk-first}}$) and dividing it -- scaling it -- by the variation we saw between individuals in the study. 
 
 Let's compute this measure for our tea-drinking study. We can just plug in the estimates we made earlier in the chapter and compute the standard deviation of our observed data:
 
-$${d} = \frac{\theta_{\text{milk-first}}_1 - \theta_{\text{milk-first}}_2}{\sigma_{pooled}} = \frac{4.5- 3.5}{1.25} = \frac{1}{1.25} = 0.80$$
+$$d = \frac{\theta_{\textrm{milk-first}} - \theta_{\textrm{tea-first}}}{\sigma_{pooled}} = \frac{4.5- 3.5}{1.25} = \frac{1}{1.25} = 0.80$$
 \noindent In other words, the effect size of the difference between the two conditions is .8 standard deviations. 
 
 We previously said that people who drank milk-first tea had quality ratings that were, on average, 1 point higher on a 7-point scale ($\widehat{\beta_{\text{milk-first}}} = 1$). Cohen's *d* translates the arbitrary units of our rating scale into a **unit-less** effect size that is measured in terms of the variation in the data. You may find yourself wondering: "why would I ever describe things in terms of standard deviations?" The key benefit is that it allows us to compare the size of the effect to studies that use different measures.
@@ -250,7 +240,7 @@ It might at first seem reasonable just to normalize by the length of the scale. 
 
 Let's compute the effect size for the cross-cultural replication. We'll imagine that participants who drank milk-first tea gave an average rating of 50/100 and participants who drank tea-first tea rated it 49 on average. But if their variability was also relatively lower, perhaps the standard deviation of their ratings was only 5. Using the formula above, we find 
 
-$${d_{US}} = \frac{\theta_{\text{milk-first}}_1 - \theta_{\text{milk-first}}_2}{\sigma_{pooled}} = \frac{50 - 49}{5} = \frac{1}{5}=  0.2$$
+$${d_{US}} = \frac{\theta_{\text{tea-first}} - \theta_{\text{milk-first}}}{\sigma_{pooled}} = \frac{50 - 49}{5} = \frac{1}{5}=  0.2$$
 
 \noindent A Cohen's *d* of .2 means that US cafe patrons rated their tea .2 standard deviations higher when it was milk-first, much smaller than the .8 standard deviation difference in the UK patrons. 
 
@@ -268,7 +258,7 @@ Standardizing effect sizes, though, has limitations. For example, if two interve
 
 For example, imagine we conducted our tea experiment again, but this time with (decaf) tea, and focusing on children. Maybe milk-first tea tastes the same amount better than tea-first tea for kids and for adults. But it's pretty well known that kids are more variable in their responding. This higher level of variability would lead us to observe a smaller effect size in kids vs. adults. Recall that our UK adult SD was 1.25, and our effect size was $d = .8$. Imagine that children's SD is 2.5. In this scenario, even if tea led to the same 1-point absolute change in feelings of excitement among adults and children, the standardized effect size for kids would look half as big:
 
-$${d_{kids}} = \frac{\theta_{\text{milk-first}}_1 - \theta_{\text{milk-first}}_2}{\sigma_{pooled}} = \frac{5- 4}{2.5} = \frac{1}{2.5} =  .4$$
+$${d_{kids}} = \frac{\theta_{\text{tea-first}} - \theta_{\text{milk-first}}}{\sigma_{pooled}} = \frac{5- 4}{2.5} = \frac{1}{2.5} =  .4$$
 
 This example highlights some of the challenges with standardization. If we focused on the fact that both adults and children experienced a 1-point change in excitement levels ($\widehat{\beta_{\text{milk-first}}} = 1$), we would conclude that milk-first tea is equally tasty for adults and kids. If we focused on the standardized effect sizes, however, we would conclude that the effect of tea is twice as big for adults.
 
