@@ -1,14 +1,9 @@
 # Models {#models} 
 
-
-<!-- ```{r models-meme} -->
-<!-- knitr::include_graphics("images/models/couldnt_help_it.png") -->
-<!-- ``` -->
-
 ::: {.learning-goals}
 🍎 Learning goals: 
 
-* Reconceptualize statistical “tests” as models of data
+* Re-conceptualize statistical “tests” as models of data
 * Build intuitions about how specific “tests” (e.g., t-tests) relate to more general frameworks (e.g., regression, mixed effects models)
 * Identify which models are best suited for which research questions 
 * Describe what it means to ‘control for’ something
@@ -172,15 +167,15 @@ Now that we have multiple independent variables, we've labeled them $X_{group}$ 
 
 To illustrate how to interpret the regression coefficients in this model, let's use the linear predictor to compare the model's predicted tea ratings for two hypothetical participants who are both in the treatment group: 20-year-old Alice and 21-year old Bob. Alice's linear predictor tells us that her expected rating is $\theta_{milkfirst} + \beta_{teafirst} + \theta_{age} \cdot 20$. In contrast, Bob's linear predictor is $\theta_{milkfirst} + \beta_{teafirst} + \theta_{age} \cdot 21$. We could therefore calculate the expected difference in ratings for 21-year-olds versus 20-year olds by subtracting Alice's linear predictor from Bob's, yielding just $\theta_{age}$. How simple! 
 
-We would get the same result if Alice and Bob were instead 50 and 51 years old, respectively. This equivalence illustrates a key point about linear regression models in general: *the regression coefficient represents the expected difference in outocme when comparing participants who differ by 1 unit of the  independent variable* (here, comparing participants who differ by 1 year of age). In "Practical modeling considerations" below, we discuss whether and when to "control for" additional variables (i.e., when to add them to your model).
+We would get the same result if Alice and Bob were instead 50 and 51 years old, respectively. This equivalence illustrates a key point about linear regression models in general: *the regression coefficient represents the expected difference in outcome when comparing participants who differ by 1 unit of the  independent variable* (here, comparing participants who differ by 1 year of age). In "Practical modeling considerations" below, we discuss whether and when to "control for" additional variables (i.e., when to add them to your model).
 
 ### When does linear regression work?
 
 Linear regression modeling with OLS is an incredibly powerful technique for creating models to estimate the influence of multiple predictors on a single dependent variable. In fact, OLS is in a mathematical sense the *best* way to fit a linear model!^[There is a precise sense in which OLS gives the *very best* predictions we could ever get from any model that posits linear relationships between the independent variables and the outcome. That is, you can come up with any other linear model you want, and yet if the assumptions of OLS are fulfilled, predictions from OLS will always be less noisy than those of your model. This is because of an elegant mathematical result called the Gauss-Markov Theorem.] But OLS only "works" -- in the sense of yielding good estimates -- if three big conditions are met. 
 
-1. **The predictor relationships being modeled must be linear.** In our comparison of Alice's and Bob's expected outcomes based on their 1-year age difference, we were able to interpret the coefficient $\theta_{age}$ as the average difference in $Y_i$ when comparing participants who differ by 1 year of age, *regardless* of whether those ages are 20 vs. 21 or 50 vs. 51. But that's not always true: plenty of things vary **non-linearly** with age -- for example, imagine growth in height over age! Linear regression will give bad answers in such cases.^[One way to accommodate **non-linearities** is to modify the linear predictor to include polynomial terms, such as $age^2$, which then allow us to fit a curve rather than just a straight line. It is always a good idea to use visualizations like scatterplots to look for possible problems with linearity.]
+1. **The predictor relationships being modeled must be linear.** In our comparison of Alice's and Bob's expected outcomes based on their 1-year age difference, we were able to interpret the coefficient $\theta_{age}$ as the average difference in $Y_i$ when comparing participants who differ by 1 year of age, *regardless* of whether those ages are 20 vs. 21 or 50 vs. 51. But that's not always true: plenty of things vary **non-linearly** with age -- for example, imagine growth in height over age! Linear regression will give bad answers in such cases.^[One way to accommodate **non-linearities** is to modify the linear predictor to include polynomial terms, such as $age^2$, which then allow us to fit a curve rather than just a straight line. It is always a good idea to use visualizations like scatter plots to look for possible problems with linearity.]
 
-<!-- [Suggested Figure. Panel A: Scatterplot showing a nice linear relationship with OLS fit superimposed. Panel B: Scatterplot showing a nonlinear relationship with OLS fit, OLS fit with x^2 term, and LOESS superimposed.] -->
+<!-- [Suggested Figure. Panel A: Scatter plot showing a nice linear relationship with OLS fit superimposed. Panel B: Scatter plot showing a nonlinear relationship with OLS fit, OLS fit with x^2 term, and LOESS superimposed.] -->
 
 2. **Errors must be independent.** In our example, observations in the regression model (i.e., rows in the dataset) were sampled independently: each participant was recruited independently to the study and each performed a single trial. On the other hand, suppose we have repeated-measures data in which we sample participants, and then obtained multiple measurements for each participant. Within each participant, measurements would likely be correlated (perhaps due to their general level of tea enjoyment). This correlation invalidates inferences from a model that does not include it. We'll discuss this problem in detail below.
 
@@ -203,7 +198,7 @@ If any of these three conditions are violated, estimates and inferences from you
 
 So far we have considered continuous outcome measures, like tea ratings. What if we instead had a binary outcome, such as whether a participant liked or didn't like the tea, or a count outcome, such as the number of cups a participant chose to drink? These and other non-continuous outcomes often violate the assumptions of OLS, in particular because they often induce heteroskedastic errors. 
 
-Binary outcomes inherently violate heteroskedasticity because the variance of a binary variable depends directly on the success probability. Errors will be more variable when the expected success probability closer to 0.50, and much less variable for when the expected success is probability is closer to 0 or 1.^[Specifically, the variance of a binary variable with success probability $p$ is simply $p(1-p)$, which is maximized at $p=0.50$.] This hederoskedasticity in turn means that inferences from the model (e.g., $p$-values) can be incorrect; sometimes just a little bit off but sometimes dramatically incorrect.^[There's a whole school of thought in economics that claims that it's OK to use linear regression for binary outcomes. One commentator described this as "wrong but super useful" because the coefficients are simple to interpret as probabilities. Our position is that the linear probability model is an approximation that can be useful but should only be deployed with care by researchers who have given some thought to its weaknesses.]
+Binary outcomes inherently violate heteroskedasticity because the variance of a binary variable depends directly on the success probability. Errors will be more variable when the expected success probability closer to 0.50, and much less variable for when the expected success is probability is closer to 0 or 1.^[Specifically, the variance of a binary variable with success probability $p$ is simply $p(1-p)$, which is maximized at $p=0.50$.] This heteroskedasticity in turn means that inferences from the model (e.g., $p$-values) can be incorrect; sometimes just a little bit off but sometimes dramatically incorrect.^[There's a whole school of thought in economics that claims that it's OK to use linear regression for binary outcomes. One commentator described this as "wrong but super useful" because the coefficients are simple to interpret as probabilities. Our position is that the linear probability model is an approximation that can be useful but should only be deployed with care by researchers who have given some thought to its weaknesses.]
 
 Happily, **generalized linear models** (GLM) are regression models closely related to OLS that can handle non-continuous outcomes. These models are called "generalized" because OLS is one of many members of this large class of models. To see the connection, let's first write an OLS model more generally in terms of what it says about the expected value of the outcome, which we notate as $E[Y_i]$:
 
@@ -332,7 +327,7 @@ This default model then represents a simple summary of your experimental results
 
 1. **Preregister your model**. If you adjust your analysis after you see your data, you risk $p$-hacking -- choosing an analysis that inflates the estimate of your effect of interest. As we discussed in Chapter \@ref(replication) and as we will discuss in more detail in Chapter \@ref(prereg), one important strategy for avoiding this problem is to **preregister** your analysis.^[A side benefit of preregistration is it makes you think through whether your experimental design is appropriate -- that is, is there an analysis that estimates the effect you want from the data you intend to collect?]
 
-```{r fig.margin=TRUE, fig.cap = "Raw data, means, and confidence intervals for the tea-tasting experiment."}
+```{r models-ex-viz, fig.margin=TRUE, fig.cap = "Raw data, means, and confidence intervals for the tea-tasting experiment."}
 ggplot(tea_data, aes(x = condition, y = rating)) + 
   geom_jitter(width = .025, height = .1, alpha = .5) +
   stat_summary(fun.data = "mean_cl_boot", col = "red") + 
@@ -345,25 +340,102 @@ ggplot(tea_data, aes(x = condition, y = rating)) +
 
 ### A worked example
 
-This advice may seem abstract, so let's put it into practice on a simple example. Yes, you guessed it - it'll be about tea tasting. 
 
-```{r}
-tea_data |> 
-  mutate(i = 1:n(),
-         X = ifelse(condition == "tea first", 1, 0)) |>
-  rename(`rating (Y)` = rating) |>
-  select(i, condition, X, `rating (Y)`) |>
-  DT::datatable(rownames=FALSE, 
-                caption = "Example tea tasting data in a regression format.")
-
+```{r models-sgf-stim, fig.margin = TRUE, fig.cap="Example stimulus materials from @stiller2015."}
+knitr::include_graphics("images/models/sgf.png")
 ```
 
+```{r models-sgf-data}
+sgf <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/data/tidyverse/stiller_scales_data.csv") |>
+  mutate(age_group = cut(age, 2:5, include.lowest = TRUE), 
+         condition = factor(ifelse(condition == "Label", "Experimental", "Control")))
+```
+
+All this advice may seem abstract, so let's put it into practice on a simple example. For a change, let's look at an experiment that's not about tea tasting. Here we'll consider data from an experiment testing preschool children's language comprehension [@stiller2015; we also use these data in Appendix \@ref(tidyverse)]. In this experiment, 2--5 year old children saw displays like the one in Figure \@ref(fig:models-sgf-stim). In the experimental condition, a puppet said "My friend has glasses! Which one is my friend?" The goal was to measure how many children made the inference that the puppets friend was the face with glasses and *no* hat. To estimate this effect, participants were randomly assigned to either the experimental condition or to a control condition in which the puppet had eaten too much peanut butter and couldn't talk, but they still had to guess which face was his friend. Data from this experiment consisted of `r nrow(sgf)` total observations from `r length(unique(sgf$subid))` children, with four different experimental items -- faces, houses, beds, and plates of pasta -- each presented to each child. The primary hypothesis of this experiment was that an inference effect would provide support for the idea that preschool children could make pragmatic inferences.
+
+This experimental design looks a lot like some versions of our tea-tasting experiment. We have one primary condition manipulation, presented between-participants so that some participants are in the experimental condition and others are in the control condition. Our measurements are repeated within participants across different experimental items. Finally, we have one important, pre-planned covariate: children's age.^[Our sampling plan for this experiment was actually **stratified** across age, meaning that we intentionally recruited the same number of participants for each one-year age group -- because we anticipated that age was highly correlated with children's ability to succeed in this experiment. We'll present this kind of sampling in more detail in Chapter \@ref(sampling).] Experimental data are plotted in Figure \@ref(fig:models-sgf-plot).  
+
+```{r models-sgf-plot, fig.cap= "Data for @stiller2015. Each point shows a single participant's proportion correct trials plotted by age group, jittered slightly to avoid overplotting. Larger points and associated confidence intervals show mean and 95\\% confidence intervals for each condition."}
+sgf_sub_means <- sgf |>
+  group_by(age_group, condition, subid) |>
+  summarise(mean_correct = mean(correct)) 
+
+sgf_group_means <- sgf_sub_means |>
+  group_by(age_group, condition) |>
+  summarise(sd_correct = sd(mean_correct), 
+            n_obs = length(mean_correct),
+            sem = sd_correct / sqrt(n_obs),
+            ci = sem * 1.96,
+            mean_correct = mean(mean_correct))
+
+ggplot(sgf_group_means, 
+       aes(x = age_group, y = mean_correct, 
+           col = condition, group = condition)) + 
+  geom_line() + 
+  geom_pointrange(aes(ymin = mean_correct - ci, 
+                      ymax = mean_correct + ci)) +
+  geom_jitter(data = sgf_sub_means, alpha = .3, 
+              width = .1, height = .02) + 
+  ylim(0,1) + 
+  ggthemes::scale_color_solarized(name = "Condition") + 
+  xlab("Age group (years)") + 
+  ylab("Proportion correct") + 
+  theme_classic()
+```
+How should we go about making our default model for this dataset?^[This experiment was not preregistered, but the paper includes a separate replication dataset with the same analysis.] We simply include each of these design factors in a mixed effects model; we use a logistic variant of the linear mixed effects model (a **generalized linear mixed effects model**) because we would like to predict correct performance on each trial, which is a binary variable. So that gives us an effect of condition and age as a covariate. We further add an interaction between condition and age in case the condition effect varies meaningfully across groups. Finally, we add random effects of participant and experimental item.^[There's lots of debate in the literature about the best random effect structure for mixed effects models. This is a very tricky and technical subject. In brief, some folks argue for so-called **maximal** models, in which you include every random effect that is justified by the design [@barr2013]. In our case, that would mean including random slopes of condition for each experimental item. The problem is that these models can get very complex, and can be very hard to fit using standard software. We won't weigh in on this topic, but as you start to use these models on more complex experimental designs, it might be worth reading up.]
+
+The resulting model looks like this:
+
+$$
+logit(Y_{it}) = \beta_{cntl} + \beta_{age} * age_y + \beta_{exp} * X_i + \beta_{age*exp} * age_i * X_i + \gamma_i + \delta_t + \epsilon_{it}
+$$
+
+Let's break this down left to right:
+
+* $logit(Y_{it})$ says that we are predicting a logistic function of $Y_it$, whether child $i$ was correct on trial $t$. 
+* $\beta_{cntl}$ is the **intercept**, our estimate of the average log odds of correct responses for participants in the control condition. 
+* $\beta_{age} * age_y$ is the age predictor. $\beta_{age}$ represents change in log odds associated with a year more or less of age, and $age_i$ is the age for each participant.^[We have **centered** our age predictor in this example so that all estimates from our model are for the average age of our participants. Centering is a good practice for modeling continuous predictors because it increases the interpretability of other parts of the model. For example, because age is centered in this model, the intercept $\beta_{cntl}$ can be interpreted as the predicted odds of a correct trial for a participant at the average age.]
+* $\beta_{exp} * X_i$ is the condition predictor. $\beta_{exp}$ represents the change in log odds associated with being in the experimental condition (the causal effect of interest!), and $X_i$ an indicator variable that is 1 if child $i$ is in the experimental condition and 0 for the control conditions. Multiplying $\beta_{exp}$ by this indicator means that the predictor has the value 0 for participants in the control condition and $\beta_{exp}$ for those in the experimental condition. 
+* $\beta_{age*exp} * age_i * X_i$ is the interaction between age and experimental condition. $\beta_{age*exp}$ represents the change in log odds associated with being one year older *and* in the experimental condition. This term is multiplied by both each child's age *and* the condition indicator $X_i$. 
+* $\gamma_i$ is the random intercept for individual participants, capturing individual variation in the odds of success across trials. 
+* $\delta_t$ is the random intercept for individual experimental items, capturing variation in the odds of success across the four different items. 
+
+```{r models-sgf-model}
+sgf$age_centered <- scale(sgf$age, scale=FALSE)
+mod <- lme4::glmer(correct ~ age_centered * condition + (1|subid) + (1|item), 
+                   family = "binomial",
+                   data = sgf)
+```
+
+```{r models-sgf-model-print}
+apa_mod <- apa_print(mod)
+apa_tab <- apa_mod$table
+apa_tab$term[1] <- "Control condition"
+apa_tab$term[2] <- "Age (years)"
+apa_tab$term[3] <- "Experimental condition"
+apa_tab$term[4] <- "Age (years) * Experimental condition"
+apa_table(apa_tab, caption = "Estimated effects for our generalized linear mixed effects model on data from Stiller et al. (2015).")
+```
+
+Let's estimate this model and see how it looks. We'll focus here on interpretation of the so-called **fixed effects** (the main predictors), as opposed to the participant and item random effects.^[Participant means are estimated to have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[1],2)` (in log odds) while items have a standard deviation of `r `round(as.data.frame(lme4::VarCorr(mod))$sdcor[2],2)`. These indicate that both of our random effects capture meaningful variation.] Table \@ref(tab:models-sgf-model-print) shows the coefficients. Again, let's walk through each.
+
+* The control condition estimate (intercept) is `r apa_mod$full_result$Intercept`. This estimate reflects that the log odds of a correct response for an average-age participant in the control condition is `r round(lme4::fixef(mod)[1],2)`, which corresponds to a probability of `r round(boot::inv.logit(lme4::fixef(mod)[1]), 2)`. If we look at Figure \@ref(fig:models-sgf-plot), that estimate makes sense: `r round(boot::inv.logit(lme4::fixef(mod)[1]), 2)` seems close to the average for the control condition. 
+
+* The age effect estimate is `r apa_mod$full_result$age_centered`. There is a slight decrease in the probability of a correct response for older children in the control condition. Again, looking at Figure \@ref(fig:models-sgf-plot), this estimate is interpretable: we see a small decline in the probability of a correct response for the oldest age group. 
+
+* The key experimental condition estimate then is `r apa_mod$full_result$conditionExperimental`. This estimate means that the log odds of a correct response for an average-age participant in the experimental condition is the sum of the estimates for the control (intercept) and the experimental conditions: `r round(lme4::fixef(mod)[1],2)` +  `r round(lme4::fixef(mod)[3],2)`, which corresponds to a probability of `r round(boot::inv.logit(lme4::fixef(mod)[1] + lme4::fixef(mod)[3]), 2)`. Again, grounding our interpretation in Figure \@ref(fig:models-sgf-plot), this estimate corresponds to the average value for the experimental condition.
+
+* Finally, the interaction of age and condition is `r apa_mod$full_result$age_centered_conditionExperimental`. This positive coefficient reflects that with every year of age, the difference between control and experimental conditions grows. 
+
+In sum, this model suggests that there was a substantial difference in performance between experimental and control conditions, in turn supporting the hypothesis that children in the sampled age group can perform pragmatic inferences. This example illustrates the "default model" framework that we recommend -- the idea that a single regression model corresponding to the design of the experiment can yield an interpretable estimate of the causal effect of interest, even in the presence of several other sources of variation.
 
 ### When does it makes sense to include covariates in a model?
 
-Let's come back to one piece of advice that we gave above about making a "default" model of an experiment: not including covariates. This advice can seem surprising. Many demographic factors are of interest to psychologists and other behavioral scientists, and in observational studies these factors will almost always be related to important life outcomes. So why not put them into our experimental models? 
+Let's come back to one piece of advice that we gave above about making a "default" model of an experiment: not including covariates. This advice can seem surprising. Many demographic factors are of interest to psychologists and other behavioral scientists, and in observational studies these factors will almost always be related to important life outcomes. So why not put them into our experimental models? After all, we did include age in our worked example above!
 
-If you have one or small handful of covariates that you believe are meaningfully related to the outcome, you *can* plan in advance to put them in your model. Including these can increase the precision of your estimates by reducing "noise" in your outcome. What's surprising though is how *little* this adjustment does to increase your overall precision unless the correlation between covariate and outcome is very big. Figure \@ref(fig:models-precision) shows this relationship in a simple simulation. Only when the correlation between covariate and outcome (e.g., age and tea rating) is greater than .8 does this adjustment really help.^[A relationship that strong is very unusual for most experiments in psychology, not least because our outcome measures are very unlikely to even be reliable enough to correlate with *themselves* at $r > .8$ let alone with another variable; see Chapter \@ref(measurement) for more details on this point.] 
+Well, if you have one or at most a small handful of covariates that you believe are meaningfully related to the outcome, you *can* plan in advance to put them in your model. If you think that your effect is likely to be **moderated** a specific demographic characteristic -- as we did with age and pragmatic inference in our example above -- then this inclusion can be quite useful. 
+
+Further, including covariates can increase the precision of your estimates by reducing "noise" in your outcome, and if you hypothesize that they interact. What's surprising though is how *little* this adjustment does to increase your overall precision unless the correlation between covariate and outcome is very big. Figure \@ref(fig:models-precision) shows this relationship in a simple simulation. Only when the correlation between covariate and outcome (e.g., age and tea rating) is greater than .6 -- .8 does this adjustment really help.^[A relationship that strong is very unusual for most experiments in psychology, not least because our outcome measures are very unlikely to even be reliable enough to correlate with *themselves* at $r > .8$ let alone with another variable; see Chapter \@ref(measurement) for more details on this point.] 
 
 ```{r models-precision, fig.cap="Decreases in estimation error (root mean squared error) due to adjusting for covariates, plotted by the N participants in each group and the correlation between the covariate and the outcome."}
 # based on http://egap.org/methods-guides/10-things-know-about-covariate-adjustment
@@ -415,7 +487,7 @@ ggplot(d, aes(x = half_n, y = rmse,
   theme(legend.position = "bottom")
 ```
 
-That said, there are quite a few reasons not to include covariates -- motivating our recommendation to skip them in your default model.
+That said, there are quite a few reasons not to include covariates -- motivating our recommendation to skip them in your default model unless you have very strong expectations for either A) a correlation with the outcome or B) a strong moderation relationship.
 
 The first reason is simply because we don't need to. Because randomization cuts causal links, our experimental estimate is an unbiased estimate of the causal effect of interest. We are guaranteed that, in the limit of many different experiments, even though people with different ages will be in the different tea tasting conditions, this source of variation will be averaged out.
 
