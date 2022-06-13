@@ -1,8 +1,9 @@
-import '/src/box.scss'
+import './box.scss'
 
 import icons               from '/src/icons'
 import Collapsible         from 'react-collapsible'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import parse               from 'html-react-parser'
 
 const Label = ({ type }) => (
 	<>
@@ -12,15 +13,16 @@ const Label = ({ type }) => (
 	</>
 )
 
-const Box = ({ title, type, children }) => (
+const Box = ({ title, type, content }) => (
 	<div class={ `box ${type}` }>
 		<Collapsible
 			trigger={ <Label type={ type }/> }
+			overflowWhenOpen='visible'
 			transitionTime={ 300 }
 			easing='ease'
 		>
 			{ title && <p class='title'>{ title }</p> }
-			{ children }
+			{ parse(content) }
 		</Collapsible>
 	</div>
 )
