@@ -26,19 +26,19 @@ MathJax.Hub.Config({
 
 <title>Chapter 10 Sampling | Experimentology</title>
 
-<script src="libs/header-attrs-2.13/header-attrs.js"></script>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
 <script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="libs/jquery-3.5.1/jquery.min.js"></script>
 <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-<script src="libs/datatables-binding-0.21/datatables.js"></script>
-<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-<link href="libs/dt-core-1.11.3/css/jquery.dataTables.min.css" rel="stylesheet" />
-<link href="libs/dt-core-1.11.3/css/jquery.dataTables.extra.css" rel="stylesheet" />
-<script src="libs/dt-core-1.11.3/js/jquery.dataTables.min.js"></script>
-<link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
-<script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<script src="libs/datatables-binding-0.18/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script>
 
 
 <style type="text/css">code{white-space: pre;}</style>
@@ -159,15 +159,14 @@ div.csl-indent {
 <li><a href="11-strategy.html#strategy"><span class="toc-section-number">11</span> Experimental strategy</a></li>
 <li class="part"><span><b>IV Execution</b></span></li>
 <li><a href="12-prereg.html#prereg"><span class="toc-section-number">12</span> Preregistration</a></li>
-<li><a href="13-consent.html#consent"><span class="toc-section-number">13</span> Recruitment and Consent</a></li>
-<li><a href="14-collection.html#collection"><span class="toc-section-number">14</span> Data collection</a></li>
-<li><a href="15-management.html#management"><span class="toc-section-number">15</span> Project management</a></li>
+<li><a href="13-collection.html#collection"><span class="toc-section-number">13</span> Data collection</a></li>
+<li><a href="14-management.html#management"><span class="toc-section-number">14</span> Project management</a></li>
 <li class="part"><span><b>V Analysis and Reporting</b></span></li>
-<li><a href="16-viz.html#viz"><span class="toc-section-number">16</span> Visualization</a></li>
-<li><a href="17-eda.html#eda"><span class="toc-section-number">17</span> Exploratory data analysis</a></li>
-<li><a href="18-writing.html#writing"><span class="toc-section-number">18</span> Writing</a></li>
-<li><a href="19-meta.html#meta"><span class="toc-section-number">19</span> Meta-analysis</a></li>
-<li><a href="20-conclusions.html#conclusions"><span class="toc-section-number">20</span> Conclusions</a></li>
+<li><a href="15-viz.html#viz"><span class="toc-section-number">15</span> Visualization</a></li>
+<li><a href="16-eda.html#eda"><span class="toc-section-number">16</span> Exploratory data analysis</a></li>
+<li><a href="17-writing.html#writing"><span class="toc-section-number">17</span> Writing</a></li>
+<li><a href="18-meta.html#meta"><span class="toc-section-number">18</span> Meta-analysis</a></li>
+<li><a href="19-conclusions.html#conclusions"><span class="toc-section-number">19</span> Conclusions</a></li>
 <li class="appendix"><span><b>Appendices</b></span></li>
 <li><a href="A-git.html#git"><span class="toc-section-number">A</span> GitHub Tutorial</a></li>
 <li><a href="B-rmarkdown.html#rmarkdown"><span class="toc-section-number">B</span> R Markdown Tutorial</a></li>
@@ -190,17 +189,17 @@ div.csl-indent {
 <li>Reason about limitations of different samples</li>
 </ul>
 </div>
-<p>As we keep reminding you, experiments are designed to yield measurements of a causal effect. But a causal effect of what, and on whom? These are questions that are often given surprisingly little air time in our papers. Titles in our top journals read “Daxy thinking promotes fribbles,” “Doing fonzy improves smoodling,” or “Blicket practice produces more foozles than smonkers.”<label for="tufte-sn-148" class="margin-toggle sidenote-number">148</label><input type="checkbox" id="tufte-sn-148" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">148</span> Titles changed to protect the original authors. These researchers might very well have said more specific things in the text of their paper.</span> Each of these uses <strong>generic language</strong> to state a claim that is implied to be generally true <span class="citation">(<a href="#ref-dejesus2019" role="doc-biblioref">DeJesus et al., 2019</a>)</span>,<label for="tufte-sn-149" class="margin-toggle sidenote-number">149</label><input type="checkbox" id="tufte-sn-149" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">149</span> Generic language is a fascinating linguistic phenomenon. When we say things like “mosquitoes transmit malaria,” we don’t mean that <em>all</em> mosquitos do it, only something like “it’s a valid and diagnostic generalization about mosquitoes in contrast to other relevant insects or other creatures that they are spreaders of malaria” <span class="citation">(<a href="#ref-tessler2019" role="doc-biblioref">Tessler &amp; Goodman, 2019</a>)</span>.</span> but for each of these, we could reasonably ask “doing fonzy improves smoodling <em>for whom</em>?” Is it everyone? Or a particular set of people? And similarly, we might want to ask “<em>how much</em> and <em>what kind</em> of fonzy reading?” These are questions about the <strong>generalizability of research</strong>.<label for="tufte-sn-150" class="margin-toggle sidenote-number">150</label><input type="checkbox" id="tufte-sn-150" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">150</span> Imagine for a second what a non-generic version of one of these titles might look like: “Reading one particular selection of fonzy for fifteen minutes in the lab improved 36 college students’ smoodling scores on a questionnaire.” It seems pretty clear that we wouldn’t let the authors get away with a fully general version of their claim: “Doing [<em>any</em>] fonzy improves smoodling [<em>for anyone</em>].” That’s just a bad generalization.</span></p>
+<p>As we keep reminding you, experiments are designed to yield measurements of a causal effect. But a causal effect of what, and on whom? These are questions that are often given surprisingly little air time in our papers. Titles in our top journals read “Daxy thinking promotes fribbles,” “Doing fonzy improves smoodling,” or “Blicket practice produces more foozles than smonkers.”<label for="tufte-sn-172" class="margin-toggle sidenote-number">172</label><input type="checkbox" id="tufte-sn-172" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">172</span> Titles changed to protect the original authors. These researchers might very well have said more specific things in the text of their paper.</span> Each of these uses <strong>generic language</strong> to state a claim that is implied to be generally true <span class="citation">(<a href="#ref-dejesus2019" role="doc-biblioref">DeJesus et al., 2019</a>)</span>,<label for="tufte-sn-173" class="margin-toggle sidenote-number">173</label><input type="checkbox" id="tufte-sn-173" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">173</span> Generic language is a fascinating linguistic phenomenon. When we say things like “mosquitoes transmit malaria,” we don’t mean that <em>all</em> mosquitos do it, only something like “it’s a valid and diagnostic generalization about mosquitoes in contrast to other relevant insects or other creatures that they are spreaders of malaria” <span class="citation">(<a href="#ref-tessler2019" role="doc-biblioref">Tessler &amp; Goodman, 2019</a>)</span>.</span> but for each of these, we could reasonably ask “doing fonzy improves smoodling <em>for whom</em>?” Is it everyone? Or a particular set of people? And similarly, we might want to ask “<em>how much</em> and <em>what kind</em> of fonzy reading?” These are questions about the <strong>generalizability of research</strong>.<label for="tufte-sn-174" class="margin-toggle sidenote-number">174</label><input type="checkbox" id="tufte-sn-174" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">174</span> Imagine for a second what a non-generic version of one of these titles might look like: “Reading one particular selection of fonzy for fifteen minutes in the lab improved 36 college students’ smoodling scores on a questionnaire.” It seems pretty clear that we wouldn’t let the authors get away with a fully general version of their claim: “Doing [<em>any</em>] fonzy improves smoodling [<em>for anyone</em>].” That’s just a bad generalization.</span></p>
 <p>We’ve already run into generalizability in our treatment of statistical estimation and inference. When we estimated a particular quantity (say, the effect of fonzy), we did so in our own sample. But we then used inferential tools to reason about how this <strong>sample</strong>’s estimate related to the <strong>population</strong> as a whole. How do we link up these statistical tools for generalization to the scientific questions we have about the generalizability of our findings? That’s the question of this chapter.</p>
 <p>The first key set of decisions in experiment planning is what population to sample from and how to sample. We’ll start by talking about the basics of <strong>sampling theory</strong>: different ways of sampling and the generalizations they do and don’t license. In this context, we also discuss <strong>stimulus sampling</strong>, a pervasive and under-appreciated challenge to the generalizability of behavioral research. A second set of key decisions is about <strong>sample size</strong> planning. We’ll start with classic <strong>power analysis</strong> but then introduce several other ways that an experimenter can plan and justify their sample size. In the final section, we’ll consider some of the broader issues that come up in sampling, including several sampling biases that can lead to biases in the experimental effect. We’ll end with a discussion of some broader questions about generalizability in behavioral research.</p>
 <div class="case-study">
 <p>🔬 Case study: Is everyone as bad at describing smells as I am?</p>
-<p>Since Darwin, scientists have assumed that smell is a vestigial sense in humans – one that we don’t even bother to encode in language. In English we don’t even have consistent words for odors. We can say something is “stinky,” “fragrant, or maybe”musty,” but beyond these, all our words for smells are about the <em>source</em> of the smell, not the qualities of it. Bananas, roses, and skunks all have distinctive smells, but we don’t have any vocabulary for naming what is common or uncommon about them. And when we make up ad-hoc vocabulary, it’s typically quite inconsistent <span class="citation">(<a href="#ref-majid2014" role="doc-biblioref">Majid &amp; Burenhult, 2014</a>)</span>. The same situation applies across many languages.</p>
+<p>Since Darwin, scientists have assumed that smell is a vestigial sense in humans – one that we don’t even bother to encode in language. In English we don’t even have consistent words for odors. We can say something is “stinky,” “fragrant, or maybe”musty," but beyond these, all our words for smells are about the <em>source</em> of the smell, not the qualities of it. Bananas, roses, and skunks all have distinctive smells, but we don’t have any vocabulary for naming what is common or uncommon about them. And when we make up ad-hoc vocabulary, it’s typically quite inconsistent <span class="citation">(<a href="#ref-majid2014" role="doc-biblioref">Majid &amp; Burenhult, 2014</a>)</span>. The same situation applies across many languages.</p>
 <p>So, would it be a good generalization about human beings – all people – that olfaction as a sense is de-emphasized relative to vision? This inference has a classic sample-to-population structure. We notice that, within several samples of participants using widely-spoken languages, we observe limited and inconsistent vocabulary for smells, as well as poor discrimination. We use these samples to license an inference to the population – in this case, the entire human population.</p>
 <p>
 <span class="marginnote shownote">
 <!--
-<div class="figure">--><span style="display:block;" id="fig:sampling-majid2014"></span>
+<div class="figure">--><span id="fig:sampling-majid2014"></span>
 <img src="images/sampling/majid2014.png" alt="Data from Majid and Burenhult (2014) on the consistency of color and odor naming in English and Jahai speakers. Higher values indicate more consistent descriptions. Pie charts indicate the type of language being used." width="\linewidth"  />
 <!--
 <p class="caption marginnote">-->Figure 10.1: Data from Majid and Burenhult (2014) on the consistency of color and odor naming in English and Jahai speakers. Higher values indicate more consistent descriptions. Pie charts indicate the type of language being used.<!--</p>-->
@@ -249,6 +248,11 @@ div.csl-indent {
 <p>sample calculations for within/between subjects
 <a href="http://daniellakens.blogspot.com/2016/11/why-within-subject-designs-require-less.html" class="uri">http://daniellakens.blogspot.com/2016/11/why-within-subject-designs-require-less.html</a>
 <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6640316/" class="uri">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6640316/</a></p>
+</div>
+<div id="repeated-measures-designs-more-people-or-more-items" class="section level3" number="10.2.3">
+<h3><span class="header-section-number">10.2.3</span> Repeated measures designs: more people or more items?</h3>
+<p>DeBolt and Oakes
+Westfall</p>
 </div>
 </div>
 <div id="issues-in-sampling" class="section level2" number="10.3">
