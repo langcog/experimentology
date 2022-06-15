@@ -1,9 +1,9 @@
-import './box.scss'
+import './Box.scss'
 
-import icons               from '/src/icons'
-import Collapsible         from 'react-collapsible'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import icons               from '/src/icons'
 import parse               from 'html-react-parser'
+import Collapsible         from 'react-collapsible'
 
 const Label = ({ type }) => (
 	<>

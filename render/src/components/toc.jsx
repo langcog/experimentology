@@ -7,7 +7,7 @@ import {
 	part_title_rest,
 	dropdown,
 	chapter_title,
-} from './toc.module.scss'
+} from './TOC.module.scss'
 
 import { title, subtitle, parts }      from '/contents.json'
 import { useState, useEffect, useRef } from 'preact/hooks'

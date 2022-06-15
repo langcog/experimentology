@@ -1,5 +1,5 @@
-import Box                   from './components/box'
-import TOC                   from './components/toc'
+import TOC                   from './components/TOC'
+import Box                   from './components/Box'
 import { routes }            from '/contents.json'
 import parse, { domToReact } from 'html-react-parser'
 import render                from 'preact-render-to-string'
@@ -53,10 +53,10 @@ export default ({ url, html }) => {
 	}
 
 	const replace = node => {
-		if (node.attribs?.href) {
-			node.attribs.href = node.attribs.href
-			.replace(/^(\w+-([^-].+))\.html#\2$/, '$1');
-		}
+		// if (node.attribs?.href) {
+		// 	node.attribs.href = node.attribs.href
+		// 	.replace(/^(\w+-([^-].+))\.html#\2$/, '$1');
+		// }
 
 		if (isTOC(node)) return island(<TOC/>);
 
