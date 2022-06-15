@@ -42,7 +42,7 @@ This isn't a statistics book and we won't attempt to teach the full array of imp
 
 ## Sampling variation
 
-In Chapter \@ref(estimation) we discussed Fisher's tea-tasting experiment, and we discussed how to estimate means and differences in means from our observed data. These so-called "point estimates" represent our best guesses about the population parameters given the data and possibly also given our prior beliefs. But on their own, point estimates do not say anything about how much statistical uncertainty is involved in these point estimates.[^inference-7] Quantifying and reasoning about this uncertainty is an important goal: If we were to repeat the tea-tasting experiment with 500 participants instead of 48, we would have less uncertainty with 500 participants, even if the point estimates happened to be identical.
+In Chapter \@ref(estimation), we introduced Fisher's tea-tasting experiment and discussed how to estimate means and differences in means from our observed data. These so-called "point estimates" represent our best guesses about the population parameters given the data and possibly also given our prior beliefs. But on their own, point estimates do not say anything about how much statistical uncertainty is involved in these point estimates.[^inference-7] Quantifying and reasoning about this uncertainty is an important goal: If we were to repeat the tea-tasting experiment with 500 participants instead of 48, we would have less uncertainty with 500 participants, even if the point estimates happened to be identical.
 
 ### Standard errors
 
@@ -98,6 +98,8 @@ The sampling distribution is not the same thing as the distribution of tea ratin
 We talked in the last chapter about the normal distribution, a convenient and ubiquitous tool for quantifying the distribution of measurements. A shocking thing about sampling distributions for many kinds of estimates -- and for *all* maximum likelihood estimates -- is that they become normally distributed as the sample size gets larger and larger. This result holds even for estimates that are not even remotely normally distributed in small samples! 
 
 For example, say we are flipping a coin and we want to estimate the probability that it lands heads ($p_H$). If we draw samples each consisting of only $n=2$ coin flips, Figure \@ref(fig:inference-coin-2) is the sampling distribution of the estimates ($\widehat{p}_H$). This sampling distribution doesn't look normally distributed at all -- it doesn't have the characteristic "bell curve" look! $\widehat{p}_H$ can only take on the values 0, 0.5, or 1 in a sample of only 2 coin flips. 
+
+<!-- Julie's comment: For Figure 6.4, it might be nice to also put the x axis directly below the n = 2 and n = 8 coin flips figures (right now it's only at the bottom of the n = 32 and n = 128 figures). I say this because an important observation that I think helps readers orient to these figures is the fact that for n = 2, only values 0, 0.5 and 1 are possible, as helpfully described above. Right now it looks like "32" which is the heading of the figure below it, is the central value of the x axis which could potentially be confusing. -->
 
 ```{r inference-coin-2, fig.margin = TRUE, fig.cap="Samping distribution of samples from a biased coin with N=2 flips in each sample."}
 
@@ -201,10 +203,10 @@ ggplot(null_model_summary_multin, aes(x =delta)) +
              aes(xintercept = q975), col = "red", lty = 2) + 
   facet_wrap(~n) +
   xlim(-2.5, 2.5) + 
-  ylab("Frequency") + xlab("Difference in rating)")
+  ylab("Frequency") + xlab("Difference in rating")
 ```
 
-The more participants in the experiment, the tighter the null distribution becomes, and hence the smaller the region in which we should expect a null treatment effect to fall. Because our expectation based on the null becomes more precise, we will be able to reject then null based on smaller treatment effects. In inference of this type, as with estimation, our goals matter. If we're merely testing a hypothesis out of curiosity, perhaps we don't want to measure too many cups of tea. But if we were designing the tea strategy for a major cafe chain, the stakes would be higher and a more precise estimate might necessary; in that case, maybe we'd want to do a more extensive experiment! 
+The more participants in the experiment, the tighter the null distribution becomes, and hence the smaller the region in which we should expect a null treatment effect to fall. Because our expectation based on the null becomes more precise, we will be able to reject the null based on smaller treatment effects. In inference of this type, as with estimation, our goals matter. If we're merely testing a hypothesis out of curiosity, perhaps we don't want to measure too many cups of tea. But if we were designing the tea strategy for a major cafe chain, the stakes would be higher and a more precise estimate might necessary; in that case, maybe we'd want to do a more extensive experiment! 
 
 One last note: You might notice an interesting parallel between Fisher's paradigm for NHST and Popper's falsificationist philosophy (introduced in Chapter \@ref(theories)). In both cases, you never get to accept the actual hypothesis of interest. The only thing you can do is observe evidence that is inconsistent. The added limitation of NHST is that the only hypothesis you can falsify is the null!
 
@@ -272,15 +274,15 @@ tea_bf_large <- BayesFactor::ttestBF(x = tea_data_large$rating[tea_data_large$co
                                paired = FALSE)
 ```
 
+<!-- Julie's comment: The caption for Figure 6.7 mentions a best fitting normal distribution in blue and means as dashed lines but the figure only seems to show data points. Not sure if the caption is out-of-date or the figure hasn't been updated, but would be good to align. -->
 
-
-Figure \@ref(fig:inference-milk-first) shows one example dataset. Once we set up our models, we can compute the relative likelihood of the data under each.^[In this case, we use the "default Bayesian $t$-test provided by the `BayesFactor` package.] The resulting BF is `r round(extractBF(tea_bf)$bf, 2)`, somewhere between anecdotal and substantial evidence. On the other hand, if we double the size of the experiment to 96 participants, the BF goes up to `r round(extractBF(tea_bf_large)$bf, 2)`, which is quite strong evidence.
+Figure \@ref(fig:inference-milk-first) shows one example dataset. Once we set up our models, we can compute the relative likelihood of the data under each.^[In this case, we use the default Bayesian $t$-test provided by the `BayesFactor` package.] The resulting BF is `r round(extractBF(tea_bf)$bf, 2)`, somewhere between anecdotal and substantial evidence. On the other hand, if we double the size of the experiment to 96 participants, the BF goes up to `r round(extractBF(tea_bf_large)$bf, 2)`, which is quite strong evidence.
 
 That's the Bayes Factor. Now let's turn back to NHST and the $p$-value.
 
 ### *p*-values
 
-We already have a working definition of what a $p$-value is from our discussion above: it's the **probability of the data (or any data that would be more extreme) under the null hypothesis**. How is this quantity related to either our Bayesian estimate or the BF? Well, the first thing to notice is that the $p$-value is very close (but not identical to) the likelihood itself.^[The likelihood -- for both Bayesians and frequentists --  is the probability of the data, just like the $p$-value. But unlike the $p$-value, it doesn't include the probability of more extreme data as well.] 
+We already have a working definition of what a $p$-value is from our discussion above: it's the **probability of the data (or any data that would be more extreme) under the null hypothesis**. How is this quantity related to either our Bayesian estimate or the BF? Well, the first thing to notice is that the $p$-value is very close (but not identical) to the likelihood itself.^[The likelihood -- for both Bayesians and frequentists --  is the probability of the data, just like the $p$-value. But unlike the $p$-value, it doesn't include the probability of more extreme data as well.] 
 
 
 ```{r inference-t-test}
@@ -293,7 +295,9 @@ tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
 
 Next we can use a simple statistical test, a $t$-test, to compute $p$-values for our experiment. In case you haven't encountered one, a $t$-test is a procedure for computing a $p$-value by comparing the distribution of two variables using the null hypothesis that there is no difference between them.^[$t$-tests can also be used in cases where one sample is being compared to some baseline.] The $t$-test uses the data to compute a **test statistic** whose distribution under the null hypothesis is known. Then the value of this statistic can be converted to $p$-values for making an inference. 
 
-When we conduct a $t$-test on our experimental results, we see that the difference between the two groups is statistically significant at $p<.05$: `r papaja::apa_print(tea_t)$statistic`. Here we've given a standard American Psychological Association report of a $t$-test. The first part of this report on the test gives the $t$ value, qualified by the **degrees of freedom** for the test. We won't focus much on the idea of degrees of freedom here, but for now it's enough to know that this number quantifies the amount of information given by the data, in this case 48 datapoints minus the two means (one for each of the samples).  
+When we conduct a $t$-test on our experimental results, we see that the difference between the two groups is statistically significant at $p<.05$: `r papaja::apa_print(tea_t)$statistic`. Here we've given a standard American Psychological Association report of a $t$-test. The first part of this report on the test gives the $t$ value, qualified by the **degrees of freedom** for the test in parentheses. We won't focus much on the idea of degrees of freedom here, but for now it's enough to know that this number quantifies the amount of information given by the data, in this case 48 datapoints minus the two means (one for each of the samples).  
+
+<!-- Julie's comment: The data being used through the papaja function doesn't seem to match the text around it. For instance, the p value is p = .056 but the text reports that as being sig at p < .05. Similarly, the df is 18 but the text around it describes the df to be 46 ("48 datapoints minus the two means)". Maybe there is a mismatch somewhere? -->
 
 Let's compare $p$ values and default Bayes Factors for a couple of different conditions. In Table \@ref(tab:p-bf-comparison), you can see a set of simulated experiments with varying total numbers of participants and varying average treatment effects. Both $p$ and BF go up with more participants and larger effects. But in general BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ can sometimes translate to a BF of less than 3 [@benjamin2018]. 
 
@@ -322,6 +326,8 @@ The critical thing about $p$-values, though, is not just that they are a specifi
 
 As we mentioned, though, we are usually interested in not just rejecting the null hypothesis but also in the evidence for the alternative (the one we are interested in). The Bayes Factor is one approach to quantifying positive evidence. This issue with the Fisher approach to $p$-values has been known for a long time, though, and so there is an alternative use of $p$-values that we introduce here. 
 
+<!-- Julie's comment: Maybe it's just me but the last sentence above is a slightly confusing transition to the next section. -->
+
 ### The Neyman-Pearson approach
 
 ```{r inference-power-alpha, fig.cap="Standard decision matrix for NHST.", fig.margin=TRUE}
@@ -331,7 +337,7 @@ knitr::include_graphics("images/inference/power-alpha.png")
 
 One way to "patch" NHST is to introduce a decision-theoretic view, shown in Figure \@ref(fig:inference-power-alpha).[^inference-16] On this view, called the Neyman-Pearson view, there is a real $H_1$, albeit one that is not specified. Then the true state of the world could be that $H_0$ is true or $H_1$ is true. The $p<.05$ criterion is the threshold at which we are willing to reject the null, and so this constitutes our **false positive** rate $\alpha$. But we also need to define a **false negative** rate, which is conventionally called $\beta$. [OH NO! NOW WE HAVE ANOTHER "BETA".]
 
-Setting these rates is a decision problem: If you are too conservative in your criteria for the intervention having an effect, however, then you risk a false negative, where you incorrectly conclude that it doesn't work. And if you're too liberal in your assessment of the evidence, then you risk a false positive.[^inference-17] In practice, however, mostly people leave $\alpha$ at .05 and try to control their false negative rate by increasing their sample size. 
+Setting these rates is a decision problem: If you are too conservative in your criteria for the intervention having an effect, then you risk a false negative, where you incorrectly conclude that it doesn't work. And if you're too liberal in your assessment of the evidence, then you risk a false positive.[^inference-17] In practice, however, mostly people leave $\alpha$ at .05 and try to control their false negative rate by increasing their sample size. 
 
 As we saw in Figure \@ref(fig:inference-null-model), the greater the sample, the better your chance of rejecting the null for any given non-null effect. But these chances will depend also on the effect size you are using. This formulation gives rise to the idea of classical power analysis, which we cover in Chapter \@ref(sampling). Most folks who defend binary inference using $p$-values are interested in using the Neyman-Pearson approach. In our view, this approach has its place (it's especially useful for power analysis) but it still suffers from the substantial issues that plague all binary inference techniques, especially those that use $p$-values. We turn to some of these below.  
 [^inference-16]: A little bit of useful history here is given in @cohen1990.
@@ -340,7 +346,7 @@ As we saw in Figure \@ref(fig:inference-null-model), the greater the sample, the
 
 ## Inference and its discontents
 
-In the prior sections of this chapter, we reviewed NHST and Bayesian approaches to inference. Now it's time to step back and think about some of the ways that inference practices -- especially those related to NHST -- have been problematic for psychology research. We'll being with some issues surrounding $p$-values and then give a specific accident report related to the process of "$p$-hacking." We end by discussing the foundations for thinking about probability in light of these issues.
+In the prior sections of this chapter, we reviewed NHST and Bayesian approaches to inference. Now it's time to step back and think about some of the ways that inference practices -- especially those related to NHST -- have been problematic for psychology research. We'll begin with some issues surrounding $p$-values and then give a specific accident report related to the process of "$p$-hacking." We end by discussing the foundations for thinking about probability in light of these issues.
 
 ### Problems with the interpretation of *p*
 
@@ -376,7 +382,7 @@ knitr::kable(dozen,
 
 These are not the only issues with $p$-values. In fact, people have so much trouble understanding what $p$-values *do* say that there are whole articles written about these misconceptions. Table \@ref(tab:dirty-dozen) shows a set of misconceptions documented and refuted by @goodman2008. 
 
-Let's take a look at just a few. Misconception 1 is that, if $p= .05$, the null has a 5% chance of being true. This misconception is a result of confusing $p(H_0 | d)$ (the posterior) and $p(d | H_0)$ (the likelihood -- also known as the $p$-value). Misconception 2 -- that $p > .05$ allows us to *accept* the null -- also stems from this reversal of posterior and likelihood. And misconception 3 a misinterpretation of the $p$-value as an effect size (which we learned about in the last chapter): a large effect is likely to be clinically important, but with a small enough sample size, you can get a small $p$-value even for a very small effect. We won't go through all the misconceptions here, but we encourage you to challenge yourself to work through them (as in the exercise below). 
+Let's take a look at just a few. Misconception 1 is that, if $p= .05$, the null has a 5% chance of being true. This misconception is a result of confusing $p(H_0 | d)$ (the posterior) and $p(d | H_0)$ (the likelihood -- also known as the $p$-value). Misconception 2 -- that $p > .05$ allows us to *accept* the null -- also stems from this reversal of posterior and likelihood. And misconception 3 is a misinterpretation of the $p$-value as an effect size (which we learned about in the last chapter): a large effect is likely to be clinically important, but with a small enough sample size, you can get a small $p$-value even for a very small effect. We won't go through all the misconceptions here, but we encourage you to challenge yourself to work through them (as in the exercise below). 
 
 <!-- NC: The dirty dozen table doesn't seem that useful if we do not explain why these things are incorrect. MM agrees. We can probably discuss the fallacies for one or the other and then just invoke the CI-p-value duality for why the other set of fallacies is also wrong. Mika and I discuss the CI fallacies below. -->
 
@@ -478,6 +484,8 @@ The problem with all of these statements is that, in the frequentist framework, 
 
 Confidence intervals are constructed by estimating the middle 95% of the sampling distribution of $\widehat{\beta}$. Because of our hero, the Central Limit Theorem, we can treat the sampling distribution as normal for reasonably large samples. Given this, it's common to construct a 95% confidence intervals $\widehat{\beta} \pm 1.96 \widehat{SE}$.^[This type of CI is called a "Wald" confidence interval.] For the tea example, we had $\widehat{SE} = \sigma/\sqrt{n} = `r round(tea_se,2)`$, yielding the confidence interval: [`r round(tea_ci_lower,2)`, `r round(tea_ci_upper,2)`]. 
 
+<!-- Julie's comment: I think the paragraph above should be moved higher up, earlier in the introduction of CIs because it clarifies a lot about what a CI is objectively. Otherwise, until we reach this paragraph, CIs feel abstract, e.g., how do we know the "true" parameter? -->
+
 [^inference-8]: In case you don't have enough tea to do the experiment 100 times to confirm this, you can do it virtually [here](https://istats.shinyapps.io/ExploreCoverage/).
 
 [^inference-9]: In contrast, Bayesians think of parameters themselves as variable rather than fixed.
@@ -491,6 +499,8 @@ ggplot(tea_data_large,
   xlab("Condition")
 ```
 For visualization purposes, we can show the confidence intervals on individual estimates (Figure \@ref(fig:inference-condition-cis)). These tell us about the precision of our estimates of each quantity relative to the population estimate. But we've been talking primarily about the CI on the treatment effect $\widehat{\beta}$, which is shown in Figure \@ref(fig:inference-treatment-ci). This CI 
+
+<!-- Julie's comment: Paragraph above seemed unfinished? Also Figure 6.9 doesn't contain any CI, and figure caption for Figure 6.10 probably needs to be updated (e.g., "Figure 6.10: Confidence intervals on estimate on treatment effect." -->
 
 ```{r inference-treatment-ci, fig.margin=TRUE, fig.cap = "Confidence intervals on each of the two condition estimates."}
 treatment_ci <- tibble(ymin = tea_ci_lower, 
@@ -518,7 +528,7 @@ If you want to quantify evidence for or against a hypothesis, it's worth conside
 
 Despite the reasons to be worried about $p$-values, for many practicing scientists (at least at time of writing) there is no one right answer as to whether to reject $p$-values. Even if we'd like to be Bayesian, there are a number of obstacles. First, though new computational tools make fitting Bayesian models and extracting Bayes Factors much easier than before (more about this below and in the next chapter), it's still on average quite a bit harder to fit a Bayesian model than it is a frequentist one. Second, because Bayesian analyses are less familiar, it may be an uphill battle to convince advisors, reviewers, and funders to use them. 
 
-As a group, some of us are more Bayesian than frequentist, while others are more frequentist than Bayesian -- but all of us recognize the need to move flexibly between statistical paradigms. Furthermore, a lot of them time we're not so worried about which paradigm we're using. The paradigms are at their most divergent when making binary inferences, whether they are at $p < .05$ or $BF > 3$. 
+As a group, some of us are more Bayesian than frequentist, while others are more frequentist than Bayesian -- but all of us recognize the need to move flexibly between statistical paradigms. Furthermore, a lot of the time we're not so worried about which paradigm we're using. The paradigms are at their most divergent when making binary inferences, whether they are at $p < .05$ or $BF > 3$. 
 In sum, the practicing experimentalist should see binary inference tools as only one part of a bigger toolkit for data analysis. This toolkit should also include estimation approaches from the previous chapter as well as the methods for quantifying precision and uncertainty that we introduced above. Further, for more complex situations, the toolkit needs to include some tools for building models. Towards this goal, the next chapter provides some initial tools for how to use models for estimation and inference about experimental effects.
 
 ::: {.box .exercises}
@@ -526,3 +536,5 @@ In sum, the practicing experimentalist should see binary inference tools as only
 
 2. Take three of Goodman's (2008) "dirty dozen" in Table \@ref(tab:dirty-dozen) and write a description of why each is a misconception. (These can be checked against the original article, which gives a nice discussion). 
 :::
+
+<!-- Julie's general chapter comments: I really loved how clearly the chapter described what sampling distribution and standard error were - I find that these concepts are often one of the most difficult for students to grasp but this chapter explained it extremely well! Another thing I loved was the direct comparison of p values to BF (Table 6.2)! I've never seen such a direct comparison and it helps relate the two more concretely. -->
