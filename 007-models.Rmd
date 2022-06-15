@@ -248,17 +248,19 @@ We have only scratched the surface of GLMs here. First, there are many different
 
 ## Accommodating clustering in our models
 
-Experimental data often contain multiple measurements for each participant (so-called **repeated measures**). In addition, as we discussed in our case study, these measurements are often based on a sample of stimulus items (which then each have multiple measures as well). Table \@ref(tab:models-crossed-rm) gives an example of what the outcome data $y$ might look like in this case. This clustering is problematic for OLS models, because the error terms for each datapoint are not independent. 
 
-```{r models-crossed-rm, fig.margin = TRUE, fig.cap = "Outcome data $y$ with indices indicating both participant and stimulus."}
+```{r models-crossed-rm}
 
 crossed_ex <- data.frame(`Stimulus1` = c("y~1,1~", "y~2,1~", "y~3,1~"),
                      `Stimulus2` = c("y~1,2~", "y~2,2~", "y~3,2~"),
                      `Stimulus3` = c("y~1,3~", "y~2,3~", "y~3,3~")) 
 rownames(crossed_ex) <- c("Participant1","Participant2","Participant3")
 
-kable(crossed_ex, row.names = TRUE)
+kable(crossed_ex, row.names = TRUE, caption = "Outcome data $y$ with indices indicating both participant and stimulus.")
 ```
+
+Experimental data often contain multiple measurements for each participant (so-called **repeated measures**). In addition, as we discussed in our case study, these measurements are often based on a sample of stimulus items (which then each have multiple measures as well). Table \@ref(tab:models-crossed-rm) gives an example of what the outcome data $y$ might look like in this case. This clustering is problematic for OLS models, because the error terms for each datapoint are not independent. 
+
 
 ```{r models-tea-ols}
 tea_mod <- lm(rating ~ condition, data = tea_data)
@@ -314,7 +316,7 @@ More generally, linear mixed effects models are very powerful and they have beco
 
 In the first part of this chapter, we've described a suite of regression-based techniques -- standard OLS, the generalized linear model, and linear mixed effects models -- that can be used to model the data resulting from randomized experiments (as well as many other kinds of data). Further, when used appropriately, the regression-based estimates give an unbiased estimate of a causal effect of interest, the estimation of which is our main goal in doing an experiment. The advantage of regression models over the simpler estimation and inference methods we described in the prior two chapters is that these models can more effectively take into account a range of different kinds of variation including covariates, multiple manipulations, and clustered structure. 
 
-But -- practically speaking -- how should go you about building a model for your experiment? What should you put in and what should you leave out? There are many ways to use models to explore datasets (see Chapter \@ref(eda)), but in this section we will try to sketch a default approach for the use of models to estimate causal effects in experiments in the most straightforward way. Think of this as a starting point or default. We'll begin this section by giving a set of rules of thumb, then discuss a worked example. Our final subsection will deal with the complex issue of covariate adjustment and when you should include covariates in your model. 
+But -- practically speaking -- how should go you about building a model for your experiment? What should you put in and what should you leave out? There are many ways to use models to explore datasets, but in this section we will try to sketch a default approach for the use of models to estimate causal effects in experiments in the most straightforward way. Think of this as a starting point or default. We'll begin this section by giving a set of rules of thumb, then discuss a worked example. Our final subsection will deal with the complex issue of covariate adjustment and when you should include covariates in your model. 
 
 ### Modeling rules of thumb
 
