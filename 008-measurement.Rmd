@@ -44,11 +44,15 @@ To decide which of these methods to use for a specific study, we need to think t
 We don't want to use CDI questionnaires if they are a bad measurement instrument. How can we tell? This is where assessment of reliability and validity are critical. In practice, the task of selecting and justifying a measurement instrument comes down to an argument about reliability and validity.
 
 
-```{r load-ws, eval=FALSE}
-library(wordbankr)
-ws <- wordbankr::get_instrument_data(language = "English (American)", 
-                                     form = "WS", administrations = TRUE, 
-                                     iteminfo = TRUE)
+```{r measurement-reliability}
+# data access - commented
+# library(wordbankr)
+# ws <- wordbankr::get_instrument_data(language = "English (American)", 
+#                                      form = "WS", administrations = TRUE, 
+#                                      iteminfo = TRUE)
+# saveRDS(ws, here("data","measurement","eng-ws.Rds"))
+
+ws <- readRDS(here("data","measurement","eng-ws.Rds"))
 
 ws_mat <- ws |>
   filter(!longitudinal, type == "word") |>
@@ -58,11 +62,7 @@ ws_mat <- ws |>
   summarise(prop = mean(value)) |>
   ungroup() |>
   pivot_wider(names_from = even_item, values_from = prop)
-saveRDS(ws_mat, "data/measurement/ws_mat.rds")
-```
 
-```{r measurement-reliability}
-ws_mat <- readRDS("data/measurement/ws_mat.rds")
 n <- length(unique(ws_mat$data_id))
 test_retest <- cor.test(ws_mat$even, ws_mat$odd)$estimate
 ```
@@ -154,7 +154,7 @@ test_retest_16 <- cor.test(ws_mat_16$even, ws_mat_16$odd)$estimate
 
 This example leads us to a major issue with calculating reliabilities using the relative approach: *reliability numbers computed in this way are always relative to the variation in the sample*. So if the sample had less variability, reliability would decrease. We can see that in the CDI data by restricting our sample to only 16-month-olds (our prior sample had 16 -- 30-month-olds) with low maternal education. Within this more restricted subset, our reliability drops to $r = `r round(test_retest_16, digits = 3)`$ -- still very high but not quite as high as within the full sample. 
 
-But we can construct a much more worrisome version of the same problem. Say we are very sloppy in our administration of the CDI and create lots of between subjects variability, perhaps by giving different instructions to different families. This practice will actually *increase* our estimate of split-half reliability -- while the within-participant variability will remain the same, the between-participant variability will go up! You could call this a "reliability paradox" -- sloppier data collection can actually lead to higher reliabilities.^[Much of this discussion comes from a nice blogpost by Steve Luck: https://lucklab.ucdavis.edu/blog/2019/2/19/reliability-and-precision. If you get interested in this topic, a fascinating article by @hedge2018 shows why many robust cognitive tasks like the Stroop task nevertheless show low reliability by the definition we've been using here: they don't vary very much between individuals!] 
+But we can construct a much more worrisome version of the same problem. Say we are very sloppy in our administration of the CDI and create lots of between-participants variability, perhaps by giving different instructions to different families. This practice will actually *increase* our estimate of split-half reliability -- while the within-participant variability will remain the same, the between-participant variability will go up! You could call this a "reliability paradox" -- sloppier data collection can actually lead to higher reliabilities.^[Much of this discussion comes from a nice blogpost by Steve Luck: https://lucklab.ucdavis.edu/blog/2019/2/19/reliability-and-precision. If you get interested in this topic, a fascinating article by @hedge2018 shows why many robust cognitive tasks like the Stroop task nevertheless show low reliability by the definition we've been using here: they don't vary very much between individuals!] 
 
 More generally, we need to be sensitive to the sources of variability we're quantifying reliability over -- both the numerator and the denominator. If we're computing split-half reliabilities, typically we're looking at variability across test questions (from some question bank) vs. across individuals (from some population). Both of these sets matter -- if the population is more variable *or* the questions are less variable, we'll get higher reliability.^[We're not going to cover this, but all the same concepts come up when you quantify the reliability of different observers' ratings of the same stimulus (**inter-annotator reliability**), say for example when you have two coders rate how aggressive a person seems in a video. The most common measure of inter-annotator agreement is a categorical measure called Cohen's $\kappa$, for categorical agreement, but you can use ICCs and many other measures, and they fall prey to the same paradoxes we've discussed here for measure reliability.]  
 
