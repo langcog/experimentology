@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="Chapter 9 Design of experiments | Experimentology" />
+<meta property="og:type" content="book" />
+
+
+
+
+
+<meta name="author" content="Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke, Robert Hawkins, Maya Mathur, and Rondeline Williams" />
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<meta name="description" content="Chapter 9 Design of experiments | Experimentology">
+
+<title>Chapter 9 Design of experiments | Experimentology</title>
+
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="libs/jquery-3.5.1/jquery.min.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.18/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+
+</head>
+
+<body>
+
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul>
+<li class="part"><span><b>I Preliminaries</b></span></li>
+<li><a href="1-experiments.html#experiments"><span class="toc-section-number">1</span> Experiments</a></li>
+<li><a href="2-theories.html#theories"><span class="toc-section-number">2</span> Theories</a></li>
+<li><a href="3-replication.html#replication"><span class="toc-section-number">3</span> Replication and reproducibility</a></li>
+<li><a href="4-ethics.html#ethics"><span class="toc-section-number">4</span> Ethics</a></li>
+<li class="part"><span><b>II Statistics</b></span></li>
+<li><a href="5-estimation.html#estimation"><span class="toc-section-number">5</span> Estimation</a></li>
+<li><a href="6-inference.html#inference"><span class="toc-section-number">6</span> Inference</a></li>
+<li><a href="7-models.html#models"><span class="toc-section-number">7</span> Models</a></li>
+<li class="part"><span><b>III Design and Planning</b></span></li>
+<li><a href="8-measurement.html#measurement"><span class="toc-section-number">8</span> Measurement</a></li>
+<li><a href="9-design.html#design"><span class="toc-section-number">9</span> Design of experiments</a></li>
+<li><a href="10-sampling.html#sampling"><span class="toc-section-number">10</span> Sampling</a></li>
+<li class="part"><span><b>IV Execution</b></span></li>
+<li><a href="11-prereg.html#prereg"><span class="toc-section-number">11</span> Preregistration</a></li>
+<li><a href="12-collection.html#collection"><span class="toc-section-number">12</span> Data collection</a></li>
+<li><a href="13-management.html#management"><span class="toc-section-number">13</span> Project management</a></li>
+<li class="part"><span><b>V Analysis and Reporting</b></span></li>
+<li><a href="14-viz.html#viz"><span class="toc-section-number">14</span> Visualization</a></li>
+<li><a href="15-writing.html#writing"><span class="toc-section-number">15</span> Writing</a></li>
+<li><a href="16-meta.html#meta"><span class="toc-section-number">16</span> Meta-analysis</a></li>
+<li><a href="17-conclusions.html#conclusions"><span class="toc-section-number">17</span> Conclusions</a></li>
+<li class="appendix"><span><b>Appendices</b></span></li>
+<li><a href="A-git.html#git"><span class="toc-section-number">A</span> GitHub Tutorial</a></li>
+<li><a href="B-rmarkdown.html#rmarkdown"><span class="toc-section-number">B</span> R Markdown Tutorial</a></li>
+<li><a href="C-tidyverse.html#tidyverse"><span class="toc-section-number">C</span> Tidyverse Tutorial</a></li>
+<li><a href="D-ggplot.html#ggplot"><span class="toc-section-number">D</span> ggplot Tutorial</a></li>
+<li><a href="E-instructors.html#instructors"><span class="toc-section-number">E</span> Instructor’s guide</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="design" class="section level1" number="9">
+<h1><span class="header-section-number">Chapter 9</span> Design of experiments</h1>
+<!-- ```{r design-meme} -->
+<!-- knitr::include_graphics("images/design/meme.jpg") -->
+<!-- ``` -->
+<div class="learning-goals">
+<p>🍎 Learning goals:</p>
+<ul>
+<li>Describe key elements to designing a manipulation</li>
+<li>Define randomization and counterbalancing strategies for removing confounds</li>
+<li>Discuss strategies to design experiments that are appropriate to the populations of interest</li>
+</ul>
+</div>
+<p>The key thesis of our book is that experiments should be designed to yield precise and unbiased measurements of a causal effect. But the causal effect of what? The manipulation, in a word. In an experiment we intervene on the world and measure the effects of that manipulation. We then compare that measurement to a case where the intervention has not occurred. The previous chapter covered the topic of measurement; here we discuss manipulations.</p>
+<p>We refer to different intervention states as <strong>conditions</strong> of the experiment. These conditions instantiate specific <strong>factors</strong> of interest. The most common experimental design is the comparison between a <strong>control</strong> condition, in which the intervention is not performed, and an <strong>experimental</strong> (or sometimes, <strong>treatment</strong>) condition in which the intervention is performed. But many other experimental designs are possible. The goal of this chapter is to introduce some of these and give you some tools for considering their tradeoffs. In the first part of the chapter, we’ll introduce some common experimental designs and the vocabulary for describing them.</p>
+<p>To be useful, a measure must be a valid measure of a construct of interest. The same is true for a manipulation – it must validly relate to the causal effect of interest. In the next part of the chapter, we’ll discuss issues of <strong>manipulation validity</strong>, including both issues of ecological validity and <strong>confounding</strong>. We’ll talk about how practices like <strong>randomization</strong> and <strong>counterbalancing</strong> can help remove nuisance confounds.<label for="tufte-sn-143" class="margin-toggle sidenote-number">143</label><input type="checkbox" id="tufte-sn-143" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">143</span> This section will draw on our introduction of causal inference in Chapter <a href="1-experiments.html#experiments">1</a>, so if you haven’t read that, now’s the time.</span></p>
+<!-- We'll end the chapter by discussing some aspects of strategy in experimental design. How do you design an experiment to test a theory? What sorts of experimental designs are maximally efficient?  -->
+<p>To preview our general take-home points from this chapter: we think that your default experiment should have one or a maximum of two factors and should manipulate those factors continuously and within-participants. This strategy is most likely to yield precise estimates of a particular effect that can be used to constrain future theorizing. We’ll start by considering a case study in which a subtle confound led to difficulties interpreting an experimental result.</p>
+<div class="case-study">
+<p>🔬 Case study: Automatic theory of mind?</p>
+<p>In an early version of our course, a student named Desmond Ong set out to replicate a thought-provoking finding: both infants and adults seemed to show evidence of tracking other agents’ belief state, even when it was irrelevant to the task at hand <span class="citation">(<a href="#ref-kovacs2010" role="doc-biblioref">Kovács et al., 2010</a>)</span>. The paradigm was complex, however: an animated character would watch as a self-propelled ball came in and out from behind a screen. At the end of the video, the screen would swing down and the participant had to respond whether the ball was present our absent, with their reaction time as the key dependent variable. The experimental design fully crossed two factors: whether the participant believed the ball was present or absent (P+/P-) and whether the animated agent would have believed the ball was present or absent (A+/A-) based on what it saw.</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:design-kovacs-original"></span>
+<img src="images/design/kovacs-original.png" alt="Original data from Kovacs et al. (2010). Error bars show 95\% confidence intervals." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 9.1: Original data from Kovacs et al. (2010). Error bars show 95% confidence intervals.<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>Both the original experiments and the replications that Desmond ran showed a significant effect of the agent’s beliefs on participants’ reaction times, suggesting that what the – totally irrelevant – agent thought about the ball was having an effect on participants’ expectations, leading them to react more or less quickly to the presence of the ball. Figure <a href="9-design.html#fig:design-kovacs-original">9.1</a> shows the original data from an experiment with 24 adults. But although all studies showed a persistent effect of agent belief, ours also showed a crossover <strong>interaction</strong> of participant and agent belief: the participants were slower when the agents AND the participants believed that the ball was behind the screen (Figure <a href="9-design.html#fig:design-kovacs-replication">9.2</a>). That didn’t make sense – on the hypothesis that participants were tracking their own beliefs about the ball <em>and</em> the agent’s, they should have been fastest in that condition, not slowest.</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:design-kovacs-replication"></span>
+<img src="images/design/kovacs-replication.png" alt="Data from a series of replications of Kovacs et al. (2010), including versions on the web (Experiments 1a and 1b) and in lab (Experiment 1c), as well as several variations on responding (Experiments 2 and 3) and an experiment where a large wall kept the agent from seeing the ball at all (Experiment 4)." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 9.2: Data from a series of replications of Kovacs et al. (2010), including versions on the web (Experiments 1a and 1b) and in lab (Experiment 1c), as well as several variations on responding (Experiments 2 and 3) and an experiment where a large wall kept the agent from seeing the ball at all (Experiment 4).<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>Across a series of experiments, we identified the key issue. There was a <strong>confound</strong> in the experimental design – another factor that varied across conditions besides the target ones, the agent’s and participant’s belief states. The confound was an attention check: participants had to press a key when the agent left the scene to show that they were paying attention. This attention check was later in the video on both the P+/A+ and P-/A- trials – precisely those trials that had slower reaction times. When the attention check was removed or when its timing was equalized across conditions, we observed no further condition effects. Thus, it appeared that the pattern that was observed in the original study was likely due to this confound, not to belief tracking <span class="citation">(<a href="#ref-phillips2015" role="doc-biblioref">Phillips et al., 2015</a>)</span>.</p>
+<p>A first moral of this story concerns differences between estimation and dichotomous inference mindsets. If we took as our standard for replication that the original statistical tests were still significant at <span class="math inline">\(p&lt;.05\)</span>, we would have concluded that this experiment replicated. Indeed, the original findings were extremely replicable. But our focus was on whether the estimates were consistent with the proposed theoretical explanation. This perspective led us to conclude that they weren’t and work to find the confound.</p>
+<p>A second moral is about the importance of openness for replication work. A big barrier to carrying out our replication work was the unavailability of the original stimulus videos from <span class="citation">Kovács et al. (<a href="#ref-kovacs2010" role="doc-biblioref">2010</a>)</span>. To carry out our work we had to team up with another group of researchers who had learned how to generate complex animated videos. Then once we completed our work, we received the critique that our videos might have been different from the original ones.<label for="tufte-sn-144" class="margin-toggle sidenote-number">144</label><input type="checkbox" id="tufte-sn-144" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">144</span> Eventually we did get the original videos and replicated using these, finding <a href="http://babieslearninglanguage.blogspot.com/2015/05/an-update-on-automatic-belief-encoding.html">essentially the same effect</a>. And the original team also published a replication and extension using neural measures and eliminating the attention check altogether – that version showed no reaction time effect, consistent with the confound interpretation <span class="citation">(<a href="#ref-kovacs2014" role="doc-biblioref">Kovács et al., 2014</a>)</span>.</span> This effort and uncertainty could have been avoided had the original stimuli been posted.</p>
+<p>There’s an important caveat to this story, however. Our work <em>only</em> revealed that there was a confound in the particular experimental operationalization that Kovacs et al. used. We tried to be clear in our paper that it <em>did not</em> speak against automatic theory of mind. Indeed, others have suggested that different versions of this paradigm do reveal evidence for theory of mind processing once the confound is fixed <span class="citation">(<a href="#ref-el-kaddouri2020" role="doc-biblioref">El Kaddouri et al., 2020</a>)</span>! We remain agnostic; the only thing we’re sure of at the present is that it’s better not to have a confound in your experiment.<label for="tufte-sn-145" class="margin-toggle sidenote-number">145</label><input type="checkbox" id="tufte-sn-145" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">145</span> As a teaser, this case might be an example of a broader pattern that we believe is quite common in the behavioral sciences of <strong>being right for the wrong reason</strong>. That is, experimenters perform an experiment to test a particular hypothesis. The hypothesis is correct, and the experimenters observe a positive result and report on it. Unfortunately, the experiment is imperfect and does not warrant the conclusion – yet the conclusion is nevertheless correct. This pattern resembles what are called “Gettier cases” in philosophy, after a famous argument about the nature of knowledge <span class="citation">(<a href="#ref-gettier2012" role="doc-biblioref">Gettier, 1963</a>)</span>: is it really knowledge if you are right but your justification is wrong?.</span></p>
+</div>
+<div id="experimental-designs" class="section level2" number="9.1">
+<h2><span class="header-section-number">9.1</span> Experimental designs</h2>
+<p>Experimental designs are so fundamental to so many fields that they are discussed in many different ways. As a result, the terminology can get quite confusing. Here we’ll try to stay consistent by describing an experiment as a relationship between some <strong>manipulation</strong> in which participants are randomly assigned to an experimental condition to evaluate its effects on some <strong>measure</strong>.<label for="tufte-sn-146" class="margin-toggle sidenote-number">146</label><input type="checkbox" id="tufte-sn-146" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">146</span> The alternative terminology used in psychology is that of an <strong>independent variable</strong> (the manipulation, which is causally prior and hence “independent” of other causal influences) and a <strong>dependent variable</strong> (the measure, which causally depends on the manipulation, or so we hypothesize). This terminology seems transparently terrible.</span> An alternative is the terms that are often used in econometrics: the <strong>treatment</strong> (manipulation) and the <strong>outcome</strong> (measure).<label for="tufte-sn-147" class="margin-toggle sidenote-number">147</label><input type="checkbox" id="tufte-sn-147" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">147</span> This terminology has some fairly medical connotations – it sounds like the treatment is something substantial and lasting, and the outcome is meaningful. That’s not always the case in experiments that investigate psychological mechanisms. For example, in a cognitive psychology context, it sounds a bit weird to us to say that the “treatment” was reading scrambled words and the “outcome” was lexical decision reaction times.</span> We’ll sometimes use “treatment” language here as well.</p>
+<p>In this section, we’ll discuss a number of dimensions on which experiments vary. First, they vary in how many factors they incorporate and how these factors are crossed – we begin with the two-factor experiment and then discuss generalizations. Second, they vary in how many conditions and how many measures are given to each participant. Third, their manipulations can be discrete or continuous.</p>
+<div id="a-two-factor-experiment" class="section level3" number="9.1.1">
+<h3><span class="header-section-number">9.1.1</span> A two-factor experiment</h3>
+<p>The classical “design of experiments” framework has as its goal to separate observed variability in the dependent measure into 1) variability due to the manipulation(s) and (2) other variability, including measurement error and participant-level variation. This framework maps nicely onto the statistical framework described in Chapters <a href="5-estimation.html#estimation">5</a> – <a href="7-models.html#models">7</a>. We are modeling the distribution of our measure using information about the condition structure of our experiment as our predictors.</p>
+<p>Different experimental designs will allow us to estimate condition effects more and less effectively. Recall in Chapter <a href="5-estimation.html#estimation">5</a>, we estimated the effect of our manipulation by a simple subtraction: <span class="math inline">\(\Delta = \theta_{T} - \theta_{C}\)</span> (where <span class="math inline">\(\Delta\)</span> is the effect estimate, and <span class="math inline">\(\theta\)</span>s indicate the estimates for each condition, treatment <span class="math inline">\(T\)</span> and control <span class="math inline">\(C\)</span>). This logic works just fine also if there are two distinct treatments in a three condition experiment: each treatment can be compared to control separately. For treatment 1, <span class="math inline">\(\Delta_{T_1} = \theta_{T_2} - \theta_{C}\)</span> and <span class="math inline">\(\Delta_{T_2} = \theta_{T_2} - \theta_{C}\)</span>.</p>
+<p>That logic is going to get more complicated if we have more than one distinct factor of interest, though. Let’s look at a simple example. <span class="citation">L. Young et al. (<a href="#ref-young2007" role="doc-biblioref">2007</a>)</span> were interested in how moral judgments depend on both the beliefs of actors and the outcomes of their actions. They presented participants with vignettes in which they learned, for example, that Grace visits a chemical factory with her friend and goes to the coffee break room where she sees a white powder that she puts in her friend’s coffee. They then manipulated both Grace’s beliefs and the outcomes of her actions following the schema in Figure <a href="9-design.html#fig:design-young-design">9.3</a>. Participants (N=10) used a four-point Likert scale to rate whether the actions were morally forbidden (1) or permissible (4).</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:design-young-design"></span>
+<img src="images/design/young2007-design.png" alt="The 2x2 crossed design used in Young et al. (2007)." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 9.3: The 2x2 crossed design used in Young et al. (2007).<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>Young et al.’s design has two factors – belief and outcome – each with two levels (negative and neutral).<label for="tufte-sn-148" class="margin-toggle sidenote-number">148</label><input type="checkbox" id="tufte-sn-148" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">148</span> Note that neither of these is necessarily a “control” condition: the goal is simply to compare these two levels of the factor – negative and neutral – to estimate the effect due to the factor.</span> These factors are <strong>fully crossed</strong>: each level of each factor is combined with each level of each other. That means that we can estimate a number of effects of interest. The experimental data are shown in Figure <a href="9-design.html#fig:design-young-data">9.4</a>.</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:design-young-data"></span>
+<img src="images/design/young2007-data.png" alt="Moral permissability as a function of belief and outcome. Results from Young et al. (2007)." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 9.4: Moral permissability as a function of belief and outcome. Results from Young et al. (2007).<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>This fully-crossed design makes it easy for us to estimate quantities of interest. Let’s say that our <strong>reference</strong> group (equivalent to the control group for now) is neutral belief, neutral outcome, which we’ll notate <span class="math inline">\(B,O\)</span>. Now it’s easy to use the same kind of subtraction we did before to estimate a variety of effects. For example, we can look at the effect of negative belief in the case of a neutral outcome: <span class="math inline">\(\Delta_{-B,O} = \theta_{-B,O} - \theta_{B,O}\)</span>. The effect of a negative outcome is computed similarly as <span class="math inline">\(\Delta_{B,-O} = \theta_{B,-O} - \theta_{B,O}\)</span>.</p>
+<p>But now there is a complexity: these two <strong>simple effects</strong> (effects of one variable at a particular level of another variable) make a prediction. They predict that the combined effect <span class="math inline">\(\Delta_{-B,-O}\)</span> should be equal to the sum of <span class="math inline">\(\Delta_{-B,O}\)</span> and <span class="math inline">\(\Delta_{B,-O}\)</span>.<label for="tufte-sn-149" class="margin-toggle sidenote-number">149</label><input type="checkbox" id="tufte-sn-149" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">149</span> If you’re interested, you can also compute the <strong>average</strong> or <strong>main</strong> effect of a particular factor via the same subtractive logic. For example, the average effect of negative belief (<span class="math inline">\(-B\)</span>) vs. a neutral belief (<span class="math inline">\(B\)</span>) can be computed as <span class="math inline">\(\Delta_{-B} = \frac{(\theta_{-O, -B} + \theta_{O, -B}) - (\theta_{-O, B} + \theta_{O, B})}{2}\)</span>.</span> As we can see from the graph, that’s not right: if it were, the negative belief, negative outcome condition would be below the minimum possible rating. Instead, we observe an <strong>interaction</strong> effect (sometimes called a <strong>two-way interaction</strong> when there are two factors): The effect when both factors are present is different than the sum of the two simple effects.<label for="tufte-sn-150" class="margin-toggle sidenote-number">150</label><input type="checkbox" id="tufte-sn-150" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">150</span> If you’re reading carefully, you might be thinking that this all sounds like we’re talking about the analysis of variance (ANOVA), not about experimental design per se. But these two topics are actually the same topic under the hood: the question is how to design an experiment so that these statistical models can be used to estimate particular effects – and combinations of effects – that we care about.</span> Critically, without a fully-crossed design, we can’t estimate this interaction and we would have made an incorrect prediction.</p>
+</div>
+<div id="generalized-factorial-designs" class="section level3" number="9.1.2">
+<h3><span class="header-section-number">9.1.2</span> Generalized factorial designs</h3>
+<p>We can refer to Young et al.’s design, in which there are two factors with two levels each as a <strong>2x2 design</strong> (pronounced “two by two”). 2x2 designs are incredibly common and useful, but they are only one of an infinite variety of such designs that can be constructed.</p>
+<p>Say we added a third factor to Young et al.’s design such that Grace either feels neutral towards her friend or is angry on that day. If we fully crossed this third affective factor with the other two (belief and outcome), we’d have a 2x2x2 design. This design would have eight conditions: <span class="math inline">\((A, B, O)\)</span>, <span class="math inline">\((A, B, -O)\)</span>, <span class="math inline">\((A, -B, O)\)</span>, <span class="math inline">\((-A, B, O)\)</span>, <span class="math inline">\((A, -B, -O)\)</span>, <span class="math inline">\((-A, B, -O)\)</span>, <span class="math inline">\((-A, -B, O)\)</span>, <span class="math inline">\((-A, -B, -O)\)</span>. These conditions would in turn allow us to estimate both two-way and three-way interactions, enumerated in Table <a href="9-design.html#tab:design-three-way">9.1</a>.</p>
+<p><!--
+<caption>--><span class="marginnote shownote"><span id="tab:design-three-way">Table 9.1: </span>Possible effects in a hypothetical 2x2x2 experimental design with affect, belief, and outcome as factors.</span><!--</caption>--></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Effect</th>
+<th align="left">Term Type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Affect</td>
+<td align="left">Main effect</td>
+</tr>
+<tr class="even">
+<td align="left">Belief</td>
+<td align="left">Main effect</td>
+</tr>
+<tr class="odd">
+<td align="left">Outcome</td>
+<td align="left">Main effect</td>
+</tr>
+<tr class="even">
+<td align="left">Affect X Belief</td>
+<td align="left">2-way interaction</td>
+</tr>
+<tr class="odd">
+<td align="left">Affect X Outcome</td>
+<td align="left">2-way interaction</td>
+</tr>
+<tr class="even">
+<td align="left">Belief X Outcome</td>
+<td align="left">2-way interaction</td>
+</tr>
+<tr class="odd">
+<td align="left">Affect X Belief X Outcome</td>
+<td align="left">3-way interaction</td>
+</tr>
+</tbody>
+</table>
+<p>Three-way interactions are hard to think about! The affect X belief X outcome interaction tells you about the difference in moral permissibility that’s due to all three factors being present as opposed to what you’d predict on the basis of your estimates of the two-way interactions. In addition to being hard to think about, higher order interactions tend to be hard to estimate, because estimating them accurately requires you to have a stable estimate of all of the lower-order interactions <span class="citation">(<a href="#ref-mcclelland1993" role="doc-biblioref">McClelland &amp; Judd, 1993</a>)</span>. For this reason, we recommend against experimental designs that rely on higher-order interactions unless you are in a situation where you both have strong predictions about these interactions and are confident in your ability to estimate them appropriately.<label for="tufte-sn-151" class="margin-toggle sidenote-number">151</label><input type="checkbox" id="tufte-sn-151" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">151</span> We’ll talk about how to understand sample size requirements of this type next in Chapter <a href="10-sampling.html#sampling">10</a>.</span></p>
+<p>Three-way interactions are just the beginning, though. If you have three factors with two levels each, you can estimate 7 total effects of interest, as in Table <a href="9-design.html#tab:design-three-way">9.1</a>. If you have four factors with two levels each, you get 15. Four factors with three levels each gets you a horrifying 80 different effects!<label for="tufte-sn-152" class="margin-toggle sidenote-number">152</label><input type="checkbox" id="tufte-sn-152" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">152</span> The general formula for <span class="math inline">\(N\)</span> factors with <span class="math inline">\(M\)</span> levels each is <span class="math inline">\(M^N-1\)</span>.</span> This way lies madness, at least from the perspective of estimating and interpreting individual effects in a reasonable sample.</p>
+<p>So what should you do if you really do care about four or more factors – in the sense that you want to estimate their effects and include them in your theory? The simplest strategy is to start your research off by measuring them independently by running a series of single-factor experiments. This kind of setup is natural when there is a single reference level for each factor of interest, and such experiments can yield a basis for judging which factors are most important for your outcome and hence which should be prioritized for experiments to estimate interactions.</p>
+<p>On the other hand, sometimes there is no reference level for a factor. For example, in the <span class="citation">Kovács et al. (<a href="#ref-kovacs2010" role="doc-biblioref">2010</a>)</span> paradigm, it’s not clear whether a positive or negative belief is the reference level. That’s not a problem in a fully-crossed design like theirs, but this situation can pose a problem because if you have more than two such factors. Ideally you would want to run independent experiments, but you have to choose some level for all of the other variables – you can’t just assume that one level is “neutral.”</p>
+<p>One solution that lets you compute main effects but not interactions is called a <strong>Latin square</strong>. Latin squares are a good solution for three-factor designs, which is the level at which a fully-crossed design typically gets overwhelming.<label for="tufte-sn-153" class="margin-toggle sidenote-number">153</label><input type="checkbox" id="tufte-sn-153" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">153</span> There’s a variant called the “Greco-Latin square” for four factors, in case you need that.</span> A Latin square is an <span class="math inline">\(n x n\)</span> matrix in which each number occurs exactly once in each row and column, e.g. <span class="math display">\[\begin{bmatrix} 
+    1 &amp; 2 &amp; 3 \\
+    2 &amp; 3 &amp; 1\\
+    3 &amp; 1 &amp; 2 \\
+    \end{bmatrix}\]</span></p>
+<p>This Latin square for <span class="math inline">\(n=3\)</span> gives the solution for how to balance factors across a 3x3x3 experiment. The row number is one factor, the column number is the second factor, and the number in the cell is the third factor. So one condition would be (1,1,1), the first level of all factors, shown in the upper left cell. Another would be (3,3,2), the lower right cell. Although a fully-crossed design would require 27 cells to be run, the Latin square has only nine. Critically, the combinations of all each factor is balanced across the nine cells so that the average effect of each level of the three factors can be estimated.<label for="tufte-sn-154" class="margin-toggle sidenote-number">154</label><input type="checkbox" id="tufte-sn-154" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">154</span> You can check and see that no interactions can be estimated, because no factor co-occurs with two different levels of another factor.</span></p>
+<p>There are also fancier methods available. For example, the literature on optimal experiment design contains methods for choosing the most informative sequence of experiments to run in order to estimate the parameters in a model <span class="citation">(e.g., <a href="#ref-myung2009" role="doc-biblioref">Myung &amp; Pitt, 2009</a>)</span>. Going down this road typically means having an implemented computational theory of your domain, but it can be a very productive strategy for exploring a complex experimental space with many factors.</p>
+</div>
+<div id="between--vs.-within-participant-designs" class="section level3" number="9.1.3">
+<h3><span class="header-section-number">9.1.3</span> Between- vs. within-participant designs</h3>
+<p>Once you have a sense of the factor or factors you would like to manipulate in your experiment, the next step is to consider how these will be presented to participants, and how that presentation will interact with your measurements. The biggest decision to be made is whether each participant will experience only one level of a factor – a <strong>between-participants</strong> design – or whether they will experience multiple levels – a <strong>within-participants</strong> design. Figure <a href="9-design.html#fig:design-between">9.5</a> shows a very simple example of between-participants design with four participants (two assigned to each condition), while Figure <a href="9-design.html#fig:design-within">9.6</a> shows a within-participants version of the same design.<label for="tufte-sn-155" class="margin-toggle sidenote-number">155</label><input type="checkbox" id="tufte-sn-155" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">155</span> The within-participants design is counterbalanced for the order of the conditions; we cover the issue of counterbalancing below.</span></p>
+<div class="figure"><span id="fig:design-between"></span>
+<p class="caption marginnote shownote">
+Figure 9.5: A between-participants design.
+</p>
+<img src="images/design/between.png" alt="A between-participants design." width="\linewidth"  />
+</div>
+<div class="figure"><span id="fig:design-within"></span>
+<p class="caption marginnote shownote">
+Figure 9.6: A within-participants design, counterbalanced for order.
+</p>
+<img src="images/design/within.png" alt="A within-participants design, counterbalanced for order." width="\linewidth"  />
+</div>
+<p>The decision whether to measure a particular factor between- or within-participants is consequential because people vary. Imagine we’re estimating our treatment effect as before, simply by computing <span class="math inline">\(\widehat{\Delta} = \widehat{\theta}_{T} - \widehat{\theta}_{C}\)</span> with each of these estimates from different populations of participants. In this scenario, our estimate <span class="math inline">\(\widehat{\Delta}\)</span> contains three components: 1) the true differences between <span class="math inline">\(\theta_{T}\)</span> and <span class="math inline">\(\theta_{C}\)</span>, 2) sampling-related variation in which participants from the population ended up in the samples for the two conditions, and 3) measurement error. Component #2 is present because any two samples of participants from a population will differ in their average on a measure – this is precisely the kind of sampling variation we saw in the null distributions in Chapter <a href="6-inference.html#inference">6</a>.</p>
+<p>When our experimental design is within-participants, component #2 is not present, because participants in both conditions are sampled from the <em>same</em> population. If we get unlucky and all of our participants are lower than the population mean on our measure, that unluckiness affects our conditions equally. We discuss the specific consequences for sample size calculations in the next chapter but the consequences are fairly extreme. Between-participants designs typically require between two and eight times as many participants as within-participants designs!<label for="tufte-sn-156" class="margin-toggle sidenote-number">156</label><input type="checkbox" id="tufte-sn-156" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">156</span> If you want to estimate how big an advantage you get from within-participants data collection, you need to know how correlated (reliable) your observations are. <a href="http://daniellakens.blogspot.com/2016/11/why-within-subject-designs-require-less.html">Here’s one analysis of this issue</a> that suggests that the key relationship is that <span class="math inline">\(N_{within} = N_{between} (1-\rho) /2\)</span> where <span class="math inline">\(\rho\)</span> is the correlation between the measurement of the two conditions within individuals. The more correlated they are, the smaller your within-participants <span class="math inline">\(N\)</span>.</span></p>
+<p>Given these advantages, why would you consider using a between-participants design? A within-participants design is simply not possible for all experiments. For example, consider a medical intervention like an experimental surgical procedure. Patients likely cannot receive both two procedures, and so no within-participant comparison of procedures is possible.</p>
+<p>Most treatment conditions in the behavioral sciences are not so extreme, but it may be impractical or inadvisable to deliver multiple conditions. <span class="citation">Greenwald (<a href="#ref-greenwald1976" role="doc-biblioref">1976</a>)</span> distinguishes three types of undesirable effects: <strong>practice</strong>, <strong>sensitization</strong>, and <strong>carry-over</strong> effects<label for="tufte-sn-157" class="margin-toggle sidenote-number">157</label><input type="checkbox" id="tufte-sn-157" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">157</span> We tend to think of all of these as being forms of carry-over effect, and sometimes use this as a catch-all description. Some people also use the picturesque description <a href="https://statmodeling.stat.columbia.edu/2017/11/25/poisoning-well-within-person-design-whats-risk/">“poisoning the well”</a> – earlier conditions “ruin” the data for later conditions.</span>:</p>
+<ul>
+<li>Practice effects occur when administering the measure or the treatment will lead to improvement. Imagine a curriculum intervention for teaching a math concept – it would be hard to convince a school to teach the same topic to students twice, and the effect of the second round of teaching would likely be quite different than the first!</li>
+<li>Sensitization effects occur when seeing two versions of an intervention mean that you might respond differently to the second than the first because you have compared them and noticed the contrast. Greenwald’s example is of a study on room lighting – if the experimenters are constantly changing the lighting, participants may become aware that this is the point of the study.</li>
+<li>Carry-over effects refer to the case where one treatment might have a longer-lasting effect than the measurement period. For example, imagine a study in which one treatment was to make participants frustrated with an impossible puzzle; if a second condition were given after this first one, participants might still be frustrated, leading to spill-over.</li>
+</ul>
+<p>All of these issues can lead to real concerns with respect to within-participant designs. On the other hand, following <a href="https://statmodeling.stat.columbia.edu/2017/11/25/poisoning-well-within-person-design-whats-risk/">Gelman’s</a> guidance, we worry that the desire for effect estimates that are completely unbiased by these concerns may lead to the overuse of between-participant designs. As we mentioned above, these designs come at a major cost in terms of power and precision. An alternative approach is simply to acknowledge the possibility of carry-over type effects and plan to analyze these within your statistical model (for example by estimating the interaction of condition and order).</p>
+<p>We summarize the state of affairs from our perspective in Figure <a href="9-design.html#fig:design-between-within">9.7</a>. From our perspective, within-participant designs should be preferred whenever possible.</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:design-between-within"></span>
+<img src="images/design/between-within.png" alt="Pros and cons of between- vs. within-participant designs. We recommend within-participant designs when possible." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 9.7: Pros and cons of between- vs. within-participant designs. We recommend within-participant designs when possible.<!--</p>-->
+<!--</div>--></span>
+</p>
+</div>
+<div id="repeated-measurements-and-experimental-items" class="section level3" number="9.1.4">
+<h3><span class="header-section-number">9.1.4</span> Repeated measurements and experimental items</h3>
+<p>We just discussed decision-making about whether to administer multiple <em>manipulations</em> to a single participant. The exactly analogous decision comes up for <em>measures</em>! And our take-home will be similar: unless there are specific difficulties that come up, it’s usually a very good idea to take multiple measurements from each participant, in what is called – sensibly – a <strong>repeated measures</strong> design.<label for="tufte-sn-158" class="margin-toggle sidenote-number">158</label><input type="checkbox" id="tufte-sn-158" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">158</span> We’re of course talking about taking multiple measurements of the same construct! This is different from taking multiple measures of different constructs. As we discussed in Chapter <a href="8-measurement.html#measurement">8</a>, we tend to be against measuring lots of different things in a single experiment – in part because of the concerns that we’re articulating in this chapter: if you have time, it’s better to make more precise measures of the one construct you care about most. Measuring one thing well is hard enough. Much better to do that than to measure many constructs badly.</span></p>
+<p>In the last subsection, we described how variability in our estimates in a between-participants design depend on three components: 1) true condition differences, 2) sampling variation between conditions, and 3) measurement error. (The within-participants design is good because it doesn’t have #2). Repeated measures designs help with measurement error. The more times you measure, the lower your measurement error. This is the the same thing as reliability, which we covered in Chapter <a href="8-measurement.html#measurement">8</a>. If you have a perfectly reliable measure, there is no measurement error. Repeated measurements increase reliability.</p>
+<p>The simplest way you can do a repeated measures design is by administering your treatment and then administering your measure – multiple times. This scenario is pictured in a between-participants design in Figure <a href="9-design.html#fig:design-rm-between">9.8</a>. Sometimes this works quite well. For example, imagine a transcranial magnetic stimulation (TMS) experiment: participants receive neural stimulation for a period of time, targeted at a particular region. Then they perform some measurement task repeatedly until it wears off. The more times they perform it, the better the estimate of whatever effect (when compared to a control of TMS to another region, say).</p>
+<div class="figure"><span id="fig:design-rm-between"></span>
+<p class="caption marginnote shownote">
+Figure 9.8: A between-participants, repeated-measures design.
+</p>
+<img src="images/design/rm-between.png" alt="A between-participants, repeated-measures design." width="\linewidth"  />
+</div>
+<p>The catch is exactly analogous to the between-participants design: some measures can’t be repeated without altering the response. To take an obvious example, we can’t give the same math problem twice! The general solution to this problem that is typically used is the <strong>experimental item</strong>. In the case of a math assessment, you create multiple problems that you believe test the same concept but have different numbers or other superficial characteristics. This practice is widespread, and we will have a lot to say about it in the next chapter, because the use of multiple experimental items can license generalizations across a population of items in the same way that the use of multiple participants can ideally license generalizations across a population of people <span class="citation">(<a href="#ref-clark1973" role="doc-biblioref">Clark, 1973</a>)</span>.</p>
+<p>One variation on the repeated measures, between-participants design is a specific version where the measure is administered both before (pre-) and after (post-) intervention, as in Figure <a href="9-design.html#fig:design-pre-post">9.9</a>. This design is sometimes known as a <strong>pre-post</strong> design. It is extremely common in cases where the intervention is larger-scale and harder to give within-participants, such as in a field experiment where a policy or curriculum is given to one sample and not to another. The pre measurements can be used to subtract participant-level variability out and recover a more precise estimate of the treatment effect. Recall that our treatment effect in a pure between participants design is <span class="math inline">\(\widehat{\Delta} = \widehat{\theta}_{T} - \widehat{\theta}_{C}\)</span>. In a pre-post design, we can do better by computing <span class="math inline">\(\widehat{\Delta} = (\widehat{\theta_{T_{post}}} - \widehat{\theta_{T_{pre}}}) - (\widehat{\theta_{C_{post}}} - \widehat{\theta_{C_{pre}}})\)</span>. We could rephrase this as “how much more did the treatment group go up than the control group?<label for="tufte-sn-159" class="margin-toggle sidenote-number">159</label><input type="checkbox" id="tufte-sn-159" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">159</span> This estimate is sometimes called a “difference in differences” and is very widely used in the field of econometrics, both in experimental and quasi-experimental cases <span class="citation">(<a href="#ref-cunningham2021" role="doc-biblioref">Cunningham, 2021</a>)</span>.</span></p>
+<div class="figure"><span id="fig:design-pre-post"></span>
+<p class="caption marginnote shownote">
+Figure 9.9: A between-participants, pre-post design.
+</p>
+<img src="images/design/pre-post.png" alt="A between-participants, pre-post design." width="\linewidth"  />
+</div>
+<p>Of course, repeated measurements are not limited to between-participants designs! All within-participants designs are repeated measures designs, which are the bread and butter of perception, psychophysics, and cognitive psychology research. When both manipulations and measures can be repeated, these designs afford high measurement precision even with small sample sizes; they are recommended whenever they are possible.</p>
+</div>
+<div id="discrete-and-continuous-experimental-manipulations" class="section level3" number="9.1.5">
+<h3><span class="header-section-number">9.1.5</span> Discrete and continuous experimental manipulations</h3>
+<p>Most experimental designs in most subfields of psychology use discrete condition manipulations: treatment vs. control. In our view, this decision is often a lost opportunity. In our framework, the goal of an experiment is to estimate a causal effect; ideally, this estimate can be generalized to other contexts and used as a basis for theory. Measuring not just one effect but instead a <strong>dose-response</strong> relationship – how the measure changes as the strength of the manipulation is changed – has a number of benefits in helping to achieve this goal.</p>
+<p>Many manipulations can be <strong>titrated</strong> – that is, their strength can be varied continuously – with a little creativity on the part of an experimenter. A curriculum intervention can be applied at different levels of intensity, perhaps by changing the number of sessions in which it is taught. For a priming manipulation, the frequency or duration of prime stimuli can be varied. Two stimuli can be morphed continuously so that categorization boundaries can be examined.<label for="tufte-sn-160" class="margin-toggle sidenote-number">160</label><input type="checkbox" id="tufte-sn-160" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">160</span> These methods are extremely common in perception and psychophysics research, in part because the dimensions being studied are often continuous in nature. For example, imagine trying to estimate a participant’s visual contrast sensitivity <em>without</em> continuously manipulating the contrast of the stimulus, eliciting judgments at many different levels.</span></p>
+<div class="figure"><span id="fig:design-dose-schema"></span>
+<p class="caption marginnote shownote">
+Figure 9.10: Three schematic designs. (A) Control and treatment are two levels of a nominal variable. (B) Control is compared to ordered levels of a treatment. (C) Treatment level is an interval or ratio variable such that points can be connected and a parametric curve can be extrapolated.
+</p>
+<img src="images/design/dose-response.png" alt="Three schematic designs. (A) Control and treatment are two levels of a nominal variable. (B) Control is compared to ordered levels of a treatment. (C) Treatment level is an interval or ratio variable such that points can be connected and a parametric curve can be extrapolated." width="\linewidth"  />
+</div>
+<p>Dose-response designs are useful because they provide insight into the shape of the function mapping your manipulation to your measure. Knowing this shape can inform your theoretical understanding! Consider the examples given in Figure <a href="9-design.html#fig:design-dose-schema">9.10</a>. If you only have two conditions in your experiment, then the most you can say about the relationship between your manipulation and your measure is that it produces an effect of a particular magnitude; in essence, you are assuming that condition is a nominal variable. If you have multiple ordered levels of treatment, you can start to speculate about the nature of the relationship between treatment and effect magnitude. But if you can measure the strength of your treatment, then you can start to describe the nature of the relationship between the strength of treatment and strength of effect via a parametric function (e.g., a linear regression, a sigmoid, or other function).<label for="tufte-sn-161" class="margin-toggle sidenote-number">161</label><input type="checkbox" id="tufte-sn-161" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">161</span> These assumptions are theory-laden, of course – the choice of a linear function or a sigmoid is not necessary: nothing guarantees that simple, smooth, or monotonic functions are the right ones. The important point from our perspective is that choosing a function makes explicit your assumptions about the nature of the treatment-effect relationship.</span> These parametric functions can in turn allow you to generalize from your experiment, making predictions about what would happen under intervention conditions that you didn’t measure directly!</p>
+<p>This all can feel a bit abstract, so let’s consider an example. <span class="citation">Brennan et al. (<a href="#ref-brennan1966" role="doc-biblioref">1966</a>)</span> were interested in the relationship between visual complexity and infants’ looking preferences. Do infants uniformly prefer complex stimuli, or do they search for stimuli at an appropriate level of complexity for their processing abilities. To test this hypothesis, they exposed infants in three different age groups (3, 8, and 14 weeks, N=30) to black and white checkerboard stimuli with three different levels of complexity (2x2, 8x8, and 24x24). Their findings are plotted in Figure <a href="9-design.html#fig:design-dose-ex">9.11</a>: the youngest infants preferred the simplest stimuli, while infants at an intermediate age preferred stimuli of intermediate complexity, and the oldest infants preferred the most complex stimuli. These findings help to motivate the theory that infants attend preferentially to stimuli that provide appropriate learning input for their processing ability <span class="citation">(<a href="#ref-kidd2012" role="doc-biblioref">Kidd et al., 2012</a>)</span>.<label for="tufte-sn-162" class="margin-toggle sidenote-number">162</label><input type="checkbox" id="tufte-sn-162" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">162</span> <span class="citation">Brennan et al. (<a href="#ref-brennan1966" role="doc-biblioref">1966</a>)</span>’s experiment uses a quantitative manipulation of complexity (checkerboard density). But they treat this manipulation as an ordinal – rather than an interval – variable, presumably because they do not know precisely how checkerboard density translates into changes in the psychological construct they care about, namely complexity. Does doubling the number of squares on the board double complexity, or do you have to double the number of squares on each side? Does complexity saturate, such that a 128x128 checkerboard is not much more complex? These are just a few of the questions that the dose-response approach raises.</span></p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:design-dose-ex"></span>
+<img src="experimentology_files/figure-html/design-dose-ex-1.png" alt="Infants' looking time, plotted by stimulus complexity and infant age. Data from Brennan et al., 1966." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 9.11: Infants’ looking time, plotted by stimulus complexity and infant age. Data from Brennan et al., 1966.<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>If your goal is simply to detect whether an effect is zero or non-zero, then dose-response designs do not achieve the maximum statistical power. For example, if <span class="citation">Brennan et al. (<a href="#ref-brennan1966" role="doc-biblioref">1966</a>)</span> simply wanted to achieve maximal statistical power, they probably should have only tested two age groups and two levels of complexity (say, 3 and 14 week infants and 2x2 and 24x24 checkerboards). That would have been enough to show an interaction of complexity and age, and their greater resources devoted to these four (as opposed to nine) conditions would mean more precise estimates of each (simulated in Figure <a href="9-design.html#fig:design-dose-ex-2">9.12</a>). But their findings would be less clearly supportive of the view that infants prefer stimuli that are appropriate to their processing ability. By seeking to measure intermediate conditions, they provided a stronger constraint on their theory.</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:design-dose-ex-2"></span>
+<img src="experimentology_files/figure-html/design-dose-ex-2-1.png" alt="Imagining the data from Brennan et al. 1966 if they had omitted intermediate conditions in search of the most extreme effect." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 9.12: Imagining the data from Brennan et al. 1966 if they had omitted intermediate conditions in search of the most extreme effect.<!--</p>-->
+<!--</div>--></span>
+</p>
+</div>
+</div>
+<div id="choosing-your-manipulation" class="section level2" number="9.2">
+<h2><span class="header-section-number">9.2</span> Choosing your manipulation</h2>
+<p>In the previous section, we reviewed a host of common experimental designs. These designs provide a palette of common options for combining manipulation and measure. But your choice must be predicated on the specific manipulation you are interested in! In this section, we discuss considerations for experimenters as they design their manipulation, especially regarding internal and external validity.</p>
+<div id="internal-validity-threats-confounding" class="section level3" number="9.2.1">
+<h3><span class="header-section-number">9.2.1</span> Internal validity threats: Confounding</h3>
+<p>First and foremost, manipulations must correspond to the construct whose causal effect is being estimated. If they do not, they are <strong>confounded</strong>. This term is used widely in psychology, but it’s worth revisiting what it means.</p>
+<p>Let’s go back to our discussion of causal inference in Chapter (experiments). Our goal was to use a randomized experiment to estimate the causal effect of listening to Bob Dylan on participants’ writing skills. We notated this situation using causal graphical models with possible causes to their effect (Figure <a href="9-design.html#fig:design-dylan1">9.13</a>). When we designed a within-participants experiment, we introduced an order confound: if Dylan was always played first, then we didn’t know whether a change in our measure was caused by Dylan directly (the path straight from <span class="math inline">\(X\)</span> to <span class="math inline">\(Y\)</span>) or by some order-related factor, say unfamiliarity with the task (the “indirect” path from <span class="math inline">\(X\)</span> to the confound <span class="math inline">\(X&#39;\)</span> and then to <span class="math inline">\(Y\)</span>). If the confound remains, as with the timing confound in the <span class="citation">Kovács et al. (<a href="#ref-kovacs2010" role="doc-biblioref">2010</a>)</span> case study discussed above, then any experimental effect could be attributed to the confound only and not to the causal factor of interest.</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:design-dylan1"></span>
+<img src="images/design/dylan1.png" alt="Confounding between order and condition" width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 9.13: Confounding between order and condition<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>An <strong>experimental confound</strong> of this sort is a variable that is created in the course of the experimental design that is both causally related to the predictor and potentially also related to the outcome. As such, it is a threat to <strong>internal validity</strong>. When you detect this kind of confound, you should use your experimental design to remove it whenever possible. Your two main options are <strong>counterbalancing</strong> and <strong>randomization</strong>. Both manipulate the confounded factor and, by doing so, wield the causal scissors and remove the dependency between condition and any other downstream factor (as in Figure <a href="9-design.html#fig:design-dylan2">9.14</a>.<label for="tufte-sn-163" class="margin-toggle sidenote-number">163</label><input type="checkbox" id="tufte-sn-163" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">163</span> As you can see from the figures, the formerly-confounding factor still influences the measure! But it does so independently from the factor of interest, and hence the estimate is not biased. You will find order effects in most experiments, but most well-designed experiments do not have order <em>confounds</em>.</span></p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:design-dylan2"></span>
+<img src="images/design/dylan2.png" alt="Confounding between order and condition is removed by randomization or counterbalancing." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 9.14: Confounding between order and condition is removed by randomization or counterbalancing.<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>How should we employ our causal scissors? If you think a particular confound might have a significant effect on your measure, <strong>counterbalancing</strong> it across participants and across trials is a very safe choice. That way, you are guaranteed to have no effect of the confound on your average effect.<label for="tufte-sn-164" class="margin-toggle sidenote-number">164</label><input type="checkbox" id="tufte-sn-164" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">164</span> In practice, counterbalancing is like adding an additional factor to your factorial design! But because the factor is a nuisance factor, we don’t discuss it as a true condition manipulation. Despite that, it’s a good practice to check for effects of these sorts of nuisance factors in your preliminary analysis. Even though your average effect won’t be biased by it, it introduces variation that you might want to understand to interpret other effects and plan news studies.</span> In a simple counterbalance of order for our Dylan experiment, we would manipulate condition order between participants. Some participants would hear Dylan first and others hear Dylan second.</p>
+<p>Counterbalancing gets trickier when you have too many levels on a variable or multiple confounding variables. For example, if you have lots of different nuisance variables – say, condition order, what writing prompt you use for each order, which Dylan song you play – it may not be possible to do a fully-crossed counterbalance so that all combinations of these factors are seen by equal numbers of participants. In these kinds of cases, you may have to rely on partial counterbalancing schemes or Latin square designs<label for="tufte-sn-165" class="margin-toggle sidenote-number">165</label><input type="checkbox" id="tufte-sn-165" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">165</span> In this case, the Latin squares are used to create orderings of stimuli such that the position of each treatment in the order is controlled across two other confounding variables.</span>, or you may have to fall back on randomization.</p>
+<p>The second option for eliminating methodological confounds of this type – <strong>randomization</strong> – is increasingly common now that many experimental interventions are delivered by software. If you can randomize experimental confounds, you probably should. The only time you really get in trouble with randomization is when you have a large number of options, a small number of participants, or some combination of the two. In this case, you can end up with unbalanced levels of the randomized factors. Averaging across many experiments, this lack of balance will come out in the wash. But in a single experiment, it can lead to unfortunate bias in numbers. For that reason, counterbalancing is a more conservative option for experiments with small samples (or if you have confounding factors with large numbers of levels).</p>
+<p>A good approach to thinking through your experimental design is to walk through the experiment step by step and think about potential confounds. For each of these confounds, consider how it might be removed via counterbalancing or randomization. As the case study of <span class="citation">Kovács et al. (<a href="#ref-kovacs2010" role="doc-biblioref">2010</a>)</span> shows, confounds are not always obvious, especially in complex paradigms. There is no sure-fire way to ensure that you have spotted every one – sometimes the best way to avoid them is simply to present your candidate design to a skeptical friend.</p>
+</div>
+<div id="internal-validity-threats-placebo-demand-and-expectancy" class="section level3" number="9.2.2">
+<h3><span class="header-section-number">9.2.2</span> Internal validity threats: Placebo, demand, and expectancy</h3>
+<p>A second class of important threats to internal validity comes from cases where the research design is confounded by a set of factors internal to the research ecosystem. In some cases, these create confounds can be controlled; in others they must simply be understood and guarded against. <span class="citation">Rosnow &amp; Rosenthal (<a href="#ref-rosnow1997" role="doc-biblioref">1997</a>)</span> called these “artifacts”: systematic errors related to aspects of the fact of research <em>with</em> people, and <em>by</em> people.</p>
+<p>A <strong>placebo</strong> effect is a positive effect on the measure that comes as a result of <em>any</em> treatment being given in the context of research. Giving an inactive sugar pill leads some patients to report a reduction in whatever symptom they are being treated for. Placebo effects are a major target of inquiry in medical research as well as a fixture in experimental designs in medicine <span class="citation">(<a href="#ref-benedetti2020" role="doc-biblioref">Benedetti, 2020</a>)</span>. The key idea is that treatments must not simply be compared to a baseline of no treatment but rather to a baseline in which the psychological aspects of treatment are present. In the terms we have been using, the framework of treatment (independent of the content of the treatment) confounds a comparison with a “no treatment” baseline.</p>
+<p>In the psychological context, such placebo effects have sometimes been referred to as <strong>Hawthorne</strong> effects, after historical experiments in which a group of workers who were being studied at the Western Electrical Company supposedly were more productive on the basis of being studied. This story is in fact more complex than its textbook description <span class="citation">(<a href="#ref-rosenthal1984" role="doc-biblioref">Rosenthal &amp; Rosnow, 1984</a>)</span>, but the generalization is true. The simple fact of being part of an experiment can alter behavior in the same way that receiving medical treatment can alter a response to treatment. Thus, experimenters who are interested in measuring a positive response to some treatment must be careful to provide an <strong>active control</strong> that removes the “key ingredient” while still maintaining the general study framework.</p>
+<div class="accident-report">
+<p>⚠️ Accident report: Brain training?</p>
+<p>Can doing challenging cognitive tasks make you smarter? In the late 2000s and early 2010s, a large industry for “brain training” emerged. Companies like Lumos Labs, CogMed, BrainHQ, and CogniFit offered games – often modeled on cognitive psychology tasks – that claimed to lead to broad gains in memory, attention, and problem solving.</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:design-jaeggi"></span>
+<img src="images/design/jaeggi.png" alt="The primary outcome graph for Jaeggi et al. (2008)." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 9.15: The primary outcome graph for Jaeggi et al. (2008).<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>These sites were basing their claims in part on a scientific literature reporting that concerted training on difficult cognitive tasks could lead to <strong>transfer</strong> to other domains. Among the most influential of these was a study by <span class="citation">Jaeggi et al. (<a href="#ref-jaeggi2008" role="doc-biblioref">2008</a>)</span>. They conducted four experiments in which participants (N=70 across the studies) were assigned to either working memory training via a difficult dual N-back task or a no-training control, with training varying from 8 days all the way to 19 days. Their finding excited a tremendous amount of interest because they reported not only gains in performance on the training task but also on a matrix reasoning task (which is considered to be a good measure of general intelligence). While the control group’s scores on these tasks improved, presumably just from being tested twice, there was a condition by time (pre- vs. post) interaction such that the scores of the trained groups (consolidated across all four training experiments) grew significantly more over the training period (Figure <a href="9-design.html#fig:design-jaeggi">9.15</a>). These findings were interpreted as supporting transfer – whereby training on one task leads to broader gains – a key goal for “brain training.”</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span id="fig:design-jaeggi-disagg"></span>
+<img src="images/design/jaeggi-disaggregated.png" alt="The four sub-experiments of Jaeggi et al. (2008), now disaggregated. Panels show 8- (A), 12- (B), 17- (C), and 19-session (D) studies. Note the different scales and measures. RAPM = Raven's Advanced Progressive Matrices; BOMAT = Bochumer Matrizentest. From @redick2013." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 9.16: The four sub-experiments of Jaeggi et al. (2008), now disaggregated. Panels show 8- (A), 12- (B), 17- (C), and 19-session (D) studies. Note the different scales and measures. RAPM = Raven’s Advanced Progressive Matrices; BOMAT = Bochumer Matrizentest. From <span class="citation">Redick et al. (<a href="#ref-redick2013" role="doc-biblioref">2013</a>)</span>.<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>This finding spurred immense interest in the scientific community, but the consensus did not support these early findings. Careful readers of the original paper noticed a number of the signs of analytic flexibility that we mentioned in Chapters <a href="3-replication.html#replication">3</a> and <a href="6-inference.html#inference">6</a> in the original paper, including the post-hoc consolidation of experiments to yield <span class="math inline">\(p = .025\)</span> on the key interaction <span class="citation">(<a href="#ref-redick2013" role="doc-biblioref">Redick et al., 2013</a>)</span>. When data were disaggregated, it was clear that the measures and effects had differed in each of the different sub-experiments (Figure <a href="9-design.html#fig:design-jaeggi-disagg">9.16</a>).</p>
+<p>Several replications by the same group addressed some of these issues, but still failed to show convincing evidence for far transfer with an active control group <span class="citation">(<a href="#ref-simons2016" role="doc-biblioref">Simons et al., 2016</a>)</span>. Further, a careful replication (N=74) with an active control group and a wide range of outcome measures failed to find any transfer effects from working-memory training <span class="citation">(<a href="#ref-redick2013" role="doc-biblioref">Redick et al., 2013</a>)</span>. A meta-analysis of 23 studies concluded that their findings cast doubt on working memory training for increasing cognitive functioning <span class="citation">(<a href="#ref-melby-lervag2013" role="doc-biblioref">Melby-Lervåg &amp; Hulme, 2013</a>)</span>. And in one convincing and broad test of the cognitive transfer theory, a BBC show (“Bang Goes The Theory”) encouraged its listeners to participate in a six week online brain training study. More than 11,000 listeners completed the pre- and post-tests and at least two training sessions. Neither focused training of planning and reasoning nor broader training on memory, attention and mathematics led to transfer to un-trained tasks.</p>
+<p>Placebo effects are one plausible explanation for positive findings. <span class="citation">Foroughi et al. (<a href="#ref-foroughi2016" role="doc-biblioref">2016</a>)</span> recruited participants to participate via two different advertisements. The first advertised that “numerous studies have shown working memory training can increase fluid intelligence” (placebo group) while the second simply offered experimental credits (control group). After a single training session, the placebo group showed significant improvements to their matrix reasoning abilities. Participants in the placebo group realized gains from training out of proportion with any they could have realized through training. Further, those participants who responded to the placebo group ad tended to endorse statements about the malleability of intelligence, suggesting that they might have been especially likely to self-select into the intervention.</p>
+<p>Summarizing the voluminous literature on brain training, <span class="citation">Simons et al. (<a href="#ref-simons2016" role="doc-biblioref">2016</a>)</span> wrote that “Despite marketing claims from brain-training companies of ‘proven benefits’… we find the evidence of benefits from cognitive brain training to be ‘inadequate.’”</p>
+</div>
+<p>If placebo effects reflect what participants “want” from a treatment then <strong>demand characteristics</strong> reflect what participants think <em>experimenters</em> want. Demand characteristics are often raised as an explanation for avoiding within-participants designs – if participants are sensitized to the presence of intervention, they may then respond in a way that they believe is helpful to the experimenter. Typical tools for controlling demand characteristics include using a cover story to mask the purpose of an experiment, using a debriefing procedure to probe whether participants typically guessed the purpose of an experiment, and (perhaps most effectively) creating a control condition with similar demand characteristics but missing a key component of the experimental intervention.</p>
+<p>The final entry into this list of internal validity threats comes from what are called <strong>experimenter expectancy effects</strong>, where the experimenter’s behavior biases participants in a way that results in the appearance of condition differences where no true difference exists. The classic example of such effects comes from the animal learning literature and the story of Clever Hans the horse. Hans appeared able to do arithmetic by tapping out solutions with his hoof; however on deeper investigation was being cued by his trainer to stop tapping when the desired answer was reached.</p>
+<p>Expectancy effects of this type are not limited to the animal literature nor to cases of training. In medical research, designs – where neither patients nor experimenters know which condition the patients are in – are the gold standard, and results from other designs are treated with suspicion.</p>
+<p>In any experiment delivered by human experimenters who know what condition they are delivering, condition differences can result from experimenters imparting their expectations. Figure <a href="9-design.html#fig:design-rosenthal">9.17</a> shows the results of a meta-analysis estimating the size of expectancy effects across a range of domains. These magnitudes are shocking. There is no question that experimenter expectancy is sufficient to “create” many interesting phenomena artifactually if we are not on guard against it. The mechanisms of expectancy are an interesting research topic in their own right, but in many cases expectancies appear to be communicated non-verbally in much the same way that Clever Hans learned <span class="citation">(<a href="#ref-rosnow1997" role="doc-biblioref">Rosnow &amp; Rosenthal, 1997</a>)</span>.</p>
+<div class="figure"><span id="fig:design-rosenthal"></span>
+<p class="caption marginnote shownote">
+Figure 9.17: Magnitudes of expectancy effects. From <span class="citation">Rosenthal (<a href="#ref-rosenthal1994" role="doc-biblioref">1994</a>)</span>.
+</p>
+<img src="images/design/rosenthal2004.png" alt="Magnitudes of expectancy effects. From @rosenthal1994." width="\linewidth"  />
+</div>
+<p>The most common modern guard against expectancy is the delivery of interventions by a computer platform that can give instructions in a coherent and uniform way across conditions. In the case of interventions that must be delivered by experimenters, the gold-standard fallback strategy is that experimenters be unaware of which condition they are delivering.<label for="tufte-sn-166" class="margin-toggle sidenote-number">166</label><input type="checkbox" id="tufte-sn-166" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">166</span> This state of unawareness is sometimes referred to as <strong>blinding</strong> though we avoid this term.</span> On the other hand, the logistics of maintaining experimenter ignorance can be quite complicated in psychology. For this reason, many researchers opt for lesser degrees of control, for example, choosing to standardize delivery of an intervention via a script. These designs are sometimes necessary for practical reasons but should be scrutinized closely. “How can you rule out experimenter expectancy effects?” is an uncomfortable question that should likely be asked more frequently in seminars and paper reviews.</p>
+</div>
+<div id="external-validity-of-manipulations" class="section level3" number="9.2.3">
+<h3><span class="header-section-number">9.2.3</span> External validity of manipulations</h3>
+<p>The goal of a specific experimental manipulation is to operationalize a particular causal relationship of interest. Just as the relationship between measure and construct can be more or less valid, so to can the relationship between manipulation and construct. How can you tell? Just like in the case of measures, there’s no one royal road to validity. You need to make a validity argument <span class="citation">(<a href="#ref-kane1992" role="doc-biblioref">Kane, 1992</a>)</span>.<label for="tufte-sn-167" class="margin-toggle sidenote-number">167</label><input type="checkbox" id="tufte-sn-167" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">167</span> One caveat is that the validity of a manipulation incorporates the validity of the manipulation <em>and</em> the measure. You can’t really have a good estimate of a causal effect if the measurement is invalid.</span> Let’s see how these arguments might look for some of the examples we’ve discussed in this chapter.</p>
+<p>Our manipulation choice of listening to Bob Dylan was intended to operationalize the effect of lyrically-dense music on writing quality. Listening to Dylan in the lab seems face valid, since it’s related to the construct we care about, music listening while working at the computer at home. It’s also ecologically valid since listening and writing in the lab is not that different than the home equivalent. On the other hand, playing Dylan was only one way we could have operationalized our construct of interest. The specifics of our manipulation – how many Dylan songs? should we sample other lyrically-dense songs, or even other genres? do we add rap or slam poetry? – make a huge difference for the generalizability of our estimated effect. If we find an effect with Dylan and then write a paper entitled “Verbally-dense music decreases writing quality,” we are generalizing quite far from our manipulation (and perhaps our measure as well) and critics would be right to question the validity of our operationalization.<label for="tufte-sn-168" class="margin-toggle sidenote-number">168</label><input type="checkbox" id="tufte-sn-168" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">168</span> If you are noticing that this discussion sounds a bit like our discussion of experimental items and the greater generalizability of experimental effects with multiple items, then you are right! More in the next chapter.</span> Even in straightforward cases, we need to be careful about the breadth of the claims we make.</p>
+<p>Let’s next consider the manipulation in our infancy example – complexity was varied by showing infants checkerboards of different densities <span class="citation">(<a href="#ref-brennan1966" role="doc-biblioref">Brennan et al., 1966</a>)</span>. This manipulation seems face valid: denser checkerboards do <em>look</em> more complicated.<label for="tufte-sn-169" class="margin-toggle sidenote-number">169</label><input type="checkbox" id="tufte-sn-169" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">169</span> Perhaps a critic would say that checkerboards typically don’t typically occur in infants’ natural ecology, so the ecological validity of measuring looking time to stimuli that are graded like this is questionable. An advocate for the study could reasonably respond that the desire for experimental control in this case likely trumps the argument for ecologically valid stimuli <span class="citation">(<a href="#ref-kominsky2020" role="doc-biblioref">Kominsky et al., 2020</a>)</span>.</span> The trouble again is generalization, though: how do we apply this idea of complexity more broadly once we are outside of the world of checkerboards?<label for="tufte-sn-170" class="margin-toggle sidenote-number">170</label><input type="checkbox" id="tufte-sn-170" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">170</span> A whole world of visual cognition research examines this question <span class="citation">(e.g., <a href="#ref-alvarez2004" role="doc-biblioref">Alvarez &amp; Cavanagh, 2004</a>)</span>.</span></p>
+<p>Sometimes validity arguments are made based on the success of the manipulation in producing some change in the measurement. In the the implicit theory of mind case study we began with, the stimulus contained an animated Smurf character, and the argument was that participants took the Smurf’s beliefs into account in making their judgments. This stimulus choice seems surprising – not only would participants have to track the implicit beliefs of other <em>people</em>, they would alto have to be tracking the beliefs of depictions of non-human, animated characters. On the other hand, based on the success of the manipulation, the authors made an <em>a fortiori</em> argument: if you track an animated Smurf’s beliefs, then you <em>must</em> be tracking the beliefs of real humans. This example reveals how arguments about manipulation validity can be <strong>theory-laden</strong>.</p>
+<p>Let’s look at one last example to think more about the theory-ladenness of manipulation validity. <span class="citation">Walton &amp; Cohen (<a href="#ref-walton2011" role="doc-biblioref">2011</a>)</span> conducted a short intervention in which college students (N=92) read about social belonging and the challenges of the transition to college and then reframed their own experiences using these ideas. This intervention led to long-lasting changes in grades and well-being. While the intervention undoubtedly had a basis in theory <span class="citation">(e.g., <a href="#ref-walton2007" role="doc-biblioref">Walton &amp; Cohen, 2007</a>)</span>, part of our understanding of the validity of the intervention comes from its efficacy: sense of belonging <em>must</em> be a powerful factor if intervening on it causes such big changes in the outcome measures.<label for="tufte-sn-171" class="margin-toggle sidenote-number">171</label><input type="checkbox" id="tufte-sn-171" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">171</span> On the other hand, if the manipulation <em>doesn’t</em> produce a change in your measure, maybe the manipulation is invalid, but the construct still exists. Sense of belonging could still be important even if my particular intervention failed to alter it!</span> The only danger is when the process becomes circular – a theory is correct because the interventions yielded a success, and the interventions are presumed to be valid because of the theory. The way out of this circle is through replication and generalization of the intervention. If the intervention repeatably produces the outcome, as has been shown in replications of the sense of belonging intervention <span class="citation">(e.g., <a href="#ref-murphy2020" role="doc-biblioref">Murphy et al., 2020</a>)</span>, then the manipulation becomes an intriguing target for future theories. The next step in such a research program is to understand the limitations of such interventions (sometimes called <strong>boundary conditions</strong>).</p>
+</div>
+</div>
+<div id="summary-experimental-design" class="section level2" number="9.3">
+<h2><span class="header-section-number">9.3</span> Summary: Experimental design</h2>
+<p>In this chapter, we started by examining some common experimental designs that allow us to measure effects associated with one or more manipulations. Our advice, in brief, was: “keep it simple!” The failure mode of many experiments is that they contain too many manipulations, and these manipulations are measured with too little precision.</p>
+<p>Start with just a single manipulation, and measure it carefully. Ideally this measurement should be done via a within-participants design unless the manipulation is completely incompatible with this design. And if this design can incorporate a dose-response manipulation, it is more likely to provide a basis for quantitative theorizing.</p>
+<p>How do you ensure that your manipulation is valid? A careful experimenter needs to consider possible confounds and ensure that these are controlled or randomized. They must also consider other artifacts including placebo and demand effects. Finally, they must begin thinking about the relation of their manipulation to the broader theoretical construct whose causal role they hope to test.</p>
+<!-- E. O. Wilson’s advice: iteration on a repeatable measurement. -->
+<!-- ## Strategy -->
+<!-- ### How to design a manipulation to test a theory. -->
+<!-- Simplicity as a key design principle -->
+<!--   - Statistical and interpretability concerns for complex interaction designs. -->
+<!--   - Nuisance variables: counterbalancing and randomization. -->
+<!-- The temptation to manipulate lots of things -->
+<!-- Again, we advocate for simplicity. -->
+<!-- The advice is out there to -->
+<!-- ### Connecting with theory -->
+<!--   - The ethics of the “dead on arrival” experiment – why appropriate experimental design is an ethical imperative (we “waste” participant contributions otherwise). -->
+<!--  “risky tests”: those that will best help adjudicate between theories. @meehl1978 -->
+<!--   Optimal experiment design in psychophysics and beyond – how to use quantitative models to select the stimulus that maximizes your chances of a theory-informing result. -->
+<!-- ::: {.ethics-box} -->
+<!-- 🌿 Ethics box: Including the population being sampled in the design process.  -->
+<!-- ::: -->
+<!-- Multi-experiment design strategy: start simple?  -->
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-alvarez2004" class="csl-entry">
+Alvarez, G. A., &amp; Cavanagh, P. (2004). The capacity of visual short-term memory is set both by visual information load and by number of objects. <em>Psychological Science</em>, <em>15</em>(2), 106–111.
+</div>
+<div id="ref-benedetti2020" class="csl-entry">
+Benedetti, F. (2020). <em>Placebo effects</em>. Oxford University Press.
+</div>
+<div id="ref-brennan1966" class="csl-entry">
+Brennan, W. M., Ames, E. W., &amp; Moore, R. W. (1966). Age differences in infants’ attention to patterns of different complexities. <em>Science</em>, <em>151</em>(3708), 354–356.
+</div>
+<div id="ref-clark1973" class="csl-entry">
+Clark, H. H. (1973). The language-as-fixed-effect fallacy: A critique of language statistics in psychological research. <em>Journal of Verbal Learning and Verbal Behavior</em>, <em>12</em>(4), 335–359.
+</div>
+<div id="ref-cunningham2021" class="csl-entry">
+Cunningham, S. (2021). <em>Causal inference</em>. Yale University Press.
+</div>
+<div id="ref-el-kaddouri2020" class="csl-entry">
+El Kaddouri, R., Bardi, L., De Bremaeker, D., Brass, M., &amp; Wiersema, R. (2020). Measuring spontaneous mentalizing with a ball detection task: Putting the attention-check hypothesis by phillips and colleagues (2015) to the test. <em>PSYCHOLOGICAL RESEARCH-PSYCHOLOGISCHE FORSCHUNG</em>, <em>84</em>(6), 1749–1757.
+</div>
+<div id="ref-foroughi2016" class="csl-entry">
+Foroughi, C. K., Monfort, S. S., Paczynski, M., McKnight, P. E., &amp; Greenwood, P. (2016). Placebo effects in cognitive training. <em>Proceedings of the National Academy of Sciences</em>, <em>113</em>(27), 7470–7474.
+</div>
+<div id="ref-gettier2012" class="csl-entry">
+Gettier, E. L. (1963). Is justified true belief knowlege? <em>Analysis</em>, <em>23</em>, 121–123.
+</div>
+<div id="ref-greenwald1976" class="csl-entry">
+Greenwald, A. G. (1976). Within-subjects designs: To use or not to use? <em>Psychological Bulletin</em>, <em>83</em>(2), 314.
+</div>
+<div id="ref-jaeggi2008" class="csl-entry">
+Jaeggi, S. M., Buschkuehl, M., Jonides, J., &amp; Perrig, W. J. (2008). Improving fluid intelligence with training on working memory. <em>Proceedings of the National Academy of Sciences</em>, <em>105</em>(19), 6829–6833.
+</div>
+<div id="ref-kane1992" class="csl-entry">
+Kane, M. T. (1992). An argument-based approach to validity. <em>Psychological Bulletin</em>, <em>112</em>(3), 527.
+</div>
+<div id="ref-kidd2012" class="csl-entry">
+Kidd, C., Piantadosi, S. T., &amp; Aslin, R. N. (2012). The goldilocks effect: Human infants allocate attention to visual sequences that are neither too simple nor too complex. <em>PloS One</em>, <em>7</em>(5), e36399.
+</div>
+<div id="ref-kominsky2020" class="csl-entry">
+Kominsky, J. F., Lucca, K., Thomas, A. J., Frank, M. C., &amp; Hamlin, K. (2020). <em>Simplicity and validity in infant research</em>.
+</div>
+<div id="ref-kovacs2014" class="csl-entry">
+Kovács, Á. M., Kühn, S., Gergely, G., Csibra, G., &amp; Brass, M. (2014). Are all beliefs equal? Implicit belief attributions recruiting core brain regions of theory of mind. <em>PloS One</em>, <em>9</em>(9), e106558.
+</div>
+<div id="ref-kovacs2010" class="csl-entry">
+Kovács, Á. M., Téglás, E., &amp; Endress, A. D. (2010). The social sense: Susceptibility to others’ beliefs in human infants and adults. <em>Science</em>, <em>330</em>(6012), 1830–1834.
+</div>
+<div id="ref-mcclelland1993" class="csl-entry">
+McClelland, G. H., &amp; Judd, C. M. (1993). Statistical difficulties of detecting interactions and moderator effects. <em>Psychological Bulletin</em>, <em>114</em>(2), 376.
+</div>
+<div id="ref-melby-lervag2013" class="csl-entry">
+Melby-Lervåg, M., &amp; Hulme, C. (2013). Is working memory training effective? A meta-analytic review. <em>Developmental Psychology</em>, <em>49</em>(2), 270.
+</div>
+<div id="ref-murphy2020" class="csl-entry">
+Murphy, M. C., Gopalan, M., Carter, E. R., Emerson, K. T., Bottoms, B. L., &amp; Walton, G. M. (2020). A customized belonging intervention improves retention of socially disadvantaged students at a broad-access university. <em>Science Advances</em>, <em>6</em>(29), eaba4677.
+</div>
+<div id="ref-myung2009" class="csl-entry">
+Myung, J. I., &amp; Pitt, M. A. (2009). Optimal experimental design for model discrimination. <em>Psychological Review</em>, <em>116</em>(3), 499.
+</div>
+<div id="ref-phillips2015" class="csl-entry">
+Phillips, J., Ong, D. C., Surtees, A. D., Xin, Y., Williams, S., Saxe, R., &amp; Frank, M. C. (2015). A second look at automatic theory of mind: Reconsidering kov<span>á</span>cs, t<span>é</span>gl<span>á</span>s, and endress (2010). <em>Psychological Science</em>, <em>26</em>(9), 1353–1367.
+</div>
+<div id="ref-redick2013" class="csl-entry">
+Redick, T. S., Shipstead, Z., Harrison, T. L., Hicks, K. L., Fried, D. E., Hambrick, D. Z., Kane, M. J., &amp; Engle, R. W. (2013). No evidence of intelligence improvement after working memory training: A randomized, placebo-controlled study. <em>Journal of Experimental Psychology: General</em>, <em>142</em>(2), 359.
+</div>
+<div id="ref-rosenthal1994" class="csl-entry">
+Rosenthal, R. (1994). Interpersonal expectancy effects: A 30-year perspective. <em>Current Directions in Psychological Science</em>, <em>3</em>(6), 176–179.
+</div>
+<div id="ref-rosenthal1984" class="csl-entry">
+Rosenthal, R., &amp; Rosnow, R. L. (1984). <em>Essentials of behavioral research: Methods and data analysis</em>. McGraw-Hill.
+</div>
+<div id="ref-rosnow1997" class="csl-entry">
+Rosnow, R., &amp; Rosenthal, R. (1997). <em>People studying people: Artifacts and ethics in behavioral research</em>. WH Freeman.
+</div>
+<div id="ref-simons2016" class="csl-entry">
+Simons, D. J., Boot, W. R., Charness, N., Gathercole, S. E., Chabris, C. F., Hambrick, D. Z., &amp; Stine-Morrow, E. A. (2016). Do <span>“brain-training”</span> programs work? <em>Psychological Science in the Public Interest</em>, <em>17</em>(3), 103–186.
+</div>
+<div id="ref-walton2007" class="csl-entry">
+Walton, G. M., &amp; Cohen, G. L. (2007). A question of belonging: Race, social fit, and achievement. <em>Journal of Personality and Social Psychology</em>, <em>92</em>(1), 82.
+</div>
+<div id="ref-walton2011" class="csl-entry">
+Walton, G. M., &amp; Cohen, G. L. (2011). A brief social-belonging intervention improves academic and health outcomes of minority students. <em>Science</em>, <em>331</em>(6023), 1447–1451.
+</div>
+<div id="ref-young2007" class="csl-entry">
+Young, L., Cushman, F., Hauser, M., &amp; Saxe, R. (2007). The neural basis of the interaction between theory of mind and moral judgment. <em>Proceedings of the National Academy of Sciences</em>, <em>104</em>(20), 8235–8240.
+</div>
+</div>
+<p style="text-align: center;">
+<a href="8-measurement.html"><button class="btn btn-default">Previous</button></a>
+<a href="10-sampling.html"><button class="btn btn-default">Next</button></a>
+</p>
+</div>
+</div>
+
+<link href="www/global.css" rel="stylesheet">
+<script src="www/global.js"></script>
+
+
+</body>
+</html>
