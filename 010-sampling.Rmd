@@ -3,9 +3,10 @@
 ::: {.learning-goals}
 🍎 Learning goals: 
 
-* Learn how to choose an appropriate sample size
-* Generalize notion of sample size to other axes of generalizability 
-* Reason about limitations of different samples
+
+* Discuss sampling theory and stratified sampling
+* Reason about limitations of different samples, especially convenience samples
+* Learn how to choose and justify an appropriate sample size for your experiment
 :::
 
 As we keep reminding you, experiments are designed to yield measurements of a causal effect. But a causal effect of what, and for whom? These are questions that are often given surprisingly little air time in our papers. Titles in our top journals read "Daxy thinking promotes fribbles," "Doing fonzy improves smoodling," or "Blicket practice produces more foozles than smonkers."^[Titles changed to protect the original authors. These researchers might very well have said more specific things in the text of their paper.] Each of these uses **generic language** to state a claim that is implied to be generally true [@dejesus2019],^[Generic language is a fascinating linguistic phenomenon. When we say things like "mosquitoes transmit malaria," we don't mean that *all* mosquitos do it, only something like "it's a valid and diagnostic generalization about mosquitoes in contrast to other relevant insects or other creatures that they are spreaders of malaria" [@tessler2019].] but for each of these, we could reasonably ask "doing fonzy improves smoodling *for whom*?" Is it everyone? Or a particular set of people? And similarly, we might want to ask "*how much* and *what kind* of fonzy reading?" These are questions about the **generalizability of research**.^[Imagine for a second what a non-generic version of one of these titles might look like: "Reading one particular selection of fonzy for fifteen minutes in the lab improved 36 college students' smoodling scores on a questionnaire." It seems pretty clear that we wouldn't let the authors get away with a fully general version of their claim: "Doing [*any*] fonzy improves smoodling [*for anyone*]." That's just a bad generalization.]
@@ -36,57 +37,93 @@ On the other hand, it's more complicated to jump from a statistical generalizati
 
 The basic idea of sampling is simple: you want to estimate some measurement for a large or infinite population by measuring a sample from that population.^[There are some tools for dealing with estimation in smaller populations where your sample is a substantial fraction of the population (e.g., a survey of your department where you get responses from half of the students). We won't discuss those here; our focus is on generalizing to large populations of humans.] Sampling strategies are split into two categories: **probability sampling** -- in which every member of the population has some chance of being selected -- and **non-probability sampling** -- in which there are some members of the population that simply cannot be selected. 
 
+### Classical probability sampling
+
 Classical sampling theory is built around the idea of **probability sampling**. There is some **sampling frame** containing every member of the population -- think of a giant phone book with every adult human's name in it. Then we use some kind of **sampling strategy**, maybe at the simplest just a completely random choice, to select $N$ humans from that sample frame, and then we collect our measure with them. This scenario is the one that informs all of our statistical results about how sample means converge to the population mean (as in Chapter \@ref(inference)). 
 
 Unfortunately, we essentially *never* do sampling of this sort in psychological research. Gathering random samples from the large populations that we'd like to generalize to is far too difficult and expensive. Consider the problems involved in doing some experiment with a sample of *all adult humans*, or even *adult English-speaking humans who are located in the United States*. As soon as you start to think about what it would take to collect a probability sample of this kind of population, the complexities get overwhelming. How will you find their names (what if they aren't in the phone book)? How will you contact them (what if they don't have email)? How will they do your experiment (what if they don't have an up-to-date web browser)? What if they don't want to participate? 
 
-For survey research -- think about election polling -- there are many sophisticated techniques for dealing with these issues; although this field is still imperfect, it has advanced considerably in trying to predict complex and dynamic behaviors. One of the basic ideas is the construction of **representative samples**: samples that resemble the population in their representation of one or several sociodemographic characteristics like gender, income, race and ethnicity, age, political orientation. These samples can be constructed by random sampling, but they can also be constructed through non-probability methods like recruiting quotas of individuals from different groups. 
+Instead, the vast majority of psychology research has been conducted with **convenience samples**: non-probability samples that feature individuals who can be recruited easily, like college undergraduates or workers on crowdsourcing platforms like Amazon Mechanical Turk (see Chapter \@ref(collection)). These convenience samples present very different generalization challenges, which we will discuss in a moment.
 
-These methods are critical for much social science research, but they have been used infrequently in experimental psychology research and aren't necessarily a critical part of the beginning experimentalist's toolkit.^[Readers can come up with counter-examples of recent studies that focus on representative sampling, but our guess is that they will prove the rule more generally. For example, a recent study tested the generality of growth mindset interventions for US high school students using a national sample [@yeager2019]. This large-scale study sampled more than 100 high schools from a sampling frame of all registered high schools in the US, then randomly assigned students within schools that agreed to participate. They then checked that the schools that agreed to participate were representative of the broader population of schools. This study is great stuff, but we hope you agree that if you find yourself in this kind of situation -- planning a multi-investigator 5 year consortium study on a national sample -- you might want to consult with a statistician and not use an introductory book like this one.] Instead, the vast majority of this research has been conducted with **convenience samples**: non-probability samples that feature individuals who can be recruited easily, like college undergraduates or workers on crowdsourcing platforms like Amazon Mechanical Turk (see Chapter \@ref(collection)). These convenience samples present very different generalization challenges. 
+### Representative samples and stratified sampling
 
-## Stratified sampling
+For survey research -- think about election polling -- there are many sophisticated techniques for dealing with these issues; although this field is still imperfect, it has advanced considerably in trying to predict complex and dynamic behaviors. One of the basic ideas is the construction of **representative samples**: samples that resemble the population in their representation of one or several sociodemographic characteristics like gender, income, race and ethnicity, age, political orientation. These samples can be constructed by random sampling, but they can also be constructed through non-probability methods like recruiting quotas of individuals from different groups. These methods are critical for much social science research, but they have been used infrequently in experimental psychology research and aren't necessarily a critical part of the beginning experimentalist's toolkit.^[Readers can come up with counter-examples of recent studies that focus on representative sampling, but our guess is that they will prove the rule more generally. For example, a recent study tested the generality of growth mindset interventions for US high school students using a national sample [@yeager2019]. This large-scale study sampled more than 100 high schools from a sampling frame of all registered high schools in the US, then randomly assigned students within schools that agreed to participate. They then checked that the schools that agreed to participate were representative of the broader population of schools. This study is great stuff, but we hope you agree that if you find yourself in this kind of situation -- planning a multi-investigator 5 year consortium study on a national sample -- you might want to consult with a statistician and not use an introductory book like this one.] 
 
-We'll spend a little bit of time on stratified sampling here because it's such a generally useful tool. 
+There is one exception that we think you should know about, however. Imagine you're interested in a particular measure in a population -- say, attitudes towards tea drinking across US adults -- but you think that this measure will vary with one or more characteristics such as whether the adults are frequent, infrequent, or non-coffee drinkers. Even worse, your measure might be more variable within one group: perhaps most coffee drinkers feel OK about tea, but non-drinkers either love it (they are tea drinkers) or hate it (they don't drink any hot beverages). A simple random sample from this population will converge asymptotically to the correct population average for tea-drinking attitudes. But it will do so somewhat more slowly than ideal because any given sample may over- or under-sample non-drinkers just by chance. 
 
 
-Imagine you are interested in a particular behavior. 
+```{r sampling-stratified, fig.cap="Illustration of stratified sampling. The left panel shows the sampling frame. The upper frames show the sampling frame stratified by a participant characteristic and a stratified sample. The lower frame shows a simple random sample, which happens to omit one group completely by chance."}
+knitr::include_graphics("images/sampling/stratified-sample-2.png")
+```
 
-```{r}
-rare_prop = .2
-common_mean = -.25
-rare_mean = 1
+**Stratified sampling** is a very useful trick that makes your effect estimates more precise in cases like this one [@neyman1992]. If you know the proportion of frequent, infrequent, or non-coffee drinkers in the population, you can sample within those subpopulations to ensure that your sample is representative along this dimension. This situation is pictured in Figure \@ref(fig:sampling-stratified), which shows how a particular sampling frame can be broken up into groups for stratified sampling (top). The result is a sample that matches the population proportions on a particular characteristic. In contrast, a simple random sample (bottom) can over- or under-sample the subgroups by chance.
+
+```{r sampling-stratified-sim, fig.cap="Simulation showing the potential benefits of stratification. Each dot is an estimated mean for a sample of a particular size, sampled randomly or with stratification. Red points show the mean and standard deviation of sample estimates.", fig.margin=TRUE}
+# rare_prop1 = .3
+# rare_prop2 = .1
+
+common_mean = -1
+rare_mean1 = 0
+rare_mean2 = 2.5
 pop = 10000
-population <- tibble(measure = c(rnorm(mean = common_mean , n = pop * (1-rare_prop)),
-                                 rnorm(mean = rare_mean, n = pop * rare_prop)),
-                     group = c(rep("common", pop * (1-rare_prop)), 
-                               rep("rare", pop * rare_prop)))
+population <- tibble(measure = c(rnorm(mean = common_mean , n = pop * .5, sd= .25),
+                                 rnorm(mean = rare_mean1, n = pop * .3, sd= .25),
+                                 rnorm(mean = rare_mean2, n = pop * .2, sd= 2)),
+                     group = c(rep("common", pop * .5), 
+                               rep("rare1", pop * .3),
+                               rep("rare2", pop * .2)))
 
-sims <- expand_grid(n_total = c(20, 50, 100, 200, 500, 1000), 
+sims <- expand_grid(n_total = c(10, 25, 50, 100, 250), 
             sim = 1:100, 
             sample = c("Stratified","Random")) |>
   rowwise() |>
-  mutate(data = ifelse(sample == "random", 
+  mutate(data = ifelse(sample == "Random", 
                        list(sample_n(population, n_total)),
                        list(bind_rows(sample_n(filter(population, group == "common"), 
-                                               n_total * (1 - rare_prop)),
-                                      sample_n(filter(population, group == "rare"),
-                                               n_total * rare_prop))))) |>
+                                               n_total * .5),
+                                      sample_n(filter(population, group == "rare1"),
+                                               n_total * .3),
+                                      sample_n(filter(population, group == "rare2"),
+                                               n_total * .2))))) |>
   unnest(cols = c(data)) |>
   group_by(n_total, sim, sample) |>
   summarise(mean = mean(measure)) 
 
 
 ggplot(sims, aes(x = n_total, y = mean)) + 
-  geom_jitter(width = 10, height = 0, alpha = .2) + 
-  facet_wrap(~sample) + 
+  geom_jitter(width = 3, height = 0, alpha = .2) + 
+  facet_grid(sample~.) + 
   geom_hline(yintercept = mean(population$measure), lty = 2) + 
   stat_summary(col = "red", 
-               fun.y = mean,
-               fun.ymin = function(x) mean(x) - sd(x), 
-               fun.ymax = function(x) mean(x) + sd(x))
-  
-
+               fun = mean, 
+               fun.min = function (x) mean(x) - sd(x), 
+               fun.max = function (x) mean(x) + sd(x)) + 
+  ylab("Mean") +
+  xlab("Total sample size (N)")
 ```
+
+Stratified sampling can lead to substantial gains in the precision of your estimate. These gains are most prominent when either the groups differ a lot in their mean or when they differ a lot in their variance.^[There are several important refinements of stratified sampling in case you ] On the other hand, if the characteristic on which you stratify participants doesn't relate to your measure at all, then stratified sampling converges just as fast as random sampling (though it's a bit more of a pain to implement). Figure \@ref(fig:sampling-stratified-sim) shows a simulation of the scenario in Figure \@ref(fig:sampling-stratified), in which each coffee preference group has a different tea attitude mean, and the smallest group has the biggest variance. Although the numbers here are invented, it's clear that estimation error is much smaller in the stratified group and estimation error declines much more quickly as samples get larger. 
+
+Stratification is everywhere, and it's useful even in convenience samples. For example, researchers who are interested in development typically stratify their samples across ages (e.g., recruiting equal numbers of two- and three-year-olds for a study of preschoolers). It's not that you can't estimate developmental change in a pure random sample; instead, it's that you are guaranteed good coverage of the range of interest when you stratify. If you have a measure that you think varies with a particular characteristic, it's not a bad idea to consider stratification. But don't go overboard -- you can drive yourself to distraction finding the last left-handed non-binary coffee drinker to complete your sample. Focus on stratifying when you know the measure varies with the characteristic of interest. 
+
+## Convenience samples, generalizability, and the WEIRD problem
+
+
+sssssssssssSDfasdf
+### The worst version of the problem 
+
+How should we reason about the fact that 
+
+"The existing science of human behavior is largely the science of the behavior of sophomores" [McNemar, 1946, quoted in @rosenthal1984].
+
+
+
+## Beyond participants: sampling items 
+
+  - What if your effect is generalizable across participants but not across stimuli (Clark 1973).
+
+
+### Reasons for hope and ways forward
 
 
 
@@ -121,8 +158,6 @@ Let's start by reviewing the null-hypothesis significance testing paradigm that 
 
 
 
-  - Classic power analysis 
-  
 ### Alternative approaches to sample size planning
 
 - Smallest effect size of interest (SESOI analysis)
@@ -135,10 +170,10 @@ sample calculations for within/between subjects
 http://daniellakens.blogspot.com/2016/11/why-within-subject-designs-require-less.html
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6640316/
 
-### Repeated measures designs: more people or more items? 
+<!-- ### Repeated measures designs: more people or more items?  -->
 
-DeBolt and Oakes
-Westfall
+<!-- DeBolt and Oakes -->
+<!-- Westfall -->
 
 ## Issues in sampling 
 
@@ -148,7 +183,7 @@ Westfall
   - Selection bias (connection to DAGs again)
 
 
-### Heterogeneity and stratification
+### Heterogeneity 
 
 Where sampling goes wrong:
 
