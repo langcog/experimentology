@@ -11,7 +11,6 @@
 
 
 
-
 <meta name="author" content="Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke, Robert Hawkins, Maya Mathur, and Rondeline Williams" />
 
 
@@ -26,7 +25,6 @@ MathJax.Hub.Config({
 
 <title>Chapter 10 Sampling | Experimentology</title>
 
-<script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
@@ -152,7 +150,7 @@ div.csl-indent {
 <li><a href="5-estimation.html#estimation"><span class="toc-section-number">5</span> Estimation</a></li>
 <li><a href="6-inference.html#inference"><span class="toc-section-number">6</span> Inference</a></li>
 <li><a href="7-models.html#models"><span class="toc-section-number">7</span> Models</a></li>
-<li class="part"><span><b>III Design and Planning</b></span></li>
+<li class="part"><span><b>III Design</b></span></li>
 <li><a href="8-measurement.html#measurement"><span class="toc-section-number">8</span> Measurement</a></li>
 <li><a href="9-design.html#design"><span class="toc-section-number">9</span> Design of experiments</a></li>
 <li><a href="10-sampling.html#sampling"><span class="toc-section-number">10</span> Sampling</a></li>
@@ -160,9 +158,9 @@ div.csl-indent {
 <li><a href="11-prereg.html#prereg"><span class="toc-section-number">11</span> Preregistration</a></li>
 <li><a href="12-collection.html#collection"><span class="toc-section-number">12</span> Data collection</a></li>
 <li><a href="13-management.html#management"><span class="toc-section-number">13</span> Project management</a></li>
-<li class="part"><span><b>V Analysis and Reporting</b></span></li>
-<li><a href="14-viz.html#viz"><span class="toc-section-number">14</span> Visualization</a></li>
-<li><a href="15-writing.html#writing"><span class="toc-section-number">15</span> Writing</a></li>
+<li class="part"><span><b>V Reporting</b></span></li>
+<li><a href="14-writing.html#writing"><span class="toc-section-number">14</span> Writing</a></li>
+<li><a href="15-viz.html#viz"><span class="toc-section-number">15</span> Visualization</a></li>
 <li><a href="16-meta.html#meta"><span class="toc-section-number">16</span> Meta-analysis</a></li>
 <li><a href="17-conclusions.html#conclusions"><span class="toc-section-number">17</span> Conclusions</a></li>
 <li class="appendix"><span><b>Appendices</b></span></li>
@@ -182,12 +180,12 @@ div.csl-indent {
 <div class="learning-goals">
 <p>🍎 Learning goals:</p>
 <ul>
-<li>Learn how to choose an appropriate sample size</li>
-<li>Generalize notion of sample size to other axes of generalizability</li>
-<li>Reason about limitations of different samples</li>
+<li>Discuss sampling theory and stratified sampling</li>
+<li>Reason about limitations of different samples, especially convenience samples</li>
+<li>Learn how to choose and justify an appropriate sample size for your experiment</li>
 </ul>
 </div>
-<p>As we keep reminding you, experiments are designed to yield measurements of a causal effect. But a causal effect of what, and for whom? These are questions that are often given surprisingly little air time in our papers. Titles in our top journals read “Daxy thinking promotes fribbles,” “Doing fonzy improves smoodling,” or “Blicket practice produces more foozles than smonkers.”<label for="tufte-sn-172" class="margin-toggle sidenote-number">172</label><input type="checkbox" id="tufte-sn-172" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">172</span> Titles changed to protect the original authors. These researchers might very well have said more specific things in the text of their paper.</span> Each of these uses <strong>generic language</strong> to state a claim that is implied to be generally true <span class="citation">(<a href="#ref-dejesus2019" role="doc-biblioref">DeJesus et al., 2019</a>)</span>,<label for="tufte-sn-173" class="margin-toggle sidenote-number">173</label><input type="checkbox" id="tufte-sn-173" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">173</span> Generic language is a fascinating linguistic phenomenon. When we say things like “mosquitoes transmit malaria,” we don’t mean that <em>all</em> mosquitos do it, only something like “it’s a valid and diagnostic generalization about mosquitoes in contrast to other relevant insects or other creatures that they are spreaders of malaria” <span class="citation">(<a href="#ref-tessler2019" role="doc-biblioref">Tessler &amp; Goodman, 2019</a>)</span>.</span> but for each of these, we could reasonably ask “doing fonzy improves smoodling <em>for whom</em>?” Is it everyone? Or a particular set of people? And similarly, we might want to ask “<em>how much</em> and <em>what kind</em> of fonzy reading?” These are questions about the <strong>generalizability of research</strong>.<label for="tufte-sn-174" class="margin-toggle sidenote-number">174</label><input type="checkbox" id="tufte-sn-174" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">174</span> Imagine for a second what a non-generic version of one of these titles might look like: “Reading one particular selection of fonzy for fifteen minutes in the lab improved 36 college students’ smoodling scores on a questionnaire.” It seems pretty clear that we wouldn’t let the authors get away with a fully general version of their claim: “Doing [<em>any</em>] fonzy improves smoodling [<em>for anyone</em>].” That’s just a bad generalization.</span></p>
+<p>As we keep reminding you, experiments are designed to yield measurements of a causal effect. But a causal effect of what, and for whom? These are questions that are often given surprisingly little air time in our papers. Titles in our top journals read “Daxy thinking promotes fribbles,” “Doing fonzy improves smoodling,” or “Blicket practice produces more foozles than smonkers.”<a href="#fn173" class="footnote-ref" id="fnref173"><sup>173</sup></a> Each of these uses <strong>generic language</strong> to state a claim that is implied to be generally true <span class="citation">(<a href="#ref-dejesus2019" role="doc-biblioref">DeJesus et al., 2019</a>)</span>,<a href="#fn174" class="footnote-ref" id="fnref174"><sup>174</sup></a> but for each of these, we could reasonably ask “doing fonzy improves smoodling <em>for whom</em>?” Is it everyone? Or a particular set of people? And similarly, we might want to ask “<em>how much</em> and <em>what kind</em> of fonzy reading?” These are questions about the <strong>generalizability of research</strong>.<a href="#fn175" class="footnote-ref" id="fnref175"><sup>175</sup></a></p>
 <p>We’ve already run into generalizability in our treatment of statistical estimation and inference. When we estimated a particular quantity (say, the effect of fonzy), we did so in our own sample. But we then used inferential tools to reason about how this <strong>sample</strong>’s estimate related to the <strong>population</strong> as a whole. How do we link up these statistical tools for generalization to the scientific questions we have about the generalizability of our findings? That’s the question of this chapter.</p>
 <p>The first key set of decisions in experiment planning is what population to sample from and how to sample. We’ll start by talking about the basics of <strong>sampling theory</strong>: different ways of sampling and the generalizations they do and don’t license. In this context, we also discuss <strong>stimulus sampling</strong>, a pervasive and under-appreciated challenge to the generalizability of behavioral research. A second set of key decisions is about <strong>sample size</strong> planning. We’ll start with classic <strong>power analysis</strong> but then introduce several other ways that an experimenter can plan and justify their sample size. In the final section, we’ll consider some of the broader issues that come up in sampling, including several sampling biases that can lead to biases in the experimental effect. We’ll end with a discussion of some broader questions about generalizability in behavioral research.</p>
 <div class="case-study">
@@ -197,7 +195,7 @@ div.csl-indent {
 <p>
 <span class="marginnote shownote">
 <!--
-<div class="figure">--><span id="fig:sampling-majid2014"></span>
+<div class="figure">--><span style="display:block;" id="fig:sampling-majid2014"></span>
 <img src="images/sampling/majid2014.png" alt="Data from Majid and Burenhult (2014) on the consistency of color and odor naming in English and Jahai speakers. Higher values indicate more consistent descriptions. Pie charts indicate the type of language being used." width="\linewidth"  />
 <!--
 <p class="caption marginnote">-->Figure 10.1: Data from Majid and Burenhult (2014) on the consistency of color and odor naming in English and Jahai speakers. Higher values indicate more consistent descriptions. Pie charts indicate the type of language being used.<!--</p>-->
@@ -209,32 +207,58 @@ div.csl-indent {
 </div>
 <div id="sampling-theory" class="section level2" number="10.1">
 <h2><span class="header-section-number">10.1</span> Sampling theory</h2>
-<p>The basic idea of sampling is simple: you want to estimate some measurement for a large or infinite population by measuring a sample from that population.<label for="tufte-sn-175" class="margin-toggle sidenote-number">175</label><input type="checkbox" id="tufte-sn-175" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">175</span> There are some tools for dealing with estimation in smaller populations where your sample is a substantial fraction of the population (e.g., a survey of your department where you get responses from half of the students). We won’t discuss those here; our focus is on generalizing to large populations of humans.</span> Sampling strategies are split into two categories: <strong>probability sampling</strong> – in which every member of the population has some chance of being selected – and <strong>non-probability sampling</strong> – in which there are some members of the population that simply cannot be selected.</p>
+<p>The basic idea of sampling is simple: you want to estimate some measurement for a large or infinite population by measuring a sample from that population.<a href="#fn176" class="footnote-ref" id="fnref176"><sup>176</sup></a> Sampling strategies are split into two categories: <strong>probability sampling</strong> – in which every member of the population has some chance of being selected – and <strong>non-probability sampling</strong> – in which there are some members of the population that simply cannot be selected.</p>
+<div id="classical-probability-sampling" class="section level3" number="10.1.1">
+<h3><span class="header-section-number">10.1.1</span> Classical probability sampling</h3>
 <p>Classical sampling theory is built around the idea of <strong>probability sampling</strong>. There is some <strong>sampling frame</strong> containing every member of the population – think of a giant phone book with every adult human’s name in it. Then we use some kind of <strong>sampling strategy</strong>, maybe at the simplest just a completely random choice, to select <span class="math inline">\(N\)</span> humans from that sample frame, and then we collect our measure with them. This scenario is the one that informs all of our statistical results about how sample means converge to the population mean (as in Chapter <a href="6-inference.html#inference">6</a>).</p>
 <p>Unfortunately, we essentially <em>never</em> do sampling of this sort in psychological research. Gathering random samples from the large populations that we’d like to generalize to is far too difficult and expensive. Consider the problems involved in doing some experiment with a sample of <em>all adult humans</em>, or even <em>adult English-speaking humans who are located in the United States</em>. As soon as you start to think about what it would take to collect a probability sample of this kind of population, the complexities get overwhelming. How will you find their names (what if they aren’t in the phone book)? How will you contact them (what if they don’t have email)? How will they do your experiment (what if they don’t have an up-to-date web browser)? What if they don’t want to participate?</p>
-<p>For survey research – think about election polling – there are many sophisticated techniques for dealing with these issues; although this field is still imperfect, it has advanced considerably in trying to predict complex and dynamic behaviors. One of the basic ideas is the construction of <strong>representative samples</strong>: samples that resemble the population in their representation of one or several sociodemographic characteristics like gender, income, race and ethnicity, age, political orientation. These samples can be constructed by random sampling, but they can also be constructed through non-probability methods like recruiting quotas of individuals from different groups.</p>
-<p>Our view is that these methods are important for much social science research, but less so for experimental psychology research.<label for="tufte-sn-176" class="margin-toggle sidenote-number">176</label><input type="checkbox" id="tufte-sn-176" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">176</span> Readers can come up with counter-examples, but our guess is that they will prove the rule more generally. For example, a recent study tested the generality of growth mindset interventions for US high school students using a national sample <span class="citation">(<a href="#ref-yeager2019" role="doc-biblioref">Yeager et al., 2019</a>)</span>. This large-scale study sampled more than 100 high schools from a sampling frame of all registered high schools in the US, then randomly assigned students within schools that agreed to participate. They then checked that the schools that agreed to participate were representative of the broader population of schools. This study is great stuff, but we hope you agree that if you find yourself in this kind of situation – planning a multi-investigator 5 year consortium study on a national sample – you might want to consult with a statistician and not use an introductory book like this one.</span> First, many experiments simply cannot be deployed flexibly to arbitrary people in the same way as survey questions. Second, the characteristics on which particular psychological constructs vary – and hence on which you might want a sample to be representative – are often much less clear</p>
+<p>Instead, the vast majority of psychology research has been conducted with <strong>convenience samples</strong>: non-probability samples that feature individuals who can be recruited easily, like college undergraduates or workers on crowdsourcing platforms like Amazon Mechanical Turk (see Chapter <a href="12-collection.html#collection">12</a>). These convenience samples present very different generalization challenges, which we will discuss in a moment.</p>
 </div>
-<div id="stratified-sampling" class="section level2" number="10.2">
-<h2><span class="header-section-number">10.2</span> Stratified sampling</h2>
-<p>We’ll spend a little bit of time on stratified sampling here because it’s such a generally useful tool.</p>
-<p>Imagine you are interested in a particular behavior.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-22-1.png" width="\linewidth"  /></p>
-<div id="generalization-and-the-goals-of-sampling" class="section level3" number="10.2.1">
-<h3><span class="header-section-number">10.2.1</span> Generalization and the goals of sampling</h3>
-<p>The goal of sampling is generalization: but who do we want to generalize to?</p>
+<div id="representative-samples-and-stratified-sampling" class="section level3" number="10.1.2">
+<h3><span class="header-section-number">10.1.2</span> Representative samples and stratified sampling</h3>
+<p>For survey research – think about election polling – there are many sophisticated techniques for dealing with these issues; although this field is still imperfect, it has advanced considerably in trying to predict complex and dynamic behaviors. One of the basic ideas is the construction of <strong>representative samples</strong>: samples that resemble the population in their representation of one or several sociodemographic characteristics like gender, income, race and ethnicity, age, political orientation. These samples can be constructed by random sampling, but they can also be constructed through non-probability methods like recruiting quotas of individuals from different groups. These methods are critical for much social science research, but they have been used infrequently in experimental psychology research and aren’t necessarily a critical part of the beginning experimentalist’s toolkit.<a href="#fn177" class="footnote-ref" id="fnref177"><sup>177</sup></a></p>
+<p>There is one exception that we think you should know about, however. Imagine you’re interested in a particular measure in a population – say, attitudes towards tea drinking across US adults – but you think that this measure will vary with one or more characteristics such as whether the adults are frequent, infrequent, or non-coffee drinkers. Even worse, your measure might be more variable within one group: perhaps most coffee drinkers feel OK about tea, but non-drinkers either love it (they are tea drinkers) or hate it (they don’t drink any hot beverages). A simple random sample from this population will converge asymptotically to the correct population average for tea-drinking attitudes. But it will do so somewhat more slowly than ideal because any given sample may over- or under-sample non-drinkers just by chance.</p>
+<div class="figure"><span style="display:block;" id="fig:sampling-stratified"></span>
+<p class="caption marginnote shownote">
+Figure 10.2: Illustration of stratified sampling. The left panel shows the sampling frame. The upper frames show the sampling frame stratified by a participant characteristic and a stratified sample. The lower frame shows a simple random sample, which happens to omit one group completely by chance.
+</p>
+<img src="images/sampling/stratified-sample2.png" alt="Illustration of stratified sampling. The left panel shows the sampling frame. The upper frames show the sampling frame stratified by a participant characteristic and a stratified sample. The lower frame shows a simple random sample, which happens to omit one group completely by chance." width="\linewidth"  />
+</div>
+<p><strong>Stratified sampling</strong> is a very useful trick that makes your effect estimates more precise in cases like this one <span class="citation">(<a href="#ref-neyman1992" role="doc-biblioref">Neyman, 1992</a>)</span>. If you know the proportion of frequent, infrequent, or non-coffee drinkers in the population, you can sample within those subpopulations to ensure that your sample is representative along this dimension. This situation is pictured in Figure <a href="10-sampling.html#fig:sampling-stratified">10.2</a>, which shows how a particular sampling frame can be broken up into groups for stratified sampling (top). The result is a sample that matches the population proportions on a particular characteristic. In contrast, a simple random sample (bottom) can over- or under-sample the subgroups by chance.</p>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span style="display:block;" id="fig:sampling-stratified-sim"></span>
+<img src="experimentology_files/figure-html/sampling-stratified-sim-1.png" alt="Simulation showing the potential benefits of stratification. Each dot is an estimated mean for a sample of a particular size, sampled randomly or with stratification. Red points show the mean and standard deviation of sample estimates." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 10.3: Simulation showing the potential benefits of stratification. Each dot is an estimated mean for a sample of a particular size, sampled randomly or with stratification. Red points show the mean and standard deviation of sample estimates.<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>Stratified sampling can lead to substantial gains in the precision of your estimate. These gains are most prominent when either the groups differ a lot in their mean or when they differ a lot in their variance.<a href="#fn178" class="footnote-ref" id="fnref178"><sup>178</sup></a> On the other hand, if the characteristic on which you stratify participants doesn’t relate to your measure at all, then stratified sampling converges just as fast as random sampling (though it’s a bit more of a pain to implement). Figure <a href="10-sampling.html#fig:sampling-stratified-sim">10.3</a> shows a simulation of the scenario in Figure <a href="10-sampling.html#fig:sampling-stratified">10.2</a>, in which each coffee preference group has a different tea attitude mean, and the smallest group has the biggest variance. Although the numbers here are invented, it’s clear that estimation error is much smaller in the stratified group and estimation error declines much more quickly as samples get larger.</p>
+<p>Stratification is everywhere, and it’s useful even in convenience samples. For example, researchers who are interested in development typically stratify their samples across ages (e.g., recruiting equal numbers of two- and three-year-olds for a study of preschoolers). It’s not that you can’t estimate developmental change in a pure random sample; instead, it’s that you are guaranteed good coverage of the range of interest when you stratify. If you have a measure that you think varies with a particular characteristic, it’s not a bad idea to consider stratification. But don’t go overboard – you can drive yourself to distraction finding the last left-handed non-binary coffee drinker to complete your sample. Focus on stratifying when you know the measure varies with the characteristic of interest.</p>
+</div>
+</div>
+<div id="convenience-samples-generalizability-and-the-weird-problem" class="section level2" number="10.2">
+<h2><span class="header-section-number">10.2</span> Convenience samples, generalizability, and the WEIRD problem</h2>
+<p>Let’s go back to the question of generalizability. How generalizable are the effect estimates that we obtain in our experiments? We’ll start by laying out the worst version of the problem of generalizability in experimental psychology. Maybe we don’t really know anything about any population of interest. We’ll then try to pull back from the brink and discuss some reasons why we might not want to be in despair despite some of the true generalizability issues that plague the psychology literature.</p>
+<div id="the-worst-version-of-the-problem" class="section level3" number="10.2.1">
+<h3><span class="header-section-number">10.2.1</span> The worst version of the problem</h3>
+<p>We shokd
+This is just one of a number of issues in sampling and generalizability. Here are a few worries.</p>
 <ul>
-<li>Ubiquitous convenience sampling</li>
-<li>The WEIRD framework (and its weaknesses)</li>
-<li>Representative sampling and stratification for variance reduction</li>
-<li>Ethical implications of representation in experimental samples</li>
+<li><strong>Convenience samples.</strong> In the middle of the last section, we dropped a little bombshell: almost all research in experimental psychology is performed with convenience samples.</li>
 </ul>
-</div>
-<div id="beyond-participants-sampling-items" class="section level3" number="10.2.2">
-<h3><span class="header-section-number">10.2.2</span> Beyond participants: sampling items</h3>
+<p>From a sampling theory standpoint, essentially <strong>every</strong> estimate in the published literature applies to an unknown population. This is just one of</p>
+<p>“The existing science of human behavior is largely the science of the behavior of sophomores” <span class="citation">(McNemar, 1946, quoted in <a href="#ref-rosenthal1984" role="doc-biblioref">Rosenthal &amp; Rosnow, 1984</a>)</span>.</p>
 <ul>
 <li>What if your effect is generalizable across participants but not across stimuli (Clark 1973).</li>
 </ul>
+</div>
+<div id="reasons-for-hope-and-ways-forward" class="section level3" number="10.2.2">
+<h3><span class="header-section-number">10.2.2</span> Reasons for hope and ways forward</h3>
+<p>What are the moderators?</p>
+<p>Sampling items – across studies</p>
+<p>Framing the probelm as a question of heterogeneity.</p>
 </div>
 </div>
 <div id="sample-size-planning" class="section level2" number="10.3">
@@ -244,60 +268,109 @@ div.csl-indent {
 <p><!--
 <caption>--><span class="marginnote shownote"><span id="tab:sampling-stopping-rules">Table 10.1: </span>Example classes of experimental stopping rules.</span><!--</caption>--></p>
 <table>
-<colgroup>
-<col width="1%" />
-<col width="15%" />
-<col width="46%" />
-<col width="36%" />
-</colgroup>
+
+
 <thead>
-<tr class="header">
-<th align="right"></th>
-<th align="left">Method</th>
-<th align="left">Stopping Rule</th>
-<th align="left">Example</th>
+<tr>
+<th style="text-align:right;">
+</th>
+<th style="text-align:left;">
+Method
+</th>
+<th style="text-align:left;">
+Stopping Rule
+</th>
+<th style="text-align:left;">
+Example
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="right">1</td>
-<td align="left">Power analysis</td>
-<td align="left">Stop at N for known probability of rejecting the null given known effect size</td>
-<td align="left">Randomized trial with strong expectations about effect size</td>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+Power analysis
+</td>
+<td style="text-align:left;">
+Stop at N for known probability of rejecting the null given known effect size
+</td>
+<td style="text-align:left;">
+Randomized trial with strong expectations about effect size
+</td>
 </tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="left">Smallest effect size of interest</td>
-<td align="left">Stop at N for known probability of rejecting the null for effects greater than some minimum</td>
-<td align="left">Measurement of unknown but important effect</td>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+Smallest effect size of interest
+</td>
+<td style="text-align:left;">
+Stop at N for known probability of rejecting the null for effects greater than some minimum
+</td>
+<td style="text-align:left;">
+Measurement of unknown but important effect
+</td>
 </tr>
-<tr class="odd">
-<td align="right">3</td>
-<td align="left">Resource constraint</td>
-<td align="left">Stop collecting data after a certain amount of time or after a certain amount of resources are used</td>
-<td align="left">Time-limited field work</td>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+Resource constraint
+</td>
+<td style="text-align:left;">
+Stop collecting data after a certain amount of time or after a certain amount of resources are used
+</td>
+<td style="text-align:left;">
+Time-limited field work
+</td>
 </tr>
-<tr class="even">
-<td align="right">4</td>
-<td align="left">Precision analysis</td>
-<td align="left">Stop at N that provides some known degree of precision in measure</td>
-<td align="left">Experimental measurement to compare with predictions of cognitive models</td>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+Precision analysis
+</td>
+<td style="text-align:left;">
+Stop at N that provides some known degree of precision in measure
+</td>
+<td style="text-align:left;">
+Experimental measurement to compare with predictions of cognitive models
+</td>
 </tr>
-<tr class="odd">
-<td align="right">5</td>
-<td align="left">Sequential analysis</td>
-<td align="left">Stop when a known inferential criterion is reached</td>
-<td align="left">Intervention trial designed to accept or reject null with maximal efficiency</td>
+<tr>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+Sequential analysis
+</td>
+<td style="text-align:left;">
+Stop when a known inferential criterion is reached
+</td>
+<td style="text-align:left;">
+Intervention trial designed to accept or reject null with maximal efficiency
+</td>
 </tr>
 </tbody>
 </table>
 <p>There are many different stopping rules that can be used to justify a sample size (Table @ref(tab:sampling-stopping rules)). Each of these can provide a valid justification for a particular sample size, but they are most useful in different situations. We’ll first introduce classic power analysis both because it is a common standard and because it illustrates some of the concepts used in others (e.g., <strong>smallest effect size of interest</strong> or SESOI analysis). We’ll then discuss alternative approaches.</p>
 <div id="classic-power-analysis" class="section level3" number="10.3.1">
 <h3><span class="header-section-number">10.3.1</span> Classic power analysis</h3>
-<p>Let’s start by reviewing the null-hypothesis significance testing paradigm that we introduced in Chapter <a href="6-inference.html#inference">6</a>.</p>
-<ul>
-<li>Classic power analysis</li>
-</ul>
+<p>
+<span class="marginnote shownote">
+<!--
+<div class="figure">--><span style="display:block;" id="fig:sampling-neyman-pearson"></span>
+<img src="images/inference/power-alpha.png" alt="Standard decision matrix for NHST." width="\linewidth"  />
+<!--
+<p class="caption marginnote">-->Figure 10.4: Standard decision matrix for NHST.<!--</p>-->
+<!--</div>--></span>
+</p>
+<p>Let’s start by reviewing the null-hypothesis significance testing paradigm that we introduced in Chapter <a href="6-inference.html#inference">6</a>. Recall that we introduced a decision-theoretic view of testing in Section 6.3.3, shown again in Figure <a href="10-sampling.html#fig:sampling-neyman-pearson">10.4</a>. The idea was that we’ve got some null hypothesis <span class="math inline">\(H_0\)</span> and some alternative <span class="math inline">\(H_1\)</span> – something like “no effect” and “yes, there is some effect with known size”– and we want to use data to decide which state we’re in. <span class="math inline">\(\alpha\)</span> is our criterion for rejecting the null. <span class="math inline">\(\beta\)</span></p>
 </div>
 <div id="alternative-approaches-to-sample-size-planning" class="section level3" number="10.3.2">
 <h3><span class="header-section-number">10.3.2</span> Alternative approaches to sample size planning</h3>
@@ -312,11 +385,9 @@ div.csl-indent {
 <p>sample calculations for within/between subjects
 <a href="http://daniellakens.blogspot.com/2016/11/why-within-subject-designs-require-less.html" class="uri">http://daniellakens.blogspot.com/2016/11/why-within-subject-designs-require-less.html</a>
 <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6640316/" class="uri">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6640316/</a></p>
-</div>
-<div id="repeated-measures-designs-more-people-or-more-items" class="section level3" number="10.3.3">
-<h3><span class="header-section-number">10.3.3</span> Repeated measures designs: more people or more items?</h3>
-<p>DeBolt and Oakes
-Westfall</p>
+<!-- ### Repeated measures designs: more people or more items?  -->
+<!-- DeBolt and Oakes -->
+<!-- Westfall -->
 </div>
 </div>
 <div id="issues-in-sampling" class="section level2" number="10.4">
@@ -330,8 +401,8 @@ Westfall</p>
 </ul></li>
 </ul>
 </div>
-<div id="heterogeneity-and-stratification" class="section level3" number="10.4.2">
-<h3><span class="header-section-number">10.4.2</span> Heterogeneity and stratification</h3>
+<div id="heterogeneity" class="section level3" number="10.4.2">
+<h3><span class="header-section-number">10.4.2</span> Heterogeneity</h3>
 <p>Where sampling goes wrong:</p>
 </div>
 <div id="limitations-statements" class="section level3" number="10.4.3">
@@ -375,8 +446,14 @@ Majid, A., &amp; Burenhult, N. (2014). Odors are expressible in language, as lon
 <div id="ref-majid2018" class="csl-entry">
 Majid, A., &amp; Kruspe, N. (2018). Hunter-gatherer olfaction is special. <em>Current Biology</em>, <em>28</em>(3), 409–413.
 </div>
+<div id="ref-neyman1992" class="csl-entry">
+Neyman, J. (1992). On the two different aspects of the representative method: The method of stratified sampling and the method of purposive selection. In <em>Breakthroughs in statistics</em> (pp. 123–150). Springer.
+</div>
 <div id="ref-piantadosi2014" class="csl-entry">
 Piantadosi, S. T., &amp; Gibson, E. (2014). Quantitative standards for absolute linguistic universals. <em>Cognitive Science</em>, <em>38</em>(4), 736–756.
+</div>
+<div id="ref-rosenthal1984" class="csl-entry">
+Rosenthal, R., &amp; Rosnow, R. L. (1984). <em>Essentials of behavioral research: Methods and data analysis</em>. McGraw-Hill.
 </div>
 <div id="ref-tessler2019" class="csl-entry">
 Tessler, M. H., &amp; Goodman, N. D. (2019). The language of generalization. <em>Psychological Review</em>, <em>126</em>(3), 395.
@@ -384,6 +461,17 @@ Tessler, M. H., &amp; Goodman, N. D. (2019). The language of generalization. <em
 <div id="ref-yeager2019" class="csl-entry">
 Yeager, D. S., Hanselman, P., Walton, G. M., Murray, J. S., Crosnoe, R., Muller, C., Tipton, E., Schneider, B., Hulleman, C. S., Hinojosa, C. P.others. (2019). A national experiment reveals where a growth mindset improves achievement. <em>Nature</em>, <em>573</em>(7774), 364–369.
 </div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="173">
+<li id="fn173"><p>Titles changed to protect the original authors. These researchers might very well have said more specific things in the text of their paper.<a href="10-sampling.html#fnref173" class="footnote-back">↩︎</a></p></li>
+<li id="fn174"><p>Generic language is a fascinating linguistic phenomenon. When we say things like “mosquitoes transmit malaria,” we don’t mean that <em>all</em> mosquitos do it, only something like “it’s a valid and diagnostic generalization about mosquitoes in contrast to other relevant insects or other creatures that they are spreaders of malaria” <span class="citation">(<a href="#ref-tessler2019" role="doc-biblioref">Tessler &amp; Goodman, 2019</a>)</span>.<a href="10-sampling.html#fnref174" class="footnote-back">↩︎</a></p></li>
+<li id="fn175"><p>Imagine for a second what a non-generic version of one of these titles might look like: “Reading one particular selection of fonzy for fifteen minutes in the lab improved 36 college students’ smoodling scores on a questionnaire.” It seems pretty clear that we wouldn’t let the authors get away with a fully general version of their claim: “Doing [<em>any</em>] fonzy improves smoodling [<em>for anyone</em>].” That’s just a bad generalization.<a href="10-sampling.html#fnref175" class="footnote-back">↩︎</a></p></li>
+<li id="fn176"><p>There are some tools for dealing with estimation in smaller populations where your sample is a substantial fraction of the population (e.g., a survey of your department where you get responses from half of the students). We won’t discuss those here; our focus is on generalizing to large populations of humans.<a href="10-sampling.html#fnref176" class="footnote-back">↩︎</a></p></li>
+<li id="fn177"><p>Readers can come up with counter-examples of recent studies that focus on representative sampling, but our guess is that they will prove the rule more generally. For example, a recent study tested the generality of growth mindset interventions for US high school students using a national sample <span class="citation">(<a href="#ref-yeager2019" role="doc-biblioref">Yeager et al., 2019</a>)</span>. This large-scale study sampled more than 100 high schools from a sampling frame of all registered high schools in the US, then randomly assigned students within schools that agreed to participate. They then checked that the schools that agreed to participate were representative of the broader population of schools. This study is great stuff, but we hope you agree that if you find yourself in this kind of situation – planning a multi-investigator 5 year consortium study on a national sample – you might want to consult with a statistician and not use an introductory book like this one.<a href="10-sampling.html#fnref177" class="footnote-back">↩︎</a></p></li>
+<li id="fn178"><p>There are several important refinements of stratified sampling in case you <a href="10-sampling.html#fnref178" class="footnote-back">↩︎</a></p></li>
+</ol>
 </div>
 <p style="text-align: center;">
 <a href="9-design.html"><button class="btn btn-default">Previous</button></a>
