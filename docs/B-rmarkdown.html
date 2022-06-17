@@ -11,6 +11,7 @@
 
 
 
+
 <meta name="author" content="Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke, Robert Hawkins, Maya Mathur, and Rondeline Williams" />
 
 
@@ -25,6 +26,7 @@ MathJax.Hub.Config({
 
 <title>B R Markdown Tutorial | Experimentology</title>
 
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
@@ -186,8 +188,8 @@ div.csl-indent {
 <li>Know about generating APA format files with <code>papaja</code> and bibtex</li>
 </ul>
 </div>
-<p>This is a short tutorial on using R Markdown to mix prose and code together for creating reproducible scientific documents.<a href="#fn270" class="footnote-ref" id="fnref270"><sup>270</sup></a></p>
-<p>In short: R Markdown allows you to create documents that are compiled with code, producing your next scientific paper. This tutorial will help you learn the nuts and bolts of how to do this. This appendix – actually this whole book – is written in R Markdown. It’s a very flexible platform for writing nice looking documents.<a href="#fn271" class="footnote-ref" id="fnref271"><sup>271</sup></a></p>
+<p>This is a short tutorial on using R Markdown to mix prose and code together for creating reproducible scientific documents.<label for="tufte-sn-271" class="margin-toggle sidenote-number">271</label><input type="checkbox" id="tufte-sn-271" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">271</span> The current version is adapted from an earlier tutorial that Mike Frank and Chris Hartgerink taught together at SIPS 2017.</span></p>
+<p>In short: R Markdown allows you to create documents that are compiled with code, producing your next scientific paper. This tutorial will help you learn the nuts and bolts of how to do this. This appendix – actually this whole book – is written in R Markdown. It’s a very flexible platform for writing nice looking documents.<label for="tufte-sn-272" class="margin-toggle sidenote-number">272</label><input type="checkbox" id="tufte-sn-272" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">272</span> If you’re interested in the source code for this tutorial, it’s available <a href="https://github.com/langcog/experimentology/blob/master/101-rmarkdown.Rmd">here</a>. We use the amazing <code>bookdown</code> package to format multi-chapter manuscripts, and we use the <code>tufte</code> package (lightly customized) for style.</span></p>
 <div id="getting-started" class="section level2" number="19.1">
 <h2><span class="header-section-number">B.1</span> Getting Started</h2>
 <p>Fire up Rstudio and create a new R Markdown file. Don’t worry about the settings, we’ll get to that later.</p>
@@ -202,7 +204,7 @@ div.csl-indent {
 <p>An R Markdown file contains several parts. Most essential are the header, the body text, and code chunks. When you knit the resulting document, you will get the output – text combined with the results of running the core – in one of a number of output formats.</p>
 <div id="header" class="section level3" number="19.2.1">
 <h3><span class="header-section-number">B.2.1</span> Header</h3>
-<p>Headers in R Markdown files contain some metadata about your document, which you can customize to your liking. Below is a simple example that purely states the title, author name(s), date, and output format.<a href="#fn272" class="footnote-ref" id="fnref272"><sup>272</sup></a></p>
+<p>Headers in R Markdown files contain some metadata about your document, which you can customize to your liking. Below is a simple example that purely states the title, author name(s), date, and output format.<label for="tufte-sn-273" class="margin-toggle sidenote-number">273</label><input type="checkbox" id="tufte-sn-273" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">273</span> The header is written in “YAML”, which means “yet another markup language.” You don’t need to know that, and don’t worry about it. Just make sure you are careful with indenting, as YAML does care about that.</span></p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="B-rmarkdown.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
 <span id="cb4-2"><a href="B-rmarkdown.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Untitled&quot;</span></span>
 <span id="cb4-3"><a href="B-rmarkdown.html#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;NAME&quot;</span></span>
@@ -294,20 +296,6 @@ If you want to create PDFs from R Markdown you need a installation on your compu
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="B-rmarkdown.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(mtcars), <span class="at">digits =</span> <span class="dv">1</span>)</span></code></pre></div>
 <p>Produces tabular output like this:</p>
 <table>
-<colgroup>
-<col width="27%" />
-<col width="7%" />
-<col width="6%" />
-<col width="7%" />
-<col width="6%" />
-<col width="7%" />
-<col width="6%" />
-<col width="7%" />
-<col width="4%" />
-<col width="4%" />
-<col width="7%" />
-<col width="7%" />
-</colgroup>
 <thead>
 <tr class="header">
 <th align="left"></th>
@@ -462,13 +450,13 @@ If you want to create PDFs from R Markdown you need a installation on your compu
 <blockquote>
 <p>There’s a statistically-significant difference in horsepower for 4- and 6-cylinder cars (<span class="math inline">\(t(11.49) = -3.56\)</span>, <span class="math inline">\(p = 0.004\)</span>).</p>
 </blockquote>
-<p>We did this via an inline code block: <code>round(ts$parameter, 2)</code>.<a href="#fn273" class="footnote-ref" id="fnref273"><sup>273</sup></a></p>
+<p>We did this via an inline code block: <code>round(ts$parameter, 2)</code>.<label for="tufte-sn-274" class="margin-toggle sidenote-number">274</label><input type="checkbox" id="tufte-sn-274" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">274</span> APA would require omission of the leading zero. <code>papaja::printp()</code> will let you do that, see below.</span></p>
 <p>Rounding <span class="math inline">\(p\)</span> values can occasionally get you in trouble. It’s very easy to have an output of <span class="math inline">\(p = 0\)</span> when in fact <span class="math inline">\(p\)</span> can never be exactly equal to 0. Nonetheless, this can help you prevent the kinds of rounding errors that would get picked up by software like <code>statcheck</code>.</p>
 </div>
 </div>
 <div id="writing-apa-format-papers" class="section level2" number="19.5">
 <h2><span class="header-section-number">B.5</span> Writing APA-format papers</h2>
-<p>The end-game of reproducible research is to knit your entire paper into a submittable APA-style writeup. Managing APA format is a pain in the best of times. The <code>papaja</code> package allows you to circumvent this task by rendering your manuscript directly from R Markdown.<a href="#fn274" class="footnote-ref" id="fnref274"><sup>274</sup></a></p>
+<p>The end-game of reproducible research is to knit your entire paper into a submittable APA-style writeup. Managing APA format is a pain in the best of times. The <code>papaja</code> package allows you to circumvent this task by rendering your manuscript directly from R Markdown.<label for="tufte-sn-275" class="margin-toggle sidenote-number">275</label><input type="checkbox" id="tufte-sn-275" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">275</span> Thanks to <a href="http://github.com/crsh">Frederick Aust</a> for contributing much of the code in this section! For a bit more on <code>papaja</code>, check out <a href="https://rpubs.com/YaRrr/papaja_guide">this guide</a>.</span></p>
 <!-- ### Technical requirements -->
 <!-- `papaja` is a R-package including a R Markdown template that can be used to produce documents that adhere to the American Psychological Association (APA) manuscript guidelines. -->
 <!-- ^[Some Linux users may need a few additional TeX packages for the LaTeX document class `apa7` to work.] -->
@@ -494,7 +482,7 @@ If you want to create PDFs from R Markdown you need a installation on your compu
 <h2><span class="header-section-number">B.6</span> Bibiographic management</h2>
 <p>Managing a bibliography by hand is a lot of work. Letting software do this for you is much easier. In R Markdown it’s possible to include references using <code>bibtex</code>, by using <code>@ref</code> syntax. You can do this in <code>papaja</code> but it’s also possible to o it in other packages that have some kind of bibliographic handling.</p>
 <p>It’s simple. You put together a set of paper citations in a bibtex file – then when you refer to them in text, the citations pop up formatted correctly, and they are also put in your bibliography. As an example, <code>@nuijten2016</code> results in the in text citation “<span class="citation">Nuijten et al. (<a href="#ref-nuijten2016" role="doc-biblioref">2016</a>)</span>”, or cite them parenthetically with <code>[@nuijten2016]</code> <span class="citation">(<a href="#ref-nuijten2016" role="doc-biblioref">Nuijten et al., 2016</a>)</span>. Take a look at the <code>papaja</code> APA example to see how this works.</p>
-<p>How do you make your bibtex file? You can do it by hand but this is a pain. One option for managing references is <a href="http://bibdesk.sourceforge.net/">bibdesk</a>, which integrates with google scholar.<a href="#fn275" class="footnote-ref" id="fnref275"><sup>275</sup></a>
+<p>How do you make your bibtex file? You can do it by hand but this is a pain. One option for managing references is <a href="http://bibdesk.sourceforge.net/">bibdesk</a>, which integrates with google scholar.<label for="tufte-sn-276" class="margin-toggle sidenote-number">276</label><input type="checkbox" id="tufte-sn-276" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">276</span> Many other options are possible. For example, some of us use Zotero frequently as well.</span>
 <code>citr</code> is an R package that provides an easy-to-use <a href="https://rstudio.github.io/rstudioaddins/">RStudio addin</a> that facilitates inserting citations.
 The addin will automatically look up the Bib(La)TeX-file(s) specified in the YAML front matter.
 The references for the inserted citations are automatically added to the documents reference section. Once <code>citr</code> is installed (<code>install.packages("citr")</code>) and you have restarted your R session, the addin appears in the menus and you can define a <a href="https://rstudio.github.io/rstudioaddins/#keyboard-shorcuts">keyboard shortcut</a> to call the addin.</p>
@@ -503,8 +491,8 @@ The references for the inserted citations are automatically added to the documen
 <h2><span class="header-section-number">B.7</span> Collaboration</h2>
 <p>How do we collaborate using R Markdown? There are lots of different workflows that people use. Here are a few:</p>
 <ul>
-<li>The lead author makes a github repository with the markdown-formatted document in it. Others read the PDF and send text comments or PDF annotations and the lead makes modifications accordingly.<a href="#fn276" class="footnote-ref" id="fnref276"><sup>276</sup></a> This workflow works well when the lead author is relatively experienced and wants to keep control of the manuscript without too much line-by-line rewriting.</li>
-<li>The lead author makes a repository as above, but co-authors collaborate either by pushing changes to master or by creating pull requests. This workflow works well when the authors are all fairly git-savvy, and can be great for quickly writing different parts in parallel because of git’s automatic merging.<a href="#fn277" class="footnote-ref" id="fnref277"><sup>277</sup></a></li>
+<li>The lead author makes a github repository with the markdown-formatted document in it. Others read the PDF and send text comments or PDF annotations and the lead makes modifications accordingly.<label for="tufte-sn-277" class="margin-toggle sidenote-number">277</label><input type="checkbox" id="tufte-sn-277" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">277</span> Dropbox has good PDF annotation tools for writing comments on specific lines of text.</span> This workflow works well when the lead author is relatively experienced and wants to keep control of the manuscript without too much line-by-line rewriting.</li>
+<li>The lead author makes a repository as above, but co-authors collaborate either by pushing changes to master or by creating pull requests. This workflow works well when the authors are all fairly git-savvy, and can be great for quickly writing different parts in parallel because of git’s automatic merging.<label for="tufte-sn-278" class="margin-toggle sidenote-number">278</label><input type="checkbox" id="tufte-sn-278" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">278</span> We wrote this book using the all-github workflow, and it was pretty good, modulo some merge conflicts.</span></li>
 <li>The authors work collaboratively together in an editor like Google Docs, Word, or Overleaf. (We favor cloud platforms rather than emailing back and forth, for all the reasons discussed in Chapter <a href="13-management.html#management">13</a>). Once the substantive text sections have converged, the lead author puts that text back into the markdown document and adds references. This workflow is good for very collaborative introduction writing when co-authors don’t use git or markdown. This workflow is a little clunky, but not too bad. And critically, all the figures and numbers get rendered fresh when you re-knit, so nothing can get accidentally altered during the editing process.</li>
 <li>The lead author renders the results section from markdown, then writes text in the resulting Word document (or uploads it to Google Docs). This workflow is closest to the “old way” that many people are used to, but runs the biggest risk of errors getting introduced and propagated forward, since it’s not possible to rerender the whole document from scratch. If someone makes changes to the results section, it’s critical to propagate these back to the markdown and keep the two in sync.</li>
 </ul>
@@ -522,19 +510,6 @@ The references for the inserted citations are automatically added to the documen
 <div id="ref-nuijten2016" class="csl-entry">
 Nuijten, M. B., Hartgerink, C. H. J., Assen, M. A. L. M. van, Epskamp, S., &amp; Wicherts, J. M. (2016). The prevalence of statistical reporting errors in psychology (1985–2013). <em>Behav. Res. Methods</em>, <em>48</em>(4), 1205–1226.
 </div>
-</div>
-<div class="footnotes">
-<hr />
-<ol start="270">
-<li id="fn270"><p>The current version is adapted from an earlier tutorial that Mike Frank and Chris Hartgerink taught together at SIPS 2017.<a href="B-rmarkdown.html#fnref270" class="footnote-back">↩︎</a></p></li>
-<li id="fn271"><p>If you’re interested in the source code for this tutorial, it’s available <a href="https://github.com/langcog/experimentology/blob/master/101-rmarkdown.Rmd">here</a>. We use the amazing <code>bookdown</code> package to format multi-chapter manuscripts, and we use the <code>tufte</code> package (lightly customized) for style.<a href="B-rmarkdown.html#fnref271" class="footnote-back">↩︎</a></p></li>
-<li id="fn272"><p>The header is written in “YAML”, which means “yet another markup language.” You don’t need to know that, and don’t worry about it. Just make sure you are careful with indenting, as YAML does care about that.<a href="B-rmarkdown.html#fnref272" class="footnote-back">↩︎</a></p></li>
-<li id="fn273"><p>APA would require omission of the leading zero. <code>papaja::printp()</code> will let you do that, see below.<a href="B-rmarkdown.html#fnref273" class="footnote-back">↩︎</a></p></li>
-<li id="fn274"><p>Thanks to <a href="http://github.com/crsh">Frederick Aust</a> for contributing much of the code in this section! For a bit more on <code>papaja</code>, check out <a href="https://rpubs.com/YaRrr/papaja_guide">this guide</a>.<a href="B-rmarkdown.html#fnref274" class="footnote-back">↩︎</a></p></li>
-<li id="fn275"><p>Many other options are possible. For example, some of us use Zotero frequently as well.<a href="B-rmarkdown.html#fnref275" class="footnote-back">↩︎</a></p></li>
-<li id="fn276"><p>Dropbox has good PDF annotation tools for writing comments on specific lines of text.<a href="B-rmarkdown.html#fnref276" class="footnote-back">↩︎</a></p></li>
-<li id="fn277"><p>We wrote this book using the all-github workflow, and it was pretty good, modulo some merge conflicts.<a href="B-rmarkdown.html#fnref277" class="footnote-back">↩︎</a></p></li>
-</ol>
 </div>
 <p style="text-align: center;">
 <a href="A-git.html"><button class="btn btn-default">Previous</button></a>
