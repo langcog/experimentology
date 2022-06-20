@@ -1,12 +1,13 @@
 # Sampling {#sampling}
 
 ::: {.box .learning_goals}
-* Learn how to choose an appropriate sample size
-* Generalize notion of sample size to other axes of generalizability 
-* Reason about limitations of different samples
+* Discuss sampling theory and stratified sampling
+* Reason about limitations of different samples, especially convenience samples
+* Learn how to choose and justify an appropriate sample size for your experiment
+* Consider sampling biases and how they affect your inferences
 :::
 
-As we keep reminding you, experiments are designed to yield measurements of a causal effect. But a causal effect of what, and on whom? These are questions that are often given surprisingly little air time in our papers. Titles in our top journals read "Daxy thinking promotes fribbles," "Doing fonzy improves smoodling," or "Blicket practice produces more foozles than smonkers."^[Titles changed to protect the original authors. These researchers might very well have said more specific things in the text of their paper.] Each of these uses **generic language** to state a claim that is implied to be generally true [@dejesus2019],^[Generic language is a fascinating linguistic phenomenon. When we say things like "mosquitoes transmit malaria," we don't mean that *all* mosquitos do it, only something like "it's a valid and diagnostic generalization about mosquitoes in contrast to other relevant insects or other creatures that they are spreaders of malaria" [@tessler2019].] but for each of these, we could reasonably ask "doing fonzy improves smoodling *for whom*?" Is it everyone? Or a particular set of people? And similarly, we might want to ask "*how much* and *what kind* of fonzy reading?" These are questions about the **generalizability of research**.^[Imagine for a second what a non-generic version of one of these titles might look like: "Reading one particular selection of fonzy for fifteen minutes in the lab improved 36 college students' smoodling scores on a questionnaire." It seems pretty clear that we wouldn't let the authors get away with a fully general version of their claim: "Doing [*any*] fonzy improves smoodling [*for anyone*]." That's just a bad generalization.]
+As we keep reminding you, experiments are designed to yield measurements of a causal effect. But a causal effect of what, and for whom? These are questions that are often given surprisingly little air time in our papers. Titles in our top journals read "Daxy thinking promotes fribbles," "Doing fonzy improves smoodling," or "Blicket practice produces more foozles than smonkers."^[Titles changed to protect the original authors. These researchers might very well have said more specific things in the text of their paper.] Each of these uses **generic language** to state a claim that is implied to be generally true [@dejesus2019],^[Generic language is a fascinating linguistic phenomenon. When we say things like "mosquitoes transmit malaria," we don't mean that *all* mosquitoes do it, only something like "it's a valid and diagnostic generalization about mosquitoes in contrast to other relevant insects or other creatures that they are spreaders of malaria" [@tessler2019].] but for each of these, we could reasonably ask "doing fonzy improves smoodling *for whom*?" Is it everyone? Or a particular set of people? And similarly, we might want to ask "*how much* and *what kind* of fonzy reading?" These are questions about the **generalizability of research**.^[Imagine for a second what a non-generic version of one of these titles might look like: "Reading one particular selection of fonzy for fifteen minutes in the lab improved 36 college students' smoodling scores on a questionnaire." It seems pretty clear that we wouldn't let the authors get away with a fully general version of their claim: "Doing [*any*] fonzy improves smoodling [*for anyone*]." That's just a bad generalization.]
 
 We've already run into generalizability in our treatment of statistical estimation and inference. When we estimated a particular quantity (say, the effect of fonzy), we did so in our own sample. But we then used inferential tools to reason about how this **sample**'s estimate related to the **population** as a whole. How do we link up these statistical tools for generalization to the scientific questions we have about the generalizability of our findings? That's the question of this chapter. 
 
@@ -32,69 +33,248 @@ On the other hand, it's more complicated to jump from a statistical generalizati
 
 ## Sampling theory
 
-But we can only measure that effect in a finite number of participants 
+The basic idea of sampling is simple: you want to estimate some measurement for a large or infinite population by measuring a sample from that population.^[There are some tools for dealing with estimation in smaller populations where your sample is a substantial fraction of the population (e.g., a survey of your department where you get responses from half of the students). We won't discuss those here; our focus is on generalizing to large populations of humans.] Sampling strategies are split into two categories: **probability sampling** -- in which every member of the population has some chance of being selected -- and **non-probability sampling** -- in which there are some members of the population that simply cannot be selected. We'll begin by discussing probability sampling, then we'll talk about a useful technique for sampling called **stratified sampling**. 
 
-The question we consider in this chapter are: for what **population** do we want to estimate the causal effect, and what **sampling** strategy should we pursue in order to make that measurement. 
+### Classical probability sampling
 
-### Generalization and the goals of sampling
+Classical sampling theory is built around the idea of **probability sampling**. There is some **sampling frame** containing every member of the population -- think of a giant phone book with every adult human's name in it. Then we use some kind of **sampling strategy**, maybe at the simplest just a completely random choice, to select $N$ humans from that sample frame, and then we collect our measure with them. This scenario is the one that informs all of our statistical results about how sample means converge to the population mean (as in Chapter \@ref(inference)). 
 
+Unfortunately, we essentially *never* do sampling of this sort in psychological research. Gathering random samples from the large populations that we'd like to generalize to is far too difficult and expensive. Consider the problems involved in doing some experiment with a sample of *all adult humans*, or even *adult English-speaking humans who are located in the United States*. As soon as you start to think about what it would take to collect a probability sample of this kind of population, the complexities get overwhelming. How will you find their names (what if they aren't in the phone book)? How will you contact them (what if they don't have email)? How will they do your experiment (what if they don't have an up-to-date web browser)? What if they don't want to participate? 
 
-The goal of sampling is generalization: but who do we want to generalize to?
+Instead, the vast majority of psychology research has been conducted with **convenience samples**: non-probability samples that feature individuals who can be recruited easily, like college undergraduates or workers on crowdsourcing platforms like Amazon Mechanical Turk (see Chapter \@ref(collection)). These convenience samples present very different generalization challenges.
 
-  - Ubiquitous convenience sampling
-  - The WEIRD framework (and its weaknesses)
-  - Representative sampling and stratification for variance reduction
-  - Ethical implications of representation in experimental samples
+### Representative samples and stratified sampling
 
+For survey research -- think about election polling -- there are many sophisticated techniques for dealing with these issues; although this field is still imperfect, it has advanced considerably in trying to predict complex and dynamic behaviors. One of the basic ideas is the construction of **representative samples**: samples that resemble the population in their representation of one or several sociodemographic characteristics like gender, income, race and ethnicity, age, political orientation. These samples can be constructed by random sampling, but they can also be constructed through non-probability methods like recruiting quotas of individuals from different groups. These methods are critical for much social science research, but they have been used less frequently in experimental psychology research and aren't necessarily a critical part of the beginning experimentalist's toolkit.^[Readers can come up with counter-examples of recent studies that focus on representative sampling, but our guess is that they will prove the rule more generally. For example, a recent study tested the generality of growth mindset interventions for US high school students using a national sample [@yeager2019]. This large-scale study sampled more than 100 high schools from a sampling frame of all registered high schools in the US, then randomly assigned students within schools that agreed to participate. They then checked that the schools that agreed to participate were representative of the broader population of schools. This study is great stuff, but we hope you agree that if you find yourself in this kind of situation -- planning a multi-investigator 5 year consortium study on a national sample -- you might want to consult with a statistician and not use an introductory book like this one.] 
 
-### Beyond participants: sampling items 
-
-  - What if your effect is generalizable across participants but not across stimuli (Clark 1973).
+There is one exception that we think you should know about, however. Imagine you're interested in a particular measure in a population -- say, attitudes towards tea drinking across US adults -- but you think that this measure will vary with one or more characteristics such as whether the adults are frequent, infrequent, or non-coffee drinkers. Even worse, your measure might be more variable within one group: perhaps most coffee drinkers feel OK about tea, but non-drinkers either love it (they are tea drinkers) or hate it (they don't drink any hot beverages). A simple random sample from this population will converge asymptotically to the correct population average for tea-drinking attitudes. But it will do so somewhat more slowly than ideal because any given sample may over- or under-sample non-drinkers just by chance. 
 
 
+```{r sampling-stratified, fig.cap="Illustration of stratified sampling. The left panel shows the sampling frame. The upper frames show the sampling frame stratified by a participant characteristic and a stratified sample. The lower frame shows a simple random sample, which happens to omit one group completely by chance."}
+knitr::include_graphics("images/sampling/stratified-sample2.png")
+```
 
-## Sample planning 
+**Stratified sampling** is a very useful trick that makes your effect estimates more precise in cases like this one [@neyman1992]. If you know the proportion of frequent, infrequent, or non-coffee drinkers in the population, you can sample within those subpopulations to ensure that your sample is representative along this dimension. This situation is pictured in Figure \@ref(fig:sampling-stratified), which shows how a particular sampling frame can be broken up into groups for stratified sampling (top). The result is a sample that matches the population proportions on a particular characteristic. In contrast, a simple random sample (bottom) can over- or under-sample the subgroups by chance.
+
+```{r sampling-stratified-sim, fig.cap="Simulation showing the potential benefits of stratification. Each dot is an estimated mean for a sample of a particular size, sampled randomly or with stratification. Red points show the mean and standard deviation of sample estimates.", fig.margin=TRUE}
+# rare_prop1 = .3
+# rare_prop2 = .1
+
+common_mean = -1
+rare_mean1 = 0
+rare_mean2 = 2.5
+pop = 10000
+population <- tibble(measure = c(rnorm(mean = common_mean , n = pop * .5, sd= .25),
+                                 rnorm(mean = rare_mean1, n = pop * .3, sd= .25),
+                                 rnorm(mean = rare_mean2, n = pop * .2, sd= 2)),
+                     group = c(rep("common", pop * .5), 
+                               rep("rare1", pop * .3),
+                               rep("rare2", pop * .2)))
+
+sims <- expand_grid(n_total = c(10, 25, 50, 100, 250), 
+            sim = 1:100, 
+            sample = c("Stratified","Random")) |>
+  rowwise() |>
+  mutate(data = ifelse(sample == "Random", 
+                       list(sample_n(population, n_total)),
+                       list(bind_rows(sample_n(filter(population, group == "common"), 
+                                               n_total * .5),
+                                      sample_n(filter(population, group == "rare1"),
+                                               n_total * .3),
+                                      sample_n(filter(population, group == "rare2"),
+                                               n_total * .2))))) |>
+  unnest(cols = c(data)) |>
+  group_by(n_total, sim, sample) |>
+  summarise(mean = mean(measure)) 
+
+
+ggplot(sims, aes(x = n_total, y = mean)) + 
+  geom_jitter(width = 3, height = 0, alpha = .2) + 
+  facet_grid(sample~.) + 
+  geom_hline(yintercept = mean(population$measure), lty = 2) + 
+  stat_summary(col = "red", 
+               fun = mean, 
+               fun.min = function (x) mean(x) - sd(x), 
+               fun.max = function (x) mean(x) + sd(x)) + 
+  ylab("Mean") +
+  xlab("Total sample size (N)")
+```
+
+Stratified sampling can lead to substantial gains in the precision of your estimate. These gains are most prominent when either the groups differ a lot in their mean or when they differ a lot in their variance.^[There are several important refinements of stratified sampling in case you think these methods are important for your problem. In particular, **optimal sampling** can help you figure out how to over-sample groups with higher variance.] On the other hand, if the characteristic on which you stratify participants doesn't relate to your measure at all, then stratified sampling converges just as fast as random sampling (though it's a bit more of a pain to implement). Figure \@ref(fig:sampling-stratified-sim) shows a simulation of the scenario in Figure \@ref(fig:sampling-stratified), in which each coffee preference group has a different tea attitude mean, and the smallest group has the biggest variance. Although the numbers here are invented, it's clear that estimation error is much smaller in the stratified group and estimation error declines much more quickly as samples get larger. 
+
+Stratification is everywhere, and it's useful even in convenience samples. For example, researchers who are interested in development typically stratify their samples across ages (e.g., recruiting equal numbers of two- and three-year-olds for a study of preschoolers). It's not that you can't estimate developmental change in a pure random sample; instead, it's that you are guaranteed good coverage of the range of interest when you stratify. If you have a measure that you think varies with a particular characteristic, it's not a bad idea to consider stratification. But don't go overboard -- you can drive yourself to distraction finding the last left-handed non-binary coffee drinker to complete your sample. Focus on stratifying when you know the measure varies with the characteristic of interest. 
+
+
+## Convenience samples, generalizability, and the WEIRD problem
+
+Let's go back to the question of generalizability. How generalizable are the experimental effect estimates that we obtain in our experiments? We'll start by laying out the worst version of the problem of generalizability in experimental psychology. Maybe we don't really know anything about any population of interest. We'll then try to pull back from the brink and discuss some reasons why we might not want to be in despair despite some of the true generalizability issues that plague the psychology literature.
+
+### The worst version of the problem 
+
+Psychology is the study of the human mind. But from a sampling theory standpoint, not a single estimate in the published literature is based on a sample from the human population. So no estimate can be generalized to the object of study. And the situation is worse than that. Here are three of the most severe issues that have been raised regarding the generalizability of psychology research. 
+
+1. **Convenience samples**.  In the middle of the last section, we dropped a little bombshell: almost all research in experimental psychology is performed with convenience samples. This issue has led to the remark that "the existing science of human behavior is largely the science of the behavior of sophomores" [McNemar, 1946, quoted in @rosenthal1984]. As we'll discuss again in Chapter \@ref(collection), the samples we have easy access to don't represent the populations we want to describe. There is a twitter account devoted to finding biology papers that make big claims about curing diseases and appending the qualifier "in mice" to them. We might consider whether we need to do the same to psychology papers. Would "Doing fonzy improves smoodling *in sophomore college undergraduates in the Western US*" make it into a top journal? 
+
+2. **The WEIRD problem**. Not only are the convenience samples that we study not representative of the local or national contexts in which they are recruited, those local and national contexts are also very far from the broader human experience (see \@ref(experiments). @henrich2010 coined the term WEIRD (Western, Educated, Industrialized, Rich, and Democratic) to sum up some of the ways that typical participants in psychology experiments differ from the typical human experience. Participants from WEIRD cultures likely think, speak, reason, and perceive differently than those from other backgrounds. The vast over-representation of WEIRD participants in the literature has led some researchers to suggest that published results simply reflect "WEIRD psychology" -- a small and idiosyncratic part of a much broader universe of human psychology.^[The term WEIRD has been very useful in drawing attention to the lack of representation of the breadth of human experiences in experimental psychology. But one negative consequence of this idea has been the response that what we need to do as a field is to sample more "non-WEIRD" people. The imposition of a binary distinction -- in which every culture outside the WEIRD moniker is the same in some major respect -- is unfair and not useful [@syed2020]. A better starting point is to consider the way that cultural variation might guide our choices about sampling, as we discuss below.]
+
+3. **The item sampling issue**. As we discussed in Chapter \@ref(models), we're typically not just trying to generalize to new people, we're also trying to generalize to new stimuli [@westfall2015]. The problem is that our experiments often use a very small set of stimuli, constructed by experimenters in an ad-hoc way rather than sampled as representatives of a broader population of stimuli that we hope to generalize to with our effect size estimate.^[What's more, our statistical analyses sometimes fail to take stimulus variation into account [@clark1973].] Unless we know about the relationship of our stimuli to the broader population, our estimates may be biased in yet another way. 
+
+In sum, experiments in the psychology literature primarily measure effects from WEIRD convenience samples of people and unsystematic samples of experimental stimuli. Should we throw up our hands and resign ourselves to an ungeneralizable "science" of sample-specific anecdotes?  
+
+### Reasons for hope and ways forward
+
+We think the situation isn't as bleak as the arguments above might have suggested. Underlying each of the arguments above is the notion of **heterogeneity** in effects, the idea that particular experimental effects vary in the population. 
+
+Let's think through a very simple version of this argument. Let's say we have an experiment that measures the smoodling effect, and it turns out that smoodling is completely universal and invariant throughout the human population. Now, if we want to get a precise estimate of smoodling, we can take any sample we want because everyone will show the same pattern. Because smoodling is homogeneous, a biased, non-representative sample will not cause problems. It turns out that there are likely tasks like this -- for example, the Stroop task. The Stroop task is a bad individual difference measure because it produces a consistent and similar interference effect for many different participants [@hedge2018].
+
+```{r sampling-heterogeneity, fig.cap="Illustration of the interaction of heterogeneity and convenience samples. Left hand panels show sample composition. Individual plots show the weighted distribution of responses on some measure."}
+knitr::include_graphics("images/sampling/heterogeneity.png")
+```
+Figure \@ref(fig:sampling-heterogeneity) illustrates this argument more broadly. If you have a random sample (top), then your sample mean and your population mean will converge to the same value, regardless of whether the effect is homogeneous (right) or heterogeneous (right). That's the beauty of sampling theory.^[You do get faster convergence if you stratify the sample, though -- that's precisely what our simulation above showed.] If you have a convenience sample (bottom), one part of the population is over-represented in the sample. The convenience sample doesn't cause problems if the effect is homogeneous in the population -- as with the case of smoodling or Stroop. The trouble comes when you have a heterogeneous effect. Because one group is over-represented, you get systematic bias in the sample mean relative to the population mean.
+
+So the problems listed above -- convenience samples, WEIRD samples, and narrow stimulus samples -- only cause problems if effects are heterogeneous. Are they? The short answer is, *we don't know*. If you're reading carefully, you'll notice a problem. Convenience samples are fine in the presence of homogeneous effects, but we only use convenience samples so we may not know which effects are homogeneous! 
+
+We can't do better than this circularity without a theory of what should be variable and what should be consistent between individuals.^[Many people have theorized about the ways that culture and language in general might moderate psychological processes [e.g., @markus1991]. What we're talking about is related but slightly different -- a theory not of what's different, but of when there should be any difference and when there shouldn't be.]  As naive observers of human behavior, differences between people often loom large. We are keen observers of social characteristics like age, gender, race, class, and education. For this reason, our first theories of psychology often foreground these characteristics as the primary locus for variation between people. Certainly these characteristics are important, but they fail to explain many of the *in*variances of human psychology as well. An alternative line of theorizing starts with the idea that "lower-level" parts of psychology -- like perception -- should be less variable than "higher-level" faculties like social cognition. This kind of theory sounds like a useful place to start, but there are also plenty of counter-examples in the literature [@henrich2010]. 
+
+One positive direction for the future is the rise of multi-lab, multi-nation studies. For example, ManyLabs 2 systematically investigated replicability of a set of phenomena across cultures [@klein2018], finding limited variation in effects between WEIRD sites and other sites. And in a study comparing a set of convenience and probability samples, @coppock2018 found limited demographic heterogeneity in a sample of experimental effects from across the social sciences. Large-scale studies like these offer the possibility of measuring and systematically characterizing demographic and cultural variation -- as well as how variation itself varies between phenomena!
+
+## Sampling bias 
+
+In fields like econometrics or epidemiology that use observational methods to estimate causal effects, reasoning about **sampling biases** is a critical part of estimating generalizable effects. That's because the measure that these fields are interested in -- for example, outcomes to do with health and wealth -- vary widely across individuals. So if you assess some association, say between tea consumption and cardiovascular disease, you need to think very carefully about how your sampling process interacts with this causal structure. Some of these issues are addressed by random assignment, but others are not. 
+
+### The role of random assignment
+
+Imagine you want to measure the association between wealth and happiness through a survey. As we discussed in Chapter \@ref(experiments), there are plenty of confounds that we can come up with: factors that might make you both wealthier and happier. We can also create other sorts of problems if we are careless in our sampling. One prominent problem that we can induce is called **collider bias**. 
+
+```{r sampling-money, fig.margin=TRUE, fig.cap="Four reasons why money and happiness can be correlated in a particular sample: 1. causal relationship, 2. reverse causality, 3. confounding with friendship, and 4. collider bias in your sample."}
+knitr::include_graphics("images/sampling/money3-drawing.png")
+```
+
+Suppose we recruited our sample from the clients of a social services agency. Unfortunately, both of our variables might have a causal relationship with presence in a social service agency (Figure \@ref(fig:sampling-money): people might be interacting with the agency for financial or benefits assistance, or else for psychological services (perhaps due to depression). In this sample, we might see a *negative* association between wealth and happiness -- on average the people coming for financial assistance would have less wealth and more happiness than the people coming for psychological services -- instead of the *positive* but confounded association we talked about in Chapter \@ref(experiments). The take-home here is that if there is a causal relationship between your variables of interest and presence in your sample, you have **collider bias**.
+
+
+```{r sampling-money2, fig.margin=TRUE, fig.cap="Random assignment to an experimental intervention removes collider bias (but issues of generalizability remain)."}
+knitr::include_graphics("images/sampling/money5-drawing.png")
+```
+
+Luckily, again, random assignment saves the day! Even if we start with a sample that has collider bias, we can sever these outgoing causal links by randomly assigning some part of our sample to receive money and estimating the intervention's effect via a subtraction (as in Chapter \@ref(estimation)). 
+
+Just because random assignment works even in samples like this one, it doesn't mean this is a good sample to choose. We will still have two problems. First, our sample will be heterogeneous on both their baseline money and happiness. Our manipulation may do for some participants who have less money and do less for others who have more. And our measure may be at floor for some participants or ceiling for others. Second, just as we have discussed for other convenience samples, our estimate of the experimental effect may not generalize to individuals who don't share characteristics with the convenience sample. So this experiment is probably a bad idea.
+
+### Bias through attrition 
+
+**Attrition** is when people drop out of your study. You should do everything you can to improve participants' experiences (see Chapter \@ref(collection)) but sometimes -- especially when a  manipulation is onerous for participants or an experiment requires longitudinal tracking -- you will still have participants withdraw from the study. Attrition on its own can be a threat to the generalizability of an experimental estimate. Imagine you do an experiment comparing a new after-school math curriculum to a control curriculum in a sample of elementary school children over the course of a year. By the end of the year, most of your participants have dropped out and only the ones with parents who really care about math have stayed in the study. Even if you see an effect of the curriculum intervention, this effect may generalize only to children with very invested parents. 
+
+```{r sampling-attrition, fig.margin=TRUE, fig.cap="Selective attrition can lead to a bias even in the presence of random assignment."}
+knitr::include_graphics("images/sampling/attrition-drawing.png")
+```
+
+But there is a further problem with attrition. Randomization can help you deal with some sampling biases, but there is one important kind of bias that it doesn't help you deal with: **attrition bias** [@nunan2018]. If one of your conditions leads to more attrition than the other, you can have a bias that confounds your conclusions, even in the presence of random assignment! 
+
+Imagine students in the control condition of your math intervention experiment stayed in the sample, but the math intervention itself was so tough that most families dropped out. Now, when you compare math scores at the end of the experiment, you have a confound (Figure \@ref(fig:sampling-attrition)): scores in the math condition could be higher simply because the families that remain in the study have a higher degree of interest in math.^[Using a longitudinal design doesn't help with this issue -- the self-selected high math interest families could coach their kids on the curriculum, leading to greater growth over time even when controlling for baseline math scores.]
+
+You might think this kind of problem isn't something we have to worry about, but it turns out that attrition bias can be pretty common even in short studies, especially when they are conducted online. And this bias can lead to false conclusions. @zhou2016 ran an experiment in which they asked online participants to write about either 4 happy events (low difficulty) or 12 happy events (high difficulty) from the last year and then asked the participants to rate the difficulty of the task. Surprisingly, the high difficulty task was rated as easier than the low difficulty task! Selective attrition was the culprit for this counter-intuitive conclusion: while only 26% of participants dropped out of the low difficulty condition, a full 69% dropped out of the high difficulty task. The 31% that were left were so happy that it was actually quite easy for them to generate 12 happy events, and so they rated the objectively harder task as less difficult. 
+
+Always to track and report attrition information. That lets you -- and others -- understand whether attrition poses threats to generalizability or even to causal inference more generally. 
+
+## Sample size planning 
+
+Now that you have spent some time considering your sample and what population it represents, how many people will your sample contain? As we learned in Chapter \@ref(replication), continuing to collect data until you observe a  $p < .05$ in an inferential test is a good way to get a false positive. To avoid this situation, you need some kind of plan for when you will stop collecting data! Your **stopping rule** can then be a key part of your preregistration, so as to be transparent that your choice of stopping rule didn't invalidate your statistical inference (see Chapter \@ref(prereg)). 
+
+The simplest stopping rule is "I'll collect data until I get to a target $N$" -- all that's needed in this case is a value for $N$. Classically, this value was computed using **power analysis**, which can provide a value for which you have a good chance of rejecting the null hypothesis given a particular expected effect size. But standard power analysis relies on knowing what size effect you are expecting, which is often an unrealistic assumption. If we knew what size effect we expected, wouldn't we already have the information that we are conducting the experiment to get?
+
+```{r sampling-stopping-rules}
+tribble(~` `, ~Method, ~`Stopping Rule`, ~Example,
+        1, "Power analysis", "Stop at N for known probability of rejecting the null given known effect size", "Randomized trial with strong expectations about effect size", 
+        2, "Resource constraint", "Stop collecting data after a certain amount of time or after a certain amount of resources are used", "Time-limited field work",
+        3, "Smallest effect size of interest", "Stop at N for known probability of rejecting the null for effects greater than some minimum", "Measurement of unknown but important effect",
+        4, "Precision analysis", "Stop at N that provides some known degree of precision in measure", "Experimental measurement to compare with predictions of cognitive models",
+        5, "Sequential analysis", "Stop when a known inferential criterion is reached", "Intervention trial designed to accept or reject null with maximal efficiency") |>
+        knitr::kable(caption = "Example classes of experimental stopping rules.")
+```
+There are many different stopping rules that can be used to justify a sample size (Table \@ref(tab:sampling-stopping rules)). Each of these can provide a valid justification for a particular sample size, but they are most useful in different situations. We'll first introduce classic power analysis both because it is a common standard and because it illustrates some of the concepts used in others (e.g., **smallest effect size of interest** or SESOI analysis). We'll then discuss alternative approaches.
 
 ### Classic power analysis
 
-Sample size planning
+```{r sampling-neyman-pearson, fig.cap="Standard decision matrix for NHST. The lower-left hand quadrant shows power to reject the null.", fig.margin=TRUE}
+knitr::include_graphics("images/sampling/power-alpha.png")
+```
 
-  - Classic power analysis 
-  - Smallest effect size of interest (SESOI analysis)
-  - Precision-based sample size planning (Bland 2009; Lash and Kaufman 2015) (malcolmbarrett.shinyapps.io/precisely)
-  - Simulation based 
-  - Sequential analysis (Schönbrodt et al. 2017)
+Let's start by reviewing the null-hypothesis significance testing paradigm that we introduced in Chapter \@ref(inference). Recall that we introduced a decision-theoretic view of testing in Section 6.3.3, shown again in Figure \@ref(fig:sampling-neyman-pearson). The idea was that we've got some null hypothesis $H_0$ and some alternative $H_1$ -- something like "no effect" and "yes, there is some effect with known size"-- and we want to use data to decide which state we're in. $\alpha$ is our criterion for rejecting the null, conventionally set to $\alpha=.05$. 
 
-### Other approaches to sample size planning
+But what if $H_0$ is actually false and the alternative $H_1$ is true? Not all experiments are equally well set up to reject the null in those cases. Imagine doing an experiment with $N=3$. In that case, we'd almost always fail to reject the null, even if it were false. Our sample would almost certainly be too small to rule out sampling variation as the source of our observed data. 
 
-sample calculations for within/between subjects
-http://daniellakens.blogspot.com/2016/11/why-within-subject-designs-require-less.html
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6640316/
+Let's try to quantify our willingness to *miss* the effect -- the false negative rate. We'll denote this probability with $\beta$. If $\beta$ is the probability of missing an effect (failing to reject the null when it's really false), then $1-\beta$ is the probability that we correctly reject the null when it is false. That's what we call the **statistical power** of the experiment. 
 
-### Repeated measures designs: more people or more items? 
-
-DeBolt and Oakes
-Westfall
-
-## Issues in sampling 
-
-### Sampling biases
-
-- Attrition/survivorship bias (connection to directed acyclic graphs [DAGs] as described earlier)
-  - Selection bias (connection to DAGs again)
+We can only compute power if we know the effect size for the alternative hypothesis. If the alternative hypothesis is a small effect, then the probability of rejecting the null will typically be low (unless the sample size is very large). In contrast, if the alternative hypothesis is a large effect, then the probability of rejecting the null will be higher. 
 
 
-### Heterogeneity and stratification
+```{r sampling-power, fig.cap="Illustration of how larger sample sizes lead to greater power."}
+knitr::include_graphics("images/sampling/power.png")
+```
 
-Where sampling goes wrong:
+The same dynamic holds with sample size: the same effect size will be easier to detect with a larger sample size than with a small one. Figure \@ref(fig:sampling-power) shows how this relationship works. A large sample size creates a tighter null distribution (right side) by reducing sampling error. A tighter null distribution means you can reject the null more of the time based on the variation in a true effect. If your sample size is too small to detect your effect much of the time, we call this being **under-powered**.^[You can also refer to a design as **over-powered**, though we object slightly to this characterization, since the value of large datasets is typically not just to reject the null but also to measure an effect with high precision and to investigate how it is moderated by other characteristics of the sample.]
+ 
+Classical power analysis involves computing the sample size $N$ that's necessary in order to achieve some level of power, given $\alpha$ and a known effect size.^[Our focus here is on giving you a conceptual introduction to power analysis, but we refer you to @cohen1992 for a more detailed introduction.] The mathematics of the relationship between $\alpha$, $\beta$, $N$, and effect size have been worked out for a variety of different statistical tests [@cohen2013] and codified in software like G*Power [@faul2007] and the `pwr` package for R [@champely2017]. For other cases (including mixed effects models), you may have to conduct a simulation in which you generate many simulated experimental runs under known assumptions and compute how many of these lead to a significant effect; luckily, R packages exist for this purpose as well, including the `simr` package [@green2016]. 
 
+### Power analysis in practice
 
-### Limitations statements
+Let's do a power analysis for our hypothetical money and happiness intervention. Imagine the experiment is a simple two group design in which participants from a convenience population are randomly assigned either to receive $1000 and some advice on saving money (experimental condition) vs. just receiving the advice and no money (control condition). We then follow up a month later and collect self-reported happiness ratings. How many people should we have in our study in order to be able to reject the null? 
 
+The answer to this question depends on our desired values of $\alpha$ and $\beta$. For $\alpha$ we will just set a conventional significance threshold of $\alpha = .05$. But what should be our desired level of power? It's been conventional in the social sciences to aim for power above 80% (e.g., $\beta < .20$); this gives you 4 out of 5 chances to observe a significant effect. But just like $alpha = .05$, this is a conventional value that is perhaps a little bit too loose for modern standards -- a strong test of a particular effect should probably have 90% or 95% power.^[Really, researchers interested in using power analysis in their work should give some thought to what sort of chance of a false negative they are willing to accept. In exploratory research perhaps a higher chance of missing an effect is reasonable; in contrast, in confirmatory research it might make sense to aim for a higher level of power.]
 
+But those choices are relatively easy, compared to the fundamental issue: our power analysis requires some expectation about the effect size for our intervention! This is what we refer to as the **first fundamental problem of power analysis**: if you knew the effect size, you might not need to do the experiment! So how are you supposed to get an estimate of effect size? Here are a few possibilities:
+
+* **Meta-analysis**. If there is a good meta-analysis of the effect that you are trying to measure (or something closely related), then you are in luck. A strong meta-analysis will have not only a precise effect size estimate but also some diagnostics detecting and correcting potential publication bias in the literature (see Chapter \@ref(meta)). In this best-case scenario, you can use the meta-analytic effect size estimate as the basis for a power analysis.
+
+* **Specific prior study**. A more complicated scenario is when you have only one or a handful of prior studies that you would like to use as a guide. The trouble is that any individual effect in the literature is likely subject to publication bias (see Chapter \@ref(replication)). Thus, using this estimate likely means your study will be under-powered. See below for more discussion of replication sample size planning. 
+
+* **Pilot testing**. Many people (including us) at some point learned that one way to do a power analysis is to conduct a pilot study, estimate the effect size from the pilot, and then use this effect estimate for power analysis in the main study. _Do not do this_. The trouble is that your pilot study will have a small sample size, leading to a very imprecise estimate of effect size [@browne1995]. If you over-estimate the effect size, your main study will be very under-powered. If you under-estimate, the opposite will be true. Using a pilot for power analysis is a recipe for problems. 
+
+* **General expectations about an effect of interest**. Somewhat paradoxically, in our view, the best way you can use power analysis is typically to start with a general idea about the size of effect you expect and would like to be able to detect. It is totally reasonable to say, "I don't know how big my effect is going to be, but let's see what my power would be if it were *medium-sized* (say $d=.5$), since that's the kind of thing we're hoping for with our money intervention." This kind of power analysis can help you set your expectations about what range of effects you might be able to detect with a given sample size. 
+
+That's the first fundamental problem of classic power analysis: not knowing the effect of interest. 
+
+The **second fundamental problem of power analysis** is that the real effect size for an experiment may be zero. And in that case, no sample will let you correctly reject the null. Going back to our discussion in Chapter \@ref(inference), the null hypothesis significance testing framework is not set up to let you *accept* the null hypothesis.^[There are some frameworks for using $p$ values to accept the null, including **equivalence testing** [@lakens2018], but these are relatively less commonly used at present.] If you are interested in a bi-directional approach to hypothesis testing in which you can accept *and* reject the null, you may need to consider an alternative approach.
+
+### Alternative approaches to sample size planning
+
+Let's now consider some alternatives to classic power analysis that can still yield reasonable sample size justifications. 
+
+1. **Resource constraint**. In some cases, there are fundamental resource constraints that limit data collection. For example, if you are doing fieldwork, sometimes the right stopping criterion for data collection is "when the field visit is over" since every additional datapoint is valuable and useful. When pre-specified, these kinds of sample size justifications can be quite reasonable, although they do not preclude being under-powered to test a particular hypothesis.
+
+2. **Smallest effect size of interest (SESOI)**. SESOI analysis is a variant on power analysis that includes some resource constraint planning. Instead of trying to intuit how big your target effect is, you instead choose a level below which you might not be interested in detecting the effect. This choice can then be informed by how expensive or time-consuming it might be to test for a very small effect with high power. In practice, SESOI analysis is as simple as conducting a classic power analysis with a particular small effect. 
+  
+3. **Precision-based sample planning**. As we discussed in Chapter \@ref(inference), the goal of research is not always to reject the null hypothesis! Sometimes -- we'd argue that it should be most of the time -- the goal is to estimate a particular causal effect of interest with a high level of precision, since these estimates are a prerequisite for building theories. If what you want is an estimate with known precision (say, a confidence interval of a particular width), you can compute the sample size necessary to achieve that precision [@bland2009;@rothman2018].^[In our experience, this kind of planning is most useful when you are attempting to gather measurements with sufficient precision to compare between computational models that can make quantitative predictions that differ by some known amount -- then it's clear how tight your confidence intervals need to be.]
+
+4. **Sequential analysis**. Finally, your stopping rule need not be a hard cutoff at a specific $N$. Instead, it's possible to plan a **sequential analysis** using either frequentist or Bayesian methods, in which you plan to stop collecting data once a particular result is reached. For the frequentist version, the key thing that keeps sequential analysis from being $p$-hacking is that you pre-specify particular values of $N$ at which you will conduct tests and then correct your $p$-values for having tested multiple times [@lakens2014]. For Bayesian sequential analysis, you can actually compute a running Bayes factor as you collect data and stop when you reach a pre-specified level of evidence [@schonbrodt2017]. This latter alternative has the advantage of allowing you to collect evidence *for* the null as well as against it.
+
+```{r sampling-justification}
+tribble(~`Element`,~`Text`,
+        "Background", "We did not have strong prior information about the likely effect size, so we could not compute a classical power analysis.", 
+        "Smallest effect of interest", "Because of our interest in meaningful factors affecting word learning, we were interested in effect sizes as small as d=.5.",
+        "Resource limitation", "We were also limited by our ability to collect data only in our on-campus preschool.",
+        "Power computation", "We calculated that based on our maximal possible sample size of N=120 (60 per group), we would achieve at least 80% power for effects as small as d=.52, which we considered acceptable.") |>
+  knitr::kable(caption = "Example sample size justification, referencing elements of SESOI, resource-limitation, and power-based reasoning.")
+```
+
+In sum, there are many different ways of justifying your sample size or your stopping rule. The most important things are 1) to pre-specify your strategy and 2) to give a clear justification for your choice. Table \@ref(tab:sampling-justification) gives an example sample size justification that draws on several different concepts discussed here. A reviewer could easily follow the logic of this discussion and form their own conclusion about whether this study had an adequate sample size and whether it should have been conducted given the researchers' constraints. 
+
+### Sample sizes for replication studies
+
+Setting the sample size for a replication study has been a persistent issue in the meta-science literature. Naively speaking, it seems like you should be able to compute the effect size for the original study and then simply use that as the basis for a classical power analysis. This approach has several flaws, however. First, the effect size from the original published paper is likely an overestimate of the true effect size due to publication bias [@nosek2021].^[Imagine the counterfactual world in which the same study had yielded a smaller and perhaps non-significant effect size. Would it still have been published in the same form, and would you still want to replicate? If not, then consider the fact that the authors "got lucky" -- even if the effect is truly present, perhaps this particular experiment happened to observe a larger effect than the true value just by chance.] Second, the power analysis will only yield the sample size at which the replication will have a particular chance of rejecting the null at some criterion. But it's quite possible that the original experiment could be $p<.05$, the replication could be $p>.05$, and yet they could not differ from one another. So a statistically significant replication of the original effect size is not necessarily what you want to aim for. 
+
+Faced with these issues, a replication sample size can be planned in several other ways. First, replicators can use standard strategies above such as SESOI or resource-based planning to rule out large effects with high probability or to spend a known amount of time or money. The issue is that these strategies can produce an unsatisfying result if the SESOI is high or limited resources are allocated; a conclusive answer can require a very substantial commitment of resources. 
+
+Second, @simonsohn2015 recommends the "small telescopes" approach. The idea is not to test whether there *is* an effect, but rather where there is an effect *large enough that the original study could have detected it*. The analogy is to astronomy. If a birdwatcher points their binoculars at the sky and claims to have discovered a new planet, we want to ask not just whether there is a planet at that location, but also whether there is any possibility that they could have seen it using that device -- if not, perhaps they are right but for the wrong reasons! Simonsohn shows that, if a replicator collects 2.5 times as large a sample as the original, they have 80% power to detect any effect that was reasonably detectable by the original. This simple rule of thumb provides one good starting place for conservative replication studies. 
+
+Finally, replicators can make use of sequential Bayesian analysis, in which they attempt to gather substantial evidence relative to the support for $H_1$ *or* $H_0$. This is an appealing option because it allows for efficient collection of data that reflects whether an effect is likely to be present in a particular sample, especially in the face of the sometimes prohibitively large samples necessary for SESOI or "small telescopes" analyses.  
 
 ## Summary: Sampling
 
+Your goal as an experimenter is to estimate a causal effect. But the effect for whom? This chapter has tried to help you think about how you generalize from your experimental sample to some target population. It's very rare for you to be conducting an experiment based on a probability sample in which every member of the population. In the case that you are using a convenience sample, you will need to consider how bias introduced by the sample could relate to the effect estimate you observed. Do you think this effect is likely to be very heterogeneous in the population? Are there theories that suggest that it might be larger or smaller for the convenience sample you recruited? 
+
+Questions about generalizability and sampling depend on the precise construct you are studying, and there is no mechanistic procedure for answering them. Instead, you simply have to ask yourself: how does my sampling procedure qualify the inference I want to make based on my data? Being transparent about your reasoning can be very helpful -- both to you and to readers of your work who want to contextualize the generality of your findings. 
 
 
 :::{.box .exercises}
@@ -105,4 +285,13 @@ Where sampling goes wrong:
 3. Form an argument about this controversial position: Nothing you learn from US college undergraduates is likely to generalize to the US population as a whole, so we should dramatically decrease the use of this convenience population. 
 
 4. Form an argument about this controversial position: We can’t ever make generalizations about the human mind because so much of the historical human population is simply inaccessible to us (we can’t do experiments on ancient Greek psychology). Psychological samples are also sampling a particular moment in time.
+:::
+
+
+::: {.reading}
+📚 Suggested readings:
+
+* Henrich, J., Heine, S. J., & Norenzayan, A. (2010). The WEIRDest people in the world? *Behavioral and Brain Sciences,* 33(2-3), 61-83.
+
+* Cohen, J. (1992) A power primer. *Psychological Bulletin,* 112, 155-9. 
 :::
