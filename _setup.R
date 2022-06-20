@@ -10,7 +10,8 @@ library(BayesFactor) # inference
 library(papaja)
 library(lme4)
 library(boot) # for inv.logit
-
+library(Hmisc)
+library(kableExtra)
 
 opts_chunk$set(
   message = FALSE,

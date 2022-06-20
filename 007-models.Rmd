@@ -1,8 +1,6 @@
 # Models {#models} 
 
-::: {.learning-goals}
-🍎 Learning goals: 
-
+::: {.box .learning_goals}
 * Re-conceptualize statistical “tests” as models of data
 * Build intuitions about how specific “tests” (e.g., t-tests) relate to more general frameworks (e.g., regression, mixed effects models)
 * Identify which models are best suited for which research questions 
@@ -24,8 +22,8 @@ This example sounds a lot like the kinds of simple inferential tests we talked a
 We'll begin by discussing the ubiquitous framework for building statistical models, **linear regression**, building up connections between regression and the $t$-test. This section will discuss how to add covariates to regression models, and when linear regression does and doesn't work. In the next section, we'll discuss the **generalized linear model**, an innovation that allows us to make models of a broader range of data types. We'll then briefly introduce **mixed models**, which allow us to model clustering in our datasets (such as clusters of observations from a single individual or single stimulus item). We'll end with some opinionated practical advice on model building. 
 
 
-::: {.case-study}
-🔬 Case study: Stimulus-specific effects
+::: {.box .case_study}
+(TITLE) Stimulus-specific effects
 
 Imagine you're a psycholinguist who has the hypothesis that nouns are processed faster than verbs. You run an experiment where you pick out ten verbs and ten nouns, then measure a large sample of participants' reading time for each of these. You find strong evidence for the predicted effect and publish a paper on your claim. The only problem is that, at the same time, someone else has done exactly the same study -- with different nouns and verbs -- and published a paper making the opposite claim. The problem in this example is that each effect is driven by the specific experimental items that were chosen [@clark1973]. Out of hundreds of thousands of possible words, why these in particular? 
 
@@ -58,7 +56,7 @@ tea_data <- make_tea_data(n = 24)
 
 <!-- MBM to MCF: Estimation chapter actually foreshadows *Welch's* t-test because it describes unequal vars. Inference chapter generically refers to a t-test without making distinction. Let's discuss. -->
 
-Let's start with one of these special cases, namely estimating a treatment effect, $\beta$, in a two-group design. In Chapter \@ref(estimation), we solved this exact challenge for the tea-tasting experiment. We posited a model in which the milk-first ratings were normally distributed with mean $\theta_{milkfirst} = \theta_{teafirst} + \beta_{teafirst}$ and with standard deviation $\sigma_{milkfirst}$.^[Here's a quick reminder that "model" here is a way of saying "set of assumptions about the data generating procedure." So saying that some equation is a "model" is the same as saying, we think this is where the data came from. We can "turn the crank" -- generate data through the process that's specified in those equations, e.g., pulling numbers from a normal distribution with mean $\theta_{milkfirst}$ and standard deviation $\sigma_{milkfirst}$. In essence, we're committing to the idea that this process will give us data that are substantively similar to the ones we have already.]
+Let's start with one of these special cases, namely estimating a treatment effect, $\beta$, in a two-group design. In Chapter \@ref(estimation), we solved this exact challenge for the tea-tasting experiment. We posited a model in which the milk-first ratings were normally distributed with mean $\theta_{\text{milk-first}} = \theta_{\text{tea-first}} + \beta$ and with standard deviation $\sigma_{\text{milk-first}}$.^[Here's a quick reminder that "model" here is a way of saying "set of assumptions about the data generating procedure." So saying that some equation is a "model" is the same as saying, we think this is where the data came from. We can "turn the crank" -- generate data through the process that's specified in those equations, e.g., pulling numbers from a normal distribution with mean $\theta_{\text{milk-first}}$ and standard deviation $\sigma_{\text{milk-first}}$. In essence, we're committing to the idea that this process will give us data that are substantively similar to the ones we have already.]
 
 Let's now write that model as a regression model, that is, as a model relating each participant's tea rating, $Y_i$, given that participant's treatment assignment, $X_i$. $X_i=0$ represents the control (milk-first) group and $X_i=1$ represents the treatment (tea-first) group. Here, $Y_i$ is the dependent variable, and $X_i$ is the independent variable. $i$s are an index variable for each of the participants. To make this concrete, you can see some sample tea-tasting data (N=24 for simplicity) below, with the index $i$, the condition and its predictor $X_i$, and the rating $Y$.
 
@@ -68,8 +66,8 @@ tea_data |>
          X = ifelse(condition == "tea first", 1, 0)) |>
   rename(`rating (Y)` = rating) |>
   select(i, condition, X, `rating (Y)`) |>
-  DT::datatable(rownames=FALSE, 
-                caption = "Example tea tasting data in a regression format.")
+  kable(caption = "Example tea tasting data in a regression format.") |>
+  kableExtra::kable_styling(full_width = FALSE, position = "left")
 ```
 
 Here's the model:
@@ -78,12 +76,12 @@ Here's the model:
 <!-- MM: Not sure if align environment is supported in RMD. Might need to use this: https://stackoverflow.com/questions/47912278/align-environment-in-r-markdown-which-works-for-both-docx-and-pdf-output --> 
 \begin{align}
 \label{eq:ols_ttest}
-Y_i &= \theta_{milkfirst} + \beta_{teafirst} X_i + \epsilon_i \\
+Y_i &= \theta_{\text{milk-first}} + \beta_{\text{tea-first}} X_i + \epsilon_i \\
 \end{align}
 
-A model like this is called a **linear regression of Y on X**. $\theta_{milkfirst} + \beta X_i$ is called the **linear predictor**, and it describes the expected value of an individual's tea rating, $Y_i$, given that participant's treatment group $X_i$ (the single independent variable in this model). That is, for a participant in the control group ($X_i=0$), the linear predictor is just equal to $\theta_{milkfirst}$, which is indeed the mean for the control group that we specified above. On the other hand, for a participant in the treatment group, the linear predictor is equal to $\theta_{milkfirst} + \beta$, which is the mean for the treatment group that we specified. In regression jargon, $\beta$ is a **regression coefficient**, representing the association of the independent variable $X_i$ with the outcome $Y_i$.
+A model like this is called a **linear regression of Y on X**. $\theta_{\text{milk-first}} + \beta X_i$ is called the **linear predictor**, and it describes the expected value of an individual's tea rating, $Y_i$, given that participant's treatment group $X_i$ (the single independent variable in this model). That is, for a participant in the control group ($X_i=0$), the linear predictor is just equal to $\theta_{\text{milk-first}}$, which is indeed the mean for the control group that we specified above. On the other hand, for a participant in the treatment group, the linear predictor is equal to $\theta_{\text{milk-first}} + \beta$, which is the mean for the treatment group that we specified. In regression jargon, $\beta$ is a **regression coefficient**, representing the association of the independent variable $X_i$ with the outcome $Y_i$.
 
-The term $\epsilon_i$ is the **error term**, referring to random variation of participants' ratings around the group mean.^[Formally, we'd write $\epsilon_i \sim N(0, \sigma^2)$. The tilde means "is distributed as", and what follows is a normal distribution with mean 0 and variance $\sigma^2$.] Note that this is a very specific kind of "error"; it not to "error" due to bias, for example. Instead, you can think of the error terms as capturing the "error" that would be associated with predicting any given participant's rating based on just the linear predictor. If you predicted a control group participant's rating as $\theta_{milkfirst}$, that would be a good guess -- but you still expect the participant's rating to deviate somewhat from $\theta_{milkfirst}$ due to "error". In our regression model, the linear predictor and error terms together say that participants' ratings scatter randomly (in fact, normally) around their group means with standard deviation $\sigma$. And that is exactly the model we posited in Chapter \@ref(estimation).
+The term $\epsilon_i$ is the **error term**, referring to random variation of participants' ratings around the group mean.^[Formally, we'd write $\epsilon_i \sim N(0, \sigma^2)$. The tilde means "is distributed as", and what follows is a normal distribution with mean 0 and variance $\sigma^2$.] Note that this is a very specific kind of "error"; it not to "error" due to bias, for example. Instead, you can think of the error terms as capturing the "error" that would be associated with predicting any given participant's rating based on just the linear predictor. If you predicted a control group participant's rating as $\theta_{\text{milk-first}}$, that would be a good guess -- but you still expect the participant's rating to deviate somewhat from $\theta_{\text{milk-first}}$ due to "error". In our regression model, the linear predictor and error terms together say that participants' ratings scatter randomly (in fact, normally) around their group means with standard deviation $\sigma$. And that is exactly the model we posited in Chapter \@ref(estimation).
 <!-- [NOT TRUE BECAUSE PREVIOUS MODEL USED UNEQUAL VARIANCES.]  -->
 
 
@@ -142,9 +140,9 @@ p2 <- ggplot(tea_data,
 cowplot::plot_grid(p1,p2)
 ```
 
-Now we have the model. How do we estimate the regression coefficients $\theta_{milkfirst}$ and $\beta$? The usual method is called **ordinary least squares (OLS)**. Here's the basic idea. For any given regression coefficient estimates $\widehat{\theta}_{milkfirst}$ and $\widehat{\beta}$, we would obtain different **predicted values**, $\widehat{Y}_i = \theta_{milkfirst} + \beta X_i$ for each participant. Some regression coefficient estimates will yield better predictions than others. OLS estimation is designed to find the values of the regression coefficients that optimize these predictions, meaning that the predictions are as close as possible to participants' true outcomes, $Y_i$.^[Specifically, OLS minimizes squared error loss, in the sense that it will choose the regression coefficient estimates whose predictions minimize $\sum_{i=1}^n \left( Y_i - \widehat{Y}_i\right)^2$, where $n$ is the sample size. A wonderful thing about OLS is that those optimal regression coefficients (generically termed $\widehat{\mathbf{\beta}}$) turn out to have a very simple closed form: $\widehat{\mathbf{\beta}} = \left( \mathbf{X}'\mathbf{X} \right)^{-1} \mathbf{X}'\mathbf{y}$. We are using more general notation here because there could be multiple independent variables. Therefore, $\widehat{\mathbf{\beta}}$ is a vector, $\mathbf{X}$ is a matrix of independent variables for each subject, and $\mathbf{y}$ is a vector of participants' outcomes. As more good news, the standard error for $\widehat{\mathbf{\beta}}$ has a similarly simple closed form.]
+Now we have the model. How do we estimate the regression coefficients $\theta_{\text{milk-first}}$ and $\beta$? The usual method is called **ordinary least squares (OLS)**. Here's the basic idea. For any given regression coefficient estimates $\widehat{\theta}_{\text{milk-first}}$ and $\widehat{\beta}$, we would obtain different **predicted values**, $\widehat{Y}_i = \theta_{\text{milk-first}} + \beta X_i$ for each participant. Some regression coefficient estimates will yield better predictions than others. OLS estimation is designed to find the values of the regression coefficients that optimize these predictions, meaning that the predictions are as close as possible to participants' true outcomes, $Y_i$.^[Specifically, OLS minimizes squared error loss, in the sense that it will choose the regression coefficient estimates whose predictions minimize $\sum_{i=1}^n \left( Y_i - \widehat{Y}_i\right)^2$, where $n$ is the sample size. A wonderful thing about OLS is that those optimal regression coefficients (generically termed $\widehat{\mathbf{\beta}}$) turn out to have a very simple closed form: $\widehat{\mathbf{\beta}} = \left( \mathbf{X}'\mathbf{X} \right)^{-1} \mathbf{X}'\mathbf{y}$. We are using more general notation here because there could be multiple independent variables. Therefore, $\widehat{\mathbf{\beta}}$ is a vector, $\mathbf{X}$ is a matrix of independent variables for each subject, and $\mathbf{y}$ is a vector of participants' outcomes. As more good news, the standard error for $\widehat{\mathbf{\beta}}$ has a similarly simple closed form.]
 
-Figure \@ref(fig:models-ols-plot) gives a graphical illustration of the tea tasting data for each condition (the dots) along with the model predictions for each condition $\theta_{milkfirst}$ and $\theta_{milkfirst} + \beta$ (blue lines). The distance of each point to the predictions (the thing that OLS wants to minimize) is shown by the dotted lines. Another name for these errors is **residuals**: they are the "residual variation" that is not predicted by the model.
+Figure \@ref(fig:models-ols-plot) gives a graphical illustration of the tea tasting data for each condition (the dots) along with the model predictions for each condition $\theta_{\text{milk-first}}$ and $\theta_{\text{milk-first}} + \beta$ (blue lines). The distance of each point to the predictions (the thing that OLS wants to minimize) is shown by the dotted lines. Another name for these errors is **residuals**: they are the "residual variation" that is not predicted by the model.
 
 The left-hand plot shows the best coefficient values -- the ones that move the model as close as possible to each point, minimizing the total squared length of the dashed lines. The right-hand plot shows a substantially worse solution. The amazing thing about OLS is that it is a simple way to find the best solution for a wide range of useful models.
 
@@ -158,14 +156,14 @@ Let's add this new independent variable and a corresponding regression coefficie
 
 \begin{align}
 \label{eq:ols_one_covariate}
-Y_i &= \theta_{milkfirst} + \beta_{teafirst} X_{i1} + \theta_{age} X_{i2}  + \epsilon_i \\
+Y_i &= \theta_{\text{milk-first}} + \beta_{\text{tea-first}} X_{i1} + \theta_{\text{age}} X_{i2}  + \epsilon_i \\
 \end{align}
 <!-- \epsilon_i &\sim N(0, \sigma^2) -->
 <!-- WHY ARE WE USING THETA INSTEAD OF BETA FOR COEFS. LET'S FIX THIS. -->
 
 Now that we have multiple independent variables, we've labeled them $X_{group}$ (treatment group) and $X_{age}$ for clarity.
 
-To illustrate how to interpret the regression coefficients in this model, let's use the linear predictor to compare the model's predicted tea ratings for two hypothetical participants who are both in the treatment group: 20-year-old Alice and 21-year old Bob. Alice's linear predictor tells us that her expected rating is $\theta_{milkfirst} + \beta_{teafirst} + \theta_{age} \cdot 20$. In contrast, Bob's linear predictor is $\theta_{milkfirst} + \beta_{teafirst} + \theta_{age} \cdot 21$. We could therefore calculate the expected difference in ratings for 21-year-olds versus 20-year olds by subtracting Alice's linear predictor from Bob's, yielding just $\theta_{age}$. How simple! 
+To illustrate how to interpret the regression coefficients in this model, let's use the linear predictor to compare the model's predicted tea ratings for two hypothetical participants who are both in the treatment group: 20-year-old Alice and 21-year old Bob. Alice's linear predictor tells us that her expected rating is $\theta_{\text{milk-first}} + \beta_{\text{tea-first}} + \theta_{\text{age}} \cdot 20$. In contrast, Bob's linear predictor is $\theta_{\text{milk-first}} + \beta_{\text{tea-first}} + \theta_{\text{age}} \cdot 21$. We could therefore calculate the expected difference in ratings for 21-year-olds versus 20-year olds by subtracting Alice's linear predictor from Bob's, yielding just $\theta_{\text{age}}$. How simple!
 
 We would get the same result if Alice and Bob were instead 50 and 51 years old, respectively. This equivalence illustrates a key point about linear regression models in general: *the regression coefficient represents the expected difference in outcome when comparing participants who differ by 1 unit of the  independent variable* (here, comparing participants who differ by 1 year of age). In "Practical modeling considerations" below, we discuss whether and when to "control for" additional variables (i.e., when to add them to your model).
 
@@ -173,7 +171,7 @@ We would get the same result if Alice and Bob were instead 50 and 51 years old, 
 
 Linear regression modeling with OLS is an incredibly powerful technique for creating models to estimate the influence of multiple predictors on a single dependent variable. In fact, OLS is in a mathematical sense the *best* way to fit a linear model!^[There is a precise sense in which OLS gives the *very best* predictions we could ever get from any model that posits linear relationships between the independent variables and the outcome. That is, you can come up with any other linear model you want, and yet if the assumptions of OLS are fulfilled, predictions from OLS will always be less noisy than those of your model. This is because of an elegant mathematical result called the Gauss-Markov Theorem.] But OLS only "works" -- in the sense of yielding good estimates -- if three big conditions are met. 
 
-1. **The predictor relationships being modeled must be linear.** In our comparison of Alice's and Bob's expected outcomes based on their 1-year age difference, we were able to interpret the coefficient $\theta_{age}$ as the average difference in $Y_i$ when comparing participants who differ by 1 year of age, *regardless* of whether those ages are 20 vs. 21 or 50 vs. 51. But that's not always true: plenty of things vary **non-linearly** with age -- for example, imagine growth in height over age! Linear regression will give bad answers in such cases.^[One way to accommodate **non-linearities** is to modify the linear predictor to include polynomial terms, such as $age^2$, which then allow us to fit a curve rather than just a straight line. It is always a good idea to use visualizations like scatter plots to look for possible problems with linearity.]
+1. **The predictor relationships being modeled must be linear.** In our comparison of Alice's and Bob's expected outcomes based on their 1-year age difference, we were able to interpret the coefficient $\theta_{\text{age}}$ as the average difference in $Y_i$ when comparing participants who differ by 1 year of age, *regardless* of whether those ages are 20 vs. 21 or 50 vs. 51. But that's not always true: plenty of things vary **non-linearly** with age -- for example, imagine growth in height over age! Linear regression will give bad answers in such cases.^[One way to accommodate **non-linearities** is to modify the linear predictor to include polynomial terms, such as $\text{age}^2$, which then allow us to fit a curve rather than just a straight line. It is always a good idea to use visualizations like scatter plots to look for possible problems with linearity.]
 
 <!-- [Suggested Figure. Panel A: Scatter plot showing a nice linear relationship with OLS fit superimposed. Panel B: Scatter plot showing a nonlinear relationship with OLS fit, OLS fit with x^2 term, and LOESS superimposed.] -->
 
@@ -255,7 +253,6 @@ crossed_ex <- data.frame(`Stimulus1` = c("y~1,1~", "y~2,1~", "y~3,1~"),
                      `Stimulus2` = c("y~1,2~", "y~2,2~", "y~3,2~"),
                      `Stimulus3` = c("y~1,3~", "y~2,3~", "y~3,3~")) 
 rownames(crossed_ex) <- c("Participant1","Participant2","Participant3")
-
 kable(crossed_ex, row.names = TRUE, caption = "Outcome data $y$ with indices indicating both participant and stimulus.")
 ```
 
@@ -513,7 +510,7 @@ Even using this approach, however, reasonable data analysts could differ about w
 In the last three chapters, we have spelled out a framework for data analysis that focuses on the key experimental goal: a measurement of a particular causal effect. We began with basic techniques for estimating effects and making inferences about how these effects estimated from a sample can be generalized to a population. This chapter showed how these ideas naturally give rise to the idea of making models of data, which allow estimation of effects in more complex designs. Simple regression models, which are formally identical to other inference methods in the most basic case, can be extended with the generalized linear model as well as with mixed effects models. Finally, we ended with some guidance on how to build a "default model" -- an (often pre-registered) regression model that maps onto your experimental design and provides the primary estimate of your key causal effect. 
 
 
-::: {.reading}
+::: {.box .readings}
 📚 Suggested readings:
 
 * Gelman, A., Hill, J., & Vehtari, A. (2020). *Regression and other stories*. Cambridge University Press. -- This book provides an opinionated practical guide to regression modeling and data description. 
@@ -549,8 +546,8 @@ In the last three chapters, we have spelled out a framework for data analysis th
 <!-- - The paired t-test as a first glimpse at how we might account for participant-level random effects (see Chapter 7). -->
 
 
-<!-- ::: {.accident-report} -->
-<!-- ⚠️ Accident report: Once you have the basic t-test under your belt, it might feel natural to compare each group to 0 and conclude that one group is different from 0 and the other one isn’t. But “the difference between significant and not significant is not necessarily itself statistically significant” (Nieuwenhuis, Forstmann, and Wagenmakers 2011).  -->
+<!-- ::: {.box .accident_report} -->
+<!-- Once you have the basic t-test under your belt, it might feel natural to compare each group to 0 and conclude that one group is different from 0 and the other one isn’t. But “the difference between significant and not significant is not necessarily itself statistically significant” (Nieuwenhuis, Forstmann, and Wagenmakers 2011).  -->
 <!-- ::: -->
 
 
@@ -559,8 +556,8 @@ In the last three chapters, we have spelled out a framework for data analysis th
 
 <!-- Re-casting the t-test as a regression model  -->
 
-<!-- ::: {.interactive} -->
-<!-- ⌨️ Interactive box: Visualizing how different tests are variants of linear models. -->
+<!-- ::: {.box .interactive} -->
+<!-- Visualizing how different tests are variants of linear models. -->
 <!-- ::: -->
 
 <!-- - Discrete data and logistic regression. Same thing, different linking function. (lead-in to GLM: probit, Poisson, beta, etc.). -->
@@ -571,8 +568,8 @@ In the last three chapters, we have spelled out a framework for data analysis th
 
 <!-- Causality revisited: what can and can’t be concluded from an experiment -->
 
-<!-- ::: {.accident-report} -->
-<!-- ⚠️ Accident report: Mediation going wrong: even when you have a randomized experiment, you can still mess up your causal inference (Montgomery, Nyhan, and Torres 2018).  -->
+<!-- ::: {.box .accident_report} -->
+<!-- Mediation going wrong: even when you have a randomized experiment, you can still mess up your causal inference (Montgomery, Nyhan, and Torres 2018).  -->
 <!-- ::: -->
 
 <!-- - Dropping subjects who fail a manipulation check can be problematic (Aronow, Baron, and Pinson 2019). -->
@@ -583,11 +580,8 @@ In the last three chapters, we have spelled out a framework for data analysis th
 
 <!-- ### Homeless -->
 
-<!-- ⌨️ Interactive box: non-parametric simulations where you can shuffle data across groups a bunch of times and see what kind of distribution it produces by chance -->
-
-
-<!-- ::: {.interactive} -->
-<!-- ⌨️ Interactive: Nonparameteric resampling under the null -->
+<!-- ::: {.box .interactive} -->
+<!-- (TITLE) Nonparameteric resampling under the null -->
 
 <!-- As we've seen above, hypothesis testing hinges on approximating the null distribution of the statistical estimate. In the examples above, it was easy to use statistical theory to work out the null distribution: for example, in Figure \@ref(fig:inference-null-model), we knew that the null distribution must be binomial since we had a binary outcome, and the binomial distribution parameter $p$ must be 0.5, because that is what the null says.  -->
 
