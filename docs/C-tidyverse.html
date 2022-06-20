@@ -192,7 +192,7 @@ div.csl-indent {
 <p>“Tidy datasets are all alike, but every messy dataset is messy in its own way.” - Hadley Wickham</p>
 </blockquote>
 <p>This Appendix is a short tutorial on how to use the <code>tidyverse</code> family of packages in R. The tidyverse is a coherent “stack” for cleaning, manipulating, visualizing, and modeling data. It’s what we’ve used throughout this book both in the visible examples and on the back-end. It’s also – in our opinion – a really impressive piece of design thinking. The tidyverse implements a clear and flexible conceptual model for the manipulation of heterogeneous datasets. It takes a little while to get your head around this conceptual model, but it is very useful once you do!</p>
-<p>Here’s the basic idea: In tidy data, every row is a single <strong>observation</strong> (trial), and every column describes a <strong>variable</strong> with some <strong>value</strong> describing that trial. And if you know that data are formatted this way, then you can do amazing things, basically because you can take a uniform approach to the dataset. Here’s a quote from <span class="citation">Wickham &amp; Grolemund (<a href="#ref-wickham2016" role="doc-biblioref">2016</a>)</span><label for="tufte-sn-283" class="margin-toggle sidenote-number">283</label><input type="checkbox" id="tufte-sn-283" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">283</span> This book, <a href="http://r4ds.had.co.nz/">R for data scientists</a>, is a free web book that provides a much deeper treatment of the concepts we introduce here and is a great reference for learning the tidyverse, written by its chief architect.</span>:</p>
+<p>Here’s the basic idea: In tidy data, every row is a single <strong>observation</strong> (trial), and every column describes a <strong>variable</strong> with some <strong>value</strong> describing that trial. And if you know that data are formatted this way, then you can do amazing things, basically because you can take a uniform approach to the dataset. Here’s a quote from <span class="citation">Wickham &amp; Grolemund (<a href="#ref-wickham2016" role="doc-biblioref">2016</a>)</span><label for="tufte-sn-273" class="margin-toggle sidenote-number">273</label><input type="checkbox" id="tufte-sn-273" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">273</span> This book, <a href="http://r4ds.had.co.nz/">R for data scientists</a>, is a free web book that provides a much deeper treatment of the concepts we introduce here and is a great reference for learning the tidyverse, written by its chief architect.</span>:</p>
 <blockquote>
 <p>There’s a general advantage to picking one consistent way of storing data. If you have a consistent data structure, it’s easier to learn the tools that work with it because they have an underlying uniformity. There’s a specific advantage to placing variables in columns because it allows R’s vectorised nature to shine.</p>
 </blockquote>
@@ -200,7 +200,7 @@ div.csl-indent {
 <p>Unlike some of the other tutorials in this book, this one is meant to be worked on interactively. The best way to use it is to download the raw source code from <a href="https://raw.githubusercontent.com/langcog/experimentology/main/102-tidyverse.Rmd">here</a> and read through, filling in the exercises as you go.</p>
 <div id="functions-and-pipes" class="section level2" number="20.1">
 <h2><span class="header-section-number">C.1</span> Functions and Pipes</h2>
-<p>Everything you typically want to do in statistical programming uses <strong>functions</strong>. <code>mean</code> is a good example. <code>mean</code> takes one <strong>argument</strong>, a numeric vector. Pipes are a way to write strings of functions more easily.<label for="tufte-sn-284" class="margin-toggle sidenote-number">284</label><input type="checkbox" id="tufte-sn-284" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">284</span> We’re going to use the R native pipe, written <code>|&gt;</code>. At time of writing, this new operator just replaced the “old” pipe, <code>%&gt;%</code>.</span> They bring the first argument of the function to the beginning.</p>
+<p>Everything you typically want to do in statistical programming uses <strong>functions</strong>. <code>mean</code> is a good example. <code>mean</code> takes one <strong>argument</strong>, a numeric vector. Pipes are a way to write strings of functions more easily.<label for="tufte-sn-274" class="margin-toggle sidenote-number">274</label><input type="checkbox" id="tufte-sn-274" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">274</span> We’re going to use the R native pipe, written <code>|&gt;</code>. At time of writing, this new operator just replaced the “old” pipe, <code>%&gt;%</code>.</span> They bring the first argument of the function to the beginning.</p>
 <p>We’ll use the <code>mtcars</code> dataset that’s built in with the <code>tidyverse</code>. Here’s what a sample of that dataset looks like, using the <code>kable</code> function (which we learned in Appendix <a href="B-rmarkdown.html#rmarkdown">B</a>).</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="C-tidyverse.html#cb13-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(mtcars), <span class="at">digits =</span> <span class="dv">1</span>)</span></code></pre></div>
 <table>
@@ -315,7 +315,7 @@ div.csl-indent {
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="C-tidyverse.html#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">mean</span>(<span class="fu">gpm</span>(mtcars<span class="sc">$</span>mpg)), <span class="at">digits =</span> <span class="dv">2</span>)</span>
 <span id="cb16-2"><a href="C-tidyverse.html#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.05</span></span></code></pre></div>
 <div class="exercise">
-<p><span id="exr:unlabeled-div-23" class="exercise"><strong>Exercise C.1  </strong></span>Write <code>round(mean(gpm(mtcars$mpg)), digits = 2)</code> with pipes.</p>
+<p><span id="exr:unlabeled-div-25" class="exercise"><strong>Exercise C.1  </strong></span>Write <code>round(mean(gpm(mtcars$mpg)), digits = 2)</code> with pipes.</p>
 </div>
 <p>Reading <code>round(mean(gpm(mtcars$mpg)))</code> out loud involves reading from the center outwards. In contrast, the piped version can be read from left to right, top to bottom. That’s what pipes are for: they let you write strings of functions so that they are readable and distinct. We’ll be doing a lot of piping of functions with multiple arguments later, and it will really help keep our syntax simple.</p>
 </div>
@@ -353,7 +353,7 @@ div.csl-indent {
 <div id="filtering-and-mutating" class="section level3" number="20.2.2">
 <h3><span class="header-section-number">C.2.2</span> Filtering and mutating</h3>
 <p>There are lots of reasons you might want to remove rows from your dataset, including getting rid of outliers, selecting subpopulations, and so forth. For this purpose, <code>filter</code> is a verb (a function in the tidyverse) that takes a data frame as its first argument, and then as its second takes the condition you want to filter on.</p>
-<p>So if you wanted to look only at two year olds, you could do this:<label for="tufte-sn-285" class="margin-toggle sidenote-number">285</label><input type="checkbox" id="tufte-sn-285" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">285</span> Filter can take a either a single logical condition or a set of conditions, so you could also write <code>filter(sgf, age &gt; 2 &amp; age &lt; 3)</code>.s</span></p>
+<p>So if you wanted to look only at two year olds, you could do this:<label for="tufte-sn-275" class="margin-toggle sidenote-number">275</label><input type="checkbox" id="tufte-sn-275" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">275</span> Filter can take a either a single logical condition or a set of conditions, so you could also write <code>filter(sgf, age &gt; 2 &amp; age &lt; 3)</code>.s</span></p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="C-tidyverse.html#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(sgf, age <span class="sc">&gt;=</span><span class="dv">2</span>, age <span class="sc">&lt;</span> <span class="dv">3</span>)</span></code></pre></div>
 <p>Here we’ve given <code>sgf</code> as the first argument to <code>filter</code>. But our general strategy is going to be using pipes. The way this works is that:</p>
 <ul>
@@ -384,7 +384,7 @@ div.csl-indent {
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="C-tidyverse.html#cb23-1" aria-hidden="true" tabindex="-1"></a>sgf <span class="ot">&lt;-</span> sgf <span class="sc">|&gt;</span></span>
 <span id="cb23-2"><a href="C-tidyverse.html#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age_group =</span> <span class="fu">cut</span>(age, <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">include.lowest =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
 <div class="exercise">
-<p><span id="exr:unlabeled-div-24" class="exercise"><strong>Exercise C.2  </strong></span>Filter the <code>sgf</code> data so that only the “face” trial in the “Label” condition is present.</p>
+<p><span id="exr:unlabeled-div-26" class="exercise"><strong>Exercise C.2  </strong></span>Filter the <code>sgf</code> data so that only the “face” trial in the “Label” condition is present.</p>
 </div>
 </div>
 <div id="standard-descriptives-using-summarise-and-group_by" class="section level3" number="20.2.3">
@@ -483,7 +483,7 @@ Figure C.3: Visualization of Stiller, Goodman, &amp; Frank (2015) data after gro
 <img src="experimentology_files/figure-html/tidyverse-cis-plot-1.png" alt="Visualization of Stiller, Goodman, &amp; Frank (2015) data after grouping and summary, now with participant-level 95\% confidence intervals and visualization of individual participant means." width="\linewidth"  />
 </div>
 <div class="exercise">
-<p><span id="exr:unlabeled-div-25" class="exercise"><strong>Exercise C.3  </strong></span>Challenge: Adapt the code above to split the data by item, rather than by age group. For an extra challenge, plot the data this way as well.</p>
+<p><span id="exr:unlabeled-div-27" class="exercise"><strong>Exercise C.3  </strong></span>Challenge: Adapt the code above to split the data by item, rather than by age group. For an extra challenge, plot the data this way as well.</p>
 </div>
 </div>
 </div>
@@ -537,7 +537,7 @@ Figure C.3: Visualization of Stiller, Goodman, &amp; Frank (2015) data after gro
 <span id="cb35-18"><a href="C-tidyverse.html#cb35-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 590 more rows</span></span></code></pre></div>
 <p>We can compare this data frame to <code>sgf</code> and see that we’ve recovered the original long form.</p>
 <div class="exercise">
-<p><span id="exr:unlabeled-div-26" class="exercise"><strong>Exercise C.4  </strong></span>Use <code>pivot_wider</code> to try and make <code>sgf_wide</code> from <code>sgf</code>. The two arguments you need are <code>names_from</code> and <code>values_from</code>, which specify the names and values (just like in <code>pivot_longer</code>).</p>
+<p><span id="exr:unlabeled-div-28" class="exercise"><strong>Exercise C.4  </strong></span>Use <code>pivot_wider</code> to try and make <code>sgf_wide</code> from <code>sgf</code>. The two arguments you need are <code>names_from</code> and <code>values_from</code>, which specify the names and values (just like in <code>pivot_longer</code>).</p>
 </div>
 </div>
 <div id="tidyverse-chapter-sumamry" class="section level2" number="20.4">
