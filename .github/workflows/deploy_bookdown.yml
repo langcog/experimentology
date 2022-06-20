@@ -21,13 +21,26 @@ jobs:
       - uses: r-lib/actions/setup-pandoc@v2
       
       - uses: r-lib/actions/setup-renv@v2
-      
+
       - name: Render Book
         run: Rscript -e 'rmarkdown::render_site()'
-        
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: current
+
+      - name: Render
+        run: |
+          npm install
+          npm run build
+        working-directory: ./render
+
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.3.0
         with:
-          branch: main
-          target-folder: docs
-          folder: docs
+          branch: gh-pages
+          folder: render/dist/client
+          clean: true
+          clean-exclude: |
+            CNAME
