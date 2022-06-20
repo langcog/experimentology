@@ -1,9 +1,7 @@
 
 # Visualization {#viz}
 
-::: {.learning-goals}
-🍎 Learning goals:
-
+::: {.box .learning_goals}
 -   Analyze the principles behind informative visualizations
 -   Incorporate visualization into analysis workflow
 -   Learn to make "the design plot"
@@ -18,12 +16,11 @@ Good visualizations aim to deliberately harness this power and put it to work at
 Yet our powerful pattern detectors can also be a liability; if we're not careful, we can easily be fooled into seeing patterns that are unreliable or even misleading.
 As psychology moves into an era of bigger data and more complex behaviors, we become increasingly reliant on **data visualization literacy** [@borner2019data] to make sense of what is going on.
 
-::: {.case-study}
-🔬 Case study: Mapping a pandemic
+::: {.box .case_study}
+(TITLE) Mapping a pandemic
 
-```{marginfigure, echo=TRUE}
-<img src="images/viz/snow_cholera_voronoi.jpeg"/>
-Mapping out a cholera epidemic (1854). Line shows region for which Broad Street pump is nearest.
+```{r viz-cholera, fig.margin=TRUE, fig.cap="Mapping out a cholera epidemic (1854). Line shows region for which Broad Street pump is nearest."}
+knitr::include_graphics("images/viz/snow_cholera_voronoi.jpeg")
 ```
 
 In 1854, a deadly outbreak of cholera was sweeping through London.
@@ -111,7 +108,7 @@ The second principle is to *facilitate comparison* along the dimensions relevant
 For example, it is easier for our visual system to accurately compare the location of elements (e.g. noticing that one point is a certain distance away from another) than to compare their areas or colors (e.g. noticing that one point is bigger or brighter than another).
 To illustrate, suppose we have a simple pre-post design with two groups: a treatment group and a control group.
 
-```{r}
+```{r viz-prepost1}
 library(ggthemes)
 make_2x2_data <- function(n_total = 48, sigma = .5, delta = 1) {
   tibble(condition = c(rep("control", n_total/2),
@@ -128,7 +125,7 @@ d <- make_2x2_data() %>%
 
 We could always plot the means of each group as colors:
 
-```{r}
+```{r viz-prepost2}
 d %>%
   group_by(condition, phase) %>%
   summarize(rating = mean(rating)) %>%
@@ -138,7 +135,7 @@ d %>%
 
 or areas:
 
-```{r}
+```{r viz-prepost3}
 d %>%
   group_by(condition, phase) %>%
   summarize(rating = mean(rating)) %>%
@@ -151,7 +148,7 @@ Additionally, this way of plotting the data places equal emphasis on phase and c
 An alternative is to show four bars: two on the left showing the 'pre' phase and two on the right showing the 'post' phase.
 Maybe the control group is red and the treatment group is blue.
 
-```{r}
+```{r viz-prepost4}
 d %>% 
   group_by(condition, phase) %>%
   summarize(rating = mean(rating)) %>%
@@ -168,7 +165,7 @@ We have to look between the red bars, and then look between the blue bars and im
 What could help facilitate this comparison?
 Consider the following line plot:
 
-```{r}
+```{r viz-prepost5}
 d %>% 
   group_by(condition, phase) %>%
   summarize(rating = mean(rating)) %>%
@@ -209,7 +206,7 @@ Error bars turn a purely descriptive visualization (e.g showing COVID-19 case co
 They represent a minimal form of uncertainty about the possible statistics that might have been observed, not just the one that was actually observed.
 As such, they allow the viewer to interpret the means as *estimates*. 
 
-```{r}
+```{r viz-show-data1}
 d %>% 
   group_by(condition, phase) %>%
   tidyboot::tidyboot_mean(rating) %>%
@@ -226,7 +223,7 @@ There are many ways of showing the distribution.
 For example, a 'boxplot' shows the median (a horizontal line) in the center of a box extending from the lower quartile (25%) to the upper quartile (75%).
 Lines then extend out to the biggest and smallest values (excluding outliers, which are shown as dots).
 
-```{r}
+```{r viz-show-data2}
 d %>% 
   ggplot(aes(x = phase, y = rating, color = condition)) +
     geom_boxplot(alpha = 0.8)
@@ -234,7 +231,7 @@ d %>%
 
 We can also show the raw data as jittered values with low transparency:
 
-```{r}
+```{r viz-show-data3}
 d %>% 
   group_by(condition, phase) %>%
   tidyboot::tidyboot_mean(rating) %>%
@@ -253,8 +250,8 @@ knitr::include_graphics("images/viz/raincloud.png")
 ```
 
 
-::: {.interactive}
-⌨️ Interactive box: Visualizing uncertainty with error bars
+::: {.box .interactive}
+(TITLE) Visualizing uncertainty with error bars
 
 One common misconception is that error bars are a measure of variance *in the data*, like the standard deviation of the response variable.
 Instead, they typically represent a measure of precision extracted from the statistical model.
@@ -272,7 +269,7 @@ Or suppose you want to estimate proportions from categorical data, or a more *ad
 Analytic estimators of confidence intervals can in principle be derived for these statistics, subject to different assumptions, but it is often more transparent and reliable in practice to use the bootstrap. 
 As long as you can write a code snippet to compute a value from a dataset, you can use the bootstrap. 
 
-```{r}
+```{r viz-boot}
 boot <- d %>% 
   group_by(condition, phase) %>%
   tidyboot::tidyboot_mean(rating) %>%
@@ -329,7 +326,7 @@ knitr::include_graphics("images/viz/roeder_badviz.jpeg")
 The defaults in modern visualization libraries like `ggplot` prevent some of the worst offenses, but are still often suboptimal.
 For example: consider whether the visual complexity introduced by the default grey background and grid lines is justified, or whether a more minimal theme would be sufficient (see the [`ggthemes`](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/) package for a good collection of themes). 
 
-```{r}
+```{r viz-themes}
 library(ggrepel)
 d %>% 
   group_by(condition, phase) %>%
@@ -360,8 +357,8 @@ A few additional tips:
 
 * Different audiences may require different levels of specificity. Sometimes it is better to collapse over secondary variables (even if they are included in your statistical models) in order to control the density of the figure and draw attention to the key question of interest. 
 
-<!-- ::: {.case-study} -->
-<!-- 🔬 Case study: Sklar et al. (2012) reported evidence of “unconscious” arithmetic. Further reanalyses didn’t support this finding (Moors and Hesselmann 2018). Rabagliati et al. (2018) also failed to replicate. Visualizations provide a framework for asking about the ways the measurements relate to the manipulation that might have shed light on the issues.  -->
+<!-- ::: {.box .case_study} -->
+<!-- Sklar et al. (2012) reported evidence of “unconscious” arithmetic. Further reanalyses didn’t support this finding (Moors and Hesselmann 2018). Rabagliati et al. (2018) also failed to replicate. Visualizations provide a framework for asking about the ways the measurements relate to the manipulation that might have shed light on the issues.  -->
 <!-- ::: -->
 
 
@@ -417,7 +414,7 @@ So which visualizations should we start with?
 The best practice is to always start by making histograms of the raw data. 
 For example, here are the histograms for the classic `iris` dataset containing measurements from different kinds of flowers. 
 
-```{r}
+```{r viz-iris1}
 iris %>%
   select(-Species) %>%
   pivot_longer(everything()) %>%
@@ -430,7 +427,7 @@ iris %>%
 Immediately we can see that sepal length and width seem to be distributed roughly normally, but petal length and petal width look bimodal. 
 We might then break out the data by species:
 
-```{r}
+```{r viz-iris2}
 iris %>%
   group_by(Species) %>%
   pivot_longer(-Species) %>%
@@ -452,7 +449,7 @@ Or we might might notice that the "species" attribute is missing for some values
 In addition to these histograms, it is natural to proceed to looking at pairwise relationships, which we aren't able to determine from independent histograms. 
 The `ggpairs` function in the `ggally` package makes this particularly straightforward. 
 
-```{r}
+```{r viz-iris3}
 library(GGally)
 ggpairs(iris)
 ```
@@ -463,8 +460,8 @@ There is one cloud of points that is strongly correlated, but another cloud of p
 Reporting a single correlation and claiming a relationship between petal length and sepal length ($r=.87, p<0.001$) might therefore be misleading. 
 Instead, we might want to be careful to break this relationship out by species and test whether it is stronger for some species than others.
 
-::: {.accident-report}
-⚠️ Accident report: [Distributional] gorillas in our midst.
+::: {.box .accident_report}
+(TITLE) [Distributional] gorillas in our midst.
 
 Many data scientists don’t bother checking what their data looks like before proceeding to test specific hypotheses.
 @yanai2020 cleverly designed an artificial dataset for their students to test for such blindness. 
@@ -475,10 +472,8 @@ Fourteen of these students failed to notice a gorilla, suggesting that they eval
 Another group of 14 students were simply asked what, if anything, they could conclude (without being given explicit hypotheses).
 More of these students apparently made the visualization, but five of them still failed to notice the gorilla! 
 
-
-```{marginfigure, echo=TRUE}
-<img src="images/viz/gorilla.png"/>
-A dataset was constructed by @yanai2020 which revealed a picture of a gorilla when the raw data were plotted.
+```{r gorilla, fig.margin=TRUE, fig.cap="A dataset was constructed by @yanai2020 which revealed a picture of a gorilla when the raw data were plotted."}
+knitr::include_graphics("images/viz/gorilla.png")
 ```
 
 While it may not be surprising that a group of students would take the shortest path to completing their assignment, similar concerns have been raised in much more serious cases concerning how experienced researchers could fail to notice obviously fraudulent data. 
@@ -489,10 +484,10 @@ So it is highly surprising to find exactly the same number of drivers in every m
 While further specialized analyses revealed further evidence of fraud (e.g. based on patterns of rounding and pairs of duplicated data points), this humble histogram was already enough to set off alarm bells. 
 A recurring regret raised by the co-authors of this paper is that they never thought to making this visualization before reporting their statistical tests. 
 
-```{marginfigure, echo=TRUE}
-<img src="images/viz/data_colada_uniform.png"/>
-A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!
+```{r viz-uniform, fig.margin=TRUE, fig.cap="A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!"}
+knitr::include_graphics("images/viz/data_colada_uniform.png")
 ```
+
 :::
 
 ## Conclusion

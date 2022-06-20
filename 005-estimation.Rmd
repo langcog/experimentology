@@ -2,28 +2,23 @@
 
 # Estimation {#estimation}
 
-::: learning-goals
-🍎 Learning goals:
-
--   Contrast inference and estimation as two goals of statistical analysis
--   Discuss differences between frequentist and Bayesian perspectives
--   Reason about standardized effect sizes and their strengths and weaknesses
+::: {.box .learning_goals}
+- Contrast inference and estimation as two goals of statistical analysis
+- Discuss differences between frequentist and Bayesian perspectives
+- Reason about standardized effect sizes and their strengths and weaknesses
 :::
 
 In the first section of this book, our goal was to set up some of the theoretical ideas that motivate our approach to experimental design and planning. We introduced our key thesis, namely that experiments are about measuring causal effects. We also began to discuss some of our key themes, including precision of measurement, reduction of bias, and generalization across populations. In this next section of the book -- treating statistical topics -- we will integrate these ideas with an analytic toolkit for **estimating** effects, **quantifying the size and precision** of these estimates (this chapter), making **inferences** about the evidence for such effects (Chapter \@ref(inference)), and making **models** for estimation and inference in more complex settings (Chapter \@ref(models)). Although this book is not a statistics text, we hope that these chapters provide some practical foundations for beginning the statistical analysis of your experimental data.
 
-::: case-study
-🔬 Case study: The Lady Tasting Tea
+::: {.box .case_study}
+(TITLE) The Lady Tasting Tea
 
 The birth of modern statistical inference came from a single, epochal act of mansplaining.^[An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed Social Darwinist who believed fervently in Eugenic legislation. These views are repugnant.] Sir Ronald Fisher was apparently at a party when a lady declared that she could tell the difference between cups when the tea was added to the milk vs. the milk to the tea. Rather than taking her at her word, Fisher devised an experimental and data analysis procedure to test her claim.^[An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed Social Darwinist who believed fervently in Eugenic legislation. These views are repugnant.]
 
 The basic schema of the experiment was that the lady would have to judge a set of new cups of tea and sort them into milk-first vs. tea-first sets. Her data would then be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, it seems unremarkable only because it literally established the way science was done for the next century.
 
 One important and unusual element of the experiment was its treatment of potential design confounds such which cup of tea was prepared first, which cup of tea was presented first, or the material that the cups were made out of. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounds. Fisher recognized that this strategy was insufficient. Only by randomizing all other aspects of the experiment could he make strong causal inferences about the treatment (milk then tea vs. tea then milk). We discussed the causal power of random assignment in Chapter \@ref(experiments) -- this experiment is a key touchstone in the popularization of randomized experiments!^[Randomized experiments were not invented by Fisher. Perhaps the earliest example of a (somewhat) randomized experiment was a trial of scurvy treatments in the 1700s [@dunn1997]. @peirce1884 also report a strikingly modern use of randomized stimulus presentation (via shuffling cards). Nevertheless, Fisher's statistical work popularized randomized experiments throughout the sciences, in part by integrating them with a set of analytic methods.]
-
 :::
-
-
 
 
 ## Estimating a quantity
@@ -35,7 +30,6 @@ Our causal theory is that the tea quality is affected by milk-tea ordering, so w
 Eventually, we'll want to estimate the effect of milk-first preparation on quality ratings (our effect of interest). But for now, our goal will be to estimate the quality of the tea when it is milk-first [the better way, according to some data; @kennedy2003]. More formally, we want to use our **sample** of 24 milk-first tea judgments to estimate a **population parameter** that we can't directly observe, namely the true perceived quality of all possible milk-first cups. 
 
 We'll try to go easy on notation but some amount will make things clearer. We will use $\theta_{\textrm{milk-first}}$ ("theta") to denote the parameter we want to estimate (the **population parameter**) and $\widehat{\theta}_{\textrm{milk-first}}$, its **sample estimate**.^[Statisticians use "hats" like this to denote estimates from a specific sample. One way to remember this is that the "person in the hat" is wearing a hat to dress up as the actual quantity. Feel free to ignore this mnemonic; it helps us.]
-
 
 ### Maximum likelihood estimation
 
@@ -95,6 +89,7 @@ $$
 The first part of the numerator is $p(d|h)$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.^[Speaking informally, "likelihood" is just a synonym for probability, but this is a technical meaning for the term, which can get a bit confusing.] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the tea is of high quality (say $\theta_{\textrm{milk-first}} = 6.5$) then the probability of a bunch of low accuracy observations will be fairly low.
 
 The second term in the numerator, $p(\theta_{\textrm{milk-first}} )$, is called the **prior**. This term encodes our beliefs about the likely distribution of tea quality. Intuitively, if we think that the tea is likely of high quality, we should require more evidence to convince us that it's bad. In contrast, if we think it's probably bad, a few examples of low ratings might serve to convince us.
+
 
 ```{r inference-bayes-demo, fig.cap="Examples of Bayesian inference about tea ratings under two different priors (facets) and just a little bit of data. Blue lines give the prior probability distribution, red lines give the likelihood of the data, and purple lines give the posterior distribution from combining likelihood and prior."}
 
