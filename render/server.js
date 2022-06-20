@@ -14,9 +14,9 @@ const startServer = async () => {
 		server: { middlewareMode: 'ssr' },
 	});
 
-	app.use(viteDevServer.middlewares);
+	const render = createPageRenderer({ root, viteDevServer });
 
-	const render = createPageRenderer({ viteDevServer, root });
+	app.use(viteDevServer.middlewares);
 
 	app.get('*', async (req, res, next) => {
 		const { url }          = req;
@@ -30,6 +30,7 @@ const startServer = async () => {
 	});
 
 	app.listen(port);
+
 	console.log(`http://localhost:${port}`);
 }
 

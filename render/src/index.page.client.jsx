@@ -14,16 +14,13 @@ const render = async () => {
 
 		hydrate(<Component { ... props }/>, container);
 
-		// document.querySelectorAll('a[href]')
-		// .forEach(a => {
-		// 	a.href = a.href.replace(/^(\w+-([^-].+))\.html#\2$/, '$1');
-		// 	console.log(location);
-		// 	// console.log(a);
-		// 	console.log(
-		// 		a.href
-		// 		.replace(/^(\w+-([^-].+))\.html#\2$/, '$1')
-		// 	);
-		// });
+		document.querySelectorAll('a[href]').forEach(a => {
+			if (new URL(a.href).origin == origin) {
+				a.href = a.href
+				.replace(location.origin, '')
+				.replace(/^\/(\w+-([^-].+))\.html#\2$/, '$1');
+			};
+		});
 	});
 }
 

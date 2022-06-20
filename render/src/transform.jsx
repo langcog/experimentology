@@ -53,11 +53,6 @@ export default ({ url, html }) => {
 	}
 
 	const replace = node => {
-		// if (node.attribs?.href) {
-		// 	node.attribs.href = node.attribs.href
-		// 	.replace(/^(\w+-([^-].+))\.html#\2$/, '$1');
-		// }
-
 		if (isTOC(node)) return island(<TOC/>);
 
 		if (isBox(node)) return island(<Box { ... convertBox(node) }/>);
