@@ -10,6 +10,7 @@ library(BayesFactor) # inference
 library(papaja)
 library(lme4)
 library(boot) # for inv.logit
+library(Hmisc)
 
 
 opts_chunk$set(

@@ -102,8 +102,6 @@ We talked in the last chapter about the normal distribution, a convenient and ub
 
 For example, say we are flipping a coin and we want to estimate the probability that it lands heads ($p_H$). If we draw samples each consisting of only $n=2$ coin flips, Figure \@ref(fig:inference-coin-2) is the sampling distribution of the estimates ($\widehat{p}_H$). This sampling distribution doesn't look normally distributed at all -- it doesn't have the characteristic "bell curve" look! $\widehat{p}_H$ can only take on the values 0, 0.5, or 1 in a sample of only 2 coin flips. 
 
-<!-- Julie's comment: For Figure 6.4, it might be nice to also put the x axis directly below the n = 2 and n = 8 coin flips figures (right now it's only at the bottom of the n = 32 and n = 128 figures). I say this because an important observation that I think helps readers orient to these figures is the fact that for n = 2, only values 0, 0.5 and 1 are possible, as helpfully described above. Right now it looks like "32" which is the heading of the figure below it, is the central value of the x axis which could potentially be confusing. -->
-
 ```{r inference-coin-2, fig.margin = TRUE, fig.cap="Samping distribution of samples from a biased coin with N=2 flips in each sample."}
 
 n_samps <- 1000
@@ -132,7 +130,8 @@ ggplot(sample_p,
        aes(x = p)) +
   geom_histogram(binwidth = 1/32) + 
   xlab("P(heads)") + 
-  facet_wrap(~n)
+  facet_wrap(~n, scales = "free") +
+  xlim(-.05,1.05)
 ```
 
 But look what happens as we draw increasingly larger samples in Figure \@ref(fig:inference-coin-ns): We get a normal distribution! This tendency of sampling distributions to become normal as $n$ becomes very large reflects a deep and elegant mathematical law called the **Central Limit Theorem**. Aesthetic swooning aside, the practical upshot is that the Central Limit Theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\widehat{SE} = \sigma/\sqrt{n}$. That is why the sampling distribution becomes narrower as the sample size increases.
@@ -252,9 +251,9 @@ In practice, the thing that is both tricky and good about Bayes Factors is that 
 
 [^inference-12]: Two good ones are @gelman1995 (a bit more statistical) and @kruschke2014 (a bit more focused on psychological data analysis). An [in-prep web-book by Nicenboim et al.](https://vasishth.github.io/bayescogsci/book/) also looks great.
 
-```{r inference-milk-first, fig.cap="Ratings of the quality of milk-first tea, with the best fitting normal distribution shown in blue (mean shown by the dashed line)."}
+```{r inference-milk-first, fig.cap="Ratings of the quality of milk-first tea."}
 sigma <- 1.25
-n_total <- 20
+n_total <- 48
 
 tea_data <- make_tea_data(n_total, sigma)
 
@@ -277,7 +276,6 @@ tea_bf_large <- BayesFactor::ttestBF(x = tea_data_large$rating[tea_data_large$co
                                paired = FALSE)
 ```
 
-<!-- Julie's comment: The caption for Figure 6.7 mentions a best fitting normal distribution in blue and means as dashed lines but the figure only seems to show data points. Not sure if the caption is out-of-date or the figure hasn't been updated, but would be good to align. -->
 
 Figure \@ref(fig:inference-milk-first) shows one example dataset. Once we set up our models, we can compute the relative likelihood of the data under each.^[In this case, we use the default Bayesian $t$-test provided by the `BayesFactor` package.] The resulting BF is `r round(extractBF(tea_bf)$bf, 2)`, somewhere between anecdotal and substantial evidence. On the other hand, if we double the size of the experiment to 96 participants, the BF goes up to `r round(extractBF(tea_bf_large)$bf, 2)`, which is quite strong evidence.
 
@@ -298,9 +296,7 @@ tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
 
 Next we can use a simple statistical test, a $t$-test, to compute $p$-values for our experiment. In case you haven't encountered one, a $t$-test is a procedure for computing a $p$-value by comparing the distribution of two variables using the null hypothesis that there is no difference between them.^[$t$-tests can also be used in cases where one sample is being compared to some baseline.] The $t$-test uses the data to compute a **test statistic** whose distribution under the null hypothesis is known. Then the value of this statistic can be converted to $p$-values for making an inference. 
 
-When we conduct a $t$-test on our experimental results, we see that the difference between the two groups is statistically significant at $p<.05$: `r papaja::apa_print(tea_t)$statistic`. Here we've given a standard American Psychological Association report of a $t$-test. The first part of this report on the test gives the $t$ value, qualified by the **degrees of freedom** for the test in parentheses. We won't focus much on the idea of degrees of freedom here, but for now it's enough to know that this number quantifies the amount of information given by the data, in this case 48 datapoints minus the two means (one for each of the samples).  
-
-<!-- Julie's comment: The data being used through the papaja function doesn't seem to match the text around it. For instance, the p value is p = .056 but the text reports that as being sig at p < .05. Similarly, the df is 18 but the text around it describes the df to be 46 ("48 datapoints minus the two means)". Maybe there is a mismatch somewhere? -->
+When we conduct a $t$-test on our experimental results, we see that the difference between the two groups is significant at $p<.05$: `r papaja::apa_print(tea_t)$statistic`. Here we've given a standard American Psychological Association report of a $t$-test. The first part of this report on the test gives the $t$ value, qualified by the **degrees of freedom** for the test in parentheses. We won't focus much on the idea of degrees of freedom here, but for now it's enough to know that this number quantifies the amount of information given by the data, in this case 48 datapoints minus the two means (one for each of the samples).
 
 Let's compare $p$ values and default Bayes Factors for a couple of different conditions. In Table \@ref(tab:p-bf-comparison), you can see a set of simulated experiments with varying total numbers of participants and varying average treatment effects. Both $p$ and BF go up with more participants and larger effects. But in general BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ can sometimes translate to a BF of less than 3 [@benjamin2018]. 
 
@@ -327,9 +323,8 @@ The critical thing about $p$-values, though, is not just that they are a specifi
 
 > It should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis. (p. 19)
 
-As we mentioned, though, we are usually interested in not just rejecting the null hypothesis but also in the evidence for the alternative (the one we are interested in). The Bayes Factor is one approach to quantifying positive evidence. This issue with the Fisher approach to $p$-values has been known for a long time, though, and so there is an alternative use of $p$-values that we introduce here. 
+As we mentioned, though, we are usually interested in not just rejecting the null hypothesis but also in the evidence for the alternative (the one we are interested in). The Bayes Factor is one approach to quantifying positive evidence. This issue with the Fisher approach to $p$-values has been known for a long time, though, and so there is an alternative approach. 
 
-<!-- Julie's comment: Maybe it's just me but the last sentence above is a slightly confusing transition to the next section. -->
 
 ### The Neyman-Pearson approach
 
@@ -433,12 +428,6 @@ Our last section presented an argument against using $p$-values for making *dich
 
 ### Confidence intervals
 
-```{r inference-meme2}
-knitr::include_graphics("images/inference/meme_that_i_know_we_cant_use.jpg")
-```
-
-<!-- Julie's comment: Based on the title of the meme it sounds like we're not using it, but in case we are, it might be good to place it further down in the chapter after we introduce the concept of confidence intervals, otherwise the joke might not make sense. -->
-
 One thing we often want to do is to make an inference about how similar our estimate from our own sample is to the population parameter of interest. For example, how close is our tea-tasting effect estimate to the true effect of tea ordering in the population? We don't know what the true effect is, but our knowledge of sampling distributions lets us make some guesses about how precise our estimate is. 
 
 The **confidence interval** is a convenient frequentist way to summarize the variability of the sampling distribution -- and hence how precise our point estimate is. The confidence interval represents the range of possible values for the parameter of interest that are plausible given the data. More formally, a 95% confidence interval for some estimate (call it $\widehat{\beta}$, as in the our example) is defined as a range of possible values for $\beta$ such that, if we did repeated sampling, 95% of the intervals generated by those samples would contain the true parameter, $\beta$. 
@@ -462,13 +451,39 @@ tea_ci_lower <- delta_hat - tea_se *1.96
 tea_ci_upper <- delta_hat + tea_se *1.96
 ```
 
-Here's an example. As we will calculate below, the 95% confidence interval for the milk ordering effect is [`r round(tea_ci_lower,2)`, `r round(tea_ci_upper,2)`]. If we were to conduct the experiment 100 times and calculate a confidence interval each time, we should expect 95 of the intervals to contain the true $\beta$, whereas we would expect the remaining 5 to not contain $\beta$.[^inference-8] 
+
+Confidence intervals are constructed by estimating the middle 95% of the sampling distribution of $\widehat{\beta}$. Because of our hero, the Central Limit Theorem, we can treat the sampling distribution as normal for reasonably large samples. Given this, it's common to construct a 95% confidence intervals $\widehat{\beta} \pm 1.96 \widehat{SE}$.^[This type of CI is called a "Wald" confidence interval.] For the tea example, we had $\widehat{SE} = \sigma/\sqrt{n} = `r round(tea_se,2)`$, yielding the confidence interval: [`r round(tea_ci_lower,2)`, `r round(tea_ci_upper,2)`]. If we were to conduct the experiment 100 times and calculate a confidence interval each time, we should expect 95 of the intervals to contain the true $\beta$, whereas we would expect the remaining 5 to not contain $\beta$.[^inference-8] 
+
+[^inference-8]: In case you don't have enough tea to do the experiment 100 times to confirm this, you can do it virtually [here](https://istats.shinyapps.io/ExploreCoverage/).
+
 
 Confidence intervals are like betting on the inferences drawn from your sample. The sample you drew is like one pull of a slot machine that will pay off (i.e., have the confidence interval contain the true parameter) 95% of the time. Put more concisely: 95% of 95% confidence intervals contain the true value of the mean.
 
+
+```{r inference-condition-cis, fig.margin=TRUE, fig.cap = "Confidence intervals on each of the two condition estimates."}
+ggplot(tea_data_large, 
+       aes(x = condition, y= rating)) + 
+  stat_summary(fun.data = "mean_cl_normal") + 
+  ylab("Quality rating (1-7)") + 
+  xlab("Condition")
+```
+For visualization purposes, we can show the confidence intervals on individual estimates (Figure \@ref(fig:inference-condition-cis)). These tell us about the precision of our estimates of each quantity relative to the population estimate. But we've been talking primarily about the CI on the treatment effect $\widehat{\beta}$, which is shown in Figure \@ref(fig:inference-treatment-ci). This CI allows us to make an inference about whether or not it overlaps with zero -- which is actually equivalent in this case to whether or not the t-test is statistically significant. 
+
+```{r inference-treatment-ci, fig.margin=TRUE, fig.cap = "Confidence intervals on the treatment effect."}
+treatment_ci <- tibble(ymin = tea_ci_lower, 
+                       mean = delta_hat, 
+                       ymax = tea_ci_upper)
+ggplot(treatment_ci, 
+       aes(x = "", y= mean)) + 
+  geom_pointrange(aes(ymin = tea_ci_lower, ymax = tea_ci_upper)) + 
+  geom_hline(yintercept = 0, lty = 2) + 
+  ylab("Quality rating (1-7)") + 
+  xlab("Treatment effect")
+```
+
 ### Confidence in confidence intervals? 
 
-In practice, though, confidence intervals are often misinterpreted by students and researchers alike [@hoekstra2014]. In Hoekstra et al.'s example, a researcher conducts an experiments and reports "The 95% confidence interval for the mean ranges from 0.1 to 0.4". All of the statements in Table \@ref(tab:inference-ci-false), though tempting to make, are *technically false*.
+In practice, confidence intervals are often misinterpreted by students and researchers alike [@hoekstra2014]. In Hoekstra et al.'s example, a researcher conducts an experiments and reports "The 95% confidence interval for the mean ranges from 0.1 to 0.4". All of the statements in Table \@ref(tab:inference-ci-false), though tempting to make, are *technically false*.
 
 ```{r inference-ci-false}
 ci <- tribble(
@@ -489,37 +504,8 @@ knitr::kable(ci,
 
 The problem with all of these statements is that, in the frequentist framework,  there is only true value of the parameter, and the variability captured in confidence intervals is about the *samples*, not the parameter itself.[^inference-9] For this reason, we can't make any statements about the probability of the value of the mean or of our confidence in specific numbers. To reiterate, what we *can* say is: if we were to repeat the procedure of conducting the experiment and calculating a confidence interval many times, in the long run, 95% of those confidence intervals would contain the true mean. 
 
-Confidence intervals are constructed by estimating the middle 95% of the sampling distribution of $\widehat{\beta}$. Because of our hero, the Central Limit Theorem, we can treat the sampling distribution as normal for reasonably large samples. Given this, it's common to construct a 95% confidence intervals $\widehat{\beta} \pm 1.96 \widehat{SE}$.^[This type of CI is called a "Wald" confidence interval.] For the tea example, we had $\widehat{SE} = \sigma/\sqrt{n} = `r round(tea_se,2)`$, yielding the confidence interval: [`r round(tea_ci_lower,2)`, `r round(tea_ci_upper,2)`]. 
-
-<!-- Julie's comment: I think the paragraph above should be moved higher up, earlier in the introduction of CIs because it clarifies a lot about what a CI is objectively. Otherwise, until we reach this paragraph, CIs feel abstract, e.g., how do we know the "true" parameter? -->
-
-[^inference-8]: In case you don't have enough tea to do the experiment 100 times to confirm this, you can do it virtually [here](https://istats.shinyapps.io/ExploreCoverage/).
 
 [^inference-9]: In contrast, Bayesians think of parameters themselves as variable rather than fixed.
-
-
-```{r inference-condition-cis, fig.margin=TRUE, fig.cap = "Confidence intervals on each of the two condition estimates."}
-ggplot(tea_data_large, 
-       aes(x = condition, y= rating)) + 
-  stat_summary(fun.data = "mean_cl_boot") + 
-  ylab("Quality rating (1-7)") + 
-  xlab("Condition")
-```
-For visualization purposes, we can show the confidence intervals on individual estimates (Figure \@ref(fig:inference-condition-cis)). These tell us about the precision of our estimates of each quantity relative to the population estimate. But we've been talking primarily about the CI on the treatment effect $\widehat{\beta}$, which is shown in Figure \@ref(fig:inference-treatment-ci). This CI 
-
-<!-- Julie's comment: Paragraph above seemed unfinished? Also Figure 6.9 doesn't contain any CI, and figure caption for Figure 6.10 probably needs to be updated (e.g., "Figure 6.10: Confidence intervals on estimate on treatment effect." -->
-
-```{r inference-treatment-ci, fig.margin=TRUE, fig.cap = "Confidence intervals on each of the two condition estimates."}
-treatment_ci <- tibble(ymin = tea_ci_lower, 
-                       mean = delta_hat, 
-                       ymax = tea_ci_upper)
-ggplot(treatment_ci, 
-       aes(x = "", y= mean)) + 
-  geom_pointrange(aes(ymin = tea_ci_lower, ymax = tea_ci_upper)) + 
-  geom_hline(yintercept = 0, lty = 2) + 
-  ylab("Quality rating (1-7)") + 
-  xlab("Treatment effect")
-```
 
 The Bayesian analog to a confidence interval is a **credible interval**. Recall that for Bayesians, parameters themselves are considered probabilistic (i.e., subject to random variation), not fixed. A 95% credible interval for an estimate, $\widehat{\beta}$, represents a range of possible values for $\beta$ such that there is a 95% probability that $\beta$ falls inside the interval. Because we are now wearing our Bayesian hats, we are "allowed" to talk about $\beta$ as if it were probabilistic rather than fixed. In practice, credible intervals are constructed by finding the posterior distribution of $\beta$, as in Chapter \@ref(estimation), and then taking the middle 95%, for example. 
 
@@ -545,5 +531,3 @@ Step away from the computer. Can you write the definition of a $p$-value and a B
 ::: {.exercise}
 Take three of Goodman's (2008) "dirty dozen" in Table \@ref(tab:dirty-dozen) and write a description of why each is a misconception. (These can be checked against the original article, which gives a nice discussion). 
 :::
-
-<!-- Julie's general chapter comments: I really loved how clearly the chapter described what sampling distribution and standard error were - I find that these concepts are often one of the most difficult for students to grasp but this chapter explained it extremely well! Another thing I loved was the direct comparison of p values to BF (Table 6.2)! I've never seen such a direct comparison and it helps relate the two more concretely. -->
