@@ -128,7 +128,7 @@ We could always plot the means of each group as colors:
 ```{r viz-prepost2}
 d %>%
   group_by(condition, phase) %>%
-  summarize(rating = mean(rating)) %>%
+  summarise(rating = mean(rating)) %>%
   ggplot(aes(x = phase, y = condition, fill = rating)) +
     geom_tile()
 ```
@@ -138,7 +138,7 @@ or areas:
 ```{r viz-prepost3}
 d %>%
   group_by(condition, phase) %>%
-  summarize(rating = mean(rating)) %>%
+  summarise(rating = mean(rating)) %>%
   ggplot(aes(x = phase, y = condition, size = rating)) +
     geom_point()
 ```
@@ -151,7 +151,7 @@ Maybe the control group is red and the treatment group is blue.
 ```{r viz-prepost4}
 d %>% 
   group_by(condition, phase) %>%
-  summarize(rating = mean(rating)) %>%
+  summarise(rating = mean(rating)) %>%
   ggplot(aes(x = phase, y = rating, fill = condition)) +
     geom_bar(stat = 'identity', position = 'dodge')
 ```
@@ -168,7 +168,7 @@ Consider the following line plot:
 ```{r viz-prepost5}
 d %>% 
   group_by(condition, phase) %>%
-  summarize(rating = mean(rating)) %>%
+  summarise(rating = mean(rating)) %>%
   ggplot(aes(x = phase, y = rating, color = condition, group = condition)) +
     geom_point() +
     geom_line()
@@ -278,7 +278,7 @@ boot <- d %>%
 
 ci_sem <- d %>% 
   group_by(condition, phase) %>%
-  summarize(empirical_stat = mean(rating), 
+  summarise(empirical_stat = mean(rating), 
             sem = sd(rating)/sqrt(length(rating)),
             ci_lower = mean(rating) - sem,
             ci_upper = mean(rating) + sem) %>%

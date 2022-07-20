@@ -1,3 +1,4 @@
+library(Hmisc)
 library(tidyverse)
 library(glue)
 library(here)
@@ -10,7 +11,6 @@ library(BayesFactor) # inference
 library(papaja)
 library(lme4)
 library(boot) # for inv.logit
-library(Hmisc)
 library(kableExtra)
 
 opts_chunk$set(
