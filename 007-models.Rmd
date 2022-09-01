@@ -84,9 +84,10 @@ p1 <- ggplot(tea_data,
   geom_text(data = data.frame(x = c(2 + j + .1, 1 + j + .1),
                               y = c(mean(tea_data$rating[tea_data$condition == "tea first"]), 
                                   mean(tea_data$rating[tea_data$condition == "milk first"])),
-                              label = c("Θ+β", "Θ")),
+                              label = c("β0 + β1", "β0")),
             mapping = aes(x = x, y = y, label = label),
             col = "blue", 
+            hjust = 0, 
             inherit.aes = FALSE) + 
   xlab("Condition") + 
   ylab("Rating") + 
@@ -104,11 +105,12 @@ p2 <- ggplot(tea_data,
                    y = bad_cond_mean, 
                    yend = bad_cond_mean), col = "blue") +
   geom_text(data = data.frame(x = c(2 + j + .1, 1 + j + .1),
-                              y = c(mean(tea_data$rating[tea_data$condition == "tea first"]) - 1, 
-                                  mean(tea_data$rating[tea_data$condition == "milk first"]) + 1),
-                              label = c("Θ+β", "Θ")),
+                              y = c(mean(tea_data$rating[tea_data$condition == "tea first"]) - 1.5, 
+                                  mean(tea_data$rating[tea_data$condition == "milk first"]) + 1.5),
+                              label = c("β0 + β1", "β0")),
             mapping = aes(x = x, y = y, label = label),
             col = "blue", 
+            hjust = 0,
             inherit.aes = FALSE) + 
   xlab("Condition") + 
   ylab("Rating") + 
@@ -116,7 +118,6 @@ p2 <- ggplot(tea_data,
 
 cowplot::plot_grid(p1,p2)
 ```
-<!-- [MM: I haven't edited notation in any of the plots or other display items.] -->
 
 Now we have the model. How do we estimate the regression coefficients $\beta_0$ and $\beta_1$? The usual method is called **ordinary least squares (OLS)**. Here's the basic idea. For any given regression coefficient estimates $\widehat{\beta}_0$ and $\widehat{\beta}_1$, we would obtain different **predicted values**, $\widehat{Y}_i = \widehat{\beta}_0 + \widehat{\beta}_1 X_i$ for each participant. Some regression coefficient estimates will yield better predictions than others. OLS estimation is designed to find the values of the regression coefficients that optimize these predictions, meaning that the predictions are as close as possible to participants' true outcomes, $Y_i$.^[Specifically, OLS minimizes squared error loss, in the sense that it will choose the regression coefficient estimates whose predictions minimize $\sum_{i=1}^n \left( Y_i - \widehat{Y}_i\right)^2$, where $n$ is the sample size. A wonderful thing about OLS is that those optimal regression coefficients (generically termed $\widehat{\mathbf{\beta}}$) turn out to have a very simple closed form: $\widehat{\mathbf{\beta}} = \left( \mathbf{X}'\mathbf{X} \right)^{-1} \mathbf{X}'\mathbf{y}$. We are using more general notation here because there could be multiple independent variables. Therefore, $\widehat{\mathbf{\beta}}$ is a vector, $\mathbf{X}$ is a matrix of independent variables for each subject, and $\mathbf{y}$ is a vector of participants' outcomes. As more good news, the standard error for $\widehat{\mathbf{\beta}}$ has a similarly simple closed form.]
 
@@ -201,7 +202,6 @@ In GLMs, we are not just taking the outcome variable in our dataset and transfor
 
 Perhaps the most common link function is the **logit** link, which is suitable for binary data. This link function looks like this, where $w$ is any probability that is strictly between 0 and 1:
 
-<!-- MM: Changed p to w below to avoid confusion with number of paramters. -->
 $$g(w) = \log \left( \frac{w}{1 - w} \right)$$
 
 The term $w / (1 - w)$ is called an **odds** and represents the probability of an event occurring divided by the probability of its not occurring. The resulting model is called **logistic regression** and looks like:
@@ -248,7 +248,7 @@ crossed_ex <- data.frame(`Stimulus1` = c("y~1,1~", "y~2,1~", "y~3,1~"),
 rownames(crossed_ex) <- c("Participant1","Participant2","Participant3")
 kable(crossed_ex, row.names = TRUE, caption = "Outcome data $y$ with indices indicating both participant and stimulus.")
 ```
-<!-- [MM: Should this table just use numerical values? The $y_{i,j}$ notation isn't used later.] -->
+<!-- [MM: Should this table just use numerical values? The $y_{i,j}$ notation isn't used later. MCF: I worry that it will just be 9 made up numbers then. Maybe we should cut this?] -->
 
 Experimental data often contain multiple measurements for each participant (so-called **repeated measures**). In addition, as we discussed in our case study, these measurements are often based on a sample of stimulus items (which then each have multiple measures as well). Table \@ref(tab:models-crossed-rm) gives an example of what the outcome data $y$ might look like in this case. This clustering is problematic for OLS models, because the error terms for each datapoint are not independent. 
 
