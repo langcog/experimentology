@@ -30,9 +30,9 @@ To make a public case for this idea, he started counting cholera deaths.
 He marked each case on a map of the area, and indicated the locations of the water pumps for reference.
 Furthermore, a line could be drawn representing the region that was closest to each water pump, a technique which is now known as a [Voronoi diagram](https://en.wikipedia.org/wiki/Voronoi_diagram).
 The resulting illustration clearly reveals that cases clustered around an area called Golden Square, which received water from a pump on Broad Street.
-Although the precise causal role of these maps in Snow's own thinking is disputed, and it is likely that he produced them well after the incident [@brody2000map], they have nonetheless played a significant role in the history of data visualization [@friendly2021history].^[Actually, the use of disease maps goes back even further! [@seaman1798inquiry] mapped an outbreak of yellow fever in New York City to argue that deaths clustered around a handful of waste sites. He turned out to be right, but for the wrong reasons! These waste sites were breeding grounds for mosquitos, which were the real culprits. Coincidentally, Seaman is also known as the first to introduce vaccines to the United States. He vaccinated his children against smallpox and later organized a program to provide free vaccines to the public.].
+Although the precise causal role of these maps in Snow's own thinking is disputed, and it is likely that he produced them well after the incident [@brody2000map], they have nonetheless played a significant role in the history of data visualization [@friendly2021history].^[Actually, the use of disease maps goes back even further! @seaman1798inquiry mapped an outbreak of yellow fever in New York City to argue that deaths clustered around a handful of waste sites. He turned out to be right, but for the wrong reasons! These waste sites were breeding grounds for mosquitos, which were the real culprits. Coincidentally, Seaman is also known as the first to introduce vaccines to the United States. He vaccinated his children against smallpox and later organized a program to provide free vaccines to the public.]
 
-Nearly two centuries later, as the Covid-19 pandemic swept through the world, governmental agencies like the [CDC](https://covid.cdc.gov/covid-data-tracker) produced maps of the outbreak that have become much more familiar:
+Nearly two centuries later, as the COVID-19 pandemic swept through the world, governmental agencies like the [CDC](https://covid.cdc.gov/covid-data-tracker) produced maps of the outbreak that became much more familiar:
 
 ```{r viz-covid, fig.cap="Map showing the known locations of cumulative coronavirus cases by share of the population in each county (reproduced from the New York Times)"}
 knitr::include_graphics("images/viz/covid-hot-spots.png")
@@ -57,43 +57,59 @@ knitr::include_graphics("images/viz/vaccination.png")
 ```
 
 From this visualization, we can see that unvaccinated individuals are about 6x more likely to test positive.
+
 At the same time, these visualizations were produced using *observational* data, and therefore make it challenging to draw causal inferences.
 For example, people were not randomly assigned to vaccination conditions, and those who have avoided vaccinations may differ in other ways than those who sought out vaccinations.
 Additionally, you may have noticed that these visualizations typically do not give a sense of the raw data, the sample sizes of each group, or uncertainty about the estimates. 
-In this chapter, we will explore how to use visualizations in our own carefully controlled behavioral experiments that license causal inferences. 
+In this chapter, we will explore how to use visualizations in our own carefully controlled psychology experiments, which license stronger causal inferences.
 :::
 
 ## Basic principles of (confirmatory) visualization
 
 In this section, we begin by introducing a few simple guidelines to keep in mind when making informative visualizations in the context of experimental psychology^[Given this relatively narrow focus, a full treatment of visualization is outside the scope of this book. The classic volumes are by @tukey1977exploratory and [@tufte2001visual,@tufte1997visual], and we recommend @healy2018data for a more contemporary guide. For the purposes of understanding the examples in this chapter, it should be sufficient to work through our R tutorials for data manipulation and visualization in Appendices C and D].
-Remember that the needs may be distinct from other contexts, such as journalism or public policy.
+Remember that our needs may be distinct from other fields, such as journalism or public policy.
 You may have seen beautiful and engaging full-page graphics with small print and a wealth of information.
 The art of designing and producing these graphics is typically known as **infoviz** and should be distinguished from what we call **statistical visualization** [@gelman2013].
+
 Roughly, infoviz aims to construct rich and immersive worlds to visually explore: a reader can spend hours pouring over the most intricate graphics and continue to find new and intriguing patterns.
 Statistical visualization, on the other hand, aims to crisply convey the logic of a specific inference at a glance.
-
-In this section, we review several basic principles of making statistical visualizations.
 These are the production-ready figures that anchor the results section of a paper and accompany the key, pre-registered analyses of interest.
-We then return below to the role of visualization in more exploratory analyses. 
+In this section, we review several basic principles of making statistical visualizations.
+We then return below to the role of visualization in more exploratory analyses.
 
 ```{r viz-infoviz, fig.margin=TRUE, fig.cap = "Unlike statistical visualization, which aims to clearly expose the logic of an experiment at a glance, infoviz aims to provide a rich world of patterns to explore [reproduced from @infoviz]."}
 knitr::include_graphics("images/viz/viz_infoviz.jpeg")
 ```
+
 
 ### Principle 1: Show the design
 
 There are so many different kinds of graphs (bar graphs, line graphs, scatter plots, and pie charts) and so many different possible attributes of those graphs (colors, sizes, line types).
 How do we begin to decide how to navigate these decisions?
 The first principle guiding good statistical visualizations is to *show the design* of your experiment.
-There are strong (unwritten) conventions about how your analysis should map onto graphical elements, and following these conventions can minimize confusion.
+There are strong (unwritten) conventions about how your analysis is expected to map onto graphical elements, and following these conventions can minimize confusion.
 Start with the variables you manipulate, and make sure they are clearly visible.
 Conventionally, the primary manipulation of interest (e.g. condition) goes on the x-axis, and the primary measurement of interest (e.g. responses) goes on the y-axis.
-Other critical variables of interest (e.g. secondary manipulations, demographics) are then assigned to "visual variables" (e.g. color or size)
-Visualization libraries like `ggplot` help you think about exposing the design by asking you to make these assignments in an `aesthetics` layer that goes at the very top:
+Other critical variables of interest (e.g. secondary manipulations, demographics) are then assigned to "visual variables" (e.g. color, shape, or size)
+Visualization libraries like `ggplot` (see Appendix \@ref(ggplot)) help you show the design by asking you to make variable assignments in an `aesthetics` layer that goes at the very top:
 
 ```
-ggplot(aes(x = condition, y = response, color = ..., linetype = ..., ))
+aes(
+  x = ...,
+  y = ...,
+  color = ...,
+  linetype = ...,
+)
 ```
+
+As an example, we will consider the data from @stiller2015 that we explored back in Chapter \@ref{models}.
+Because this was a developmental study, the primary independent variable of interest is the age group of participants (ages 2, 3, or 4).
+So age gets assigned to the x-axis.
+The dependent variable is accuracy: the proportion of trials that a participant made the correct response (out of 4 trials).
+So accuracy goes on the y-axis.
+Now, we have two other variables that we might want to show: the condition (experimental vs. control) and the type of stimuli (houses, beds, and plates of pasta).
+When we think about it, though, only condition is central to exposing the design.
+While we might be interested in whether some types of stimuli are systematically easier or harder than others, condition is more central for understanding the *logic* of the study.
 
 ### Principle 2: Facilitate comparison
 
@@ -101,35 +117,29 @@ ggplot(aes(x = condition, y = response, color = ..., linetype = ..., ))
 knitr::include_graphics("images/viz/viz_hierarchy.png")
 ```
 
-Now that you've mapped your design clearly to the figure's axes, how do you decide which graphical elements to display?
-In principle, you might think, these assignments are all arbitrary anyway: as long as we clearly label our choices, it doesn't matter whether we use lines, points, bars, colors, textures, or shapes. 
-While it's true that there are many ways to show the same data, being thoughtful about our choices can make it much easier for readers to interpret our findings.
-The second principle is to *facilitate comparison* along the dimensions relevant to our scientific questions. 
-For example, it is easier for our visual system to accurately compare the location of elements (e.g. noticing that one point is a certain distance away from another) than to compare their areas or colors (e.g. noticing that one point is bigger or brighter than another).
-To illustrate, suppose we have a simple pre-post design with two groups: a treatment group and a control group.
+Now that you've mapped elements of your design to the figure's axes, how do you decide which graphical elements to display?
+You might think: well, in principle, these assignments are all arbitrary anyway.
+As long as we clearly label our choices, it shouldn't matter whether we use lines, points, bars, colors, textures, or shapes.
+It's true that there are many ways to show the same data.
+But being thoughtful about our choices can make it much easier for readers to interpret our findings.
+The second principle of statistical visualizations is to *facilitate comparison* along the dimensions relevant to our scientific questions.
+It is easier for our visual system to accurately compare the location of elements (e.g. noticing that one point is a certain distance away from another) than to compare their areas or colors (e.g. noticing that one point is bigger or brighter than another).
 
 ```{r viz-prepost1}
 library(ggthemes)
-make_2x2_data <- function(n_total = 48, sigma = .5, delta = 1) {
-  tibble(condition = c(rep("control", n_total/2),
-                       rep("treatment", n_total/2)),
-         phase = c(rep("pre", n_total/4), rep("post", n_total/4), rep("pre", n_total/4), rep("post", n_total/4)),
-         rating = c(rnorm(n_total/4, mean = 2, sd = sigma),
-                    rnorm(n_total/4, mean = 2, sd = sigma),
-                    rnorm(n_total/4, mean = 2, sd = sigma),
-                    rnorm(n_total/4, mean = 2 + delta, sd = sigma)))
-} 
-d <- make_2x2_data() %>%
-  mutate(phase = fct_relevel(phase, 'pre'))
+
+d <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/data/tidyverse/stiller_scales_data.csv") |>
+  mutate(age_group = cut(age, 2:5, include.lowest = TRUE),
+         condition = factor(ifelse(condition == "Label", "Experimental", "Control")))
 ```
 
-We could always plot the means of each group as colors:
+We could always plot the accuracy of each age group as colors:
 
 ```{r viz-prepost2}
 d %>%
-  group_by(condition, phase) %>%
+  group_by(condition, age_group) %>%
   summarise(rating = mean(rating)) %>%
-  ggplot(aes(x = phase, y = condition, fill = rating)) +
+  ggplot(aes(x = age_group, y = condition, fill = rating)) +
     geom_tile()
 ```
 
@@ -137,52 +147,52 @@ or areas:
 
 ```{r viz-prepost3}
 d %>%
-  group_by(condition, phase) %>%
+  group_by(condition, age_group) %>%
   summarise(rating = mean(rating)) %>%
-  ggplot(aes(x = phase, y = condition, size = rating)) +
+  ggplot(aes(x = age_group, y = condition, size = rating)) +
     geom_point()
 ```
 
 These plots allow us to see that one condition is (qualitatively) bigger than others, but it's hard to tell how much bigger. 
-Additionally, this way of plotting the data places equal emphasis on phase and condition, but we may instead have in mind particular contrasts, like the *change* from pre- to post-tests and how that change differs across conditions.
-An alternative is to show four bars: two on the left showing the 'pre' phase and two on the right showing the 'post' phase.
-Maybe the control group is red and the treatment group is blue.
+Additionally, this way of plotting the data places equal emphasis on age and condition, but we may instead have in mind particular contrasts, like the *change* across ages and how that change differs across conditions.
+An alternative is to show six bars: three on the left showing the 'experimental' phase and three on the right showing the 'control' phase.
+Maybe the age groups are different colors:
 
 ```{r viz-prepost4}
 d %>% 
-  group_by(condition, phase) %>%
+  group_by(condition, age_group) %>%
   summarise(rating = mean(rating)) %>%
-  ggplot(aes(x = phase, y = rating, fill = condition)) +
+  ggplot(aes(x = condition, y = rating, fill = age)) +
     geom_bar(stat = 'identity', position = 'dodge')
 ```
 
-This is slightly better: it's easier to compare the heights of bars than the 'blueness' of squares, and mapping condition to color draws our eye to that contrast. 
-However, we can do even better by noticing that the main question we are testing in our design is an *interaction*. 
-Our statistic of interest is a difference of differences. 
-To what extent is the pre-post change for the control group different than the pre-post change for the treatment group?
+This is slightly better: it's easier to compare the heights of bars than the 'blueness' of squares, and mapping age to color draws our eye to those contrasts.
+However, we can do even better by noticing that our experiment was designed to test an *interaction*.
+That statistic of interest is a difference of differences.
+To what extent does the developmental change in performance on the experimental condition different from developmental change in performance on the control condition?
 Some researchers have gotten proficient at reading off interactions from bar plots, but they also require a complex set of eye movements. 
-We have to look between the red bars, and then look between the blue bars and implicitly judge one difference against the other: the actual statistic isn't explicitly shown anywhere! 
+We have to look at the pattern across the bars on the left, and then jump over to the bars on the right, and implicitly judge one difference against the other: the actual statistic isn't explicitly shown anywhere!
 What could help facilitate this comparison?
 Consider the following line plot:
 
 ```{r viz-prepost5}
 d %>% 
-  group_by(condition, phase) %>%
+  group_by(condition, age_group) %>%
   summarise(rating = mean(rating)) %>%
-  ggplot(aes(x = phase, y = rating, color = condition, group = condition)) +
+  ggplot(aes(x = age_group, y = rating, color = condition, group = condition)) +
     geom_point() +
     geom_line()
 ```
 
-Now the contrast we want to interpret is highlighted visually. 
-It is easier to directly compare the slope of two lines than mentally compute a difference of differences between four bars. 
+Now the interaction contrast we want to interpret is highlighted visually.
+It is easier to directly compare the slopes of two lines than mentally compute a difference of differences between four bars.
 A few corollaries of this principle [see this helpful presentation from Karl Broman](https://www.biostat.wisc.edu/~kbroman/presentations/IowaState2013/graphs_combined.pdf):
 
-* It is easier to compare values that are adjacent to one another. This is especially important when there are many different conditions included on the same plot. If particular sets of conditions are of theoretical interest, place them close to one another. Otherwise, sort conditions by a meaningful value (rather than alphabetically). 
+* It is easier to compare values that are *adjacent* to one another. This is especially important when there are many different conditions included on the same plot. If particular sets of conditions are of theoretical interest, place them close to one another. Otherwise, sort conditions by a meaningful value (rather than alphabetically).
 
 * When possible, put labels directly next to data rather than in a legend. Legends force readers to glance back and forth to remember what different colors or lines mean. 
 
-* When making histograms or density plots, it is challenging to compare distributions when they are place side-by-side. Instead, facilitate comparison of distributions by vertically aligning them, or making them transparent and placed on the same axes. v
+* When making histograms or density plots, it is challenging to compare distributions when they are placed side-by-side. Instead, facilitate comparison of distributions by vertically aligning them, or making them transparent and placed on the same axes.
 
 * If the scale makes it hard to see important differences, consider transforming the data (e.g. taking the logarithm).
 
@@ -199,7 +209,7 @@ The worst offenders might show just two bars, representing averaged values for t
 This kind of plot adds very little beyond a sentence in the text reporting the means, but it can also be seriously misleading.
 It hides real variation in the data, making a noisy effect based on a few data points look the same as a more systematic one based on a larger sample.
 Additionally, it collapses the *distribution* of the data, making a multi-modal distribution look the same as a unimodal one. 
-The third principle of modern statistical visualization is therefore to *show the data* to visualize variability in some form.
+The third principle of modern statistical visualization is to *show the data* and visualize variability in some form.
 
 The most minimal form of this principle is to *always include error bars*^[And be sure to tell the reader what the error bars represent (a 95% confidence interval? a standard error of the mean?)]
 Error bars turn a purely descriptive visualization (e.g showing COVID-19 case counts over  time) into an inferential one. 
@@ -208,32 +218,45 @@ As such, they allow the viewer to interpret the means as *estimates*.
 
 ```{r viz-show-data1}
 d %>% 
-  group_by(condition, phase) %>%
-  tidyboot::tidyboot_mean(rating) %>%
-  ggplot(aes(x = phase, y = empirical_stat, color = condition, group = condition)) +
+  group_by(condition, age_group) %>%
+  tidyboot::tidyboot_mean(correct) %>%
+  ggplot(aes(x = age_group, y = empirical_stat, color = condition, group = condition)) +
     geom_point() +
     geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
     geom_line() +
-    labs(y = 'mean response')
+    labs(y = 'mean accuracy')
 ```
 
 But we can do even better. 
 By overlaying the distribution of the actual data points on the same plot, we can give the reader information not just about the statistical inferences but the underlying data supporting those inferences.
-There are many ways of showing the distribution.
+In the case of the @stiller2015 study, data points for individual trials are binary (correct or incorrect).
+It's technically possible to show individual responses as dots at 0s and 1s, but this doesn't tell us much (we'll just get a big clump of 0s and a big clump of 1s).
+The question to ask yourself when 'showing the data' is: what are the theoretically meaningful 'units' of variation in the data?
+This question is closely related to our discussion of mixed-effects models in Chapter \@ref{models}, when we considered which random effects we should include.
+Here, a reader is likely to wonder how much variance was found across *different children* in a given age group.
+To show such variation, we aggregate to calculate an accuracy score for each participant.^[While participant-level variation is a good default, the relevant level of aggregation may differ across designs. For example, collective behavior studies may choose to show the data point for each *group*. This choice of unit is also important when generating error bars: if you have a small number of participants but many observations per participant, you are faced with a choice. You may either bootstrap over the flat list of all individual observation (yielding very small error bars), or you may first aggregate within participants (yielding larger error bars that account for the fact that repeated observations from the same participant are not independent.)].
+
+There are many ways of showing the resulting distribution of participant-level data.
 For example, a 'boxplot' shows the median (a horizontal line) in the center of a box extending from the lower quartile (25%) to the upper quartile (75%).
 Lines then extend out to the biggest and smallest values (excluding outliers, which are shown as dots).
 
+
 ```{r viz-show-data2}
-d %>% 
-  ggplot(aes(x = phase, y = rating, color = condition)) +
+d %>%
+group_by(condition, age_group, subid) %>%
+summarize(rating = mean(correct)) %>%
+  ggplot(aes(x = age_group, y = rating, color = condition)) +
     geom_boxplot(alpha = 0.8)
 ```
 
-We can also show the raw data as jittered values with low transparency:
+It is also common to show the raw data as jittered values with low transparency.
+We jitter the points because many participants have the same numbers (e.g. 50\\%) and if they overlap it is hard to see how many points there are.
 
 ```{r viz-show-data3}
 d %>% 
-  group_by(condition, phase) %>%
+  group_by(condition, age_group, subid) %>%
+  summarize(rating = mean(correct)) %>%
+  group_by(condition, age_group) %>%
   tidyboot::tidyboot_mean(rating) %>%
   ggplot(aes(x = phase, y = empirical_stat, color = condition, group = condition)) +
     geom_point() +
@@ -242,6 +265,7 @@ d %>%
     geom_jitter(aes(x = phase, y = rating, color = condition), alpha = 0.25, width = 0.1, data = d) +
     labs(y = 'mean response')
 ```
+
 Perhaps the format that takes this principle the furthest is the so-called "raincloud plot" [@allen2019raincloud].
 A raincloud plot combines the raw data (the 'rain') with a smoothed density (the 'cloud') and a boxplot giving the median and quartiles of the distribution. 
 
@@ -271,13 +295,17 @@ As long as you can write a code snippet to compute a value from a dataset, you c
 
 ```{r viz-boot}
 boot <- d %>% 
-  group_by(condition, phase) %>%
+  group_by(condition, age_group, subid) %>%
+  summarize(rating = mean(correct)) %>%
+  group_by(condition, age_group) %>%
   tidyboot::tidyboot_mean(rating) %>%
   select(-n, -mean) %>%
   mutate(method = 'bootstrapped 95% CI')
 
-ci_sem <- d %>% 
-  group_by(condition, phase) %>%
+ci_sem <- d %>%
+  group_by(condition, age_group, subid) %>%
+  summarize(rating = mean(correct)) %>%
+  group_by(condition, age_group) %>%
   summarise(empirical_stat = mean(rating), 
             sem = sd(rating)/sqrt(length(rating)),
             ci_lower = mean(rating) - sem,
@@ -290,13 +318,14 @@ ci_ci <- ci_sem %>%
   mutate(method = 'analytic 95% CI')
 
 bind_rows(boot, ci_sem, ci_ci) %>%
-  ggplot(aes(x = phase, y = empirical_stat, color = condition, group = condition)) +
+  ggplot(aes(x = age_group, y = empirical_stat, color = condition, group = condition)) +
     geom_point() +
     geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
     geom_line() +
     facet_wrap(~ method) +
     labs(y = 'mean response') +
-    theme_few()
+    theme_few() +
+    theme(aspect.ratio = 1)
 ```
 
 As we can see, the bootstrapped 95% CI looks similar to the analytic 95% CI derived from the standard error, except the upper and lower limits are slightly asymmetric (reflecting outliers in one direction or another). 
@@ -310,7 +339,7 @@ In other words, we cannot magically pull more information out of a small sample 
 ### Principle 4: Maximize information, minimize ink
 
 Now that we have the basic graphical elements in place to show our design and data, it might seem like the rest is purely a matter of aesthetic preference, like choosing a pretty color scheme or font. 
-However, even at this stage there are well-founded principles to make the difference between an effective visualization and a confusing one.
+However, even at this stage there are well-founded principles to make the difference between an effective visualization and a confusing or obfuscating one.
 Simply put, we should try to use the simplest possible presentation of the maximal amount of information: we should maximize the "data-ink ratio".
 To calculate the amount of information shown, @tufte2001visual suggested a measure called the "data density index" (ddi), the "numbers plotted per square inch".
 The worst offenders have a very low density while also using a lot of excess ink.
@@ -328,10 +357,12 @@ For example: consider whether the visual complexity introduced by the default gr
 
 ```{r viz-themes}
 library(ggrepel)
-d %>% 
-  group_by(condition, phase) %>%
+d %>%
+  group_by(condition, age_group, subid) %>%
+  summarize(rating = mean(correct)) %>%
+  group_by(condition, age_group) %>%
   tidyboot::tidyboot_mean(rating) %>%
-  ggplot(aes(x = phase, y = empirical_stat, color = condition, group = condition)) +
+  ggplot(aes(x = age_group, y = empirical_stat, color = condition, group = condition)) +
     geom_point() +
     geom_line() +
     geom_text_repel(aes(label = condition, colour = condition), 
@@ -339,7 +370,7 @@ d %>%
                     min.segment.length = Inf, nudge_x = -.7, nudge_y = -.5) +
     geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
     geom_jitter(aes(x = phase, y = rating, color = condition, fill = condition), alpha = 0.25, width = 0.05, data = d) +
-    labs(x = '', y = 'mean response') +
+    labs(x = 'age group', y = 'mean accuracy') +
     scale_colour_few() +
     theme_few() +
     theme(aspect.ratio = 1, legend.position = 'none') 
@@ -349,7 +380,7 @@ A few additional tips:
 
 * Make sure the font size of all text in your figures is legible and no smaller than other text in your paper (e.g. 10pt). This may require, for example, making the axis breaks sparser, rotating text, or changing the aspect ratio of the figure. 
 
-* An important tool to keep in your visualization arsenal is the *facet plot*.  When your experimental design becomes more complex, consider breaking variables out into a *grid* of facets instead of packing more and more colors and line-styles onto the same axis.  In other words, while higher 'information density' is typically a good thing, you want to aim for the sweet spot before it becomes too dense and confusing. Remember Principle 2. When there is too much going on in every square inch, it is difficult to guide your readers eye to the comparisons that actually matter, and spreading it out across facets gives you additional control over the salient patterns. 
+* Another important tool to keep in your visualization arsenal is the *facet plot*.  When your experimental design becomes more complex, consider breaking variables out into a *grid* of facets instead of packing more and more colors and line-styles onto the same axis.  In other words, while higher 'information density' is typically a good thing, you want to aim for the sweet spot before it becomes too dense and confusing. Remember Principle 2. When there is too much going on in every square inch, it is difficult to guide your readers eye to the comparisons that actually matter, and spreading it out across facets gives you additional control over the salient patterns.
 
 * Sometimes these principles come into conflict, and you may need to prioritize legibility over, for example, showing all of the data. For example, suppose there is an outlier orders of magnitude away from the summary statistics. If the axis limits are zoomed out to show that point, then most of the plot will be blank space! It is reasonable to decide that it is not worth compressing the key statistical question of your visualization the bottom centimeter just to show one point. It may suffice to truncate the axes and note in the caption that a single point was excluded. 
 
@@ -357,17 +388,12 @@ A few additional tips:
 
 * Different audiences may require different levels of specificity. Sometimes it is better to collapse over secondary variables (even if they are included in your statistical models) in order to control the density of the figure and draw attention to the key question of interest. 
 
-<!-- ::: {.box .case_study} -->
-<!-- Sklar et al. (2012) reported evidence of “unconscious” arithmetic. Further reanalyses didn’t support this finding (Moors and Hesselmann 2018). Rabagliati et al. (2018) also failed to replicate. Visualizations provide a framework for asking about the ways the measurements relate to the manipulation that might have shed light on the issues.  -->
-<!-- ::: -->
-
-
 ## Exploratory visualization
 
 So far in this chapter we have focused on principles of *confirmatory* data visualization: how to make 'production-quality' figures that convey the key pre-registered analyses without hiding sources of variablility or misleading readers about the reliability of the results.
 Yet this is only one role that data visualization plays when doing science. 
 An equally important role is called *exploratory visualization*: the more routine practice of understanding one's own data by visualizing it.
-In a sense, this role is analogous to the sense of exploratory analyses in Chapter XX. 
+This role is analogous to the sense of exploratory data analyses discussed in Chapter \@ref{prereg}.
 We typically do not pre-register exploratory visualizations, and when we decide to include them in a paper they are typically in the service of a secondary argument (e.g. checking the robustness of an effect or validating that some assumption is satisfied).
 
 But, at least in our experience, this kind of visualization plays a much more ubiquitous role in the analyst's day-to-day activities.
@@ -487,6 +513,7 @@ A recurring regret raised by the co-authors of this paper is that they never tho
 ```{r viz-uniform, fig.margin=TRUE, fig.cap="A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!"}
 knitr::include_graphics("images/viz/data_colada_uniform.png")
 ```
+:::
 
 ## Conclusion
 
