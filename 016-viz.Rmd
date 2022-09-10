@@ -3,10 +3,10 @@
 
 ::: {.box .learning_goals}
 -   Analyze the principles behind informative visualizations
--   Incorporate visualization into analysis workflow
+-   Incorporate visualization into an analysis workflow
 -   Learn to make "the design plot"
 -   Select different visualizations of variability and distribution
--   Connect visualization concepts to measurement principles.
+-   Connect visualization concepts to measurement principles
 :::
 
 What makes visualizations so useful, and what role do they play in the toolkit of experimentology?
@@ -138,7 +138,7 @@ We could always plot the accuracy of each age group as colors:
 ```{r viz-prepost2}
 d %>%
   group_by(condition, age_group) %>%
-  summarise(rating = mean(rating)) %>%
+  summarise(rating = mean(correct)) %>%
   ggplot(aes(x = age_group, y = condition, fill = rating)) +
     geom_tile()
 ```
@@ -148,7 +148,7 @@ or areas:
 ```{r viz-prepost3}
 d %>%
   group_by(condition, age_group) %>%
-  summarise(rating = mean(rating)) %>%
+  summarise(rating = mean(correct)) %>%
   ggplot(aes(x = age_group, y = condition, size = rating)) +
     geom_point()
 ```
@@ -161,8 +161,8 @@ Maybe the age groups are different colors:
 ```{r viz-prepost4}
 d %>% 
   group_by(condition, age_group) %>%
-  summarise(rating = mean(rating)) %>%
-  ggplot(aes(x = condition, y = rating, fill = age)) +
+  summarise(rating = mean(correct)) %>%
+  ggplot(aes(x = condition, y = rating, fill = age_group)) +
     geom_bar(stat = 'identity', position = 'dodge')
 ```
 
@@ -178,10 +178,11 @@ Consider the following line plot:
 ```{r viz-prepost5}
 d %>% 
   group_by(condition, age_group) %>%
-  summarise(rating = mean(rating)) %>%
+  summarise(rating = mean(correct)) %>%
   ggplot(aes(x = age_group, y = rating, color = condition, group = condition)) +
     geom_point() +
-    geom_line()
+    geom_line() +
+  ylab("Proportion correct")
 ```
 
 Now the interaction contrast we want to interpret is highlighted visually.
@@ -253,16 +254,21 @@ It is also common to show the raw data as jittered values with low transparency.
 We jitter the points because many participants have the same numbers (e.g. 50\\%) and if they overlap it is hard to see how many points there are.
 
 ```{r viz-show-data3}
-d %>% 
+mss <- d %>% 
   group_by(condition, age_group, subid) %>%
-  summarize(rating = mean(correct)) %>%
+  summarize(rating = mean(correct)) 
+
+ms <- mss %>%
   group_by(condition, age_group) %>%
-  tidyboot::tidyboot_mean(rating) %>%
-  ggplot(aes(x = phase, y = empirical_stat, color = condition, group = condition)) +
+  tidyboot::tidyboot_mean(rating) 
+
+ggplot(ms, 
+       aes(x = age_group, y = empirical_stat, color = condition, group = condition)) +
     geom_point() +
     geom_line() +
     geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
-    geom_jitter(aes(x = phase, y = rating, color = condition), alpha = 0.25, width = 0.1, data = d) +
+    geom_jitter(data = mss, aes(x = age_group, y = rating, color = condition),
+                alpha = 0.25, width = 0.1) +
     labs(y = 'mean response')
 ```
 
@@ -357,19 +363,15 @@ For example: consider whether the visual complexity introduced by the default gr
 
 ```{r viz-themes}
 library(ggrepel)
-d %>%
-  group_by(condition, age_group, subid) %>%
-  summarize(rating = mean(correct)) %>%
-  group_by(condition, age_group) %>%
-  tidyboot::tidyboot_mean(rating) %>%
-  ggplot(aes(x = age_group, y = empirical_stat, color = condition, group = condition)) +
+
+ggplot(ms, aes(x = age_group, y = empirical_stat, 
+             color = condition, group = condition)) +
     geom_point() +
     geom_line() +
     geom_text_repel(aes(label = condition, colour = condition), 
-                    data = . %>% filter(phase == "post"), 
-                    min.segment.length = Inf, nudge_x = -.7, nudge_y = -.5) +
+                    data = . %>% filter(age_group == "(4,5]")) +
     geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
-    geom_jitter(aes(x = phase, y = rating, color = condition, fill = condition), alpha = 0.25, width = 0.05, data = d) +
+    geom_jitter(aes(x = age_group, y = rating, color = condition, fill = condition), alpha = 0.25, width = 0.05, data = mss) +
     labs(x = 'age group', y = 'mean accuracy') +
     scale_colour_few() +
     theme_few() +
@@ -672,7 +674,7 @@ Or you might notice that an attribute is missing for some values, and trace it b
 If you see anything that looks weird, track it down until you understand why it's happening.
 Bugs that are subtle and invisible in other parts of the analysis pipeline will often pop out as red flags in visualizations.
 
-## Conclusion
+## Chapter summary: Visualization
 
 This chapter has given a short review of the principles of data visualization, especially focusing on the needs of experimental psychology, which are often quite different than those of other fields.
 We particularly focused on the need to make visualization part of the experimenter's analytic workflow.
@@ -680,15 +682,12 @@ Picking up the idea of a "default model" from Chapter \@ref(models), we discusse
 Within this framework, we then discussed different visualizations of distribution and variability that better align our graphics with the principles of measurement and attention to raw data that we have been advocating throughout.
 
 ::: {.box .readings}
-📚 Suggested readings:
-
 There are many good introductions to data visualization. Here are two social-science focused books whose advice we agree with and that also contain a lot of practical information and helpful R code for the same packages we use here.  
 
-* Healy, K. (2019). *Data Visualization: A Practical Introduction*. Princeton University Press. 
+* Healy, K. (2019). *Data Visualization: A Practical Introduction*. Princeton University Press. Princeton University Press. Available free onine at [https://socviz.co](). 
 
-* Wilke, C. O. (2019). *Fundamentals of Data Visualization*. O'Reilly Media.
+* Wilke, C. O. (2019). *Fundamentals of Data Visualization*. O'Reilly Media. Available free online at [https://clauswilke.com/dataviz/]().
 
 For a more classical treatment, see @tukey1977exploratory and [@tufte2001visual,@tufte1997visual].
 
 :::
-

@@ -7,6 +7,7 @@ import {
 	faWandMagicSparkles  as interactive,
 	faPenRuler           as exercises,
 	faList               as examples,
+	faBook               as readings,
 } from '@fortawesome/free-solid-svg-icons'
 
 export default {
@@ -18,4 +19,5 @@ export default {
 	interactive,
 	exercises,
 	examples,
+	readings,
 }

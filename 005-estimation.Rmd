@@ -3,12 +3,14 @@
 # Estimation {#estimation}
 
 ::: {.box .learning_goals}
-- Contrast inference and estimation as two goals of statistical analysis
-- Discuss differences between frequentist and Bayesian perspectives
-- Reason about standardized effect sizes and their strengths and weaknesses
+- Use parameter estimation to compute a causal effect via an experiment
+- Discuss differences between frequentist and Bayesian estimation
+- Reason about standardized effect sizes and their strengths and weaknesses 
 :::
 
-In the first section of this book, our goal was to set up some of the theoretical ideas that motivate our approach to experimental design and planning. We introduced our key thesis, namely that experiments are about measuring causal effects. We also began to discuss some of our key themes, including precision of measurement, reduction of bias, and generalization across populations. In this next section of the book -- treating statistical topics -- we will integrate these ideas with an analytic toolkit for **estimating** effects, **quantifying the size and precision** of these estimates (this chapter), making **inferences** about the evidence for such effects (Chapter \@ref(inference)), and making **models** for estimation and inference in more complex settings (Chapter \@ref(models)). Although this book is not a statistics text, we hope that these chapters provide some practical foundations for beginning the statistical analysis of your experimental data.
+In the first section of this book, our goal was to set up some of the theoretical ideas that motivate our approach to experimental design and planning. We introduced our key thesis, namely that experiments are about measuring causal effects. We also began to discuss some of our key themes, including precision of measurement, reduction of bias, and generalization across populations. 
+
+In this next section of the book -- treating statistical topics -- we will integrate these ideas with an analytic toolkit for **estimating** effects, **quantifying the size and precision** of these estimates (this chapter), making **inferences** about the evidence for such effects (Chapter \@ref(inference)), and making **models** for estimation and inference in more complex settings (Chapter \@ref(models)). Although this book is not a statistics text, we hope that these chapters provide some practical foundations for beginning the statistical analysis of your experimental data.
 
 ::: {.box .case_study}
 (TITLE) The Lady Tasting Tea
@@ -81,17 +83,17 @@ How do we quantify this tradeoff between our prior expectations and our current 
 In Bayesian estimation, we observe some data $d$, consisting of the set of correct and incorrect responses in the experiment. Now we can use **Bayes' rule**, a tool from basic probability theory, to estimate this number. Bayes' rule says:
 
 $$
-\color{purple}{p(\theta_{\textrm{milk-first}} | d)} = \frac{\color{red}{p(d | \theta_{\textrm{milk-first}} )} \color{blue}{p(\theta_{\textrm{milk-first}} )}}{\color{black}{p(d)}}.
+\color{purple}{p(\theta_{\textrm{milk-first}} | \text{data})} = \frac{\color{red}{p(\text{data} | \theta_{\textrm{milk-first}} )} \color{blue}{p(\theta_{\textrm{milk-first}} )}}{\color{black}{p(\text{data})}}.
 $$
 
-\noindent Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(\theta_{\textrm{milk-first}} |d)$) is called the **posterior probability** -- it tell us what we should believe about the population parameter on tea quality, given the data we observed.^[We're making the posterior `r colorize("purple","purple")` to indicate the combination of likelihood (`r colorize("red","red")`) and prior (`r colorize("blue","blue")`).]
+\noindent Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(\theta_{\textrm{milk-first}} |\text{data})$) is called the **posterior probability** -- it tell us what we should believe about the population parameter on tea quality, given the data we observed.^[We're making the posterior `r colorize("purple","purple")` to indicate the combination of likelihood (`r colorize("red","red")`) and prior (`r colorize("blue","blue")`).]
 
-The first part of the numerator is $p(d|h)$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.^[Speaking informally, "likelihood" is just a synonym for probability, but this is a technical meaning for the term, which can get a bit confusing.] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the tea is of high quality (say $\theta_{\textrm{milk-first}} = 6.5$) then the probability of a bunch of low accuracy observations will be fairly low.
+The first part of the numerator is $p(\text{data}|H)$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.^[Speaking informally, "likelihood" is just a synonym for probability, but this is a technical meaning for the term, which can get a bit confusing.] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the tea is of high quality (say $\theta_{\textrm{milk-first}} = 6.5$) then the probability of a bunch of low accuracy observations will be fairly low.
 
 The second term in the numerator, $p(\theta_{\textrm{milk-first}} )$, is called the **prior**. This term encodes our beliefs about the likely distribution of tea quality. Intuitively, if we think that the tea is likely of high quality, we should require more evidence to convince us that it's bad. In contrast, if we think it's probably bad, a few examples of low ratings might serve to convince us.
 
 
-```{r inference-bayes-demo, fig.cap="Examples of Bayesian inference about tea ratings under two different priors (facets) and just a little bit of data. Blue lines give the prior probability distribution, red lines give the likelihood of the data, and purple lines give the posterior distribution from combining likelihood and prior."}
+```{r inference-bayes-demo, fig.cap="Examples of Bayesian inference about tea ratings under two different priors (panels) and a small sample size. Blue lines give the prior probability distribution, red lines give the likelihood of the data, and purple lines give the posterior distribution from combining likelihood and prior."}
 
 # example follows math here: https://people.eecs.berkeley.edu/~jordan/courses/260-spring10/lectures/lecture5.pdf
 
@@ -183,36 +185,36 @@ We've now covered estimating a single parameter (the mean in just the milk-first
 
 ### Estimating the treatment effect 
 
-Let's refer to the causal effect we care about as our **treatment effect**. In practice, estimating $\beta_{\textrm{milk-first}}$ is going to be a pretty straightforward extension to what we did before.
+Let's refer to the causal effect we care about as our **treatment effect**. In practice, estimating $\beta$ is going to be a pretty straightforward extension to what we did before.
 
-In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution, but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let's term the parameters for the tea-first group $\theta_{\textrm{tea-first}}$ and $\sigma$. To estimate the treatment effect, we are positing a **model** in which the milk-first ratings are normally distributed with mean $\theta_{\textrm{milk-first}} = \theta_{\textrm{tea-first}} + \beta_{\textrm{milk-first}}$ and with standard deviation $\sigma$.^[For simplicity, we're assuming that the standard deviations in each tea group are equal.]
+In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution, but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let's term the parameters for the tea-first group $\theta_{\textrm{tea-first}}$ and $\sigma$. To estimate the treatment effect, we are positing a **model** in which the milk-first ratings are normally distributed with mean $\theta_{\textrm{milk-first}} = \theta_{\textrm{tea-first}} + \beta$ and with standard deviation $\sigma$.^[For simplicity, we're assuming that the standard deviations in each tea group are equal.]
 
-As in the one-sample case (i.e., estimating the mean of just the milk-first group), maximum likelihood estimation would then proceed by finding the value of $\beta_{\textrm{milk-first}}$ that makes the data most likely under the assumed model. As you'd probably expect, this estimate $\widehat{\beta_{\textrm{milk-first}}}$ turns out to be simply the difference in sample means, $\theta_{\textrm{milk-first}} - \theta_{\textrm{tea-first}}$.
+As in the one-sample case (i.e., estimating the mean of just the milk-first group), maximum likelihood estimation would then proceed by finding the value of $\beta$ that makes the data most likely under the assumed model. As you'd probably expect, this estimate $\widehat{\beta}$ turns out to be simply the difference in sample means, $\theta_{\textrm{milk-first}} - \theta_{\textrm{tea-first}}$.
 
-In the Bayesian framework, we would again specify a prior $p(\beta_{\textrm{milk-first}} )$ that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could  specify a flat prior, $p(\beta_{\textrm{milk-first}} ) \propto 1$. If we believe the treatment effect is likely to favor milk-first pouring ($\beta_{\textrm{milk-first}}>0$), we could specify a normal prior centered at some positive value (e.g., $\beta_{\textrm{milk-first}}=0.5$); the standard deviation of this prior would encode how certain we are about our prior beliefs. And if we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at 0, which has the effect of "shrinking" the estimates closer to 0.^[The measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Of course, this is only one kind of uncertainty! A more holistic view of the overall credibility of an estimate should also account for other things outside of the model, like study design issues and bias.]
+In the Bayesian framework, we would again specify a prior $p(\beta)$ that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could  specify a flat prior, $p(\beta) \propto 1$. If we believe the treatment effect is likely to favor milk-first pouring ($\beta>0$), we could specify a normal prior centered at some positive value (e.g., $\beta=0.5$); the standard deviation of this prior would encode how certain we are about our prior beliefs. And if we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at 0, which has the effect of "shrinking" the estimates closer to 0.^[The measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Of course, this is only one kind of uncertainty! A more holistic view of the overall credibility of an estimate should also account for other things outside of the model, like study design issues and bias.]
 
 As in our example above, maximum likelihood estimates and Bayesian estimates are going to be pretty similar if we have a lot of data. They will only diverge when we have strong priors or relatively little data. The reason we are setting up these two different frameworks, however, is that they will provide very different inferential tools in the next chapter.
 
 ### Measures of effect size
 
-Once we have measured something, we need to make a decision about how to describe this effect to the world. Sometimes we are working with fairly intuitive relationships that are easy to describe. A researcher might say, for example, that people who received milk-first tea drank the tea, on average, 5 minutes quicker than people who received tea-first tea (i.e., that $\widehat{\beta_{\textrm{milk-first}}}_{time} = 5$). Time is measured in units like minutes and seconds and so we all have a shared understanding of what 5 minutes means.
+Once we have measured something, we need to make a decision about how to describe this effect to the world. Sometimes we are working with fairly intuitive relationships that are easy to describe. A researcher might say, for example, that people who received milk-first tea drank the tea, on average, 5 minutes quicker than people who received tea-first tea (i.e., that $\widehat{\beta} = 5$ minutes). Time is measured in units like minutes and seconds and so we all have a shared understanding of what 5 minutes means.
 
-But what about our participants' ratings of tea quality, which were provided on an arbitrary 7-point rating scale that we devised? What does it mean to that participants who drank milk-first tea rated it 1 point higher than participants who drank tea-first tea (i.e., that $\widehat{\beta_{\textrm{milk-first}}}_{rating} = 1$)? And how is this difference comparable to, for instance, a 1-point change on a scale that has similar anchors ("terrible" and "delicious") but uses a 100-point rating system?
+But what about our participants' ratings of tea quality, which were provided on an arbitrary 7-point rating scale that we devised? What does it mean to that participants who drank milk-first tea rated it 1 point higher than participants who drank tea-first tea (i.e., that $\widehat{\beta} = 1$ point)? And how is this difference comparable to, for instance, a 1-point change on a scale that has similar anchors ("terrible" and "delicious") but uses a 100-point rating system?
 
 To provide a common language for describing these relationships, some researchers use *standardized effect sizes.* A common standardized effect size is Cohen's *d*, which provides a standardized estimate of the difference between two means. There are many different ways to calculate Cohen's *d* [@lakens2013], but all approaches are usually some variant of the following formula:
 
 $$
-d = \frac{\theta_{\textrm{milk-first}} - \theta_{\textrm{tea-first}}}{\sigma_{pooled}}
+d = \frac{\theta_{\textrm{milk-first}} - \theta_{\textrm{tea-first}}}{\sigma_{\text{pooled}}}
 $$
 
-\noindent where the difference between means ($\theta_{\textrm{tea-first}}$ and $\theta_{\textrm{milk-first}}$) is divided by the pooled standard deviation $\sigma_{pooled}$.^[We're dropping the hats here because we're now working with a whole bunch of estimates, so everything would have a hat!] Intuitively, what you're doing is taking the study effect ($\beta_{\textrm{milk-first}}$) and dividing it -- scaling it -- by the variation we saw between individuals in the study. 
+\noindent where the difference between means ($\theta_{\textrm{tea-first}}$ and $\theta_{\textrm{milk-first}}$) is divided by the pooled standard deviation $\sigma_{\text{pooled}}$.^[We're dropping the hats here because we're now working with a whole bunch of estimates, so everything would have a hat!] Intuitively, what you're doing is taking the study effect ($\beta$) and dividing it -- scaling it -- by the variation we saw between individuals in the study. 
 
 Let's compute this measure for our tea-drinking study. We can just plug in the estimates we made earlier in the chapter and compute the standard deviation of our observed data:
 
-$$d = \frac{\theta_{\textrm{milk-first}} - \theta_{\textrm{tea-first}}}{\sigma_{pooled}} = \frac{4.5- 3.5}{1.25} = \frac{1}{1.25} = 0.80$$
+$$d = \frac{\theta_{\textrm{milk-first}} - \theta_{\textrm{tea-first}}}{\sigma_{\text{pooled}}} = \frac{4.5- 3.5}{1.25} = \frac{1}{1.25} = 0.80$$
 \noindent In other words, the effect size of the difference between the two conditions is .8 standard deviations. 
 
-We previously said that people who drank milk-first tea had quality ratings that were, on average, 1 point higher on a 7-point scale ($\widehat{\beta_{\text{milk-first}}} = 1$). Cohen's *d* translates the arbitrary units of our rating scale into a **unit-less** effect size that is measured in terms of the variation in the data. You may find yourself wondering: "why would I ever describe things in terms of standard deviations?" The key benefit is that it allows us to compare the size of the effect to studies that use different measures.
+We previously said that people who drank milk-first tea had quality ratings that were, on average, 1 point higher on a 7-point scale ($\widehat{\beta} = 1$ point). Cohen's *d* translates the arbitrary units of our rating scale into a **unit-less** effect size that is measured in terms of the variation in the data. You may find yourself wondering: "why would I ever describe things in terms of standard deviations?" The key benefit is that it allows us to compare the size of the effect to studies that use different measures.
 
 Let's say that we ran a replication of our tea study with two changes: (1) we studied patrons in a US cafe instead of a UK cafe, and (2) we used a 100-point quality rating scale instead of a 7-point scale. Imagine that, just as we found that participants in the UK rated the milk-first tea 1-point higher on a 7-point quality scale, US participants rated the milk-first tea 1-point higher on a *100-point* quality scale. It seems clear that these effects are different because of the difference in scale. But how different? 
 
@@ -220,11 +222,11 @@ It might at first seem reasonable just to normalize by the length of the scale. 
 
 Let's compute the effect size for the cross-cultural replication. We'll imagine that participants who drank milk-first tea gave an average rating of 50/100 and participants who drank tea-first tea rated it 49 on average. But if their variability was also relatively lower, perhaps the standard deviation of their ratings was only 5. Using the formula above, we find 
 
-$${d_{US}} = \frac{\theta_{\text{tea-first}} - \theta_{\text{milk-first}}}{\sigma_{pooled}} = \frac{50 - 49}{5} = \frac{1}{5}=  0.2$$
+$${d_{US}} = \frac{\theta_{\text{tea-first}} - \theta_{\text{milk-first}}}{\sigma_{\text{pooled}}} = \frac{50 - 49}{5} = \frac{1}{5}=  0.2$$
 
 \noindent A Cohen's *d* of .2 means that US cafe patrons rated their tea .2 standard deviations higher when it was milk-first, much smaller than the .8 standard deviation difference in the UK patrons. 
 
-There are no hard and fast rules for interpreting what makes a big effect or a small effect, but people often refer back to standard suggested by @cohen1992. On those standards, $d = 0.8$ is a "large effect", and $d = 0.2$ is a "small effect." But these effect size interpretation norms are somewhat arbitrary. More broadly, though US and UK patrons had the same raw score change in quality ratings ($\widehat{\beta_{\text{milk-first}}} = 1$), standardizing the differences allowed us to communicate that the difference was much larger among the UK patrons.
+There are no hard and fast rules for interpreting what makes a big effect or a small effect, but people often refer back to standard suggested by @cohen1992. On those standards, $d = 0.8$ is a "large effect", and $d = 0.2$ is a "small effect." But these effect size interpretation norms are somewhat arbitrary. More broadly, though US and UK patrons had the same raw score change in quality ratings ($\widehat{\beta} = 1$), standardizing the differences allowed us to communicate that the difference was much larger among the UK patrons.
 
 Cohen's *d* is one of many standardized effect sizes that researchers can use. Just as Cohen's *d* standardizes differences in group means, there are also ways of standardizing relationships between categorical variables (e.g., odds ratio), how well a predictor variable explains an outcome variable (e.g., Pearson's *r*, $r^2$, or $\eta^2$), and more. We'll be using effect sizes throughout the book, but in most cases -- for example, sample size planning in Chapter \@ref(sampling) and meta-analysis in Chapter \@ref(meta) -- we'll be using Cohen's *d* as our example.^[If you'd like to learn more about other varieties of effect size, take a look at @fritz2012.] 
 
@@ -238,14 +240,21 @@ Standardizing effect sizes, though, has limitations. For example, if two interve
 
 For example, imagine we conducted our tea experiment again, but this time with (decaf) tea, and focusing on children. Maybe milk-first tea tastes the same amount better than tea-first tea for kids and for adults. But it's pretty well known that kids are more variable in their responding. This higher level of variability would lead us to observe a smaller effect size in kids vs. adults. Recall that our UK adult SD was 1.25, and our effect size was $d = .8$. Imagine that children's SD is 2.5. In this scenario, even if tea led to the same 1-point absolute change in feelings of excitement among adults and children, the standardized effect size for kids would look half as big:
 
-$${d_{kids}} = \frac{\theta_{\text{tea-first}} - \theta_{\text{milk-first}}}{\sigma_{pooled}} = \frac{5- 4}{2.5} = \frac{1}{2.5} =  .4$$
+$${d_{kids}} = \frac{\theta_{\text{tea-first}} - \theta_{\text{milk-first}}}{\sigma_{\text{pooled}}} = \frac{5- 4}{2.5} = \frac{1}{2.5} =  .4$$
 
-This example highlights some of the challenges with standardization. If we focused on the fact that both adults and children experienced a 1-point change in excitement levels ($\widehat{\beta_{\text{milk-first}}} = 1$), we would conclude that milk-first tea is equally tasty for adults and kids. If we focused on the standardized effect sizes, however, we would conclude that the effect of tea is twice as big for adults.
+This example highlights some of the challenges with standardization. If we focused on the fact that both adults and children experienced a 1-point change in excitement levels ($\widehat{\beta} = 1$), we would conclude that milk-first tea is equally tasty for adults and kids. If we focused on the standardized effect sizes, however, we would conclude that the effect of tea is twice as big for adults.
 
 So which is better: describing raw measures or standardized effect sizes? In general our response is "Why not both?" But if you wanted to pick one or the other, we recommend focusing on raw scores when working with measures that yield measurements that are likely to be comparable across studies already. If your study uses standard units such as milliseconds (e.g., for reaction times) or counts (e.g., for a study tracking an outcome like utterances), these measurements are already comparable across studies. Reporting raw measurements can allow you to check whether your measurements make sense -- for example, a reaction time of 70 milliseconds is inhumanly fast, while a reaction time of 10 seconds might be extremely slow (at least, for many speeded tasks).
 
 In contrast, we recommend using standardized effect sizes for cases where the measurement is relatively unlikely to be comparable with other studies in its original form, or unlikely to be meaningful on its own. For example, reporting the effect of an intervention on raw math test scores is only meaningful if the reader knows how many items are on the test, how difficult it is, and so forth. In such a case where there it is hard to be "calibrated" to the measurement, standardization with respect to variability via effect sizes may be the best we can do.
 
-## Summary: Estimation
+## Chapter summary: Estimation
 
 In this chapter, we introduced the idea of estimating both individual measurements and treatment effects from observed data. These ideas are simple but they lay the foundations for drawing inferences, where we move from estimates within a particular sample to inferences about the population. Further, we set up the distinction between Bayesian and frequentist approaches, which we will expand in the next chapter since these traditions provide different inferential tools.
+
+::: {.box .readings}
+* A great narrative introduction to the history and practice of statistics: Salsburg, D. (2001). *The lady tasting tea: How statistics revolutionized science in the twentieth century*. Macmillan.
+
+* An open source statistics textbook that follows a similar approach as Chapters \@ref(estimation) -- \@ref(models): Poldrack, R. (2022). *Statistical thinking for the 21st century*. Available free online at [https://statsthinking21.org]().
+:::
+
