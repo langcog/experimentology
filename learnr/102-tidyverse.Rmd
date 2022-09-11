@@ -1,0 +1,385 @@
+---
+title: Tidyverse
+tutorial:
+  id: "`r rnorm(1)`"
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+    
+## Introduction
+
+This Appendix is a short tutorial on how to use the `tidyverse` family of packages in R. The tidyverse is a coherent "stack" for cleaning, manipulating, visualizing, and modeling data. It's what we've used throughout this book both in the visible examples and on the back-end. It's also -- in our opinion -- a really impressive piece of design thinking. The tidyverse implements a clear and flexible conceptual model for the manipulation of heterogeneous datasets. It takes a little while to get your head around this conceptual model, but it is very useful once you do!
+
+```{r data-science, echo=FALSE, fig.cap="Schematic of data workflow (from R for Data Science). This tutorial introduces first the Import and Transform components of data analysis and then the Tidy component."}
+knitr::include_graphics("images/tidyverse/data-science.png")
+```
+
+<!-- Visualise is taught in Chapter \\@ref(viz) and Appendix \\@ref(ggplot); different aspects of Model are covered by Chapters \\@ref(estimation), \\@ref(inference), and \\@ref(models); and Communicate is discussed in Chapter \\@ref(writing) and Appendix \\@ref(rmarkdown). -->
+
+__Learning goals__
+
+* Explain what "tidy data" is and why it's a useful uniform format for behavioral data
+* Master a set of tidyverse "verbs" for manipulating tidy data
+* Begin exploring the set of tools that will let you make untidy data tidier
+* Explore extensions within this ecosystem
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(learnr)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
+                      exercise.cap = "Exercise")
+
+mtcars <- as_tibble(mtcars)
+sgf <- read_csv("www/data/tidyverse/stiller_scales_data.csv")
+sgf_wide <- read_csv("www/data/tidyverse/sgf_wide.csv")
+```
+
+###
+
+> Tidy datasets are all alike, but every messy dataset is messy in its own way.
+>
+> Hadley Wickham
+
+Here's the basic idea: In tidy data, every row is a single **observation** (trial), and every column describes a **variable** with some **value** describing that trial.
+
+```{r tidyverse-tidy-1, echo=FALSE, fig.cap=""}
+knitr::include_graphics("images/tidyverse/tidy-1.png")
+```
+
+###
+
+If you know that data are formatted this way, then you can do amazing things, basically because you can take a uniform approach to the dataset. Here's a quote from the book [R for Data Science](http://r4ds.had.co.nz/):
+
+<!-- [This book, [R for Data Science](http://r4ds.had.co.nz/), is a free web book that provides a much deeper treatment of the concepts we introduce here and is a great reference for learning the tidyverse, written by its chief architect.] -->
+
+> There’s a general advantage to picking one consistent way of storing data. If you have a consistent data structure, it’s easier to learn the tools that work with it because they have an underlying uniformity. There’s a specific advantage to placing variables in columns because it allows R’s vectorised nature to shine.
+
+Let's explore what this means and how it works. We'll do that first by exploring functions and "pipes", then we'll introduce tidyverse data manipulation. We'll then look at how to make datasets tidier. Finally, we'll end with some pointers towards future directions. 
+
+## Functions and Pipes
+
+Everything you typically want to do in statistical programming uses **functions**. `mean` is a good example. `mean` takes one **argument**, a numeric vector. Pipes are a way to write strings of functions more easily. They bring the first argument of the function to the beginning. 
+
+We'll use the `mtcars` dataset that's built into base R. Here's what that dataset looks like.
+
+```{r tidyverse-pipe-mtcards}
+mtcars
+```
+
+###
+
+We'll look specifically at the `mpg` variable (miles per gallon). Instead of writing `mean(mtcars$mpg)`, with a pipe you can write:
+
+```{r tidyverse-pipe-mean, eval=FALSE}
+mtcars$mpg |> mean()
+```
+
+That's not very useful yet, but when you start **nesting** functions, it gets better. Let's set up a gallons-per-mile function.
+
+```{r tidyverse-pipe-gpm}
+gpm <- function (mpg) 1 / mpg
+```
+
+Now we can compute GPM and output the number we want like so:
+
+```{r tidyverse-pipe-nested}
+round(mean(gpm(mtcars$mpg)), digits = 2)
+```
+
+__Exercise__: rewrite `round(mean(gpm(mtcars$mpg)), digits = 2)` with pipes.
+
+```{r tidyverse-pipes-exercise, exercise=TRUE, exercise.eval=TRUE, exercise.setup="tidyverse-pipe-gpm"}
+round(mean(gpm(mtcars$mpg)), digits = 2)
+```
+
+Reading `round(mean(gpm(mtcars$mpg)))` out loud involves reading from the center outwards. In contrast, the piped version can be read from left to right, top to bottom. That's what pipes are for: they let you write strings of functions so that they are readable and distinct. We'll be doing a lot of piping of functions with multiple arguments later, and it will really help keep our syntax simple. 
+
+## Tidy data analysis
+
+Next we are going to put the pipe into action in our analysis of a real dataset. Here are the raw data from @stiller2015, a simple developmental language study that we can use as our example. In that study, children met a puppet named "Furble." Furble would show them three pictures, e.g. face, face with glasses, face with hat and glasses and would say "my friend has glasses." They then had to choose which face was Furble's friend. (The prediction was that they'd choose *glasses and not a hat*, indicating that they'd made a correct pragmatic inference). In the control condition, Furble just mumbled, so the expectation was that children would pick at chance. Figure \@ref(fig:tidyverse-furble) shows the stimuli. 
+
+```{r tidyverse-furble, echo=FALSE, fig.margin=TRUE, fig.cap="Example stimulus from Stiller, Goodman, & Frank (2015)."}
+knitr::include_graphics("images/tidyverse/furble.png")
+```
+
+###
+
+We are going to manipulate these data using "verbs" from the tidyverse. We'll only look at four verbs today, but there are many other useful ones. Here are the four most common ones in many data analytic workflows:
+
+* `filter` - remove rows by some logical condition
+* `mutate` - create new columns 
+* `group_by` - group the data into subsets by some column
+* `summarize` - apply some function over columns in each group  
+
+### Exploring and characterizing the dataset
+
+First we will read in the data. Note that we are using `read_csv` from `tidyverse`. This function is a bit faster than `read.csv` in base R and has better defaults.
+
+```{r tidyverse-sgf-data, eval=FALSE}
+sgf <- read_csv("stiller_scales_data.csv")
+```
+
+It's a very good idea to inspect your data before you start any analysis. Some common methods are using `summary`, which provides summaries of each variable and `View` to open the data in an interactive panel.
+
+```{r tidyverse-sgf}
+sgf
+```
+
+The data from @stiller2015 are tidy: each row describes a single trial, each column describes some aspect of that trial, including their id (`subid`), age (`age`), condition (`condition` - "label" is the experimental condition, "No Label" is the control), item (`item` - which thing Furble was trying to find). 
+
+Now that we have examined the data, let's go ahead and start manipulating it.
+
+### Filtering
+
+There are lots of reasons you might want to remove rows from your dataset, including getting rid of outliers, selecting subpopulations, and so forth. For this purpose, `filter` is a verb (a function in the tidyverse) that takes a data frame as its first argument, and then as its other argument(s) takes the condition(s) you want to filter on.
+
+So if you wanted to look only at two year olds, you could do this:
+<!-- ^[Filter can take a either a single logical condition or a set of conditions, so you could also write `filter(sgf, age > 2 & age < 3)`.s]  -->
+
+```{r tidyverse-filter, eval=FALSE}
+filter(sgf, age >= 2, age < 3)
+```
+
+Here we've given `sgf` as the first argument to `filter`. But our general strategy is going to be using pipes. The way this works is that:
+
+* `tidyverse` verbs always take the data frame as their first argument, and
+* because pipes pull out the first argument, the data frame just gets passed through successive operations
+* so you can read a pipe chain as "take this data frame and first do this, then do this, then do that"
+
+<!-- This piping thing is essentially the huge insight of the tidyverse: -->
+You can thus chain verbs into readable and efficient sequences of operations over dataframes, provided 1) the verbs all have the same syntax (which they do) and 2) the data all have the same structure (which they do if they are tidy). 
+
+###
+
+Rewritting our filter with piping:
+
+```{r tidyverse-filter2}
+sgf |>
+  filter(age >= 2, age < 3)
+```
+
+__Exercise__: Filter the `sgf` data so that only the "face" trial in the "Label" condition is present.
+
+```{r tidyverse-filter-exercise, exercise=TRUE}
+```
+
+### Mutating
+
+Adding columns to data frames is usually done to compute some kind of derived variable. `mutate` is the verb for these situations -- it allows you to add a column to your dataset (or change one that already exists).
+
+`mutate` takes name-value pairs where the name gives the name of the column in the output, and the value is a expression for what value to put in that column.
+
+Let's add a column to `sgf` called `age_group` that's a discrete age group factor.
+
+```{r tidyverse-mutate}
+sgf <- sgf |>
+  mutate(age_group = cut(age, 2:5, include.lowest = TRUE))
+```
+
+__Exercise__: Add a column to `sgf` called `label` that has `TRUE` for trials in the "Label" condition and `FALSE` for trials in the "No Label" condition.
+
+```{r tidyverse-mutate-exercise, exercise=TRUE}
+
+```
+
+
+### Descriptives using `summarise` and `group_by`
+
+We typically describe datasets at the level of participants, not trials. We need two verbs to get a summary at the level of participants: `group_by` and `summarise` (kiwi spelling). Let's start with grouping:
+
+```{r tidyverse-group-by}
+sgf |>
+  group_by(age_group) 
+```
+
+Grouping a dataframe alone doesn't do much. All it does is add a grouping marker. 
+
+###
+
+What `summarise` does is to *apply a function* to a part of the dataset to create a new summary dataset. Where these two verbs shine is in combination, though. Because `summarise` applies functions to columns in your *grouped data*, not just to the whole dataset!
+
+You may at some point have done this kind of group level summary by writing code that looked schematically like this:
+
+```{r tidyverse-badthing, eval=FALSE}
+foo <- initialize_the_thing_being_bound()
+for (i in 1:length(unique(sgf$item))) {
+  for (j in 1:length(unique(sgf$condition))) {
+    this_data <- sgf[sgf$item == unique(sgf$item)[i] &
+                      sgf$condition == unique(sgf$condition)[j],]
+    do_a_thing(this_data)
+    bind_together_somehow(this_data)
+  }
+}
+```
+
+**Don't do that!** This kind of code is very clunky and has all sorts of ways that it could go wrong. It's also very slow to execute.
+
+###
+
+Instead, here's the tidyverse way:
+
+```{r tidyverse-summarise}
+sgf |>
+  group_by(age_group, condition) |>
+  summarise(mean_correct = mean(correct))
+```
+
+Just like `mutate`, `summarise` takes multiple name-value pairs.
+
+###
+
+Using this syntax, we can create more elaborate summary datasets also:
+
+```{r tidyverse-summarise-multiple}
+sgf_means <- sgf |>
+  group_by(age_group, condition) |>
+  summarise(mean_correct = mean(correct), 
+            sd_correct = sd(correct),
+            n_observations = length(subid))
+```
+
+These summary data are typically very useful for plotting or displaying as tables, like this:
+
+```{r tidyverse-plotting, echo=FALSE}
+ggplot(sgf_means, 
+       aes(x = age_group, y = mean_correct, 
+           col = condition, group = condition)) + 
+  geom_line() + 
+  ylim(0,1) +
+  theme_classic() + 
+  xlab("Age group (years)") + 
+  ylab("Proportion correct")
+```
+
+<!-- fig.cap="Visualization of Stiller, Goodman, & Frank (2015) data after grouping and summary." -->
+
+### More advanced combos
+
+A very common workflow in repeated measures experiments is to calculate participant-level means, and *then* compute the mean and variance and confidence intervals) across participants. This workflow gives you variances and confidence intervals that reflect variability across participants, rather than across trials. To execute it though, you need to `group_by` and `summarise` twice: once to get participant averages, and once to get the grand average.
+
+```{r tidyverse-cis}
+sgf_sub_means <- sgf |>
+  group_by(age_group, condition, subid) |>
+  summarise(sub_mean_correct = mean(correct))
+
+sgf_sub_means
+```
+
+```{r tidyverse-cis2}
+sgf_group_means <- sgf_sub_means |>
+  group_by(age_group, condition) |>
+  summarise(mean_correct = mean(sub_mean_correct),
+            sd_correct = sd(sub_mean_correct), 
+            n_obs = length(sub_mean_correct),
+            sem = sd_correct / sqrt(n_obs),
+            ci = sem * 1.96)
+sgf_group_means
+```
+
+###
+
+Now we can augment our prior plot by adding both the means and confidence intervals as well as the raw data. 
+
+```{r tidyverse-cis-plot, echo=FALSE}
+ggplot(sgf_group_means, 
+       aes(x = age_group, y = mean_correct, 
+           col = condition, group = condition)) + 
+  geom_line() + 
+  geom_pointrange(aes(ymin = mean_correct - ci, 
+                      ymax = mean_correct + ci)) +
+  geom_jitter(aes(y = sub_mean_correct), data = sgf_sub_means, alpha = .3, 
+              width = .1, height = .0) + 
+  ylim(0,1) + 
+  xlab("Age group (years)") + 
+  ylab("Proportion correct") + 
+  theme_classic()
+```
+
+<!-- fig.cap="Visualization of Stiller, Goodman, & Frank (2015) data after grouping and summary, now with participant-level 95\\% confidence intervals and visualization of individual participant means." -->
+
+__Exercise__: Adapt the code to split the data by item, rather than by age group.
+
+```{r tidyverse-combos-exercise, exercise=TRUE}
+sgf_sub_means <- sgf |>
+  group_by(age_group, condition, subid) |>
+  summarise(sub_mean_correct = mean(correct))
+
+sgf_group_means <- sgf_sub_means |>
+  group_by(age_group, condition) |>
+  summarise(mean_correct = mean(sub_mean_correct),
+            sd_correct = sd(sub_mean_correct), 
+            n_obs = length(sub_mean_correct),
+            sem = sd_correct / sqrt(n_obs),
+            ci = sem * 1.96)
+```
+
+
+## Getting your data tidy
+
+We've now shown you some of the very nice things you can do once you have tidy data! But how do you get your data to be tidy?
+
+Psychological data often comes in two flavors: *long* and *wide* data. Long form data is *tidy*, but that format is less common. It's much more common to get *wide* data, in which every row is a case (e.g., a subject), and each column is a variable. In this format multiple trials (observations) are stored as columns. Wide data can be organized a bunch of ways, but the most common might be to have subjects as rows and trials as columns. 
+
+For example, let's take a look at a wide version of the `sgf` dataset above. 
+
+```{r tidyverse-wide, eval=FALSE}
+sgf_wide <- read_csv("sgf_wide.csv")
+```
+
+```{r tidyverse-wide2}
+sgf_wide
+```
+
+This dataset is wider in the sense that there are more columns and fewer rows than previously -- each item has its own column rather than row.
+
+###
+
+The two main verbs for tidying are `pivot_longer` and `pivot_wider`. There are lots of others in the `tidyr` package (for example, if you want to `separate` columns), but we won't cover those here.
+
+Here, we'll just show how to use `pivot_longer` to make the data tidy. We'll try to make a single column called `item` and a single column called `correct` rather than having four different columns, one for each item. This is the key tricky of pivoting to longer form data -- you need to imagine what the "missing label" is that unifies all the columns you are making longer.
+
+Specifically, `pivot_longer` takes three arguments:
+
+* A `tidyselect` way of getting columns -- the columns you want to make longer. You can select them by name (e.g. `beds, faces, houses, pasta`), you can use numbers (e.g., `5:8`), or you can use markers like `starts_with(...)`.
+* A `names_to` argument. this argument is the **name of the column names**. In this case, the column names are items, so the "missing label" for them is `item`.
+* A `values_to` argument -- the name of the thing in each column, in this case, the accuracy of the response (`correct`). 
+
+<!--
+```{r tidyverse-tidy-8, echo = FALSE, fig.margin=TRUE, fig.cap="Pivoting into a longer form. (from R for Data Science)"}
+knitr::include_graphics("images/tidyverse/tidy-8.png")
+```
+-->
+
+###
+
+Let's try it:
+
+```{r tidyverse-pivot}
+sgf_wide |> 
+  pivot_longer(beds:pasta, 
+               names_to = "item", 
+               values_to = "correct")
+```
+
+We can compare this data frame to `sgf` and see that we've recovered the original long form. 
+
+<!--
+```{r tidyverse-tidy-9, echo = FALSE, fig.margin=TRUE, fig.cap="Pivoting into a wider form. (from R for Data Science)"}
+knitr::include_graphics("images/tidyverse/tidy-9.png")
+```
+-->
+
+###
+
+__Exercise__: Use `pivot_wider` to try and make `sgf_wide` from `sgf`. The two arguments you need are `names_from` and `values_from`, which specify the names and values (just like in `pivot_longer`).   
+
+```{r tidyverse-pivot-exercise, exercise=TRUE}
+```
+
+
+## Summary
+
+The `tidyverse` has been a transformative tool for data analysis. With a little practice it can make many seemingly-difficult tasks surprisingly easy. We encourage you to continue practicing and reading examples online, as there are often clever ways to use this idiom to make complex data-related tasks much more manageable.
