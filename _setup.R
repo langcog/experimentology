@@ -5,6 +5,7 @@ library(here)
 library(knitr)
 library(shiny)
 library(metafor)
+library(ggthemes) # viz
 library(ggrepel) # viz
 library(GGally) # viz
 library(BayesFactor) # inference

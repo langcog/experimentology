@@ -1,4 +1,3 @@
-
 # Visualization {#viz}
 
 ::: {.box .learning_goals}
@@ -29,10 +28,10 @@ An obstetrician and anesthesiologist named John Snow, however, had proposed an a
 To make a public case for this idea, he started counting cholera deaths.
 He marked each case on a map of the area, and indicated the locations of the water pumps for reference.
 Furthermore, a line could be drawn representing the region that was closest to each water pump, a technique which is now known as a [Voronoi diagram](https://en.wikipedia.org/wiki/Voronoi_diagram).
-The resulting illustration clearly reveals that cases clustered around an area called Golden Square, which received water from a pump on Broad Street.
-Although the precise causal role of these maps in Snow's own thinking is disputed, and it is likely that he produced them well after the incident [@brody2000map], they have nonetheless played a significant role in the history of data visualization [@friendly2021history].^[Actually, the use of disease maps goes back even further! @seaman1798inquiry mapped an outbreak of yellow fever in New York City to argue that deaths clustered around a handful of waste sites. He turned out to be right, but for the wrong reasons! These waste sites were breeding grounds for mosquitos, which were the real culprits. Coincidentally, Seaman is also known as the first to introduce vaccines to the United States. He vaccinated his children against smallpox and later organized a program to provide free vaccines to the public.]
+The resulting illustration clearly reveals that cases clustered around an area called Golden Square, which received water from a pump on Broad Street (\@ref(fig:viz-cholera)).
+Although the precise causal role of these maps in Snow's own thinking is disputed, and it is likely that he produced them well after the incident [@brody2000map], they have nonetheless played a significant role in the history of data visualization [@friendly2021history].^[Actually, the use of disease maps goes back even further! @seaman1798inquiry mapped an outbreak of yellow fever in New York City to argue that deaths clustered around a handful of waste sites. He turned out to be right, but for the wrong reasons! These waste sites were breeding grounds for mosquitoes, which were the real culprits. Coincidentally, Seaman is also known as the first to introduce vaccines to the United States. He vaccinated his children against smallpox and later organized a program to provide free vaccines to the public.]
 
-Nearly two centuries later, as the COVID-19 pandemic swept through the world, governmental agencies like the [CDC](https://covid.cdc.gov/covid-data-tracker) produced maps of the outbreak that became much more familiar:
+Nearly two centuries later, as the COVID-19 pandemic swept through the world, governmental agencies like the [CDC](https://covid.cdc.gov/covid-data-tracker) produced maps of the outbreak that became much more familiar (Figure \@ref(fig:viz-covid)). 
 
 ```{r viz-covid, fig.cap="Map showing the known locations of cumulative coronavirus cases by share of the population in each county (reproduced from the New York Times)"}
 knitr::include_graphics("images/viz/covid-hot-spots.png")
@@ -42,7 +41,7 @@ These maps make abstract statistics visible: By assigning higher cumulative case
 And we're not limited by the spatial layout of a map.
 We're now also used to seeing the horizontal axis correspond to *time* and the vertical axis correspond to some value at that time.
 Curves like the following, showing the 7-day average of new cases, allow us to see other patterns, like the *rate of change*.
-Even though more and more cases accumulate every day, we can see at a glance the different 'waves' of cases, and when they peaked. 
+Even though more and more cases accumulate every day, we can see at a glance the different 'waves' of cases, and when they peaked (Figure \@ref(fig:viz-cases)). 
 
 ```{r viz-cases, fig.cap="7-day average of new reported COVID cases (reproduced from the New York Times)"}
 knitr::include_graphics("images/viz/covid-cases.png")
@@ -50,7 +49,7 @@ knitr::include_graphics("images/viz/covid-cases.png")
 
 While these visualizations capture purely descriptive statistics, we often want our visualizations to answer more specific questions.
 For example, we may ask about the effectiveness of vaccinations: how do case rates differ across vaccinated and unvaccinated populations?
-In this case, we may talk about ``breaking out'' a curve by some other variable, like vaccination status:
+In this case, we may talk about ``breaking out'' a curve by some other variable, like vaccination status (Figure \@ref(fig:viz-cases2)). 
 
 ```{r viz-cases2, fig.cap="Rates of COVID cases by vaccination status (reproduced from [`covid.cdc.gov`](https://covid.cdc.gov/covid-data-tracker/#rates-by-vaccine-status))"}
 knitr::include_graphics("images/viz/vaccination.png")
@@ -66,14 +65,14 @@ In this chapter, we will explore how to use visualizations in our own carefully 
 
 ## Basic principles of (confirmatory) visualization
 
-In this section, we begin by introducing a few simple guidelines to keep in mind when making informative visualizations in the context of experimental psychology.^[For the purposes of understanding the examples in this chapter, it should be sufficient to work through our R tutorials for data manipulation and visualization in Appendices C and D.]
+In this section, we begin by introducing a few simple guidelines to keep in mind when making informative visualizations in the context of experimental psychology.^[For the purposes of understanding the examples in this chapter, it should be sufficient to work through the tutorials on data manipulation and visualization in Appendices C and D.]
 Remember that our needs may be distinct from other fields, such as journalism or public policy.
 You may have seen beautiful and engaging full-page graphics with small print and a wealth of information.
 The art of designing and producing these graphics is typically known as **infoviz** and should be distinguished from what we call **statistical visualization** [@gelman2013].
 
 Roughly, infoviz aims to construct rich and immersive worlds to visually explore: a reader can spend hours pouring over the most intricate graphics and continue to find new and intriguing patterns.
-Statistical visualization, on the other hand, aims to crisply convey the logic of a specific inference at a glance.
-These are the production-ready figures that anchor the results section of a paper and accompany the key, pre-registered analyses of interest.
+**Statistical visualization**, on the other hand, aims to crisply convey the logic of a specific inference at a glance.
+These visualizations are the production-ready figures that anchor the results section of a paper and accompany the key, pre-registered analyses of interest.
 In this section, we review several basic principles of making statistical visualizations.
 We then return below to the role of visualization in more exploratory analyses.
 
@@ -90,7 +89,9 @@ The first principle guiding good statistical visualizations is to *show the desi
 There are strong (unwritten) conventions about how your analysis is expected to map onto graphical elements, and following these conventions can minimize confusion.
 Start with the variables you manipulate, and make sure they are clearly visible.
 Conventionally, the primary manipulation of interest (e.g. condition) goes on the x-axis, and the primary measurement of interest (e.g. responses) goes on the y-axis.
-Other critical variables of interest (e.g. secondary manipulations, demographics) are then assigned to "visual variables" (e.g. color, shape, or size)
+Other critical variables of interest (e.g. secondary manipulations, demographics) are then assigned to "visual variables" (e.g. color, shape, or size).
+
+::: {.box .code-connection}
 Visualization libraries like `ggplot` (see Appendix \@ref(ggplot)) help you show the design by asking you to make variable assignments in an `aesthetics` layer that goes at the very top:
 
 ```
@@ -101,12 +102,13 @@ aes(
   linetype = ...,
 )
 ```
+:::
 
 As an example, we will consider the data from @stiller2015 that we explored back in Chapter \@ref(models).
-Because this was a developmental study, the primary independent variable of interest is the age group of participants (ages 2, 3, or 4).
-So age gets assigned to the x-axis.
+Because this experiment was a developmental study, the primary independent variable of interest is the age group of participants (ages 2, 3, or 4).
+So age gets assigned to the horizontal (x) axis.
 The dependent variable is accuracy: the proportion of trials that a participant made the correct response (out of 4 trials).
-So accuracy goes on the y-axis.
+So accuracy goes on the vertical (y) axis.
 Now, we have two other variables that we might want to show: the condition (experimental vs. control) and the type of stimuli (houses, beds, and plates of pasta).
 When we think about it, though, only condition is central to exposing the design.
 While we might be interested in whether some types of stimuli are systematically easier or harder than others, condition is more central for understanding the *logic* of the study.
@@ -123,11 +125,9 @@ As long as we clearly label our choices, it shouldn't matter whether we use line
 It's true that there are many ways to show the same data.
 But being thoughtful about our choices can make it much easier for readers to interpret our findings.
 The second principle of statistical visualizations is to *facilitate comparison* along the dimensions relevant to our scientific questions.
-It is easier for our visual system to accurately compare the location of elements (e.g. noticing that one point is a certain distance away from another) than to compare their areas or colors (e.g. noticing that one point is bigger or brighter than another).
+It is easier for our visual system to accurately compare the location of elements (e.g. noticing that one point is a certain distance away from another) than to compare their areas or colors (e.g. noticing that one point is bigger or brighter than another). Figure \@ref(fig:viz-hierarchy) shows an ordering of visual variables based on how accurate our visual system is in making comparisons.
 
 ```{r viz-prepost1}
-library(ggthemes)
-
 d <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/data/tidyverse/stiller_scales_data.csv") |>
   mutate(age_group = cut(age, 2:5, include.lowest = TRUE),
          condition = factor(ifelse(condition == "Label", "Experimental", "Control")))
@@ -335,7 +335,7 @@ bind_rows(boot, ci_sem, ci_ci) %>%
 ```
 
 As we can see, the bootstrapped 95% CI looks similar to the analytic 95% CI derived from the standard error, except the upper and lower limits are slightly asymmetric (reflecting outliers in one direction or another). 
-Of course, the boostrap is not a silver bullet and can be abused in particularly small samples. 
+Of course, the bootstrap is not a silver bullet and can be abused in particularly small samples. 
 This is because the bootstrap is fundamentally limited to the sample we run it on. 
 It can be expected to be reasonably accurate if the sample is reasonably representative of the population.
 But at the end of the day, as they say, "there's no such thing as a free lunch."
@@ -392,7 +392,7 @@ Here are a few final tips for making good confirmatory visualizations:
 
 ## Exploratory visualization
 
-So far in this chapter we have focused on principles of *confirmatory* data visualization: how to make 'production-quality' figures that convey the key pre-registered analyses without hiding sources of variablility or misleading readers about the reliability of the results.
+So far in this chapter we have focused on principles of *confirmatory* data visualization: how to make 'production-quality' figures that convey the key pre-registered analyses without hiding sources of variability or misleading readers about the reliability of the results.
 Yet this is only one role that data visualization plays when doing science. 
 An equally important role is called *exploratory visualization*: the more routine practice of understanding one's own data by visualizing it.
 This role is analogous to the sense of exploratory data analyses discussed in Chapter \@ref(prereg).
@@ -470,7 +470,7 @@ So which visualizations should we start with?
 The best practice is to always start by making histograms of the raw data. 
 As an example, let's consider the data reported by @blake2015ontogeny in [Ontogeny of fairness in seven societies](http://www.nature.com/nature/journal/v528/n7581/full/nature15703.html).
 
-```{r ggplot-blake1}
+```{r viz-blake1}
 d <- read_csv("data/ontogeny_of_fairness.csv") %>%
   mutate(trial_num = as.numeric(gsub(".(\\d+)", "\\1", trial)),
          trial_type = factor(eq.uneq,
@@ -498,7 +498,7 @@ How might we go about our diagnostics?
 Let's start by getting a handle on some of the basic sample characteristics.
 For example, how many participants were in each age bin?
 
-```{r ggplot-blake3}
+```{r viz-blake3}
 d %>%
   mutate(age = floor(actor.age.years)) %>%
   group_by(age, actor.id) %>%
@@ -513,7 +513,7 @@ d %>%
 
 How many participants were included from each country?
 
-```{r ggplot-blake5}
+```{r viz-blake5}
 d %>%
   group_by(country, actor.id) %>%
   tally() %>%
@@ -527,7 +527,7 @@ d %>%
 
 Are ages roughly similar across each country?
 
-```{r ggplot-blake6}
+```{r viz-blake6}
 d %>%
   mutate(age = floor(actor.age.years)) %>%
   group_by(country, age, actor.id) %>%
@@ -558,7 +558,7 @@ Now that we have a handle on the sample, let's get a sense of the dependent vari
 Before we start taking means, let's look at how the ``rejection rate'' variable is distributed.
 We'll aggregate at the participant-level, and check the frequency of different rejection rates, overall.
 
-```{r ggplot-blake7}
+```{r viz-blake7}
 ms <- d %>%
   filter(!is.na(eq.uneq)) %>%
   mutate(age = floor(actor.age.years),
@@ -581,7 +581,7 @@ This kind of "zero-inflated" distribution is not uncommon in psychology, and may
 We also notice that there is clumping around certain values.
 We then check how many trials each participant is completing:
 
-```{r ggplot-blake8}
+```{r viz-blake8}
 ms %>%
   group_by(country, trial_type, condition, age, actor.id) %>%
   tally() %>%
@@ -614,7 +614,7 @@ Instead, we would want to be careful to break this relationship out by other var
 Finally, we can make a few versions of the "design plot" that are broken out by different variables.
 Let's start by just looking at the data from the largest site.
 
-```{r ggplot-blake8}
+```{r viz-blake9}
 ms %>%
   filter(country == "US") %>%
   group_by(country, trial_type, condition, age, actor.id) %>%
@@ -630,15 +630,15 @@ ms %>%
     xlab("Age (years)") +
     ylim(c(0,1)) +
     ggthemes::theme_few() +
-    ggthemes::scale_color_solarized()`
-``
+    ggthemes::scale_color_solarized()
+```
 
-It's definitely a figure we'd put in a paper, but it helps us get a sense of the predicted  pattern.
+It's definitely not a figure we'd put in a paper, but it helps us get a sense of the predicted  pattern.
 There appears to be an age trend that's specific to the 'Unequal' trials, with rejection rates rising over time (compared to roughly even or decreasing rates in the 'Equal' trials).
 Meanwhile, rejection rates for the Disadvantageous group also seem slightly higher than those in the Advantageous group.
 Now let's rebin into 3-year age groups so that individual point estimates are a bit more reliable, and add the other countries back in.
 
-```{r ggplot-blake9}
+```{r viz-blake10}
 d %>%
   filter(!is.na(eq.uneq)) %>%
   mutate(age = floor(actor.age.years/2)*2,
@@ -665,7 +665,7 @@ The point of exploratory visualization is to converge toward a better understand
 
 ### Visualization as debugging
 
-As you iterate through different exploratory visualization, *stay vigilant*!
+As you iterate through different exploratory visualizations, *stay vigilant*!
 Think about what you expect to see before making the plot, then ask yourself whether you got what you expected.
 You can think of this workflow as a form of "visual debugging".
 You might notice a datapoint with an impossible value, such as an proportion greater than 1 or a reaction time less than 0.
@@ -684,10 +684,13 @@ Within this framework, we then discussed different visualizations of distributio
 ::: {.box .readings}
 There are many good introductions to data visualization. Here are two social-science focused books whose advice we agree with and that also contain a lot of practical information and helpful R code for the same packages we use here.  
 
-* Healy, K. (2019). *Data Visualization: A Practical Introduction*. Princeton University Press. Princeton University Press. Available free onine at [https://socviz.co](). 
+* Healy, K. (2019). *Data Visualization: A Practical Introduction*. Princeton University Press. Princeton University Press. Available free online at [https://socviz.co](). 
 
 * Wilke, C. O. (2019). *Fundamentals of Data Visualization*. O'Reilly Media. Available free online at [https://clauswilke.com/dataviz/]().
 
-For a more classical treatment, see @tukey1977exploratory and [@tufte2001visual,@tufte1997visual].
+For a more classical treatment, see:
+* Tukey, J. W. (1977). *Exploratory data analysis*. Pearson. 
+
+* Tufte, E. R. (1997). *The Visual Display of Quantitative Information*. Graphics Press. 
 
 :::
