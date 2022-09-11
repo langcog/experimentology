@@ -15,8 +15,7 @@ export default {
 	case_study,
 	ethical_considerations,
 	accident_report,
-	code_connection,
+	code_connections,
 	exercises,
-	examples,
 	readings,
 }
