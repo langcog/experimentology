@@ -66,7 +66,7 @@ In this chapter, we will explore how to use visualizations in our own carefully 
 
 ## Basic principles of (confirmatory) visualization
 
-In this section, we begin by introducing a few simple guidelines to keep in mind when making informative visualizations in the context of experimental psychology^[Given this relatively narrow focus, a full treatment of visualization is outside the scope of this book. The classic volumes are by @tukey1977exploratory and [@tufte2001visual,@tufte1997visual], and we recommend @healy2018data for a more contemporary guide. For the purposes of understanding the examples in this chapter, it should be sufficient to work through our R tutorials for data manipulation and visualization in Appendices C and D].
+In this section, we begin by introducing a few simple guidelines to keep in mind when making informative visualizations in the context of experimental psychology.^[For the purposes of understanding the examples in this chapter, it should be sufficient to work through our R tutorials for data manipulation and visualization in Appendices C and D.]
 Remember that our needs may be distinct from other fields, such as journalism or public policy.
 You may have seen beautiful and engaging full-page graphics with small print and a wealth of information.
 The art of designing and producing these graphics is typically known as **infoviz** and should be distinguished from what we call **statistical visualization** [@gelman2013].
@@ -102,7 +102,7 @@ aes(
 )
 ```
 
-As an example, we will consider the data from @stiller2015 that we explored back in Chapter \@ref{models}.
+As an example, we will consider the data from @stiller2015 that we explored back in Chapter \@ref(models).
 Because this was a developmental study, the primary independent variable of interest is the age group of participants (ages 2, 3, or 4).
 So age gets assigned to the x-axis.
 The dependent variable is accuracy: the proportion of trials that a participant made the correct response (out of 4 trials).
@@ -233,7 +233,7 @@ By overlaying the distribution of the actual data points on the same plot, we ca
 In the case of the @stiller2015 study, data points for individual trials are binary (correct or incorrect).
 It's technically possible to show individual responses as dots at 0s and 1s, but this doesn't tell us much (we'll just get a big clump of 0s and a big clump of 1s).
 The question to ask yourself when 'showing the data' is: what are the theoretically meaningful 'units' of variation in the data?
-This question is closely related to our discussion of mixed-effects models in Chapter \@ref{models}, when we considered which random effects we should include.
+This question is closely related to our discussion of mixed-effects models in Chapter \@ref(models), when we considered which random effects we should include.
 Here, a reader is likely to wonder how much variance was found across *different children* in a given age group.
 To show such variation, we aggregate to calculate an accuracy score for each participant.^[While participant-level variation is a good default, the relevant level of aggregation may differ across designs. For example, collective behavior studies may choose to show the data point for each *group*. This choice of unit is also important when generating error bars: if you have a small number of participants but many observations per participant, you are faced with a choice. You may either bootstrap over the flat list of all individual observation (yielding very small error bars), or you may first aggregate within participants (yielding larger error bars that account for the fact that repeated observations from the same participant are not independent.)].
 
@@ -285,7 +285,7 @@ knitr::include_graphics("images/viz/raincloud.png")
 
 One common misconception is that error bars are a measure of variance *in the data*, like the standard deviation of the response variable.
 Instead, they typically represent a measure of precision extracted from the statistical model.
-In older papers, for example, it was common to use the standard error of the mean (SEM; see Chapter XXX).
+In older papers, for example, it was common to use the standard error of the mean (SEM; see Chapter \@ref(inference)).
 Remember that this is not the standard deviation of the data distribution but of the *sampling distribution* of the mean that is being estimated. 
 Given the central limit theorem, which tells us that this sampling distribution is asymptotically normal, it was straightforward to estimate the standard error analytically using the empirical standard deviation of the data divided by the square root of the sample size: `sd(x) / sqrt(length(x))`.
 Error bars based on the SEM often looked misleadingly small, as they only represent a 68% interval of the sampling distribution and go to zero quickly as a function of sample size.
@@ -378,7 +378,7 @@ ggplot(ms, aes(x = age_group, y = empirical_stat,
     theme(aspect.ratio = 1, legend.position = 'none') 
 ```
 
-A few additional tips:
+Here are a few final tips for making good confirmatory visualizations:
 
 * Make sure the font size of all text in your figures is legible and no smaller than other text in your paper (e.g. 10pt). This may require, for example, making the axis breaks sparser, rotating text, or changing the aspect ratio of the figure. 
 
@@ -395,24 +395,23 @@ A few additional tips:
 So far in this chapter we have focused on principles of *confirmatory* data visualization: how to make 'production-quality' figures that convey the key pre-registered analyses without hiding sources of variablility or misleading readers about the reliability of the results.
 Yet this is only one role that data visualization plays when doing science. 
 An equally important role is called *exploratory visualization*: the more routine practice of understanding one's own data by visualizing it.
-This role is analogous to the sense of exploratory data analyses discussed in Chapter \@ref{prereg}.
+This role is analogous to the sense of exploratory data analyses discussed in Chapter \@ref(prereg).
 We typically do not pre-register exploratory visualizations, and when we decide to include them in a paper they are typically in the service of a secondary argument (e.g. checking the robustness of an effect or validating that some assumption is satisfied).
 
-But, at least in our experience, this kind of visualization plays a much more ubiquitous role in the analyst's day-to-day activities.
-While confirmatory visualization is primarily audience-driven and concerned with visual communication, exploratory visualization is first and foremost a "cognitive tool" for the analyst. 
+But, at least in our experience, this kind of visualization plays a much more ubiquitous role in a researcher's day-to-day activities.
+While confirmatory visualization is primarily audience-driven and concerned with visual communication, exploratory visualization is first and foremost a "cognitive tool" for the researcher.
 The first time we load in a new dataset, we start up a new feedback loop. 
 We ask ourselves questions and answer them by making pictures. 
-These pictures then raise furher questions and are often our best tool for debugging our code. 
-In this section, we consider best practices for exploratory visualization. 
+These pictures then raise further questions and are often our best tool for debugging our code.
+In this section, we consider some best practices for exploratory visualization.
 
-### Distributional information
+### Examining distributional information
 
 ```{r viz-anscome, fig.margin = TRUE, fig.cap = "Anscombe's quartet [@anscombe1973graphs]."}
 knitr::include_graphics("images/viz/viz_anscombe.png")
-
 ```
 
-The central insight of exploratory visualization -- the reason it is uniquely important for data science -- is that it gives us access to holistic, distributional information that cannot be captured in any single summary statistic. 
+The primary advantage of exploratory visualization -- the reason it is uniquely important for data science -- is that it gives us access to holistic, distributional information that cannot be captured in any single summary statistic.
 The most famous example is known as "Anscombe's quartet," a set of four datasets with identical statistics.
 They have the same means, the same variances, the same correlation, the same regression line, and the same $R^2$ value. 
 Yet when they are plotted, they reveal striking structural differences. 
@@ -421,8 +420,8 @@ But the second is a perfect quadratic arc, the third is a perfectly noiseless li
 
 If our analyses are supposed to help us distinguish between different data-generating processes, corresponding to different psychological theories, it is clear that these four datasets would correspond to dramatically different theories even though they share the same statistics.
 Of course, there are arbitrarily many datasets with the same statistics, and most of these differences don't matter (this is why they are called "summary" statistics, after all!)
-The problem arises when we operationalize a theory's predictions in terms of a single statistic (e.g. a difference between groups) and lose track of the bigger pattern.
-Visualization forces us to zoom out and see the bigger picture. 
+The problem arises when we operationalize a theory's predictions in terms of a single statistic (e.g. a difference between groups or a regression coefficient) and lose track of everything else that may be going on.
+Visualization forces us to zoom out and take in the bigger picture.
 
 ```{r viz-datasaurus, fig.margin = TRUE, fig.cap = "Originally inspired by a figure constructed by [@datasaurus](http://www.thefunctionalart.com/2016/08/download-datasaurus-never-trust-summary.html) using the (drawMyData)[http://robertgrantstats.co.uk/drawmydata.html] tool, we can actually construct an arbitrary number of different graphs with exactly the same statistics [@matejka2017same,@murray2021generating]. This set, known as the [The Datasaurus Dozen](https://www.autodesk.com/research/publications/same-stats-different-graphs), even has the same set of boxplots."}
 knitr::include_graphics("images/viz/datasaurus.png")
@@ -430,6 +429,35 @@ knitr::include_graphics("images/viz/datasaurus.png")
 ```
 
 ### Data diagnostics
+
+::: {.box .accident_report}
+(TITLE) [Distributional] gorillas in our midst.
+
+Many data scientists don’t bother checking what their data looks like before proceeding to test specific hypotheses.
+@yanai2020 cleverly designed an artificial dataset for their students to test for such blindness.
+Each row of the dataset contained an individual's body mass index (BMI) and the number of steps they walked on a given day.
+While the spreadsheet looked innocuous, the data was constructed such that simply plotting the raw data revealed a picture of a gorilla.
+One group of 19 students was given an explicit set of hypotheses to test (e.g. about the relationship between BMI and steps).
+Fourteen of these students failed to notice a gorilla, suggesting that they evaluated these hypotheses without ever visualizing their data.
+Another group of 14 students were simply asked what, if anything, they could conclude (without being given explicit hypotheses).
+More of these students apparently made the visualization, but five of them still failed to notice the gorilla!
+
+```{r gorilla, fig.margin=TRUE, fig.cap="A dataset was constructed by @yanai2020 which revealed a picture of a gorilla when the raw data were plotted."}
+knitr::include_graphics("images/viz/gorilla.png")
+```
+
+While it may not be surprising that a group of students would take the shortest path to completing their assignment, similar concerns have been raised in much more serious cases concerning how experienced researchers could fail to notice obviously fraudulent data.
+For example, when [@datacolada] made a simple histogram of the car mileage data reported in [@shu2012signing] and released publicly by [@kristal2020signing], they were immediately able to observe that it followed a perfectly uniform distribution, truncated at exactly 50,000 miles.
+Given a little thought, this pattern should be extremely puzzling.
+Over a given period of time, we would typically expect something more bell-shaped: a small number of people will drive very little (e.g. 1000 miles), a small number of people will drive a lot (e.g. 50,000 miles), and most people will fall between these tails.
+So it is highly surprising to find exactly the same number of drivers in every mileage bin.
+While further specialized analyses revealed further evidence of fraud (e.g. based on patterns of rounding and pairs of duplicated data points), this humble histogram was already enough to set off alarm bells.
+A recurring regret raised by the co-authors of this paper is that they never thought to making this visualization before reporting their statistical tests.
+
+```{r viz-uniform, fig.margin=TRUE, fig.cap="A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!"}
+knitr::include_graphics("images/viz/data_colada_uniform.png")
+```
+:::
 
 Our data is always messier than we expect.
 There might be a bug in our coding scheme, a column might be mislabeled, or might contain a range of values that we didn't expect. 
@@ -440,92 +468,226 @@ If there is a weird artifact in our data, it will pop out if we just make the ri
 
 So which visualizations should we start with?
 The best practice is to always start by making histograms of the raw data. 
-For example, here are the histograms for the classic `iris` dataset containing measurements from different kinds of flowers. 
+As an example, let's consider the data reported by @blake2015ontogeny in [Ontogeny of fairness in seven societies](http://www.nature.com/nature/journal/v528/n7581/full/nature15703.html).
 
-```{r viz-iris1}
-iris %>%
-  select(-Species) %>%
-  pivot_longer(everything()) %>%
-  ggplot(aes(x = value)) +
-    geom_histogram() +
-    facet_wrap(~ name) +
-    theme_few()
+```{r ggplot-blake1}
+d <- read_csv("data/ontogeny_of_fairness.csv") %>%
+  mutate(trial_num = as.numeric(gsub(".(\\d+)", "\\1", trial)),
+         trial_type = factor(eq.uneq,
+                             levels = c("E","U"),
+                             labels = c("Equal","Unequal")),
+         condition = factor(condition,
+                      levels = c("AI","DI"),
+                      labels = c("Advantageous","Disadvantageous"))) %>%
+  arrange(country, condition, actor.id, trial_num)
 ```
 
-Immediately we can see that sepal length and width seem to be distributed roughly normally, but petal length and petal width look bimodal. 
-We might then break out the data by species:
+In this study, pairs of children played the "inequity game": they sat across from one another and were given a particular allocation of snacks.
+On some trials, each participant was allocated the same amount (Equal trials) and on some trials they were allocated different amounts (Unequal trials).
+One participants was chosen to be the ``actor'' and got to choose whether to accept or reject the allocation: in the case of rejection, neither participant got anything.
+The critical manipulation was between two forms of inequity.
+Some pairs were assigned to the Disadvantageous condition, where the actor was allocated less than their partner on Unequal trials (e.g. 1 vs. 4).
+Others were assigned to the Advantageous condition, where they were allocated more (e.g. 4 vs. 1).
 
-```{r viz-iris2}
-iris %>%
-  group_by(Species) %>%
-  pivot_longer(-Species) %>%
-  ggplot(aes(x = value, fill = Species)) +
-    geom_histogram(alpha = 0.7, position = 'identity') +
-    facet_wrap(~ name) +
-    scale_fill_few() +
-    theme_few()
+The confirmatory "design plot" would focus on contrasting developmental trajectories for Advantageous vs. Disadvantageous inequality.
+However, this is an incredibly rich dataset, including 866 pairs from different age groups and different testing sites across the world which used subtly different protocols.
+How might we go about our diagnostics?
+
+### Check data collection details
+
+Let's start by getting a handle on some of the basic sample characteristics.
+For example, how many participants were in each age bin?
+
+```{r ggplot-blake3}
+d %>%
+  mutate(age = floor(actor.age.years)) %>%
+  group_by(age, actor.id) %>%
+  tally() %>%
+  group_by(age) %>%
+  tally() %>%
+  ggplot(aes(x = age, y = n)) +
+    geom_bar(stat = "identity") +
+    xlim(0, 18) +
+    ggthemes::theme_few()
 ```
 
-It looks like there is generally strong distributional separation across the different species. 
-In the case of petal length and width, they barely overlap.
+How many participants were included from each country?
 
-While these data look clean, the same visualization often reveals outliers.
-For example, we might notice a datapoint with a negative value, which shouldn't be possible (these are lengths and widths!)
-Or we might notice gaps in the data for a particular species, with lengths being clustered around integer values, which might indicate that the researcher in charge of doing data entry for that species was rounding in a different way than the other species. 
-Or we might might notice that the "species" attribute is missing for some values, and trace it back to a bug reading in our data (maybe there was a missing comma in our `csv` file).
-
-In addition to these histograms, it is natural to proceed to looking at pairwise relationships, which we aren't able to determine from independent histograms. 
-The `ggpairs` function in the `ggally` package makes this particularly straightforward. 
-
-```{r viz-iris3}
-library(GGally)
-ggpairs(iris)
+```{r ggplot-blake5}
+d %>%
+  group_by(country, actor.id) %>%
+  tally() %>%
+  group_by(country) %>%
+  tally() %>%
+  mutate(country = fct_reorder(country, -n)) %>%
+  ggplot(aes(x = country, y = n)) +
+    geom_bar(stat = "identity") +
+    ggthemes::theme_few()
 ```
 
-For example, we can immediately notice that petal length and width are strongly correlated with one another, and we might start to worry about co-linearity problems in a regression trying to tease them apart (see Chapter XX).
-Conversely, the bi-modality of the relationship between sepal length and petal length looks more complicated.
-There is one cloud of points that is strongly correlated, but another cloud of points that is not: they have the same short petal length regardless of sepal length. 
-Reporting a single correlation and claiming a relationship between petal length and sepal length ($r=.87, p<0.001$) might therefore be misleading. 
-Instead, we might want to be careful to break this relationship out by species and test whether it is stronger for some species than others.
+Are ages roughly similar across each country?
 
-::: {.box .accident_report}
-(TITLE) [Distributional] gorillas in our midst.
-
-Many data scientists don’t bother checking what their data looks like before proceeding to test specific hypotheses.
-@yanai2020 cleverly designed an artificial dataset for their students to test for such blindness. 
-Each row of the dataset contained an individual's body mass index (BMI) and the number of steps they walked on a given day. 
-While the spreadsheet looked innocuous, the data was constructed such that simply plotting the raw data revealed a picture of a gorilla.
-One group of 19 students was given an explicit set of hypotheses to test (e.g. about the relationship between BMI and steps).
-Fourteen of these students failed to notice a gorilla, suggesting that they evaluated these hypotheses without ever visualizing their data.
-Another group of 14 students were simply asked what, if anything, they could conclude (without being given explicit hypotheses).
-More of these students apparently made the visualization, but five of them still failed to notice the gorilla! 
-
-```{r gorilla, fig.margin=TRUE, fig.cap="A dataset was constructed by @yanai2020 which revealed a picture of a gorilla when the raw data were plotted."}
-knitr::include_graphics("images/viz/gorilla.png")
+```{r ggplot-blake6}
+d %>%
+  mutate(age = floor(actor.age.years)) %>%
+  group_by(country, age, actor.id) %>%
+  tally() %>%
+  group_by(country, age) %>%
+  tally() %>%
+  ungroup() %>%
+  mutate(country = fct_reorder(country, -n)) %>%
+  ggplot(aes(x = age, y = n)) +
+    geom_bar(stat = "identity") +
+    facet_grid(~ country) +
+    xlim(0, 18) +
+    ggthemes::theme_few() +
+    theme(aspect.ratio = 1)
 ```
 
-While it may not be surprising that a group of students would take the shortest path to completing their assignment, similar concerns have been raised in much more serious cases concerning how experienced researchers could fail to notice obviously fraudulent data. 
-For example, when [@datacolada] made a simple histogram of the car mileage data reported in [@shu2012signing] and released publicly by [@kristal2020signing], they were immediately able to observe that it followed a perfectly uniform distribution, truncated at exactly 50,000 miles. 
-Given a little thought, this pattern should be extremely puzzling.
-Over a given period of time, we would typically expect something more bell-shaped: a small number of people will drive very little (e.g. 1000 miles), a small number of people will drive a lot (e.g. 50,000 miles), and most people will fall between these tails. 
-So it is highly surprising to find exactly the same number of drivers in every mileage bin. 
-While further specialized analyses revealed further evidence of fraud (e.g. based on patterns of rounding and pairs of duplicated data points), this humble histogram was already enough to set off alarm bells. 
-A recurring regret raised by the co-authors of this paper is that they never thought to making this visualization before reporting their statistical tests. 
+These exploratory visualizations help us read off some descriptive properties of the sample.
+For example, we can see that age ranges differ somewhat across sites: the cut-off is 11 in India but 15 in Mexico.
+We can also see that age groups are fairly imbalanced: in Canada, there are eighteen 11-year-olds but only five 6-year-olds.
 
-```{r viz-uniform, fig.margin=TRUE, fig.cap="A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!"}
-knitr::include_graphics("images/viz/data_colada_uniform.png")
+None of these properties are problematic, but it gives us a degree of awareness that might shape our downstream analytic decisions.
+For example, if we did not appropriately model random effects, our estimates would be dominated by the countries with larger sample sizes.
+And if we were planning to compare specific groups of 6-year-olds, for some reason, this analysis would be underpowered.
+
+### Explorating distributions
+
+Now that we have a handle on the sample, let's get a sense of the dependent variable: the participant's decision to accept or reject the allocation.
+Before we start taking means, let's look at how the ``rejection rate'' variable is distributed.
+We'll aggregate at the participant-level, and check the frequency of different rejection rates, overall.
+
+```{r ggplot-blake7}
+ms <- d %>%
+  filter(!is.na(eq.uneq)) %>%
+  mutate(age = floor(actor.age.years),
+         decision = decision == "reject")
+
+ms %>%
+  group_by(country, trial_type, condition, age, actor.id) %>%
+  summarise(decision = mean(decision, na.rm=TRUE)) %>%
+  group_by(decision) %>%
+  tally() %>%
+  ggplot(aes(x = decision, y = n)) +
+    geom_bar(stat = 'identity') +
+    xlim(-0.01, 1.01) +
+    ggthemes::theme_few()
 ```
-:::
+
+We immediately notice that the vast majority (44\%) of participants never reject in the entire experiment.
+Zero rejections is the modal behavior.
+This kind of "zero-inflated" distribution is not uncommon in psychology, and may warrant special consideration when designing the statistical model.
+We also notice that there is clumping around certain values.
+We then check how many trials each participant is completing:
+
+```{r ggplot-blake8}
+ms %>%
+  group_by(country, trial_type, condition, age, actor.id) %>%
+  tally() %>%
+  group_by(n) %>%
+  tally() %>%
+  ungroup() %>%
+  mutate(p = nn / sum(nn)) %>%
+  ggplot(aes(x = n, y = p)) +
+    geom_bar(stat = 'identity') +
+    xlim(5, 11) +
+    labs(x = '# trials', y = 'proportion of participants') +
+    ggthemes::theme_few()
+```
+
+We find that there's some variation here: 69% of participants completed 8 trials, 30% of participant completed 6 trials, and a small number of participants have odd numbers like 7 or 10 trials.
+Given the logistical complexity of large multi-site studies, it is common to have some changes in experimental protocol across data collection.
+India and Peru only have 6 trials but it appears that additional trials were added at other sites.
+In a design where the number of trials was careful controlled, seeing unexpected numbers here (like the 7 or 10 trial bins) are clues that something else may be going on in the data.
+For example, there may have been a coding error, or a response may have been double-counted due to a technical problem.
+This visualization may lead us to look up the participant IDs in these bins and manually inspect their data to see what might be going on.
+
+You can also learn a lot from looking at *pairwise* relationships in datasets with multiple continuous predictors.
+By making scatter plots of the different variables, you may notice that some are strongly correlated with one another, and might start to worry about collinearity problems in regression models trying to tease them apart.
+You may also notice more complicated relationships; for example,  one cloud of points that is strongly correlated, and another cloud of points that is not.
+Reporting a single correlation and claiming a relationship might therefore be misleading.
+Instead, we would want to be careful to break this relationship out by other variables and try to understand why there are two separate clouds.
+
+### Hypothesis-driven exploration
+
+Finally, we can make a few versions of the "design plot" that are broken out by different variables.
+Let's start by just looking at the data from the largest site.
+
+```{r ggplot-blake8}
+ms %>%
+  filter(country == "US") %>%
+  group_by(country, trial_type, condition, age, actor.id) %>%
+  summarise(decision = mean(decision, na.rm=TRUE)) %>%
+  group_by(country, trial_type, condition, age) %>%
+  summarise(decision = mean(decision, na.rm=TRUE),
+            n = n()) %>%
+  ggplot(aes(x = age, y = decision, col = country)) +
+    geom_point(aes(size = n)) +
+    facet_grid(trial_type ~ condition) +
+    geom_smooth(method="lm", se = FALSE) +
+    ylab("Proportion offers rejected") +
+    xlab("Age (years)") +
+    ylim(c(0,1)) +
+    ggthemes::theme_few() +
+    ggthemes::scale_color_solarized()`
+``
+
+It's definitely a figure we'd put in a paper, but it helps us get a sense of the predicted  pattern.
+There appears to be an age trend that's specific to the 'Unequal' trials, with rejection rates rising over time (compared to roughly even or decreasing rates in the 'Equal' trials).
+Meanwhile, rejection rates for the Disadvantageous group also seem slightly higher than those in the Advantageous group.
+Now let's rebin into 3-year age groups so that individual point estimates are a bit more reliable, and add the other countries back in.
+
+```{r ggplot-blake9}
+d %>%
+  filter(!is.na(eq.uneq)) %>%
+  mutate(age = floor(actor.age.years/2)*2,
+         decision = decision == "reject") %>%
+  group_by(country, trial_type, condition, age, actor.id) %>%
+  summarise(decision = mean(decision, na.rm=TRUE)) %>%
+  group_by(country, trial_type, condition, age) %>%
+  summarise(decision = mean(decision, na.rm=TRUE),
+            n = n()) %>%
+  ggplot(aes(x = age, y = decision, col = condition)) +
+    geom_point(aes(size = n)) +
+    facet_grid(trial_type ~ country) +
+    geom_smooth(method="lm", se = FALSE) +
+    ylab("Proportion offers rejected") +
+    xlab("Age (years)") +
+    ylim(c(0,1)) +
+    ggthemes::theme_few() +
+    theme(aspect.ratio = 1)
+```
+
+This is now looking much closer to a quick-and-dirty version of a "design plot" we might include in a paper.
+The DV (rejection rate) is on the y-axis, the primary variable of interesting (age) is on the x-axis, and the other elements of the design (country and trial type) are mapped to color and facets, respectively.
+The point of exploratory visualization is to converge toward a better understanding of what's going on in your data.
+
+### Visualization as debugging
+
+As you iterate through different exploratory visualization, *stay vigilant*!
+Think about what you expect to see before making the plot, then ask yourself whether you got what you expected.
+You can think of this workflow as a form of "visual debugging".
+You might notice a datapoint with an impossible value, such as an proportion greater than 1 or a reaction time less than 0.
+Or you might notice weird clusters or striations, which might indicate heterogeneity in data entry (perhaps different coders used slightly different rubrics or rounded in different ways).
+Or you might notice that an attribute is missing for some values, and trace it back to a bug reading in the data or merging data frames (maybe there was a missing comma in our `csv` file).
+If you see anything that looks weird, track it down until you understand why it's happening.
+Bugs that are subtle and invisible in other parts of the analysis pipeline will often pop out as red flags in visualizations.
 
 ## Chapter summary: Visualization
 
-This chapter has given a short review of the principles of data visualization, especially focusing on the needs of experimental psychology, which are often quite different than those of other fields. We particularly focused on the need to make visualization part of the experimenter's analytic workflow. Picking up the idea of a "default model" from Chapter \@ref(models), we discussed a default "design plot" that reflects the key choices made in the experimental design. Within this framework, we then discussed different visualizations of distribution and variability that better align our graphics with the principles of measurement and attention to raw data that we have been advocating throughout.  
+This chapter has given a short review of the principles of data visualization, especially focusing on the needs of experimental psychology, which are often quite different than those of other fields.
+We particularly focused on the need to make visualization part of the experimenter's analytic workflow.
+Picking up the idea of a "default model" from Chapter \@ref(models), we discussed a default "design plot" that reflects the key choices made in the experimental design.
+Within this framework, we then discussed different visualizations of distribution and variability that better align our graphics with the principles of measurement and attention to raw data that we have been advocating throughout.
 
 ::: {.box .readings}
 There are many good introductions to data visualization. Here are two social-science focused books whose advice we agree with and that also contain a lot of practical information and helpful R code for the same packages we use here.  
 
 * Healy, K. (2019). *Data Visualization: A Practical Introduction*. Princeton University Press. Princeton University Press. Available free onine at [https://socviz.co](). 
 
-* Wilke, C. O. (2019). *Fundamentals of Data Visualization*. O'Reilly Media. Available free online at [https://clauswilke.com/dataviz/](). 
-:::
+* Wilke, C. O. (2019). *Fundamentals of Data Visualization*. O'Reilly Media. Available free online at [https://clauswilke.com/dataviz/]().
 
+For a more classical treatment, see @tukey1977exploratory and [@tufte2001visual,@tufte1997visual].
+
+:::
