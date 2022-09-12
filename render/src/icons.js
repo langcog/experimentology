@@ -4,7 +4,8 @@ import {
 	faMicroscope         as case_study,
 	faLeaf               as ethical_considerations,
 	faPersonFallingBurst as accident_report,
-	faCode               as code_connections,
+	faCode               as code,
+	faRectangleHistory   as depth,
 	faPenRuler           as exercises,
 	faBook               as readings,
 } from '@fortawesome/free-solid-svg-icons'
@@ -15,7 +16,8 @@ export default {
 	case_study,
 	ethical_considerations,
 	accident_report,
-	code_connections,
+	code,
+	depth,
 	exercises,
 	readings,
 }
