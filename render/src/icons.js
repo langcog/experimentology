@@ -5,7 +5,7 @@ import {
 	faLeaf               as ethical_considerations,
 	faPersonFallingBurst as accident_report,
 	faCode               as code,
-	faRectangleHistory   as depth,
+	faLandmark           as depth,
 	faPenRuler           as exercises,
 	faBook               as readings,
 } from '@fortawesome/free-solid-svg-icons'

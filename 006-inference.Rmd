@@ -19,9 +19,7 @@ Inference methods allow us to ask questions like:
 
 Question (1) is associated with one particular type of statistical inference method -- **null hypothesis significance testing** (NHST) in the **frequentist** statistical tradition. NHST has become synonymous with data analysis, such that in the vast majority of research papers (and research methods courses), all of the reported analyses are tests of this type. Yet the equivalence of NHST -- in particular, the dichotomous inference that something is "significant" or not -- and the idea of data analysis more generally has been quite problematic.
 
-The instinct to "go test for significance" before visualizing your data and trying to understand sources of variation (participants, items, manipulations, etc.) is one of the most unhelpful things an experimenter can do. Whether $p < .05$ or not, a test of this sort gives you literally *one bit* of information about your data.[^inference-1] Considering effect sizes and their variation more holistically, including using the kinds of visualizations we advocate in Chapter \@ref(viz), gives you a much richer sense of what happened in your experiment!
-
-[^inference-1]: In the information theoretic sense, as well as the common sense!
+The instinct to "go test for significance" before visualizing your data and trying to understand sources of variation (participants, items, manipulations, etc.) is one of the most unhelpful things an experimenter can do. Whether $p < .05$ or not, a test of this sort gives you literally *one bit* of information about your data.^[In the information theoretic sense, as well as the common sense!] Considering effect sizes and their variation more holistically, including using the kinds of visualizations we advocate in Chapter \@ref(viz), gives you a much richer sense of what happened in your experiment!
 
 In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. All practicing experimentalists need to understand NHST, both to read the literature and also to apply this method in appropriate situations. For example, NHST may be a reasonable tool for testing whether an intervention leads to a difference between a treatment condition and an appropriate control, although it still doesn't tell you about the size of the intervention effect! But we will also try to contextualize NHST as a very special case of a broader set of strategies around modeling and inference. Further, we will continue to flesh out our account of how some of the pathologies of NHST have been a driver of the replication crisis.
 
@@ -65,6 +63,26 @@ ggplot(tea_summary_48,
   xlab("Treatment effect") + 
   xlim(-.5,2.5)
 ```
+::: {.box .code}
+To do this simulation, we're using a special tidyverse function from the `purrr` library: `map`. `map` is an extremely powerful function that allows us to run another function (in this case, the `make_tea_data` function that we introduced last chapter) many times with different inputs. Here we create a tibble made up of a set of 1000 runs of the `make_tea_data` function.
+
+```
+samps <- tibble(sim = 1:1000) |>
+  mutate(data = map(sim, ~make_tea_data(n_total = 48))) |>
+  unnest(cols = "data")
+```
+
+Next, we just use the `group_by` and `summarise` workflow from Appendix \@ref(tidyverse) to get the estimated treatment effect for each of these 1000 simulations.
+
+```
+tea_summary_48 <- samps |>
+  group_by(sim) |>
+  summarise(delta = mean(rating[condition == "milk first"]) - 
+              mean(rating[condition == "tea first"]))
+```
+
+This tibble gives us what we need to make our histogram.
+:::
 
 Now imagine we also did thousands of repetitions of the experiment with $n=500$ instead of $n=48$. Figure \@ref(fig:inference-sampling-500) shows what the sampling distribution might look like. Notice how much narrower the sampling distribution becomes when we increase the sample size, showing our decreased uncertainty. More formally, the standard deviation of the sampling distribution itself, called the **standard error**, decreases as the sample size increases.
 
@@ -125,6 +143,24 @@ ggplot(sample_p,
   facet_wrap(~n, scales = "free") +
   xlim(-.05,1.05)
 ```
+
+::: {.box .code}
+For this simulation, we again use the `map` function. We set up a tibble with the different values we want to to try (which we call `n_flips`). Then we make use of the `map` function to run `rbinom` (random binomial samples) for each value of `n_flips`. 
+
+One trick we make use of here is that `rbinom` takes an extra argument that says how many of these random values you want to generate. Here we generate `nsamps = 1000` samples, giving us 1000 independent replicates at each `n`. But returning an array of 1000 values for a single value of `n_flips` results in something odd: the value for each element of `flips` is an array. To deal with that, we use the `unnest` function, which expands the array back into a normal tibble. 
+
+```
+n_samps <- 1000
+n_flips_list <- c(2, 8, 32, 128)
+
+sample_p <- tibble(n_flips = n_flips_list) |>
+  group_by(n_flips) |>
+  mutate(flips = map(n_flips, ~rbinom(n = n_samps, size = n_flips, prob = .7))) |>
+  unnest(cols = c(flips)) |>
+  mutate(p = flips / n_flips)
+```
+
+:::
 
 But look what happens as we draw increasingly larger samples in Figure \@ref(fig:inference-coin-ns): We get a normal distribution! This tendency of sampling distributions to become normal as $n$ becomes very large reflects a deep and elegant mathematical law called the **Central Limit Theorem**. Aesthetic swooning aside, the practical upshot is that the Central Limit Theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\widehat{SE} = \sigma/\sqrt{n}$. That is why the sampling distribution becomes narrower as the sample size increases.
 
