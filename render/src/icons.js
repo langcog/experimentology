@@ -4,7 +4,7 @@ import {
 	faMicroscope         as case_study,
 	faLeaf               as ethical_considerations,
 	faPersonFallingBurst as accident_report,
-	faCode               as code_connection,
+	faCode               as code_connections,
 	faPenRuler           as exercises,
 	faBook               as readings,
 } from '@fortawesome/free-solid-svg-icons'
