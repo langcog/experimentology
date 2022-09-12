@@ -32,8 +32,6 @@ source("helper/tea_helper.R")
 tea_data <- make_tea_data(n = 24)
 ```
 
-<!-- MBM to MCF: Estimation chapter actually foreshadows *Welch's* t-test because it describes unequal vars. Inference chapter generically refers to a t-test without making distinction. Let's discuss. -->
-
 Let's start with one of these special cases, namely estimating a treatment effect, $\beta$, in a two-group design. In Chapter \@ref(estimation), we solved this exact challenge for the tea-tasting experiment. We posited a model in which the milk-first ratings were normally distributed with mean $\theta_{\text{milk-first}} = \theta_{\text{tea-first}} + \beta$ and with standard deviation $\sigma$.^[Here's a quick reminder that "model" here is a way of saying "set of assumptions about the data generating procedure." So saying that some equation is a "model" is the same as saying, we think this is where the data came from. We can "turn the crank" -- generate data through the process that's specified in those equations, e.g., pulling numbers from a normal distribution with mean $\theta_{\text{milk-first}}$ and standard deviation $\sigma$. In essence, we're committing to the idea that this process will give us data that are substantively similar to the ones we have already.] 
 
 Let's now write that model as a regression model, that is, as a model that predicts each participant's tea rating, $Y_i$, given that participant's treatment assignment, $X_i$. $X_i=0$ represents the control (milk-first) group and $X_i=1$ represents the treatment (tea-first) group. Here, $Y_i$ is the dependent variable, and $X_i$ is the independent variable. The subscripts $i$ index the participants. To make this concrete, you can see some sample tea-tasting data (N=24 for simplicity) below, with the index $i$, the condition and its predictor $X_i$, and the rating $Y$.
@@ -117,8 +115,26 @@ p2 <- ggplot(tea_data,
 
 cowplot::plot_grid(p1,p2)
 ```
-
 Now we have the model. How do we estimate the regression coefficients $\beta_0$ and $\beta_1$? The usual method is called **ordinary least squares (OLS)**. Here's the basic idea. For any given regression coefficient estimates $\widehat{\beta}_0$ and $\widehat{\beta}_1$, we would obtain different **predicted values**, $\widehat{Y}_i = \widehat{\beta}_0 + \widehat{\beta}_1 X_i$ for each participant. Some regression coefficient estimates will yield better predictions than others. OLS estimation is designed to find the values of the regression coefficients that optimize these predictions, meaning that the predictions are as close as possible to participants' true outcomes, $Y_i$.^[Specifically, OLS minimizes squared error loss, in the sense that it will choose the regression coefficient estimates whose predictions minimize $\sum_{i=1}^n \left( Y_i - \widehat{Y}_i\right)^2$, where $n$ is the sample size. A wonderful thing about OLS is that those optimal regression coefficients (generically termed $\widehat{\mathbf{\beta}}$) turn out to have a very simple closed form: $\widehat{\mathbf{\beta}} = \left( \mathbf{X}'\mathbf{X} \right)^{-1} \mathbf{X}'\mathbf{y}$. We are using more general notation here because there could be multiple independent variables. Therefore, $\widehat{\mathbf{\beta}}$ is a vector, $\mathbf{X}$ is a matrix of independent variables for each subject, and $\mathbf{y}$ is a vector of participants' outcomes. As more good news, the standard error for $\widehat{\mathbf{\beta}}$ has a similarly simple closed form.]
+
+::: {.box .code}
+As it turns out, fitting an OLS regression model in R is extremely easy. The underlying call is `lm`, which stands for linear model. You can fit the model with a single call to this function with a "formula" as its argument. Here's the call:
+
+```
+mod <- lm(rating ~ condition, data = tea_data)
+```
+
+Formulas in R are a special kind of terse notation for regression equations where you write the outcome, `~` (distributed as), and the predictors. R assumes that you want an intercept by default, and there are also a number of other handy defaults that make R formulas a nice easy way to specify relatively complex regression models, as we'll see below. 
+
+Once you've fit the model and assigned it to a variable, you can call `summary` to see a summary of the parameters of the model:
+
+```
+summary(mod)
+```
+
+You can also extract the coefficient values using `coef(mod)`.
+:::
+
 
 Figure \@ref(fig:models-ols-plot) gives a graphical illustration of the tea tasting data for each condition (the dots) along with the model predictions for each condition $\beta_0$ and $\beta_0 + \beta_1$ (blue lines). The distance of each point to the predictions (the thing that OLS wants to minimize) is shown by the dotted lines. These distances are sample estimates, called **residuals**, of the true errors ($\epsilon_i$).
 
@@ -234,6 +250,16 @@ ggplot(d_ex, aes(x = x, y = y)) +
 
 Figure \@ref(fig:models-logistic-ex) shows the way that a logistic regression model transforms a predictor ($X$) into an outcome probability that is bounded at 0 and 1. Critically, although the predictor is still linear, the logit link means that the same change in $X$ can result in a different change in the absolute probability of $Y$ depending on where you are on the $X$ scale. In this example, if you are in the middle of the predictor range, a one-unit change in $X$ results in a `r round(y[x == .5] - y[x == -.5], 2)` change in probability (blue). At a higher value, the change is much smaller (`r round(y[x == 4.5] - y[x == 3.5], 2)`). Notice how this is different from the linear regression model above, where the same change in age always resulted in the same change in preference! 
 
+::: {.box .code}
+GLMs are as easy to fit in R as standard LMs. You simply need to call the `glm` function -- and to specify the link function. For our example above of a binary "liking" judgment, the call would be:
+
+```
+glm(liked_tea ~ condition, data = tea_data, family = "binomial")
+```
+
+The `family` argument specifies the type of distribution being used, and hence the logistic link function. 
+:::
+
 We have only scratched the surface of GLMs here. First, there are many different link functions that are suitable for different outcome types. And second, GLMs differ from OLS not only in their link functions, but also in how they handle the error terms. Our broader goal in this chapter is to show you how regression models are *models of data*. In that context, GLMs use link functions as a way to make models that generate many different times types of outcome data.^[We sometimes think of linear models as a set of tinker toys you can snap together to stack up a set of predictors. In that context, link functions are an extra "attachment" that you can snap onto your linear model to make it generate a different response type.]
 
 ## Accommodating clustering in our models
@@ -298,10 +324,16 @@ More generally, linear mixed effects models are very flexible, and they have bec
 <!-- ^[ How many clusters are enough for LMM to behave well? This is an active area of research, and the answer will depend on the number of observations in each cluster and the model structure. However, some empirical findings suggest that, at least for certain models, LMM can considerably underestimate standard errors even with, for example, 20 clusters each with 100 observations [@bie2021fitting]. -->
 <!-- ] -->
 
-<!-- ### An alternative approach: Generalized estimating equations -->
+::: {.box .depth}
+(TITLE) An alternative approach: Generalized estimating equations
 
-<!-- A second class of methods that helps resolve these issues is **generalized estimating equations** (GEE). In this approach, we leave the linear predictor alone. We do not add random intercepts or slopes, nor do we assume anything about the distribution of the errors (i.e., we no longer assume that they are normal, independent, and homoskedastic). We instead provide the model with an initial "guess" about how we think the errors might be related to one another; for example, in a repeated-measures experiment, we might guess that the errors are exchangeable, meaning that they are correlated to the same degree within each participant but are uncorrelated across participants. Instead of *assuming* that our guess is correct, as does LMM, GEE estimates the correlation structure of the errors empirically, using our guess as a starting point, and it uses this correlation structure to arrive at point estimates and inference for the regression coefficients. Remarkably, as the number of clusters and observations become very large, GEE will *always* provide unbiased point estimates and valid inference, *even if* our guess about the correlation structure was bad. Additionally, with simple finite-sample corrections [@mancl2001covariance], GEE seems to provide valid inference at smaller numbers of clusters than does LMM. The price paid for these nice safeguards against model misspecification is that, in principle, GEE will typically have less statistical power than LMM *if* the LMM is in fact correctly specified, but the difference may be surprisingly slight in practice [@bie2021fitting]. For these reasons, we tend to prefer GEE with finite-sample corrections over LMM as the default model for clustered data. In general, we tend to favor LMM over GEE only when the number of observations and clusters are quite large, and when careful diagnostics also indicate that distributional assumptions are fulfilled. -->
+A second class of methods that helps resolve issues of clustering is **generalized estimating equations** (GEE). In this approach, we leave the linear predictor alone. We do not add random intercepts or slopes, nor do we assume anything about the distribution of the errors (i.e., we no longer assume that they are normal, independent, and homoskedastic). 
 
+In GEE, we instead provide the model with an initial "guess" about how we think the errors might be related to one another; for example, in a repeated-measures experiment, we might guess that the errors are exchangeable, meaning that they are correlated to the same degree within each participant but are uncorrelated across participants. Instead of *assuming* that our guess is correct, as does LMM, GEE estimates the correlation structure of the errors empirically, using our guess as a starting point, and it uses this correlation structure to arrive at point estimates and inference for the regression coefficients. Remarkably, as the number of clusters and observations become very large, GEE will *always* provide unbiased point estimates and valid inference, *even if* our guess about the correlation structure was bad. Additionally, with simple finite-sample corrections [@mancl2001covariance], GEE seems to provide valid inference at smaller numbers of clusters than does LMM. 
+
+The price paid for these nice safeguards against model misspecification is that, in principle, GEE will typically have less statistical power than LMM *if* the LMM is in fact correctly specified, but the difference may be surprisingly slight in practice [@bie2021fitting]. For these reasons, some of us actually favor GEE with finite-sample corrections over LMM as the default model for clustered data, though they are much less common in psychology. 
+<!-- In general, we tend to favor LMM over GEE only when the number of observations and clusters are quite large, and when careful diagnostics also indicate that distributional assumptions are fulfilled. -->
+:::
 
 ## How do you use models to analyze data? 
 
@@ -329,6 +361,7 @@ ggplot(tea_data, aes(x = condition, y = rating)) +
   xlab("Condition") +
   ylab("Rating")
 ```
+
 2. **Visualize the model predictions against the observed data**. As we'll discuss in Chapter \@ref(viz), the "default model" for an experiment should go alongside a "default visualization" that similarly reflects the full design structure of the experiment and any primary clusters. In visualizing data like those from our tea-tasting experiment, show individual participants' average ratings (as in Figure \@ref(fig:models-ex-viz)). One way to check whether a model fits your data is then to plot it on top of those data. Sometimes this combination of model and data can be as simple as a scatter plot with a regression line. But seeing the model plotted alongside the data can often reveal a mismatch between the two. A model that does not describe the data very well is not a good source of generalizable inferences!
 
 3. **Interpret the model predictions**. Once you have a model, don't just read off the $p$-values for your coefficients of interest. Walk through the each coefficient, considering how it relates to your outcome variable. For a simple two group design like we've been considering, the condition coefficient is the estimate of the causal effect that you intended to measure! Consider its sign, its magnitude, and its precision (standard error or confidence interval). 
@@ -347,12 +380,21 @@ sgf <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/
          condition = factor(ifelse(condition == "Label", "Experimental", "Control")))
 ```
 
+::: {.box .code}
+If you want to follow along with this example, you'll have to load the example data and do a little bit of preprocessing (also covered in Appendix \@ref(tidyverse)):
+
+```
+sgf <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/data/tidyverse/stiller_scales_data.csv") |>
+  mutate(age_group = cut(age, 2:5, include.lowest = TRUE), 
+         condition = factor(ifelse(condition == "Label", "Experimental", "Control")))
+```
+:::
+
 All this advice may seem abstract, so let's put it into practice on a simple example. For a change, let's look at an experiment that's not about tea tasting. Here we'll consider data from an experiment testing preschool children's language comprehension [@stiller2015; we also use these data in Appendix \@ref(tidyverse)]. In this experiment, 2--5 year old children saw displays like the one in Figure \@ref(fig:models-sgf-stim). In the experimental condition, a puppet might say, for example, "My friend has glasses! Which one is my friend?" The goal was to measure how many children made the "pragmatic inference" that the puppet's friend was the face with glasses and *no* hat. 
 
 To estimate the effect, participants were randomly assigned to either the experimental condition or to a control condition in which the puppet had eaten too much peanut butter and couldn't talk, but they still had to guess which face was his friend. There were also three other types of experimental stimuli (houses, beds, and plates of pasta). Data from this experiment consisted of `r nrow(sgf)` total observations from `r length(unique(sgf$subid))` children, with all four stimuli presented to each child. The primary hypothesis of this experiment was that that preschool children could make pragmatic inferences by correctly inferring which of the three faces (for example) the puppet was describing.
 
 This experimental design looks a lot like some versions of our tea-tasting experiment. We have one primary condition manipulation (the puppet provides information versus does not), presented between-participants so that some participants are in the experimental condition and others are in the control condition. Our measurements are repeated within participants across different experimental stimuli. Finally, we have one important, pre-planned covariate: children's age.^[Our sampling plan for this experiment was actually **stratified** across age, meaning that we intentionally recruited the same number of participants for each one-year age group -- because we anticipated that age was highly correlated with children's ability to succeed in this experiment. We'll present this kind of sampling in more detail in Chapter \@ref(sampling).] Experimental data are plotted in Figure \@ref(fig:models-sgf-plot).  
-
 ```{r models-sgf-plot, fig.cap= "Data for @stiller2015. Each point shows a single participant's proportion correct trials (out of 4 experimental stimuli) plotted by age group, jittered slightly to avoid overplotting. Larger points and associated confidence intervals show mean and 95\\% confidence intervals for each condition."}
 sgf_sub_means <- sgf |>
   group_by(age_group, condition, subid) |>
@@ -380,6 +422,7 @@ ggplot(sgf_group_means,
   ylab("Proportion correct") + 
   theme_classic()
 ```
+
 How should we go about making our default model for this dataset?^[This experiment was not preregistered, but the paper includes a separate replication dataset with the same analysis.] We simply include each of these design factors in a mixed effects model; we use a logistic link function for our mixed effects model (a **generalized linear mixed effects model**) because we would like to predict correct performance on each trial, which is a binary variable. So that gives us an effect of condition and age as a covariate. We further add an interaction between condition and age in case the condition effect varies meaningfully across groups. Finally, we add random effects of participant and experimental item.^[As discussed above, this is a tricky decision-point; we could very reasonably have added random slopes as well.]
 
 The resulting model looks like this:
@@ -416,6 +459,24 @@ apa_tab$term[4] <- "Age (years) * Experimental condition"
 apa_table(apa_tab, caption = "Estimated effects for our generalized linear mixed effects model on data from Stiller et al. (2015).")
 ```
 
+::: {.box .code}
+Fititng a mixed effects model is also surprisingly simple. The first step is to prepare your predictors. In this case, we center the `age` predictor. 
+
+```
+sgf$age_centered <- scale(sgf$age, scale=FALSE)
+```
+
+Other than that, we use the `glmer` function from the `lme4` package to fit the model. Again we have to specify our link function, just like in a standard GLM, by choosing the distribution family. 
+
+```
+mod <- lme4::glmer(correct ~ age_centered * condition + (1|subid) + (1|item), 
+                   family = "binomial",
+                   data = sgf)
+```
+
+The only big difference here is that we add random effects terms to the formula, which are notated `(1 | X)` meaning "a random intercept for each value of `X`.
+:::
+
 Let's estimate this model and see how it looks. We'll focus here on interpretation of the so-called **fixed effects** (the main predictors), as opposed to the participant and item random effects.^[Participant means are estimated to have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[1],2)` (in log odds) while items have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[2],2)`. These indicate that both of our random effects capture meaningful variation.] Table \@ref(tab:models-sgf-model-print) shows the coefficients. Again, let's walk through each.
 
 <!-- [MM: Generally I think it makes sense to transform GLM coefficients to get, e.g., ORs rather than log-ORs, and then interpret accordingly.] MCF: I am on the fence about this - I'm not sure if ORs here are that easy to interpret. I guess I like the transformation to probabilities in expectation a bit better? MM: Me too, but in that case why fit logistic regression instead of OLS? -->
@@ -439,7 +500,10 @@ Let's come back to one piece of advice that we gave above about making a "defaul
 
 Well, if you have one or at most a small handful of covariates that you believe are meaningfully related to the outcome, you *can* plan in advance to put them in your model. If you think that your effect is likely to be **moderated** a specific demographic characteristic -- as we did with age and pragmatic inference in our example above -- then this inclusion can be quite useful. 
 
-Further, including covariates can increase the precision of your estimates by reducing "noise" in your outcome, and if you hypothesize that they interact. What's surprising though is how *little* this adjustment does to increase your overall precision unless the correlation between covariate and outcome is very strong. Figure \@ref(fig:models-precision) shows this relationship in a simple simulation. Only when the correlation between covariate and outcome (e.g., age and tea rating) is greater than .6 -- .8 does this adjustment really help.^[A relationship that strong is very unusual for most experiments in psychology, not least because our outcome measures are very unlikely to even be reliable enough to correlate with *themselves* at $r > .8$ let alone with another variable; see Chapter \@ref(measurement) for more details on this point.] 
+Further, including covariates can increase the precision of your estimates by reducing "noise" in your outcome, and if you hypothesize that they interact. What's surprising though is how *little* this adjustment does to increase your overall precision unless the correlation between covariate and outcome is very strong. 
+
+::: {.box .depth}
+Figure \@ref(fig:models-precision) shows the relationship between estimation error and the inclusion of covariates via a simple simulation. Only when the correlation between covariate and outcome (e.g., age and tea rating) is greater than .6 -- .8 does this adjustment really help.^[A relationship that strong is very unusual for most experiments in psychology, not least because our outcome measures are very unlikely to even be reliable enough to correlate with *themselves* at $r > .8$ let alone with another variable; see Chapter \@ref(measurement) for more details on this point.] 
 
 ```{r models-precision, fig.cap="Decreases in estimation error due to adjusting for covariates, plotted by the N participants in each group and the correlation between the covariate and the outcome."}
 # based on http://egap.org/methods-guides/10-things-know-about-covariate-adjustment
@@ -490,6 +554,7 @@ ggplot(d, aes(x = half_n, y = rmse,
   ylab("Estimation error") + 
   theme(legend.position = "bottom")
 ```
+:::
 
 That said, there are quite a few reasons not to include covariates -- motivating our recommendation to skip them in your default model unless you have very strong expectations for either A) a correlation with the outcome or B) a strong moderation relationship.
 

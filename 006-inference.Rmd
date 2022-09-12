@@ -201,6 +201,27 @@ ggplot(null_model_summary, aes(x =delta)) +
 
 ```
 
+::: {.box .code}
+To simulate our null model, we can do the same kind of thing we did before, just specifying to our `make_tea_data` function that the true difference in effects is zero!
+
+```
+null_model <- expand_grid(sim = 1:n_sims, 
+                          n = 48) |>
+  rowwise() |>
+  mutate(data = map(n, ~make_tea_data(n_total = n, sigma = 1.25, delta = 0))) |>
+  unnest(cols = c(data))
+```
+
+Now again we can `group_by` and `summarise` to get the distribution of treatment effects under the null hypothesis. 
+
+```
+null_model_summary <- null_model |>
+  group_by(n, sim) |>
+  summarise(delta = mean(rating[condition == "milk first"]) - 
+              mean(rating[condition == "tea first"]))
+```
+:::
+
 That's the logic of Fisherian NHST: if the observed data fall in the region that has a probability of less than .05 under the null model, then we reject the null. So then when we observe some particular treatment effect $\hat{\beta}$ in a single (real) instance of our experiment, we can compute the probability of these data or any data more extreme than ours under the null model. This probability is our $p$-value, and if it is small, it gives us license to conclude that the null is false.
 
 As we saw before, the larger the sample size, the smaller the standard error. That's true for the null model too! Let's take a look at running tea-tasting experiments with 12, 24, 48, and 96 participants. Figure \@ref(fig:inference-null-model2) shows the expected null distributions in each of these, again with the 5% boundaries shown in red. 
@@ -304,6 +325,16 @@ tea_bf_large <- BayesFactor::ttestBF(x = tea_data_large$rating[tea_data_large$co
                                paired = FALSE)
 ```
 
+::: {.box .code}
+Bayes Factors are delightfully easy to compute using the `BayesFactor` R package. All we do is feed in the two sets of ratings to the `ttestBF` function!
+
+```
+tea_bf <- ttestBF(x = tea_data$rating[tea_data$condition == "milk first"],
+                               y = tea_data$rating[tea_data$condition == "tea first"],
+                               paired = FALSE)
+```
+
+:::
 
 Figure \@ref(fig:inference-milk-first) shows one example dataset. Once we set up our models, we can compute the relative likelihood of the data under each.^[In this case, we use the default Bayesian $t$-test provided by the `BayesFactor` package.] The resulting BF is `r round(extractBF(tea_bf)$bf, 2)`, somewhere between anecdotal and substantial evidence. On the other hand, if we double the size of the experiment to 96 participants, the BF goes up to `r round(extractBF(tea_bf_large)$bf, 2)`, which is quite strong evidence.
 
@@ -313,16 +344,24 @@ That's the Bayes Factor. Now let's turn back to NHST and the $p$-value.
 
 We already have a working definition of what a $p$-value is from our discussion above: it's the **probability of the data (or any data that would be more extreme) under the null hypothesis**. How is this quantity related to either our Bayesian estimate or the BF? Well, the first thing to notice is that the $p$-value is very close (but not identical) to the likelihood itself.^[The likelihood -- for both Bayesians and frequentists --  is the probability of the data, just like the $p$-value. But unlike the $p$-value, it doesn't include the probability of more extreme data as well.] 
 
+Next we can use a simple statistical test, a $t$-test, to compute $p$-values for our experiment. In case you haven't encountered one, a $t$-test is a procedure for computing a $p$-value by comparing the distribution of two variables using the null hypothesis that there is no difference between them.^[$t$-tests can also be used in cases where one sample is being compared to some baseline.] The $t$-test uses the data to compute a **test statistic** whose distribution under the null hypothesis is known. Then the value of this statistic can be converted to $p$-values for making an inference. 
 
 ```{r inference-t-test}
 tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
-                               y = tea_data$rating[tea_data$condition == "tea first"], 
-                               paired = FALSE, var.equal = TRUE)
+                y = tea_data$rating[tea_data$condition == "tea first"], 
+                paired = FALSE, var.equal = TRUE)
 
 ```
 
+::: {.box .code}
+The standard `t.test` function is built into R via the default `stats` package. Here we simply make sure to specify the variety of test we want by using the `paired = FALSE` and `var.equal = TRUE` (equal variances) flags. 
 
-Next we can use a simple statistical test, a $t$-test, to compute $p$-values for our experiment. In case you haven't encountered one, a $t$-test is a procedure for computing a $p$-value by comparing the distribution of two variables using the null hypothesis that there is no difference between them.^[$t$-tests can also be used in cases where one sample is being compared to some baseline.] The $t$-test uses the data to compute a **test statistic** whose distribution under the null hypothesis is known. Then the value of this statistic can be converted to $p$-values for making an inference. 
+```
+tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
+                y = tea_data$rating[tea_data$condition == "tea first"], 
+                paired = FALSE, var.equal = TRUE)
+```
+:::
 
 When we conduct a $t$-test on our experimental results, we see that the difference between the two groups is significant at $p<.05$: `r papaja::apa_print(tea_t)$statistic`. Here we've given a standard American Psychological Association report of a $t$-test. The first part of this report on the test gives the $t$ value, qualified by the **degrees of freedom** for the test in parentheses. We won't focus much on the idea of degrees of freedom here, but for now it's enough to know that this number quantifies the amount of information given by the data, in this case 48 datapoints minus the two means (one for each of the samples).
 
@@ -477,11 +516,9 @@ tea_ci_lower <- delta_hat - tea_se *1.96
 tea_ci_upper <- delta_hat + tea_se *1.96
 ```
 
-
 Confidence intervals are constructed by estimating the middle 95% of the sampling distribution of $\widehat{\beta}$. Because of our hero, the Central Limit Theorem, we can treat the sampling distribution as normal for reasonably large samples. Given this, it's common to construct a 95% confidence intervals $\widehat{\beta} \pm 1.96 \widehat{SE}$.^[This type of CI is called a "Wald" confidence interval.] For the tea example, we had $\widehat{SE} = \sigma/\sqrt{n} = `r round(tea_se,2)`$, yielding the confidence interval: [`r round(tea_ci_lower,2)`, `r round(tea_ci_upper,2)`]. If we were to conduct the experiment 100 times and calculate a confidence interval each time, we should expect 95 of the intervals to contain the true $\beta$, whereas we would expect the remaining 5 to not contain $\beta$.[^inference-8] 
 
 [^inference-8]: In case you don't have enough tea to do the experiment 100 times to confirm this, you can do it virtually [here](https://istats.shinyapps.io/ExploreCoverage/).
-
 
 Confidence intervals are like betting on the inferences drawn from your sample. The sample you drew is like one pull of a slot machine that will pay off (i.e., have the confidence interval contain the true parameter) 95% of the time. Put more concisely: 95% of 95% confidence intervals contain the true value of the mean.
 
@@ -493,6 +530,35 @@ ggplot(tea_data_large,
   ylab("Quality rating (1-7)") + 
   xlab("Condition")
 ```
+
+
+::: {.box .code}
+Computing confidence intervals analytically is pretty easy. Here we first compute the standard error for the difference between conditions. The only tricky bit here is that we need to compute a pooled standard deviation.
+
+```
+tea_ratings <- tea_data$rating[tea_data$condition == "tea first"]
+milk_ratings <- tea_data$rating[tea_data$condition == "milk first"]
+n_tea <- length(tea_ratings)
+n_milk <- length(milk_ratings)
+sd_tea <- sd(tea_ratings)
+sd_milk <- sd(milk_ratings)
+
+tea_sd_pooled <- sqrt(((n_tea-1)*sd_tea^2 + (n_milk-1)*sd_milk^2) / 
+                        (n_tea + n_milk - 2))
+
+tea_se <- tea_sd_pooled * sqrt((1/n_tea) + (1/n_milk))
+```
+
+Once we have the stard error, we can get the estimated difference between conditions and compute the confidence intervals by multiplying the standard error by 1.96. 
+
+```
+delta_hat <- mean(milk_ratings) - mean(tea_ratings)
+tea_ci_lower <- delta_hat - tea_se *1.96
+tea_ci_upper <- delta_hat + tea_se *1.96
+```
+:::
+
+
 For visualization purposes, we can show the confidence intervals on individual estimates (Figure \@ref(fig:inference-condition-cis)). These tell us about the precision of our estimates of each quantity relative to the population estimate. But we've been talking primarily about the CI on the treatment effect $\widehat{\beta}$, which is shown in Figure \@ref(fig:inference-treatment-ci). This CI allows us to make an inference about whether or not it overlaps with zero -- which is actually equivalent in this case to whether or not the t-test is statistically significant. 
 
 ```{r inference-treatment-ci, fig.margin=TRUE, fig.cap = "Confidence intervals on the treatment effect."}
