@@ -4,4 +4,4 @@
 
 A new in-progress open access textbook on experimental methods. Under contract with MIT Press. 
 
-Available here: https://langcog.github.io/experimentology/
+Available here: http://experimentology.io

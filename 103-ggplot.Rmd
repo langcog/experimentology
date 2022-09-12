@@ -23,12 +23,14 @@ qplot(data = diamonds,
 Try adding clarity and cut, using shape and color as your visual variables. 
 :::
 
-## More complex with `ggplot`
+## Making more complex plots with `ggplot`
 
-`ggplot` is just a way of building `qplot` calls up more systematically. It's
-sometimes easier to use and sometimes a bit more complicated. What I want to show off here is the functionality of being able to build up complex plots with multiple elements. You can actually do this using `qplot` pretty easily, but there are a few things that are hard to do. 
+`ggplot` is just a way of building `qplot` calls up more systematically.
+It's sometimes easier to use and sometimes a bit more complicated.
+What I want to show off here is the functionality of being able to build up complex plots with multiple elements.
+Once you get used to thinking in `ggplot` style --- building up plots one 'layer' at a time --- it's hard to go back!
 
-`ggplot` is the basic call, where you specify A) a dataframe and B) an aesthetic (`aes`) mapping from variables in the plot space to variables in the dataset. 
+`ggplot` is the basic call, where you specify (A) a dataframe and (B) an aesthetic (`aes`) mapping from variables in the plot space to variables in the dataset.
 
 ```{r ggplot-diamonds-more}
 d <- ggplot(diamonds, aes(x=carat, y=price)) # first you set the aesthetic and dataset
@@ -157,143 +159,11 @@ ggplot(diamonds,
 ```
 
 
-## Advanced plot exploration exercise
+## Conclusion
 
-This is an exploration of Blake et al. (2015), [Ontogeny of fairness in seven societies](http://www.nature.com/nature/journal/v528/n7581/full/nature15703.html).
-
-```{r ggplot-blake1}
-library(tidyverse)
-
-d <- read_csv("data/ontogeny_of_fairness.csv") %>%
-  mutate(trial_num = as.numeric(gsub(".(\\d+)", "\\1", trial)),
-         trial_type = factor(eq.uneq, 
-                             levels = c("E","U"), 
-                             labels = c("Equal","Unequal")), 
-         condition = factor(condition,
-                      levels = c("AI","DI"), 
-                      labels = c("Advantageous","Disadvantageous"))) %>%
-  arrange(country, condition, actor.id, trial_num)
-```
-
-The general structue of this experiment is that we have pairs of participants assigned to the Disadvantageous and Advantageous conditions, and they do 16 trials for each pair in two blocks (varying value of the offer). 
-
-```{r ggplot-blake2}
-d
-```
-
-
-### Variable exploration
-
-```{r ggplot-blake3}
-d %>%
-  group_by(country) %>%
-  summarise(n = n())
-```
-
-```{r ggplot-blake4}
-d %>%
-  group_by(country, actor.id) %>%
-  summarise(n = n()) %>%
-  summarise(n = n())
-
-d %>%
-  group_by(country) %>%
-  summarise(n = length(unique(actor.id)))
-```
-
-```{r ggplot-blake5}
-d %>%
-  group_by(country, actor.age.years, actor.id) %>%
-  summarise(n = n()) %>%
-  summarise(n = n())
-
-```
-
-
-Describe the dataset graphically in ways that are useful for you to get a handle on the data collection effort. 
-
-```{r ggplot-blake6}
-demo <- d %>%
-  mutate(age = floor(actor.age.years)) %>%
-  group_by(country, age, actor.id) %>%
-  summarise(n = n()) %>%
-  summarise(n = n())
-
-ggplot(demo, 
-       aes(x = age, y = n)) + 
-  geom_bar(stat = "identity") + 
-  facet_wrap(~ country)
-```
-
-### Hypothesis-related exploration
-
-Try just plotting the un-adjusted curves. 
-
-```{r ggplot-blake7}
-ms <- d %>%
-  filter(!is.na(eq.uneq)) %>%
-  mutate(age = floor(actor.age.years), 
-         decision = decision == "reject") %>%
-  group_by(country, trial_type, condition, age, actor.id) %>%
-  summarise(decision = mean(decision, na.rm=TRUE)) %>%
-  summarise(decision = mean(decision, na.rm=TRUE),
-            n = n())
-
-ggplot(ms, 
-       aes(x = age, y = decision, col = country)) + 
-  geom_point(aes(size = n)) +
-  facet_grid(condition ~ trial_type) + 
-  geom_smooth(method="lm", se = FALSE) + 
-  ylab("Proportion offers rejected") +
-  xlab("Age (years)") +
-  ylim(c(0,1)) + 
-  ggthemes::theme_few() + 
-  ggthemes::scale_color_solarized()
-```
-
-```{r ggplot-blake8}
-ggplot(filter(ms, country == "US"), 
-       aes(x = age, y = decision, col = country)) + 
-  geom_point(aes(size = n)) +
-  facet_grid(condition ~ trial_type) + 
-  geom_smooth(method="lm", se = FALSE) + 
-  ylab("Proportion offers rejected") +
-  xlab("Age (years)") +
-  ylim(c(0,1)) + 
-  ggthemes::theme_few() + 
-  ggthemes::scale_color_solarized()
-```
-
-Now rebin into 3-year bins.
-
-```{r ggplot-blake9}
-ms <- d %>%
-  filter(!is.na(eq.uneq)) %>%
-  mutate(age = floor(actor.age.years/2)*2, 
-         decision = decision == "reject") %>%
-  group_by(country, trial_type, condition, age, actor.id) %>%
-  summarise(decision = mean(decision, na.rm=TRUE)) %>%
-  summarise(decision = mean(decision, na.rm=TRUE),
-            n = n())
-
-ggplot(ms, aes(x = age, y = decision, col = country)) + 
-  geom_point(aes(size = n)) +
-  facet_grid(condition ~ trial_type) + 
-  geom_smooth(method="lm", se = FALSE) + 
-  ylab("Proportion offers rejected") +
-  xlab("Age (years)") +
-  ylim(c(0,1)) 
-```
-
-Break this down by country. I like this plot best so far. 
-
-```{r ggplot-blake10}
-ggplot(ms, aes(x = age, y = decision, col = condition)) + 
-  geom_point(aes(size = n)) +
-  facet_grid(trial_type ~ country) + 
-  geom_smooth(method="lm", se = FALSE, span = 2) + 
-  ylab("Proportion offers rejected") +
-  xlab("Age (years)") +
-  ylim(c(0,1)) 
-```
-
+There's a lot more to learn about `ggplot`, and some fairly simple operations end up being surprisingly challenging.
+Remember: to use `ggplot` successfully, you don't need to memorize all of the geoms, or be able to write out all the options from scratch.
+Plots are made through trial and error, and you have the entire [Internet](https://stackoverflow.com/questions/tagged/ggplot2) at your fingertips.
+Even experts find themselves Googling "how to change aspect ratio in ggplot" and copy-pasting the code they find.
+Over time, as you make more plots, you will get faster at finding what you're looking for.
+When you're ready to apply your `ggplot` skills, go to Chapter \@ref(viz) for more examples of how to use visualizations in your research workflow.
