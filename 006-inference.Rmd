@@ -261,6 +261,7 @@ The more participants in the experiment, the tighter the null distribution becom
 
 One last note: You might notice an interesting parallel between Fisher's paradigm for NHST and Popper's falsificationist philosophy (introduced in Chapter \@ref(theories)). In both cases, you never get to accept the actual hypothesis of interest. The only thing you can do is observe evidence that is inconsistent. The added limitation of NHST is that the only hypothesis you can falsify is the null!
 
+
 ## Making inferences
 
 In the tea-tasting example we were just considering, we were trying to make an inference from our sample to the broader population. In particular, we were trying to test whether milk-first tea was rated as better than tea-first tea. Our inferential goal was a clear, binary answer: is milk-first tea better? 
@@ -392,7 +393,6 @@ The critical thing about $p$-values, though, is not just that they are a specifi
 
 As we mentioned, though, we are usually interested in not just rejecting the null hypothesis but also in the evidence for the alternative (the one we are interested in). The Bayes Factor is one approach to quantifying positive evidence. This issue with the Fisher approach to $p$-values has been known for a long time, though, and so there is an alternative approach. 
 
-
 ### The Neyman-Pearson approach
 
 ```{r inference-power-alpha, fig.cap="Standard decision matrix for NHST. null.", fig.margin=TRUE}
@@ -403,7 +403,63 @@ One way to "patch" NHST is to introduce a decision-theoretic view, shown in Figu
 
 Setting these rates is a decision problem: If you are too conservative in your criteria for the intervention having an effect, then you risk a false negative, where you incorrectly conclude that it doesn't work. And if you're too liberal in your assessment of the evidence, then you risk a false positive.^[To make really rational decisions, you could couple this chart to some kind of utility function that assessed the costs of different outcomes. For example, you might think it's worse to proceed with an intervention that doesn't work than to stay with business as usual. In that case, you'd assign a higher cost to a false positive and accordingly try to adopt a more conservative criterion. We won't cover this kind of decision analysis here, but @pratt1995 is a classic textbook on statistical decision theory if you're interested.] In practice, however, mostly people leave $\alpha$ at .05 and try to control their false negative rate by increasing their sample size. 
 
-As we saw in Figure \@ref(fig:inference-null-model), the greater the sample, the better your chance of rejecting the null for any given non-null effect. But these chances will depend also on the effect size you are using. This formulation gives rise to the idea of classical power analysis, which we cover in Chapter \@ref(sampling). Most folks who defend binary inference using $p$-values are interested in using the Neyman-Pearson approach. In our view, this approach has its place (it's especially useful for power analysis) but it still suffers from the substantial issues that plague all binary inference techniques, especially those that use $p$-values. We turn to some of these below.  
+As we saw in Figure \@ref(fig:inference-null-model), the greater the sample, the better your chance of rejecting the null for any given non-null effect. But these chances will depend also on the effect size you are using. This formulation gives rise to the idea of classical power analysis, which we cover in Chapter \@ref(sampling). Most folks who defend binary inference using $p$-values are interested in using the Neyman-Pearson approach. In our view, this approach has its place (it's especially useful for power analysis) but it still suffers from the substantial issues that plague all binary inference techniques, especially those that use $p$-values. 
+
+<!-- ::: {.box .depth} -->
+<!-- (TITLE) Nonparameteric resampling under the null -->
+
+<!-- As we've seen above, hypothesis testing hinges on approximating the null distribution of the statistical estimate. In the examples above, it was easy to use statistical theory to work out the null distribution: for example, in Figure \@ref(fig:inference-null-model), we knew that the null distribution must be binomial since we had a binary outcome, and the binomial distribution parameter $p$ must be 0.5, because that is what the null says. -->
+
+<!-- But sometimes we don't know what the null distribution would look like. Suppose we want to estimate group differences in a highly skewed continuous outcome, like salary, but we had a small sample size (e.g., $n=10$ per group), as shown in Figure \@ref(fig:inference-permutation-1) -->
+
+<!-- ```{r inference-permutation-1, fig.margin = TRUE, fig.cap="A small experiment with a skewed distribution for its outcome variable."} -->
+<!-- # print(d) -->
+
+<!-- set.seed(451) -->
+<!-- n.per.group = 10 -->
+<!-- d <- data.frame(Y = c( rexp( n = n.per.group, rate = 4 ), -->
+<!--                        rexp( n = n.per.group, rate = 4 ) + 0.3 ), -->
+<!--                 Group = c( rep( "Control", n.per.group ), -->
+<!--                            rep ( "Treatment", n.per.group ) ) ) -->
+
+<!-- ggplot( data = d, -->
+<!--         aes(x = Y, group = Group ) ) + -->
+<!--   geom_dotplot( aes( fill=Group ), alpha=0.4, binwidth = .05 ) + -->
+<!--   xlab("Y") + -->
+<!--   ylab("") +  -->
+<!--   theme(legend.position = "bottom") -->
+<!-- ``` -->
+
+<!-- We can't proceed with a t-test in good conscience because, with only $n=20$, we can't necessarily trust that the Central Limit Theorem has "kicked in" sufficiently for the test to work despite the skewness. Stated otherwise, we can't be sure that the null distribution is normal in this case. -->
+
+<!-- When we can't rely on theory, another way to approximate a null distribution is through nonparametric resampling. "Resampling" means that we're going to cleverly draw new samples *from our existing sample*, and "nonparametric" means that we will do this in a way that obviates assumptions about the shape of the null distribution (in contrast to parametric approaches that do rely on such assumptions). -->
+
+<!-- The central idea is that, if the treatment truly had no effect on the outcome, then the observations would be **exchangeable** between the treatment and control groups. That is, there would not be systematic differences between the treatment and control groups. This may or may not be true in our observed sample (after all, that's why we're doing a hypothesis test in the first place), but we could draw new samples from our existing sample in a manner that forces exchangability. In this case, we could randomly permute the column of outcomes in our dataset while leaving the column of treatment assignments fixed. -->
+
+<!-- ```{r inference-permutation-2, fig.margin = TRUE, fig.cap="A small experiment with a skewed distribution for its outcome variable."} -->
+<!-- # show construction of a single permuted dataset -->
+<!-- # library(modelr) -->
+<!-- # library(purrr) -->
+<!-- perm.reps = 100 -->
+<!-- perms = gtools::permute(data = d, n = perm.reps, Y) -->
+
+<!-- # show the first permuted dataset -->
+<!-- print( perms$perm[[1]]$data ) -->
+
+<!-- #@WHY ARE THESE ALL THE SAME?? -->
+<!-- cbind( perms$perm[[1]]$data$Y, perms$perm[[2]]$data$Y ) -->
+<!-- # c.f. package example for debugging -->
+<!-- perms2 <- gtools::permute(mtcars,  1000, mpg) -->
+<!-- cbind( perms2$perm[[1]]$data$mpg, perms2$perm[[2]]$data$mpg ) -->
+<!-- # also the same?? -->
+
+<!-- # get group mean differences for each permutation via OLS -->
+<!-- ols = map(perms$perm, ~ lm(Y ~ 1, data = .)) -->
+<!-- ATEs = lapply( ols, function(.ols) as.numeric( coef(.ols)["(Intercept)"] ) ) -->
+
+<!-- # now plot the ATEs to show the null sampling distribution -->
+<!-- ``` -->
+<!-- ::: -->
 
 ## Inference and its discontents
 
