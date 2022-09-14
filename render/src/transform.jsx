@@ -10,18 +10,7 @@ const descendants = ({ children = [] }) => [
 	children.map(descendants),
 ].flat(Infinity).filter(Boolean)
 
-const isLastPage = url => url == routes.at(-1)
-
-const isRefs = node => node.attribs?.id == 'refs'
-const isTOC  = node => node.attribs?.id == 'TOC'
-const isBox  = node => node.attribs?.class?.match(/\bbox\b/)
-
-const isPageButton = node => node.name == 'p' && descendants(node)
-.some(node => node.name == 'button' && descendants(node)
-	.some(node => node.data.match(/^(Next|Previous)$/))
-)
-
-const convertBox = ({ attribs, children }) => {
+const box = ({ attribs, children }) => {
 	let title;
 
 	const [ , type ] = attribs.class.split(' ');
@@ -52,15 +41,21 @@ export default ({ url, html }) => {
 		return <div id={ id } children={ node }/>;
 	}
 
-	const replace = node => {
-		if (isTOC(node)) return island(<TOC/>);
+	const isBox       = node => node.attribs?.class?.match(/\bbox\b/)
+	const isTOC       = node => node.attribs?.id == 'TOC'
+	const isLastRefs  = node => node.attribs?.id == 'refs' && url == routes.at(-1)
+	const isNavButton = node => node.name == 'p' && descendants(node)
+	.some(node => node.name == 'button' && descendants(node)
+		.some(node => node.data.match(/^(Next|Previous)$/))
+	)
 
-		if (isBox(node)) return island(<Box { ... convertBox(node) }/>);
-
-		if (isPageButton(node)) return <></>;
-
-		if (isRefs(node) && isLastPage(url)) return <></>;
-	}
+	const replace = node => (
+		isBox(node)       ? island(<Box { ... box(node) }/>) :
+		isTOC(node)       ? island(<TOC/>)                   :
+		isLastRefs(node)  ? <></>                            :
+		isNavButton(node) ? <></>                            :
+		null
+	)
 
 	const body = render(parse(html, { library, replace }));
 
