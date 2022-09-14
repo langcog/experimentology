@@ -474,7 +474,7 @@ mod <- lme4::glmer(correct ~ age_centered * condition + (1|subid) + (1|item),
                    data = sgf)
 ```
 
-The only big difference here is that we add random effects terms to the formula, which are notated `(1 | X)` meaning "a random intercept for each value of `X`.
+The only big difference here is that we add random effects terms to the formula, which are notated `(1 | X)` meaning "a random intercept for each value of `X`". You can see a summary of the fitted model using `summary(mod)` as before. The only big difference from `lm` is that here you can extract both fixed and random effects (with `fixef(mod)` and `ranef(mod)` respectively). 
 :::
 
 Let's estimate this model and see how it looks. We'll focus here on interpretation of the so-called **fixed effects** (the main predictors), as opposed to the participant and item random effects.^[Participant means are estimated to have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[1],2)` (in log odds) while items have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[2],2)`. These indicate that both of our random effects capture meaningful variation.] Table \@ref(tab:models-sgf-model-print) shows the coefficients. Again, let's walk through each.
@@ -494,7 +494,8 @@ In sum, this model suggests that there was a substantial difference in performan
 
 This example illustrates the "default saturated model" framework that we recommend -- the idea that a single regression model corresponding to the design of the experiment can yield an interpretable estimate of the causal effect of interest, even in the presence of several other sources of variation.
 
-### When does it makes sense to include covariates in a model?
+::: {.box .depth}
+(TITLE) When does it makes sense to include covariates in a model?
 
 Let's come back to one piece of advice that we gave above about making a "default" model of an experiment: not including covariates. This advice can seem surprising. Many demographic factors are of interest to psychologists and other behavioral scientists, and in observational studies these factors will almost always be related to important life outcomes. So why not put them into our experimental models? After all, we did include age in our worked example above!
 
@@ -502,7 +503,6 @@ Well, if you have one or at most a small handful of covariates that you believe 
 
 Further, including covariates can increase the precision of your estimates by reducing "noise" in your outcome, and if you hypothesize that they interact. What's surprising though is how *little* this adjustment does to increase your overall precision unless the correlation between covariate and outcome is very strong. 
 
-::: {.box .depth}
 Figure \@ref(fig:models-precision) shows the relationship between estimation error and the inclusion of covariates via a simple simulation. Only when the correlation between covariate and outcome (e.g., age and tea rating) is greater than .6 -- .8 does this adjustment really help.^[A relationship that strong is very unusual for most experiments in psychology, not least because our outcome measures are very unlikely to even be reliable enough to correlate with *themselves* at $r > .8$ let alone with another variable; see Chapter \@ref(measurement) for more details on this point.] 
 
 ```{r models-precision, fig.cap="Decreases in estimation error due to adjusting for covariates, plotted by the N participants in each group and the correlation between the covariate and the outcome."}
@@ -554,7 +554,6 @@ ggplot(d, aes(x = half_n, y = rmse,
   ylab("Estimation error") + 
   theme(legend.position = "bottom")
 ```
-:::
 
 That said, there are quite a few reasons not to include covariates -- motivating our recommendation to skip them in your default model unless you have very strong expectations for either A) a correlation with the outcome or B) a strong moderation relationship.
 
@@ -567,6 +566,7 @@ The third reason is that you can actually compromise your causal inference by in
 Finally, one of the standard justifications for controlling is actually ill-founded as well: adding covariates because your groups are unbalanced. People often talk about "unhappy randomization": you randomize to the different tea-tasting groups, for example, but then it turns out the mean age is a bit different between groups. Then you do a t-test or some other statistical test and find out that you actually have a significant age difference.^[Incidentally, this practice makes no sense: because you randomized, you know that the difference in ages occurred by chance, so why are you using a t-test to test if the variation is due to chance?] But incidental demographic differences between groups are unlikely to be important unless that characteristic is highly correlated with the outcome (see above). Instead, if the sample size is small enough that meaningfully large incidental differences could arise in important confounders, then it is preferable to stratify randomization on that confounder at the outset (and then also to include that covariate in modeling).
 
 So these are are options: if a covariate is known to be very strongly related to our outcome, we can include it in our default model. Otherwise, we avoid a lot of trouble by leaving covariates out.
+:::
 
 ### Robustness checks and the multiverse
 

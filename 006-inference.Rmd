@@ -369,6 +369,9 @@ When we conduct a $t$-test on our experimental results, we see that the differen
 Let's compare $p$ values and default Bayes Factors for a couple of different conditions. In Table \@ref(tab:p-bf-comparison), you can see a set of simulated experiments with varying total numbers of participants and varying average treatment effects. Both $p$ and BF go up with more participants and larger effects. In general BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ can sometimes translate to a BF of less than 3 [@benjamin2018]. 
 
 ```{r p-bf-comparison}
+set.seed(10)
+options(scipen = 999) # remove scientific notation here
+
 expand_grid(N = c(12,24,48,96), 
        Delta = c(.5, 1, 1.5)) |>
   rowwise() |>
@@ -376,15 +379,15 @@ expand_grid(N = c(12,24,48,96),
                      ~make_tea_data(n_total = N, delta = Delta))) |>
   unnest(cols = c(data)) |>
   group_by(N, Delta) |>
-  summarise(`p value` = t.test(x = rating[condition == "milk first"],
+  summarise(`p value` = printp(t.test(x = rating[condition == "milk first"],
                              y = rating[condition == "tea first"], 
                              paired = FALSE, 
-                             var.equal = TRUE)$p.value,
-         BF = extractBF(
+                             var.equal = TRUE)$p.value),
+         BF = round(extractBF(
            BayesFactor::ttestBF(x = rating[condition == "milk first"],
                                y = rating[condition == "tea first"], 
-                               paired = FALSE))$bf) %>%
-  kable(booktabs = TRUE, digits = 3, caption = "Comparison of p-value and BF for several different tea-tasting scenarios.")
+                               paired = FALSE))$bf)) %>%
+  kable(booktabs = TRUE, digits = 3, caption = "Comparison of p-value and BF for several different (randomly-generated) tea-tasting scenarios.")
 ```
 
 The critical thing about $p$-values, though, is not just that they are a specific kind of data likelihoods. It is that they are used in a specific inferential procedure. The logic of NHST is that we make a binary decision about the presence of an effect. If $p < .05$, the null hypothesis is rejected; otherwise not. As @fisher1949 wrote,
