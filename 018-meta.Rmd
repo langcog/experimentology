@@ -33,10 +33,16 @@ Meta-analysis often teaches us something about a body of evidence that we do not
 
 As we explore the details of conducting a meta-analysis, we'll turn to another example: a meta-analysis of studies investigating the "contact hypothesis" on intergroup relations. 
 
-According to the contact hypothesis, prejudice towards members of minority groups can be reduced through intergroup contact interventions, in which members of majority and minority groups work together to pursue a common goal [@allport1954nature].To test this, @paluck2019contact meta-analyzed randomized studies that tested the effects of intergroup contact interventions on long-term prejudice-related outcomes. Using a systematic literature search, they tried to identify all published papers that tested these effects and then extracted effect size estimates from each paper. Because not every paper reports standardized effect sizes -- or even means and standard deviations for every group -- this process can often involve scraping information from plots, tables, and statistical tests to try to reconstruct effect sizes. For example, if the outcome variable is continuous, we could estimate Cohen's d (see Chapter \@ref(estimation)) from group means and standard deviations reported in the paper, even without having access to raw data. This book will not cover the process of conducting a systematic literature search and extracting effect sizes, but these topics are critical to understand if you plan to conduct a meta-analysis or other evidence synthesis. The resulting dataset might look like this:
+According to the contact hypothesis, prejudice towards members of minority groups can be reduced through intergroup contact interventions, in which members of majority and minority groups work together to pursue a common goal [@allport1954nature]. To aggregate the evidence on the contact hypothesis, @paluck2019contact meta-analyzed randomized studies that tested the effects of intergroup contact interventions on long-term prejudice-related outcomes. 
 
-```{r meta-dataset, fig.cap="First few lines of extracted effect sizes (yi) and their variances (vi) in the Paluck et al. meta-analysis..", fig.height=8}
-head(DF)
+Using a systematic literature search, they tried to identify all published papers that tested these effects and then extracted effect size estimates from each paper. Because not every paper reports standardized effect sizes -- or even means and standard deviations for every group -- this process can often involve scraping information from plots, tables, and statistical tests to try to reconstruct effect sizes.^[For example, if the outcome variable is continuous, we could estimate Cohen's d (see Chapter \@ref(estimation)) from group means and standard deviations reported in the paper, even without having access to raw data. This book will not cover the process of conducting a systematic literature search and extracting effect sizes, but these topics are critical to understand if you plan to conduct a meta-analysis or other evidence synthesis.] 
+
+Because @paluck2019contact generously shared their data, we can show you what their dataset looks like (Table \@ref(tab:meta-dataset)). We'll use these data as our running example throughout. 
+
+```{r meta-dataset}
+head(DF) |>
+  select(name_short, pub_date, target_spelled_out, n_total, d, var_d) |>
+  knitr::kable(caption = "First few lines of extracted effect sizes (d) and their variances (var_d) in the Paluck et al. meta-analysis.")
 ```
 
 As we've seen throughout this book, visualizing data before and after analysis helps benchmark and check our intuitions about the formal statistical results. In a meta-analysis, a common way to do so is the **forest plot**, which depicts individual studies' estimates and confidence intervals.^[You can ignore for now the column of percentages and the final line, "RE Model"; we will return to these later.] In the forest plot in Figure \@ref(fig:meta-forest), the larger squares correspond to more precise studies; notice how much narrower their confidence intervals are than the confidence intervals of less precise studies. 
@@ -49,6 +55,9 @@ metafor::forest(re.m,
                 xlab = "Standardized mean difference")
 ```
 
+::: {.code .box}
+In this chapter, we use the wonderful `metafor` package [@viechtbauer2010]. With this package, you must first fit your meta-analytic model. But once you've fit your model `mod`, you can simply call `forest(mod)` to create a plot like the one above.
+:::
 <!-- Cohen's $d$ -- which, if you recall from Chapter \@ref(estimation), represents the standardized mean difference -- was used as the effect size index. As we show in the remainder of the chapter, the meta-analytic tools @paluck2019contact used provide several useful insights about this proposed prejudice-reduction intervention. -->
 
 ### How not to synthesize evidence
@@ -77,6 +86,18 @@ $$\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}$
 
 We can use the fixed-effects formula to estimate that the overall effect size in Paluck et al.'s meta-analysis studies is a standardized mean difference of $\widehat{\mu}$ = `r round(as.numeric(fe.m$b), 2)`; 95% confidence interval [`r paste0(round(fe.m$ci.lb, 2), ", ", round(fe.m$ci.ub, 2))`]; $p < .001$. Because Cohen's $d$ is our effect size index, this estimate means that intergroup contact decreased prejudice by `r round(as.numeric(fe.m$b), 2)` standard deviations.
 
+::: {.code .box}
+Fitting meta-analytic models in `metafor` is quite simple. For example, for the fixed effects model above, we simply the `rma` function and specified that we wanted a fixed effects analysis. 
+
+```
+fe.m <- rma(yi = d,
+            vi = var_d,
+            data = paluck,
+            method = "FE")
+```
+
+Then `summary(fe.m)` gives us the relevant information about the fitted model.
+:::
 
 ### Limitations of fixed-effects meta-analysis
 
@@ -96,6 +117,20 @@ However, in random-effects meta-analysis, the inverse-variance weights now incor
 
 
 Conducting a random-effects meta-analysis of Paluck et al.'s dataset yields $\widehat{\mu}$ = `r round(as.numeric(re.m$b), 2)`; 95% confidence interval [`r paste0(round(re.m$ci.lb, 2), ", ", round(re.m$ci.ub, 2))`]; $p < .001$. That is, they estimated that, *on average across studies*, intergroup contact was associated with a decrease in prejudice of `r round(as.numeric(re.m$b), 2)` standard deviations. This meta-analytic estimate is shown as the bottom line of Figure \@ref(fig:meta-forest).
+
+
+::: {.code .box}
+Fitting a random effects model requires only a small change to the methods argument. (We also include the `knha` flag that adds a correction to the computation of standard errors and p-values). 
+
+```
+re.m <- rma(yi = d,
+            vi = var_d,
+            data = paluck,
+            method = "REML",
+            knha = TRUE)
+```
+:::
+
 
 However, these effects appeared to differ across studies. Paluck et al. estimated that the standard deviation of effects across studies was $\widehat{\tau}$ = `r tauStats[1]` ; 95% confidence interval [`r tauStats[2]`, `r tauStats[3]`]. This estimate indicates a substantial amount of heterogeneity!  To conveniently visualize these results, we can plot the estimated density of the population effects, which is just a normal distribution with mean $\widehat{\mu}$ and standard deviation $\widehat{\tau}$ (Figure \@ref(fig:meta-densities)).
 
@@ -233,6 +268,23 @@ foo <- significance_funnel(yi = meta.all$yi,
 
 # scale_x_continuous( breaks = seq(-2.5, 3.5, 0.5))
 ```
+
+::: {.box .code}
+For this plot, we use the `PublicationBias` package and the `significance_funnel` function. (An alternative function is the `metafor` function `funnel`, which results in the figure in the margins, a more "classic" funnel plot.) We use our fitted model `re.m` and feed the relevant parameters into the fucntion:
+
+```
+significance_funnel(yi = re.m$yi,
+                    vi = re.m$vi,
+                    favor.positive = TRUE,
+                    plot.pooled = TRUE,
+                    est.all = re.m$b,
+                    est.N = NA) 
+```
+
+As you can see, because meta-analysis is such a well-established method, many of the relevant operations are "plug and play."
+
+
+:::
 
 As implied by the "funnel" moniker, our plot looks a little like a funnel. Larger studies (those with smaller standard errors) cluster more closely around the mean of `r round(meta.all$b, digits)` than do smaller studies, but large and small studies alike have point estimates centered around the mean. That is, the funnel plot is symmetric.^[Classic funnel plots look more like Figure \@ref(fig:meta-classic-funnel). Our version is different in a couple of ways. Most prominently, we don't have the vertical axis reversed (which we think is confusing), and we don't have the left boundary highlighted (because we think folks don't typically select for negative studies).]
 
