@@ -87,7 +87,11 @@ There are so many different kinds of graphs (bar graphs, line graphs, scatter pl
 How do we begin to decide how to navigate these decisions?
 The first principle guiding good statistical visualizations is to *show the design* of your experiment. 
 
-The first confirmatory plot you shuld have in mind for your experiment is the **design plot**. Analogous to the "default model" in Chapter \@ref(models), the design plot should show the key dependent variable of the experiment, broken down by all of the key manipulations. Critically, design plots should neither omit particular manipulations because they didn't yield an effect or include extra covariates because they seem interesting in looking at the data. Both of these steps are the visual analogue of p-hacking! Instead, the design plot is the "preregistered analysis" of your visualization: it illustrates a first look at the estimated causal effects from your experimental manipulations.^[It can sometimes be a challenge to represent the full pattern of manipulations from an experiment in a single plot. Below we give some tricks for maximizing the legible information in your plot. But if you have tried these and your design plot still looks crowded and messy, that could be an indication that your experiment is manipulating too many things at once!]
+The first confirmatory plot you shuld have in mind for your experiment is the **design plot**.
+Analogous to the "default model" in Chapter \@ref(models), the design plot should show the key dependent variable of the experiment, broken down by all of the key manipulations.
+Critically, design plots should neither omit particular manipulations because they didn't yield an effect or include extra covariates because they seemed interesting after looking at the data.
+Both of these steps are the visual analogue of p-hacking! Instead, the design plot is the "preregistered analysis" of your visualization: it illustrates a first look at the estimated causal effects from your experimental manipulations.
+^[It can sometimes be a challenge to represent the full pattern of manipulations from an experiment in a single plot. Below we give some tricks for maximizing the legible information in your plot. But if you have tried these and your design plot still looks crowded and messy, that could be an indication that your experiment is manipulating too many things at once!]
 
 There are strong (unwritten) conventions about how your confirmatory analysis is expected to map onto graphical elements, and following these conventions can minimize confusion.
 Start with the variables you manipulate, and make sure they are clearly visible.
@@ -138,8 +142,20 @@ d <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/da
          condition = factor(ifelse(condition == "Label", "Experimental", "Control")))
 ```
 
-We could start by ploting the accuracy of each age group as colors (Figure \@ref(fig:viz-prepost2)). 
+We could start by plotting the accuracy of each age group as colors (Figure \@ref(fig:viz-prepost2)). 
 
+::: {.box .code}
+To make this (bad) visualization, we used a `ggplot` function called `geom_tile()`. 
+`geom_tile()` is commonly used to make [heat maps](https://en.wikipedia.org/wiki/Heat_map): for each value of some pair of variables (x, y), it shows a color representing the magnitude of a third variable (z).
+While a heat map is a silly way to visualize the @stiller2015 data, consider using `geom_tile()` when you have a pair of continuous variables, each taking a large range of values.
+In these cases, bar plots and line plots tend to get extremely cluttered, making it hard to see the relationship between the variables.
+Heat maps help these relationships to pop out as clear 'hot' and 'cold' regions. 
+For example, in @barnett2022, a heatmap was used to show a specific range of parameters where an effect of interest emerged.
+
+```{r viz-heatmap, fig.margin=TRUE, fig.cap = "Heatmap showing a specific range of continuous parameters where an effect emerged [reproduced from @barnett2022]."}
+knitr::include_graphics("images/viz/viz_heatmap_example.png")
+```
+:::
 
 ```{r viz-prepost2, fig.cap = "A first visualization of the Stiller et al. (2015) data."}
 d %>%
@@ -163,6 +179,19 @@ These plots allow us to see that one condition is (qualitatively) bigger than ot
 Additionally, this way of plotting the data places equal emphasis on age and condition, but we may instead have in mind particular contrasts, like the *change* across ages and how that change differs across conditions.
 An alternative is to show six bars: three on the left showing the 'experimental' phase and three on the right showing the 'control' phase.
 Maybe the age groups then are represented as different colors, as in Figure \@ref(fig:viz-prepost4).
+
+::: {.box .code}
+We make bar plots using the `ggplot` function `geom_bar()`.
+By default, it creates 'stacked' bar plots, where all values associated with the same x value (here, condition) get stacked up on top of one another.
+Stacked bar plots can be useful if, for example, you're plotting proportions that sum up to 1, or want to show how some big count is broken down into subcategories.
+It's also common to use `geom_area()` for this purpose, which connects adjacent regions.
+But the more common bar plot used in psychology puts the bars next to one another, or 'dodges' them.
+To accomplish this, we use the following parameter:
+
+```
+geom_bar(position = 'dodge')
+```
+:::
 
 ```{r viz-prepost4, fig.cap = "A bar graph of the Stiller data."}
 d %>% 
@@ -195,19 +224,18 @@ The interaction contrast we want to interpret is highlighted visually in this pl
 It is much easier to compare the slopes of two lines than mentally compute a difference of differences between four bars.
 A few corollaries of this principle [see this helpful presentation from Karl Broman](https://www.biostat.wisc.edu/~kbroman/presentations/IowaState2013/graphs_combined.pdf):
 
-* It is easier to compare values that are *adjacent* to one another. This is especially important when there are many different conditions included on the same plot. If particular sets of conditions are of theoretical interest, place them close to one another. Otherwise, sort conditions by a meaningful value (rather than alphabetically).
+* It is easier to compare values that are *adjacent* to one another. This is especially important when there are many different conditions included on the same plot. If particular sets of conditions are of theoretical interest, place them close to one another. Otherwise, sort conditions by a meaningful value (rather than alphabetically, which is usually the default for plotting software).
 
-* When possible, put labels directly next to data rather than in a legend. Legends force readers to glance back and forth to remember what different colors or lines mean. 
+* When possible, color-code labels and place them directly next to data rather than in a separate legend. Legends force readers to glance back and forth to remember what different colors or lines mean. 
 
 * When making histograms or density plots, it is challenging to compare distributions when they are placed side-by-side. Instead, facilitate comparison of distributions by vertically aligning them, or making them transparent and placed on the same axes.
 
 * If the scale makes it hard to see important differences, consider transforming the data (e.g. taking the logarithm).
 
+* When making bar plots, be very careful about the vertical y-axis. A classic "misleading visualization" mistake is to cut off the bottom of the bars by placing the endpoint of the y-axis at some arbitrary value near the smallest data point. This is misleading because people interpret bar plots in terms of the relative *area* of the bars (i.e. the amount of ink taken up by the bar), not just their absolute y-values. If the difference between data points is very small relative to the overall scale (e.g. means of 32 vs. 33 on a scale from 0 to 100), then using a scale with limits of 31 and 33 would make one bar look twice as big as the other! Conversely, if plotting means from Likert scales with a minimum value of 1, then starting the scale at 0 would shrink the effective difference! If you must use bars, use the natural end points of your measure (see Chapter \@ref(measurement)). Otherwise, consider dropping the bars and allowing the data points to 'float' with error bars.
+
 * If a key variable from your design is mapped to color, choose the color scale carefully. For example, if the variable is binary or categorical, choose visually distinct colors to maximize contrast (e.g. black, blue, and orange). If the variable is ordinal or continuous, use a color gradient. If there is a natural midpoint (e.g. if some values are negative and some are positive), consider using a diverging scale (e.g. different colors at each extreme). Remember also that a portion of your audience may be color-blind. Palettes like [viridis](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html) have been designed to be colorblind-friendly and also perceptually uniform (i.e. the perceived difference between 0.1 and 0.2 is approximately the same as the difference between 0.8 and 0.9). Finally, if the same manipulation or variable appears across multiple figures in your paper, keep the color mapping consistent: it is confusing if "red" means something different from figure to figure. 
 
-<!-- ```{r viz-meme2} -->
-<!-- knitr::include_graphics("images/viz/ggplot_meme.jpg") -->
-<!-- ``` -->
 
 ### Principle 3: Show the data
 
@@ -218,11 +246,31 @@ It hides real variation in the data, making a noisy effect based on a few data p
 Additionally, it collapses the *distribution* of the data, making a multi-modal distribution look the same as a unimodal one. 
 The third principle of modern statistical visualization is to *show the data* and visualize variability in some form.
 
-The most minimal form of this principle is to *always include error bars*.^[And be sure to tell the reader what the error bars represent -- a 95% confidence interval? a standard error of the mean? -- without this information, error bars are hard to interpret.]
+The most minimal form of this principle is to *always include error bars*.^[And be sure to tell the reader what the error bars represent -- a 95% confidence interval? a standard error of the mean? -- without this information, error bars are hard to interpret (see Depth box below).]
 Error bars turn a purely descriptive visualization into an inferential one. 
 They represent a minimal form of uncertainty about the possible statistics that might have been observed, not just the one that was actually observed. 
 Figure \@ref(fig:viz-show-data1) shows the Stiller data with error bars. 
 <!-- As such, they allow the viewer to interpret the means as *estimates*.  -->
+
+::: {.box .code}
+A common problem arises when we want to add error bars to a dodged bar plot.
+Naively, we'd expect we could just dodge the error bars in the same way we dodged the bars themselves:
+
+```
+geom_bar(position = 'dodge') +
+geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), position = 'dodge')
+```
+
+But this doesn't work! The rationale is kind of technical, but the width of the error bars is much narrower than the width of the bars, so we need to manually specify how much to dodge the error bars with the `position_dodge()` function:
+
+```
+geom_bar(position = position_dodge()) +
+geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), 
+              position = position_dodge(width = 0.9))
+```
+
+This does the trick!
+:::
 
 ```{r viz-show-data1, fig.cap = "Error bars (95\\% CIs) added to the Stiller data line graph."}
 d %>% 
@@ -248,6 +296,15 @@ There are many ways of showing the resulting distribution of participant-level d
 For example, a **boxplot** shows the median (a horizontal line) in the center of a box extending from the lower quartile (25%) to the upper quartile (75%).
 Lines then extend out to the biggest and smallest values (excluding outliers, which are shown as dots). Figure \@ref(fig:viz-show-data2) gives the boxplots for the Stiller data, which don't look that informative -- perhaps because of the coarseness of individual participant averages due to the small number of trials. 
 
+:::{.box .code}
+In `ggplot`, we can make box plots using the `geom_boxplot` command:
+```
+geom_boxplot(alpha = 0.8)
+```
+A common problem to run into is that `geom_boxplot` requires the variable assigned to `x` to discrete.
+If you have discrete levels of a numeric variable (e.g. age groups), make sure you've actually converted that variable to a `factor`.
+Otherwise, if it's still coded as `numeric`, `ggplot` will collapse all of the levels together!
+:::
 
 ```{r viz-show-data2, fig.cap = "Boxplot of the Stiller data."}
 d %>%
@@ -640,6 +697,18 @@ Instead, we would want to be careful to break this relationship out by other var
 Finally, we can make a few versions of the design plot that are broken out by different variables.
 Let's start by just looking at the data from the largest site (Figure \@ref(fig:viz-blake9)).
 
+:::{.box .code}
+Here, we are using `geom_smooth()` to overlay regression trends over the raw data.
+`geom_smooth()` takes a number of different options corresponding to different smoothing techniques.
+The default is a non-parametric regression, `geom_smooth(method = 'loess')`, which essentially stitches together means as you slide a window across your data (the `span` parameter controls the size of this window).
+Non-parametric smoothing can be a good choice for exploratory visualizations if you have a lot of data and want to make minimal assumptions about the form of the trend.
+
+Here, however, we show the linear regression trend, `geom_smooth(method = 'lm')`, which better corresponds to the predictions of the study and the statistical model being used (see Chapter \@ref(models)).
+Other regression forms can be specified with the `formula` argument.
+For example, we could show quadratic smoothing with `geom_smooth(method = 'lm', formula = y ~ poly(x, 2))`.
+The form of smoothing you use may differ across exploratory and confirmatory visualizations. 
+In a confirmatory visualization --- if you are going to include a smoothing curve --- it is typically best to use the one specified by your statistical model, as the slopes will correspond to the inferences being testing.
+:::
 ```{r viz-blake9, fig.cap="Rejection rates in the US data from Blake, plotted by age."}
 ms %>%
   filter(country == "US") %>%
@@ -662,7 +731,7 @@ ms %>%
 Figure \@ref(fig:viz-blake9) is definitely not a figure we'd put in a paper, but it helps us get a sense of the predicted pattern.
 There appears to be an age trend that's specific to the Unequal trials, with rejection rates rising over time (compared to roughly even or decreasing rates in the Equal trials).
 Meanwhile, rejection rates for the Disadvantageous group also seem slightly higher than those in the Advantageous group.
-Now let's re-bin the ata into 3-year age groups so that individual point estimates are a bit more reliable, and add the other countries back in.^[Binning data is a trick that we often use for reducing complexity in a plot when data are noisy. It should be used with care, however, since different binning decisions can sometimes lead to different conclusions. Here we tried several binning intevals and decided that three year age bins showed the underlying trends pretty well.]
+Now let's re-bin the data into 3-year age groups so that individual point estimates are a bit more reliable, and add the other countries back in.^[Binning data is a trick that we often use for reducing complexity in a plot when data are noisy. It should be used with care, however, since different binning decisions can sometimes lead to different conclusions. Here we tried several binning intervals and decided that 3-year age bins showed the underlying trends pretty well.]
 
 ```{r viz-blake10, fig.cap="Rejection rates by age for all data in the Blake dataset."}
 d %>%
@@ -686,16 +755,16 @@ d %>%
 ```
 
 Figure \@ref(fig:viz-blake10) is now looking much closer to a quick-and-dirty version of a design plot we might include in a paper.
-The DV (rejection rate) is on the y-axis, the primary variable of interesting (age) is on the x-axis. 
+The DV (rejection rate) is on the y-axis, and the primary variable of interest (age) is on the x-axis. 
 Other elements of the design (country and trial type) are mapped to color and facets, respectively.
-The point of exploratory visualization is to converge toward a better understanding of what's going on in your data.
 
 ### Visualization as debugging
 
+The point of exploratory visualization is to converge toward a better understanding of what's going on in your data.
 As you iterate through different exploratory visualizations, *stay vigilant*!
 Think about what you expect to see before making the plot, then ask yourself whether you got what you expected.
 You can think of this workflow as a form of "visual debugging".
-You might notice a datapoint with an impossible value, such as an proportion greater than 1 or a reaction time less than 0.
+You might notice a data point with an impossible value, such as an proportion greater than 1 or a reaction time less than 0.
 Or you might notice weird clusters or striations, which might indicate heterogeneity in data entry (perhaps different coders used slightly different rubrics or rounded in different ways).
 You might notice that an attribute is missing for some values, and trace it back to a bug reading in the data or merging data frames (maybe there was a missing comma in our `csv` file).
 If you see anything that looks weird, track it down until you understand why it's happening.
