@@ -14,9 +14,7 @@ const parts = [ ... document.querySelectorAll('#TOC li') ]
 	title = title.replace(/^\S+?\s/, '');
 
 	if (! href) {
-		const [ , first, rest ] = title.match(/([A-z]+)(.*)/);
-
-		parts.push({ first, rest, chapters: [] });
+		parts.push({ title, chapters: [] });
 	} else {
 		href = href.replace(/\.html.*$/, '');
 		parts.at(-1).chapters.push({ title, href });
@@ -30,9 +28,6 @@ const routes = [ '', '404', ... parts
 ]
 .map(route => `/${route}`);
 
-await writeFile('contents.json', JSON.stringify({
-	routes,
-	title,
-	subtitle,
-	parts,
-}, null, 2));
+const contents = { routes, title, subtitle, parts };
+
+await writeFile('contents.json', JSON.stringify(contents, null, 2));
