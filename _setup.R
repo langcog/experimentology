@@ -13,6 +13,7 @@ library(papaja)
 library(lme4)
 library(boot) # for inv.logit
 library(kableExtra)
+library(xaringanExtra)
 
 opts_chunk$set(
   message = FALSE,
