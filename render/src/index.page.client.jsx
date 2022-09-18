@@ -1,7 +1,7 @@
 import '/src/global.scss'
 
-import TOC         from './components/TOC'
-import Box         from './components/Box'
+import TOC         from './components/toc'
+import Box         from './components/box'
 import { getPage } from 'vite-plugin-ssr/client'
 import { hydrate } from 'preact'
 

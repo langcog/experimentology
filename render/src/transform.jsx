@@ -1,5 +1,5 @@
-import TOC                   from './components/TOC'
-import Box                   from './components/Box'
+import TOC                   from './components/toc'
+import Box                   from './components/box'
 import { routes }            from '/contents.json'
 import parse, { domToReact } from 'html-react-parser'
 import render                from 'preact-render-to-string'
