@@ -14,6 +14,7 @@ library(lme4)
 library(boot) # for inv.logit
 library(kableExtra)
 library(xaringanExtra)
+library(agreement) # for measurement
 
 opts_chunk$set(
   message = FALSE,
