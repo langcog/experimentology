@@ -15,6 +15,7 @@ library(boot) # for inv.logit
 library(kableExtra)
 library(xaringanExtra)
 library(agreement) # for measurement
+library(pwr) # for power analysis
 
 opts_chunk$set(
   message = FALSE,
