@@ -6,7 +6,7 @@ import {
 	faPersonFallingBurst as accident_report,
 	faCode               as code,
 	faLandmark           as depth,
-	faPenRuler           as exercises,
+	faPenRuler           as discussion_questions,
 	faBook               as readings,
 } from '@fortawesome/free-solid-svg-icons'
 
@@ -18,6 +18,6 @@ export default {
 	accident_report,
 	code,
 	depth,
-	exercises,
+	discussion_questions,
 	readings,
 }
