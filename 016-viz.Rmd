@@ -65,7 +65,7 @@ In this chapter, we will explore how to use visualizations in our own carefully 
 
 ## Basic principles of (confirmatory) visualization
 
-In this section, we begin by introducing a few simple guidelines to keep in mind when making informative visualizations in the context of experimental psychology.^[For the purposes of understanding the examples in this chapter, it should be sufficient to work through the tutorials on data manipulation and visualization in Appendices C and D.]
+In this section, we begin by introducing a few simple guidelines to keep in mind when making informative visualizations in the context of experimental psychology.^[For the purposes of understanding the examples in this chapter, it should be sufficient to work through the tutorials on data manipulation and visualization in Appendices \@ref(tidyverse) and \@ref(ggplot).]
 Remember that our needs may be distinct from other fields, such as journalism or public policy.
 You may have seen beautiful and engaging full-page graphics with small print and a wealth of information.
 The art of designing and producing these graphics is typically known as **infoviz** and should be distinguished from what we call **statistical visualization** [@gelman2013].
@@ -124,7 +124,7 @@ While we might be interested in whether some types of stimuli are systematically
 
 ### Principle 2: Facilitate comparison
 
-```{r viz-hierarchy, fig.margin = TRUE, fig.cap = "Principles of visual perception can help guide visualization choices."}
+```{r viz-hierarchy, fig.margin = TRUE, fig.cap = "Principles of visual perception can help guide visualization choices. Reproduced from @mackinlay1986automating (see also @cleveland1984graphical)"}
 knitr::include_graphics("images/viz/viz_hierarchy.png")
 ```
 
@@ -134,7 +134,8 @@ As long as we clearly label our choices, it shouldn't matter whether we use line
 It's true that there are many ways to show the same data.
 But being thoughtful about our choices can make it much easier for readers to interpret our findings.
 The second principle of statistical visualizations is to *facilitate comparison* along the dimensions relevant to our scientific questions.
-It is easier for our visual system to accurately compare the location of elements (e.g. noticing that one point is a certain distance away from another) than to compare their areas or colors (e.g. noticing that one point is bigger or brighter than another). Figure \@ref(fig:viz-hierarchy) shows an ordering of visual variables based on how accurate our visual system is in making comparisons.
+It is easier for our visual system to accurately compare the location of elements (e.g. noticing that one point is a certain distance away from another) than to compare their areas or colors (e.g. noticing that one point is bigger or brighter than another).
+Figure \@ref(fig:viz-hierarchy) shows an ordering of visual variables based on how accurate our visual system is in making comparisons.
 
 ```{r viz-prepost1}
 d <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/data/tidyverse/stiller_scales_data.csv") |>
@@ -142,17 +143,26 @@ d <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/da
          condition = factor(ifelse(condition == "Label", "Experimental", "Control")))
 ```
 
-We could start by plotting the accuracy of each age group as colors (Figure \@ref(fig:viz-prepost2)). 
+For example, we *could* start by plotting the accuracy of each age group as colors (Figure \@ref(fig:viz-prepost2)).
 
 ::: {.box .code}
-To make this (bad) visualization, we used a `ggplot` function called `geom_tile()`. 
+To make this (bad) visualization, we used a `ggplot` function called `geom_tile()`.
+
+```
+d |>
+  group_by(condition, age_group) |>
+  summarise(rating = mean(correct)) |>
+  ggplot(aes(x = age_group, y = condition, fill = rating)) +
+    geom_tile()
+```
+
 `geom_tile()` is commonly used to make [heat maps](https://en.wikipedia.org/wiki/Heat_map): for each value of some pair of variables (x, y), it shows a color representing the magnitude of a third variable (z).
 While a heat map is a silly way to visualize the @stiller2015 data, consider using `geom_tile()` when you have a pair of continuous variables, each taking a large range of values.
 In these cases, bar plots and line plots tend to get extremely cluttered, making it hard to see the relationship between the variables.
-Heat maps help these relationships to pop out as clear "hot" and "cold" regions. 
-For example, in @barnett2022, a heatmap was used to show a specific range of parameters where an effect of interest emerged.
+Heat maps help these relationships to pop out as clear "hot" and "cold" regions.
+For example, in @barnett2022, a heatmap was used to show a specific range of parameters where an effect of interest emerged (see Figure \@ref(fig:viz-heatmap)).
 
-```{r viz-heatmap, fig.margin=TRUE, fig.cap = "Heatmap showing a specific range of continuous parameters where an effect emerged [reproduced from @barnett2022]."}
+```{r viz-heatmap, fig.cap = "Heatmap showing a specific range of continuous parameters where an effect emerged [reproduced from @barnett2022]."}
 knitr::include_graphics("images/viz/viz_heatmap_example.png")
 ```
 :::
@@ -165,7 +175,19 @@ d |>
     geom_tile()
 ```
 
-Or as areas (Figure \@ref(fig:viz-prepost3)). 
+Or as sizes/areas (Figure \@ref(fig:viz-prepost3)).
+
+::: {.box .code}
+To make this (bad) visualization, we mapped the rating DV to the `size` element in our `aes()` call.
+
+````
+d |>
+  group_by(condition, age_group) |>
+  summarise(rating = mean(correct)) |>
+  ggplot(aes(x = age_group, y = condition, size = rating)) +
+    geom_point()
+```
+:::
 
 ```{r viz-prepost3, fig.cap = "Iterating on the Stiller data."}
 d |>
@@ -186,15 +208,19 @@ By default, it creates 'stacked' bar plots, where all values associated with the
 Stacked bar plots can be useful if, for example, you're plotting proportions that sum up to 1, or want to show how some big count is broken down into subcategories.
 It's also common to use `geom_area()` for this purpose, which connects adjacent regions.
 But the more common bar plot used in psychology puts the bars next to one another, or 'dodges' them.
-To accomplish this, we use the following parameter:
+To accomplish this, we use the `position="dodge"` parameter:
 
 ```
-geom_bar(position = "dodge")
+d |>
+  group_by(condition, age_group) |>
+  summarise(rating = mean(correct)) |>
+  ggplot(aes(x = condition, y = rating, fill = age_group)) +
+    geom_bar(stat = "identity", position = "dodge")
 ```
 :::
 
 ```{r viz-prepost4, fig.cap = "A bar graph of the Stiller data."}
-d |> 
+d |>
   group_by(condition, age_group) |>
   summarise(rating = mean(correct)) |>
   ggplot(aes(x = condition, y = rating, fill = age_group)) +
@@ -217,7 +243,7 @@ d |>
   ggplot(aes(x = age_group, y = rating, color = condition, group = condition)) +
     geom_point() +
     geom_line() +
-  ylab("Proportion correct")
+    ylab("Proportion correct")
 ```
 
 The interaction contrast we want to interpret is highlighted visually in this plot.
@@ -574,7 +600,7 @@ Fourteen of these students failed to notice a gorilla, suggesting that they eval
 Another group of 14 students were simply asked what, if anything, they could conclude (without being given explicit hypotheses).
 More of these students apparently made the visualization, but five of them still failed to notice the gorilla (Figure \@ref(fig:viz-gorilla))!
 
-```{r viz-gorilla, fig.margin=TRUE, fig.cap="A dataset was constructed by @yanai2020 which revealed a picture of a gorilla when the raw data were plotted."}
+```{r viz-gorilla, fig.cap="A dataset was constructed by @yanai2020 which revealed a picture of a gorilla when the raw data were plotted."}
 knitr::include_graphics("images/viz/gorilla.png")
 ```
 
@@ -586,22 +612,16 @@ So it is highly surprising to find exactly the same number of drivers in every m
 While further specialized analyses revealed further evidence of fraud (e.g. based on patterns of rounding and pairs of duplicated data points), this humble histogram was already enough to set off alarm bells.
 A recurring regret raised by the co-authors of this paper is that they never thought to make this visualization before reporting their statistical tests.
 
-```{r viz-uniform, fig.margin=TRUE, fig.cap="A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!"}
+```{r viz-uniform, fig.cap="A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!"}
 knitr::include_graphics("images/viz/data_colada_uniform.png")
 ```
 :::
 
 Our data are always messier than we expect.
 There might be a bug in our coding scheme, a column might be mislabeled, or might contain a range of values that we didn't expect. 
-Maybe our design wasn't perfectly balanced, or something went wrong with a particular participant's keyboard presses.  
-Most of the time, it's not tractable to manually scroll through our raw data looking for such problems. 
-Visualization is our first line of defense for the all-important process of running "data diagnostics."
-If there is a weird artifact in our data, it will pop out if we just make the right visualizations. 
+Maybe our design wasn't perfectly balanced, or something went wrong with a particular participant's keyboard presses. Most of the time, it's not tractable to manually scroll through our raw data looking for such problems. Visualization is our first line of defense for the all-important process of running "data diagnostics." If there is a weird artifact in our data, it will pop out if we just make the right visualizations.
 
-So which visualizations should we start with?
-The best practice is to always start by making histograms of the raw data. 
-
-As an example, let's consider the rich and interesting dataset shared by Blake, McAuliffe, and colleagues [-@blake2015ontogeny] in their article "Ontogeny of fairness in seven societies." This article studies the emergence of children's reasoning about fairness -- both when it benefits them and when it harms them -- across cultures.  
+So which visualizations should we start with? The best practice is to always start by making histograms of the raw data. As an example, let's consider the rich and interesting dataset shared by Blake, McAuliffe, and colleagues [-@blake2015ontogeny] in their article "Ontogeny of fairness in seven societies." This article studies the emergence of children's reasoning about fairness -- both when it benefits them and when it harms them -- across cultures.
 
 ::: {.box .code}
 If you want to follow along with this example at home, you can load the data from our repository!
@@ -790,6 +810,11 @@ d |>
 :::
 
 ```{r viz-blake7, fig.cap="Rejection rates in the Blake data."}
+d.indiv.rates |>
+  filter(!is.na(eq.uneq)) |>
+  group_by(actor.id) |>
+  summarise(reject = mean(reject, na.rm=TRUE))
+
 d |>
   filter(!is.na(eq.uneq)) |>
   group_by(actor.id) |>
@@ -799,13 +824,13 @@ d |>
     ggthemes::theme_few()
 ```
 
-We notice that many participants (`r round(mean(ms$reject == 0),2)*100`%) never reject in the entire experiment.
+We notice that many participants (`r round(mean(d.indiv.rates$reject == 0),2)*100`%) never reject in the entire experiment.
 This kind of "zero-inflated" distribution is not uncommon in psychology, and may warrant special consideration when designing the statistical model.
 We also notice that there is clumping around certain values.
 This clumping leads us to check how many trials each participant is completing (Figure \@ref(fig:viz-blake8)).
 
 ::: {.box .code}
-This last histogram is very similar to the ones above; this time we `count` twice, plotting the count of trial counts!
+This histogram is very similar to the ones above; however, we now `count` twice, first getting the trial counts for each participant and then counting how many times each count occurs overall!
 
 ```
 d |>
