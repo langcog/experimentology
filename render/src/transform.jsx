@@ -5,10 +5,10 @@ import parse, { domToReact } from 'html-react-parser'
 import render                from 'preact-render-to-string'
 import library               from 'preact'
 
-const descendants = ({ children = [] }) => [
-	children,
-	children.map(descendants),
-].flat(Infinity).filter(Boolean)
+// const descendants = ({ children = [] }) => [
+// 	children,
+// 	children.map(descendants),
+// ].flat(Infinity).filter(Boolean)
 
 const isLastPage = url => url == routes.at(-1)
 
@@ -16,10 +16,10 @@ const isRefs = node => node.attribs?.id == 'refs'
 const isTOC  = node => node.attribs?.id == 'TOC'
 const isBox  = node => node.attribs?.class?.match(/\bbox\b/)
 
-const isPageButton = node => node.name == 'p' && descendants(node)
-.some(node => node.name == 'button' && descendants(node)
-	.some(node => node.data.match(/^(Next|Previous)$/))
-)
+// const isPageButton = node => node.name == 'p' && descendants(node)
+// .some(node => node.name == 'button' && descendants(node)
+// 	.some(node => node.data.match(/^(Next|Previous)$/))
+// )
 
 const convertBox = ({ attribs, children }) => {
 	let title;
@@ -57,7 +57,7 @@ export default ({ url, html }) => {
 
 		if (isBox(node)) return island(<Box { ... convertBox(node) }/>);
 
-		if (isPageButton(node)) return <></>;
+		// if (isPageButton(node)) return <></>;
 
 		if (isRefs(node) && isLastPage(url)) return <></>;
 	}
