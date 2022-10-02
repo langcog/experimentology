@@ -75,14 +75,65 @@ The answer is **randomization**. If you randomly split a large roomful of people
 ```{r experiments-money4, fig.margin=TRUE, fig.cap="If you randomly split a large group of people into groups, the groups will, on average, be equal in every way."}
 knitr::include_graphics("images/experiments/money4-drawing.png")
 ```
+So that gives us our simple experimental design: we randomly assign some people to a money group and some people to a no-money control group! Then we measure happiness. The basic logic of randomization is that, if money causes happiness, we should see more happiness -- on average -- in the money group.^[You may already be protesting that this experiment could be done better. Maybe we could measure happiness before and after randomization, to increase precision. Maybe we need to give a small amount of money to control participants to match the interactions with an experimenter between conditions. We agree! These are important parts of experimental design, and we'll touch on them in subsequent chapters.]
 
 Randomization is a powerful tool, but there is a caveat: it doesn’t work every time. *On average*, randomization will ensure that your money and no-money groups will be equal with respect to confounds like number of friends, education attainment, and sleep quality. But just as you can flip a coin and sometimes get heads 9 out of 10 times, sometimes you use randomization and still get more highly-educated people in one condition than the other. When you randomize, you guarantee that on average all confounds are controlled and hence these do not bias your estimate.  
 
+
+::: {.box .depth}
+(TITLE) Unhappy randomization?
+
+As we've been discussing, random assignment removes confounding by ensuring that -- on average -- groups are equivalent with respect to all of their characteristics. Equivalence for any *particular* random assignment is more likely the larger your sample is, however. Any individual experiment may be affected by **unhappy randomization**, when a particular confound is unbalanced between groups by chance. 
+
+Unhappy randomization is much more common in small experiments than larger ones. To see why, we use a technique called **simulation**. In simulations, we invent data randomly following a set of assumptions: we make up a group of participants and generate their characteristics and their condition assignments. By varying the assumptions we use, we can investigate how particular choices might change the structure of the data. 
+
+To look at unhappy randomization, we created many simulated versions of our money-happiness experiment, in which an experimental group receives money and the control group receives none, and then happiness is measured for both groups. We assume that each participant has a set number of friends, and that the more friends they have, the happier they are. So when we randomly assign them to experimental and control groups, we run the risk of unhappy randomization -- sometimes one group will have substantially more friends than the other. 
+
+```{r experiments-randomization, fig.cap="Simulated data from our money-happiness experiment. Each dot represents the measured happiness effect (vertical position) for an experiment with a set number of participants in each group (horizontal position). Dot color shows how uneven friendship is between the groups. The dashed line shows the true effect."}
+set.seed(40)
+n_sims <- 100
+
+happiness_data <- expand_grid(n_per_group = c(1, 3,10,30,100,300,1000,3000), 
+                              sim_num = 1:n_sims) |>
+  rowwise() |>
+  mutate(condition = list(c(rep("experimental", n_per_group),
+                            rep("control", n_per_group))),
+         friends = list(rpois(n_per_group * 2, 5)),
+         happiness = list(rnorm(n_per_group * 2) + .3 * friends + 
+           as.numeric(as.factor(condition)))) |>
+  unnest(cols = c(condition, friends, happiness)) |>
+  group_by(n_per_group, sim_num, condition) |>
+  summarise(happiness = mean(happiness), 
+            friends = mean(friends)) |>
+  summarise(effect = diff(happiness), 
+            friend_asym = friends[1]/friends[2])
+
+ggplot(happiness_data, 
+       aes(x = n_per_group, y = effect, col = log(friend_asym))) + 
+  geom_jitter(width = .05) + 
+  scale_x_log10() + 
+  geom_hline(yintercept = 0, lty = 3) +
+  geom_hline(yintercept = 1, lty = 2) +
+  viridis::scale_color_viridis(name = "Asymmetry in number of friends (log ratio)") + 
+  xlab("N per group") + 
+  ylab("Happiness (experimental - control)") +
+  theme(legend.position = "bottom")
+```
+
+Figure \@ref(fig:experiments-randomization) shows the results of this simulation. Each dot is an experiment, representing one estimate of the happiness effect (how much happiness is gained for the amount of money given to the experimental group). For very small experiments (e.g., with 1 or 3 participants per group), dots are very far from the dashed line showing the true effect -- meaning these estimates are extremely noisy! And the reason is unhappy randomization. The upper and lower points are those in which one group had far more friends than the other.
+
+There are three things to notice about this simulation, however. First, the noise overall goes down as the sample sizes get bigger: larger experiments yield estimates closer to the true effect. Second, the unhappy randomization decreases dramatically as well with larger samples. Although individuals still differ just as much in large experiments, the *group* average number of friends is virtually the same for each condition. 
+
+Finally, although the small experiments are individually very noisy, the *average effect* across all of the small experiments is still very close to the true effect. This last point illustrates what we mean when we say that randomized experiments remove confounds. Even though friendship is still an important factor determining happiness in our simulation, the average effect across experiments is unbiased.
+
+:::
+
 In sum, randomization is a remarkably simple and effective way of holding everything constant besides a manipulated variable. In doing so, randomization allows experimental psychologists to make unbiased estimates of causal relationships. Importantly, randomization works both when you do have control of every aspect of the experiment -- like when you are baking a cake -- and even when you don't -- like when you are doing experiments with people. 
+
 
 ## Generalizability 
 
-When we are asking questions about psychology, it’s important to think about who we are trying to study. Do we want to know if money increases happiness in *all people*? In people who live in materialistic societies? In people whose basic needs are not being met? We call the group we are trying to study our **population of interest**, and the people who actually participate in our experiment our **sample**. We'll have a lot more to say about the process of **sampling** in Chapter \@ref(sampling). 
+When we are asking questions about psychology, it’s important to think about who we are trying to study. Do we want to know if money increases happiness in *all people*? In people who live in materialistic societies? In people whose basic needs are not being met? We call the group we are trying to study our **population of interest**, and the people who actually participate in our experiment our **sample**. 
 
 Sometimes researchers take a sample from one population but make a claim about another, usually broader, population. For example, they may run their experiment with a particular sample of U.S. college students but then generalize to all people (their intended population of interest).^[Unfortunately, psychologists pervasively mistakenly assume that research on U.S. college samples generalizes to the rest of the world. To highlight this issue, Henrich et al. (2010) coined the acronym WEIRD. This catchy name describes the oddness of making generalizations about all of humanity from experiments on a sample that is quite unusual because it is Western, Educated, Industrialized, Rich, and Democratic. Henrich and colleagues argue that seemingly "fundamental" psychological like visual perception, spatial cognition, and social reasoning all differ pervasively across populations -- hence, any generalization from an effect estimated with a WEIRD sub-population is unwarranted.] The mismatch of sample and population is not always a problem, but quite often causal relationships are different for different populations. 
 
@@ -91,6 +142,16 @@ In the early 2000’s, some researchers found that gratitude interventions -- li
 Issues of generalizability extend to all aspects of an experiment, not just its sample. For example, even if our hypothetical cash intervention experiment resulted in gains in happiness, we might not be warranted in generalizing to different ways of providing money. Perhaps there was something special about the amount of money we gave or the way we provided it that led to the effect we observed. Without testing multiple different intervention types, we can't make a broad claim. As we'll see in Chapters \@ref(models) and \@ref(design), this issue has consequences for both our statistical analyses and our experimental designs [@yarkoni2020].
 
 Questions of generalizability are pervasive, but the first step is to simply acknowledge and reason about them. Perhaps all papers should have a Constraints on Generality statement, where researchers discuss whether they expect their findings to generalize across different samples, experimental stimuli, procedures, and historical and temporal features [@simons2017]. This kind of statement would at least remind researchers to be humble: experiments are a powerful tool for understanding how the world works, but there are limits to what any individual experiment can teach us. 
+
+## Anatomy of a randomized experiment
+
+```{r experiments-anatomy, fig.margin=FALSE, fig.cap="Anatomy of an experiment."}
+knitr::include_graphics("images/experiments/anatomy.png")
+```
+
+Now is a good time for us to go back and consolidate the anatomy of an experiment, since this anatomy is used throughout the book. Figure \@ref(fig:experiments-anatomy) shows a simple two-group experiment like our possible money-happiness intervention. A sample is taken from a larger population, and then participants in the sample are randomly assigned to one of two conditions (the manipulation) -- either the experimental, in which money is provided, or the control, in which none is given. Then an outcome measure -- happiness -- is recorded for each participant. 
+
+We'll have a lot more to say about all of these components in subsequent chapters. We'll start with measures in Chapter \@ref(measurement), because good measurement is the foundation of a good experiment. Then in Chapter \@ref(design) we'll discuss the different kinds of experimental designs that are possible and their pros and cons. Finally, we'll we'll cover the process of **sampling** in Chapter \@ref(sampling). 
 
 ## Chapter summary: Experiments
 
