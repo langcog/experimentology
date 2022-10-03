@@ -147,7 +147,7 @@ For example, we *could* start by plotting the accuracy of each age group as colo
 ::: {.box .code}
 To make this (bad) visualization, we used a `ggplot` function called `geom_tile()`.
 
-```
+```{r eval=FALSE, echo=TRUE}
 d |>
   group_by(condition, age_group) |>
   summarise(rating = mean(correct)) |>
@@ -179,7 +179,7 @@ Or as sizes/areas (Figure \@ref(fig:viz-prepost3)).
 ::: {.box .code}
 To make this (bad) visualization, we mapped the rating DV to the `size` element in our `aes()` call.
 
-````
+```{r eval=FALSE, echo=TRUE}
 d |>
   group_by(condition, age_group) |>
   summarise(rating = mean(correct)) |>
@@ -209,7 +209,7 @@ It's also common to use `geom_area()` for this purpose, which connects adjacent 
 But the more common bar plot used in psychology puts the bars next to one another, or 'dodges' them.
 To accomplish this, we use the `position="dodge"` parameter:
 
-```
+```{r eval=FALSE, echo=TRUE}
 d |>
   group_by(condition, age_group) |>
   summarise(rating = mean(correct)) |>
@@ -281,14 +281,14 @@ Figure \@ref(fig:viz-show-data1) shows the Stiller data with error bars.
 A common problem arises when we want to add error bars to a dodged bar plot.
 Naively, we'd expect we could just dodge the error bars in the same way we dodged the bars themselves:
 
-```
+```{r eval=FALSE, echo=TRUE}
 geom_bar(position = "dodge") +
 geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), position = "dodge")
 ```
 
 But this doesn't work! The rationale is kind of technical, but the width of the error bars is much narrower than the width of the bars, so we need to manually specify how much to dodge the error bars with the `position_dodge()` function:
 
-```
+```{r eval=FALSE, echo=TRUE}
 geom_bar(position = position_dodge()) +
 geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), 
               position = position_dodge(width = 0.9))
@@ -323,9 +323,11 @@ Lines then extend out to the biggest and smallest values (excluding outliers, wh
 
 :::{.box .code}
 In `ggplot`, we can make box plots using the `geom_boxplot` command:
-```
+
+```{r eval=FALSE, echo=TRUE}
 geom_boxplot(alpha = 0.8)
 ```
+
 A common problem to run into is that `geom_boxplot` requires the variable assigned to `x` to discrete.
 If you have discrete levels of a numeric variable (e.g. age groups), make sure you've actually converted that variable to a `factor`.
 Otherwise, if it's still coded as `numeric`, `ggplot` will collapse all of the levels together!
@@ -348,7 +350,7 @@ Adding the jittered points is simple using `geom_jitter`, but we are starting to
 
 To plot both *condition* means and *participant* means, we need to create two different data frames. Here `mss` is a data frame of means for each participant; `ms` is a data frame with means and confidence intervals *across* participants. For this purpose, we use the `tidyboot` package and the `tidyboot_mean` function, which gives us bootstrapped 95% confidence intervals for the means. 
 
-```
+```{r eval=FALSE, echo=TRUE}
 mss <- d |> 
   group_by(condition, age_group, subid) |>
   summarize(rating = mean(correct)) 
@@ -507,7 +509,7 @@ To produce the plot below, we've added a few styling elements including:
 
 This last item is a bit trickier to implement. To do so, we select one set of points to label and feed these in as a filtered data frame. A few manual arguments customize the placement of the labels (you can spend hours tweaking this sort of thing by hand).
 
-```
+```{r eval=FALSE, echo=TRUE}
 geom_text_repel(data = ms |> filter(age_group == "(3,4]"),
                 aes(label = condition, colour = condition), 
                 nudge_y = .1, nudge_x = .5, segment.color = NA)
@@ -625,7 +627,7 @@ So which visualizations should we start with? The best practice is to always sta
 ::: {.box .code}
 If you want to follow along with this example at home, you can load the data from our repository!
 
-```
+```{r eval=FALSE, echo=TRUE}
 d <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/data/ontogeny_of_fairness.csv") |>
   mutate(trial_num = as.numeric(gsub(".(\\d+)", "\\1", trial)),
          trial_type = factor(eq.uneq,
@@ -674,7 +676,7 @@ For example, how many participants were in each age bin (Figure \@ref(fig:viz-bl
 ::: {.box .code}
 Exploratory histograms are often a combination of an aggregation step and a plotting step. In the aggregation step, we make use of the convenience `count` function, which gives the number (`n`) of rows in a particular grouping. Here we `count` twice in order to get first one row per participant and then count the number of participants within each age group. 
 
-```
+```{r eval=FALSE, echo=TRUE}
 ps_by_age <- d |>
   mutate(age = floor(actor.age.years)) |>
   count(age, actor.id) |>
@@ -683,7 +685,7 @@ ps_by_age <- d |>
 
 And then we plot using `ggplot`:
 
-```
+```{r eval=FALSE, echo=TRUE}
 ggplot(ps_by_age, aes(x = age, y = n)) +
     geom_bar(stat = "identity") +
     xlim(0, 18) +
@@ -723,7 +725,7 @@ How many participants were included from each country (Figure \@ref(fig:viz-blak
 ::: {.box .code}
 Here we are going to make things even terser and use a pipe chain that *includes* the ggplot, just so we are writing only a single call to produce our plot. It's up to you whether you think this enhances the readability of your code or decreases it. We find that it's sometimes useful when you don't plan on keeping the intermediate data frame for any other use than plotting.
 
-```
+```{r eval=FALSE, echo=TRUE}
 d |>
   count(country, actor.id) |>
   count(country) |>
@@ -752,7 +754,7 @@ Are ages roughly similar across each country (Figure \@ref(fig:viz-blake5))?
 ::: {.box .code}
 This next plot simply combines the grouping factors of each of the last two plots, and uses `facet_wrap` to show a separate histogram by country: 
 
-```
+```{r eval=FALSE, echo=TRUE}
 d |>
   mutate(age = floor(actor.age.years)) |>
   count(country, age, actor.id) |>
@@ -797,7 +799,7 @@ We'll aggregate at the participant level, and check the frequency of different r
 ::: {.box .code}
 Rejection rate is a continuous variable, so we switch to using a histogram in this case, choosing .05 as a reasonable bin width to see the distribution.
 
-```
+```{r eval=FALSE, echo=TRUE}
 d |>
   filter(!is.na(eq.uneq)) |>
   group_by(actor.id) |>
@@ -831,7 +833,7 @@ This clumping leads us to check how many trials each participant is completing (
 ::: {.box .code}
 This histogram is very similar to the ones above; however, we now `count` twice, first getting the trial counts for each participant and then counting how many times each count occurs overall!
 
-```
+```{r eval=FALSE, echo=TRUE}
 d |>
   filter(!is.na(eq.uneq)) |>
   count(actor.id) |>
@@ -884,7 +886,7 @@ In a confirmatory visualization --- if you are going to include a smoothing curv
 
 We begin by making a summary dataset:
 
-```
+```{r eval=FALSE, echo=TRUE}
 ms <- d |>
   filter(!is.na(reject)) |>
   group_by(country, trial_type, condition, age, actor.id) |>
@@ -896,7 +898,7 @@ ms <- d |>
 
 Then we can create the visualization (labels and styling omitted for clarity):
 
-```
+```{r eval=FALSE, echo=TRUE}
 ggplot(filter(ms, country == "US"),
        aes(x = age, y = reject, col = country)) +
     geom_point(aes(size = n)) +
@@ -936,7 +938,7 @@ Now let's re-bin the data into two-year age groups so that individual point esti
 ::: {.box .code}
 Despite the difference between the plot above and this one, the code to produce them is actually very similar. The only difference is the creation of the binned variable and a slight shift of aesthetic and faceting variables. 
 
-```
+```{r eval=FALSE, echo=TRUE}
 ms <- d |>
   filter(!is.na(reject)) |>
   mutate(age_binned = floor(actor.age.years/2)*2) |>

@@ -120,7 +120,7 @@ Now we have the model. How do we estimate the regression coefficients $\beta_0$ 
 ::: {.box .code}
 As it turns out, fitting an OLS regression model in R is extremely easy. The underlying call is `lm`, which stands for linear model. You can fit the model with a single call to this function with a "formula" as its argument. Here's the call:
 
-```
+```{r eval=FALSE, echo=TRUE}
 mod <- lm(rating ~ condition, data = tea_data)
 ```
 
@@ -128,7 +128,7 @@ Formulas in R are a special kind of terse notation for regression equations wher
 
 Once you've fit the model and assigned it to a variable, you can call `summary` to see a summary of the parameters of the model:
 
-```
+```{r eval=FALSE, echo=TRUE}
 summary(mod)
 ```
 
@@ -253,7 +253,7 @@ Figure \@ref(fig:models-logistic-ex) shows the way that a logistic regression mo
 ::: {.box .code}
 GLMs are as easy to fit in R as standard LMs. You simply need to call the `glm` function -- and to specify the link function. For our example above of a binary "liking" judgment, the call would be:
 
-```
+```{r eval=FALSE, echo=TRUE}
 glm(liked_tea ~ condition, data = tea_data, family = "binomial")
 ```
 
@@ -383,7 +383,7 @@ sgf <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/
 ::: {.box .code}
 If you want to follow along with this example, you'll have to load the example data and do a little bit of preprocessing (also covered in Appendix \@ref(tidyverse)):
 
-```
+```{r eval=FALSE, echo=TRUE}
 sgf <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/data/tidyverse/stiller_scales_data.csv") |>
   mutate(age_group = cut(age, 2:5, include.lowest = TRUE), 
          condition = factor(ifelse(condition == "Label", "Experimental", "Control")))
@@ -462,15 +462,15 @@ apa_table(apa_tab, caption = "Estimated effects for our generalized linear mixed
 ```
 
 ::: {.box .code}
-Fititng a mixed effects model is also surprisingly simple. The first step is to prepare your predictors. In this case, we center the `age` predictor. 
+Fitting a mixed effects model is also surprisingly simple. The first step is to prepare your predictors. In this case, we center the `age` predictor. 
 
-```
+```{r eval=FALSE, echo=TRUE}
 sgf$age_centered <- scale(sgf$age, scale=FALSE)
 ```
 
 Other than that, we use the `glmer` function from the `lme4` package to fit the model. Again we have to specify our link function, just like in a standard GLM, by choosing the distribution family. 
 
-```
+```{r eval=FALSE, echo=TRUE}
 mod <- lme4::glmer(correct ~ age_centered * condition + (1|subid) + (1|item), 
                    family = "binomial",
                    data = sgf)

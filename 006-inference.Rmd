@@ -43,11 +43,9 @@ In Chapter \@ref(estimation), we introduced Fisher's tea-tasting experiment and 
 
 To characterize the uncertainty in an estimate, it helps to picture what is called its **sampling distribution**, which is the distribution of the estimate across different, hypothetical samples. That is, let's imagine -- purely hypothetically -- that we conducted the tea experiment with $n=48$ not just once, but hundreds or even thousands of times. This idea is often called **repeated sampling** as a shorthand. For each hypothetical sample, we use similar recruitment methods to recruit a new sample of participants, and we estimate $\widehat{\beta}$ in that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability. If we plotted these estimates, $\widehat{\beta}$, across thousands of samples, we would get the sampling distribution in Figure \@ref(fig:inference-sampling-48). 
 
-```{r inference-helper}
-source("helper/tea_helper.R")
-```
-
 ```{r inference-sampling-48, fig.margin = TRUE, fig.cap= "Sampling distribution for the treatment effect in the tea-tasting experiment, given 1000 different experiments, each with N=48."}
+source("helper/tea_helper.R")
+
 samps <- tibble(sim = 1:1000) |>
   mutate(data = map(sim, ~make_tea_data())) |>
   unnest(cols = "data")
@@ -66,7 +64,7 @@ ggplot(tea_summary_48,
 ::: {.box .code}
 To do this simulation, we're using a special tidyverse function from the `purrr` library: `map`. `map` is an extremely powerful function that allows us to run another function (in this case, the `make_tea_data` function that we introduced last chapter) many times with different inputs. Here we create a tibble made up of a set of 1000 runs of the `make_tea_data` function.
 
-```
+```{r eval=FALSE, echo=TRUE}
 samps <- tibble(sim = 1:1000) |>
   mutate(data = map(sim, ~make_tea_data(n_total = 48))) |>
   unnest(cols = "data")
@@ -74,7 +72,7 @@ samps <- tibble(sim = 1:1000) |>
 
 Next, we just use the `group_by` and `summarise` workflow from Appendix \@ref(tidyverse) to get the estimated treatment effect for each of these 1000 simulations.
 
-```
+```{r eval=FALSE, echo=TRUE}
 tea_summary_48 <- samps |>
   group_by(sim) |>
   summarise(delta = mean(rating[condition == "milk first"]) - 
@@ -149,7 +147,7 @@ For this simulation, we again use the `map` function. We set up a tibble with th
 
 One trick we make use of here is that `rbinom` takes an extra argument that says how many of these random values you want to generate. Here we generate `nsamps = 1000` samples, giving us 1000 independent replicates at each `n`. But returning an array of 1000 values for a single value of `n_flips` results in something odd: the value for each element of `flips` is an array. To deal with that, we use the `unnest` function, which expands the array back into a normal tibble. 
 
-```
+```{r eval=FALSE, echo=TRUE}
 n_samps <- 1000
 n_flips_list <- c(2, 8, 32, 128)
 
@@ -204,7 +202,7 @@ ggplot(null_model_summary, aes(x =delta)) +
 ::: {.box .code}
 To simulate our null model, we can do the same kind of thing we did before, just specifying to our `make_tea_data` function that the true difference in effects is zero!
 
-```
+```{r eval=FALSE, echo=TRUE}
 null_model <- expand_grid(sim = 1:n_sims, 
                           n = 48) |>
   rowwise() |>
@@ -214,7 +212,7 @@ null_model <- expand_grid(sim = 1:n_sims,
 
 Now again we can `group_by` and `summarise` to get the distribution of treatment effects under the null hypothesis. 
 
-```
+```{r eval=FALSE, echo=TRUE}
 null_model_summary <- null_model |>
   group_by(n, sim) |>
   summarise(delta = mean(rating[condition == "milk first"]) - 
@@ -329,7 +327,7 @@ tea_bf_large <- BayesFactor::ttestBF(x = tea_data_large$rating[tea_data_large$co
 ::: {.box .code}
 Bayes Factors are delightfully easy to compute using the `BayesFactor` R package. All we do is feed in the two sets of ratings to the `ttestBF` function!
 
-```
+```{r eval=FALSE, echo=TRUE}
 tea_bf <- ttestBF(x = tea_data$rating[tea_data$condition == "milk first"],
                                y = tea_data$rating[tea_data$condition == "tea first"],
                                paired = FALSE)
@@ -357,7 +355,7 @@ tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
 ::: {.box .code}
 The standard `t.test` function is built into R via the default `stats` package. Here we simply make sure to specify the variety of test we want by using the `paired = FALSE` and `var.equal = TRUE` (equal variances) flags. 
 
-```
+```{r eval=FALSE, echo=TRUE}
 tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
                 y = tea_data$rating[tea_data$condition == "tea first"], 
                 paired = FALSE, var.equal = TRUE)
@@ -594,7 +592,7 @@ ggplot(tea_data_large,
 ::: {.box .code}
 Computing confidence intervals analytically is pretty easy. Here we first compute the standard error for the difference between conditions. The only tricky bit here is that we need to compute a pooled standard deviation.
 
-```
+```{r eval=FALSE, echo=TRUE}
 tea_ratings <- tea_data$rating[tea_data$condition == "tea first"]
 milk_ratings <- tea_data$rating[tea_data$condition == "milk first"]
 n_tea <- length(tea_ratings)
