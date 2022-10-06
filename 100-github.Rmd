@@ -114,9 +114,21 @@ Call it 'hello' and make sure the "Add a README file" checkbox is checked[^githu
 **git push -u origin main**
 ```
 
-Then click the green 'Code' button to get the HTTPS URL:
+### 2.1 Setting up authentication {.unnumbered}
 
-![](images/git/git_tutorial.png){width="50%"}
+GitHub needs a way of knowing whether or not your computer is authorized to read or write to the repository. For public repositories, anyone can clone (without authentication) but only authorized users (like you and collaborators you've added) can push changes. For private repos, only authorized users can see, clone, or push to the repo. 
+
+There are a few ways to autheticate with GitHub, depending on how you are accessing GitHub (all the options are outlined in more detail [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github), including instructions for [GitHub Desktop](https://docs.github.com/en/desktop/installing-and-configuring-github-desktop/installing-and-authenticating-to-github-desktop/authenticating-to-github)). 
+
+We recommend setting up SSH keys since this only has to be set up once for each computer and let's you interface with GitHub without having to type any passwords or do anything special. To do this you'll first [check if you already have appropriate SSH keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/checking-for-existing-ssh-keys) and then [create a new key if needed](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent). It's best if you accept the default location for where the key is saved. If you don't want to type a password each time, don't enter a passphrase. Finally, you'll [add this SSH key to your github account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account). 
+
+### 2.2 Cloning the repo {.unnumbered}
+
+On your repository website, click the green 'Code' button and select the SSH option. Copy the text. 
+
+When using SSH keys, when you clone a repo, you'll want to use the SSH option which will start with "git@github". If you're using a different authentication method, you will [clone with the HTTPS option](https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories). 
+
+![](images/git/git_tutorial_ssh.png){width="50%"}
 
 Go back to Terminal (or GitBash).
 
@@ -126,17 +138,9 @@ First use `cd` and `ls` to navigate to your desktop. (Mac users can type `cd ~/D
 
 Then type (replacing the URL with the one you copied above):
 
-> `git clone https://github.com/[username]/hello.git`
+> `git clone git@github.com:[username]/hello.git`
 
-At this point, if you are using a new GitHub account, you will most likely be prompted to authenticate to GitHub. There are a few ways to do this, depending on how you are accessing GitHub (all the options are outlined in more detail [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github), including instructions for [GitHub Desktop](https://docs.github.com/en/desktop/installing-and-configuring-github-desktop/installing-and-authenticating-to-github-desktop/authenticating-to-github)), but we think the easiest way is to create a personal access token (PAT) to use in place of a password. To do this, follow the directions outlined [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
-
-Once you generate a PAT, try the command again:
-
-> `git clone https://github.com/[username]/hello.git`
-
-If prompted, enter your GitHub username and newly generated PAT in the place of your password[^github-2]. Now you should have a cloned copy of the empty repo on your Desktop.
-
-[^github-2]: If you would like a credential helper to help you store the PAT, follow instructions [here](https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git) based on your operation system.
+Now you will have a folder called 'hello' on your desktop, which contains one filed called 'Readme'.
 
 ## 3. Make some commits {.unnumbered}
 
@@ -209,6 +213,15 @@ What we've done so far -- `add` and `commit` -- only affects your local computer
 > `git push`
 
 If you go to your GitHub account, you can now see the updated files.
+
+You can only push to the remote repository if the remote and local copies are in the same state, excepting the changes in the commits. This may be true if you are the only person who makes changes to the repo and you do so from only one computer, but that's missing out on a lot of the potential to use GitHub for collaboration. 
+
+To get into a good habit, we recommend that you should pull (get changes from the remote to your local copy) right before you start making changes to files and right before you push your changes. To pull run the command
+
+> `git pull --rebase`
+
+This will update your local copy to match the remote, leaving any changes you've made that are committed. (If you have uncommitted changes, you'll get an error.) So, if your collaborator made edits or added files and pushed those changes, when you pull, your local copy with also have those updates.
+
 
 ## 5. Make more changes to the repo {.unnumbered}
 
@@ -289,6 +302,8 @@ If you'd like to revert one specific commit (rather than all of the commits afte
 
 > `git commit -m "revert the commit where I did xyz..."`
 
+These reversions are just more commits, so if you revert something (and commit it) and don't want that change, you can revert the commit that reverted to get back to where you were before. 
+
 ## 7. What not to put on git {.unnumbered}
 
 There are some things you don't want on git:
@@ -354,20 +369,6 @@ mturk-and-gmail.txt
 -   Though the things we covered in this tutorial may seem overwhelming, there are really only a handful of commands that you need to know, which can be found (alongside some commands we didn't cover) on this handy [cheatsheet](http://rogerdudler.github.io/git-guide/files/git_cheat_sheet.pdf).
 
 -   Request a premium account at <https://education.github.com/> for free private repos.
-
--   To save some time, tell git to remember your GitHub username and password: <https://help.github.com/articles/caching-your-github-password-in-git/>
-
--   Or set up an SSH key to log in less often: <https://help.github.com/articles/generating-ssh-keys>
-
-    **For Windows:**
-
-    you need this code:
-
-    eval `ssh-agent -s`
-
-    ssh-add
-
-    and you need to run this part in GitBash
 
 -   For students seeking deeper Git knowledge, ProGit is a thorough [open source book](https://git-scm.com/book) from Scott Chacon. It can be viewed online or downloaded in ePub, Mobi, or PDF formats.
 

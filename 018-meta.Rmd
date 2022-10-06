@@ -37,7 +37,7 @@ According to the contact hypothesis, prejudice towards members of minority group
 
 Using a systematic literature search, they tried to identify all published papers that tested these effects and then extracted effect size estimates from each paper. Because not every paper reports standardized effect sizes -- or even means and standard deviations for every group -- this process can often involve scraping information from plots, tables, and statistical tests to try to reconstruct effect sizes.^[For example, if the outcome variable is continuous, we could estimate Cohen's d (see Chapter \@ref(estimation)) from group means and standard deviations reported in the paper, even without having access to raw data. This book will not cover the process of conducting a systematic literature search and extracting effect sizes, but these topics are critical to understand if you plan to conduct a meta-analysis or other evidence synthesis.] 
 
-Because @paluck2019contact generously shared their data, we can show you what their dataset looks like (Table \@ref(tab:meta-dataset)). We'll use these data as our running example throughout. 
+Following best practices for meta-analysis (where there are almost never privacy concerns to worry about), @paluck2019contact shared their data openly. The first few lines are shown in Table \@ref(tab:meta-dataset). We'll use these data as our running example throughout. 
 
 ```{r meta-dataset}
 head(DF) |>
@@ -55,7 +55,7 @@ metafor::forest(re.m,
                 xlab = "Standardized mean difference")
 ```
 
-::: {.code .box}
+::: {.box .code}
 In this chapter, we use the wonderful `metafor` package [@viechtbauer2010]. With this package, you must first fit your meta-analytic model. But once you've fit your model `mod`, you can simply call `forest(mod)` to create a plot like the one above.
 :::
 <!-- Cohen's $d$ -- which, if you recall from Chapter \@ref(estimation), represents the standardized mean difference -- was used as the effect size index. As we show in the remainder of the chapter, the meta-analytic tools @paluck2019contact used provide several useful insights about this proposed prejudice-reduction intervention. -->
@@ -86,10 +86,10 @@ $$\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}$
 
 We can use the fixed-effects formula to estimate that the overall effect size in Paluck et al.'s meta-analysis studies is a standardized mean difference of $\widehat{\mu}$ = `r round(as.numeric(fe.m$b), 2)`; 95% confidence interval [`r paste0(round(fe.m$ci.lb, 2), ", ", round(fe.m$ci.ub, 2))`]; $p < .001$. Because Cohen's $d$ is our effect size index, this estimate means that intergroup contact decreased prejudice by `r round(as.numeric(fe.m$b), 2)` standard deviations.
 
-::: {.code .box}
+::: {.box .code}
 Fitting meta-analytic models in `metafor` is quite simple. For example, for the fixed effects model above, we simply the `rma` function and specified that we wanted a fixed effects analysis. 
 
-```
+```{r eval=FALSE, echo=TRUE}
 fe.m <- rma(yi = d,
             vi = var_d,
             data = paluck,
@@ -119,10 +119,10 @@ However, in random-effects meta-analysis, the inverse-variance weights now incor
 Conducting a random-effects meta-analysis of Paluck et al.'s dataset yields $\widehat{\mu}$ = `r round(as.numeric(re.m$b), 2)`; 95% confidence interval [`r paste0(round(re.m$ci.lb, 2), ", ", round(re.m$ci.ub, 2))`]; $p < .001$. That is, they estimated that, *on average across studies*, intergroup contact was associated with a decrease in prejudice of `r round(as.numeric(re.m$b), 2)` standard deviations. This meta-analytic estimate is shown as the bottom line of Figure \@ref(fig:meta-forest).
 
 
-::: {.code .box}
+::: {.box .code}
 Fitting a random effects model requires only a small change to the methods argument. (We also include the `knha` flag that adds a correction to the computation of standard errors and p-values). 
 
-```
+```{r eval=FALSE, echo=TRUE}
 re.m <- rma(yi = d,
             vi = var_d,
             data = paluck,
@@ -272,7 +272,7 @@ foo <- significance_funnel(yi = meta.all$yi,
 ::: {.box .code}
 For this plot, we use the `PublicationBias` package and the `significance_funnel` function. (An alternative function is the `metafor` function `funnel`, which results in the figure in the margins, a more "classic" funnel plot.) We use our fitted model `re.m` and feed the relevant parameters into the fucntion:
 
-```
+```{r eval=FALSE, echo=TRUE}
 significance_funnel(yi = re.m$yi,
                     vi = re.m$vi,
                     favor.positive = TRUE,
@@ -328,13 +328,13 @@ You may also have heard of "$p$-methods" to detect across-study biases such as $
 Paluck et al. used a regression-based approach to assess and correct for publication bias. This approach provided significant evidence of a relationship between the standard error and effect size (i.e., an asymmetric funnel plot). Again, this asymmetry could reflect publication bias or other sources of correlation between studies' estimates and their standard errors. Paluck et al. also used this same regression-based approach to try to correct for potential publication bias. Results from this model indicated that the bias-corrected effect size estimate was close to zero. In other words, even though all studies estimated that intergroup contact decreased prejudice, it is possible that there are unpublished studies that did not find this (or found that intergroup contact increased prejudice).
 
 ::: {.box .accident_report}
-(TITLE) Garbage in, garbage out? Meta-analyzing bad research 
+(TITLE) Garbage in, garbage out? Meta-analyzing potentially problematic research 
 
-Botox can help eliminate wrinkles. But some researchers have also suggested that it may help treat clinical depression when used to paralyze the muscles associated with frowning. As crazy as they may sound, a quick examination of the literature would lead many to conclude that this treatment works. Studies that randomly assign depressed patients to either receive Botox injections or saline injections do indeed find that Botox recipients exhibit decreases in depression. And when you combine all available evidence in a meta-analysis, you find that this difference is quite large: $\widehat{d}$ = 0.83, 95% CI [0.52, 1.14]. Unfortunately, this meta-analytic result has problems with both within- and between-study bias [@coles2019does]. 
+Botox can help eliminate wrinkles. But some researchers have suggested that it may also help treat clinical depression when used to paralyze the muscles associated with frowning. As surprising as this may sound, a quick examination of the literature would lead many to conclude that this treatment works. Studies that randomly assign depressed patients to either receive Botox injections or saline injections do indeed find that Botox recipients exhibit decreases in depression. And when you combine all available evidence in a meta-analysis, you find that this difference is quite large: $\widehat{d}$ = 0.83, 95% CI [0.52, 1.14]. As @coles2019does argued though, this estimated effect may be impacted by both within- and between-study bias. 
 
-First, participants are not supposed to know whether they have been randomly assigned to receive Botox or a control saline injections. However, only one of these treatments leads the upper half of your face to be paralyzed! After a couple of weeks you're pretty likely to figure out whether you received the Botox treatment or control saline injection. Thus, the apparent effect of Botox on depression could very well be a placebo effect, a clear within-study bias issue. 
+First, participants are not supposed to know whether they have been randomly assigned to receive Botox or a control saline injections. However, only one of these treatments leads the upper half of your face to be paralyzed! @coles2019does argued that, after a couple weeks, you're pretty likely to figure out whether you received the Botox treatment or control saline injection. Thus, the apparent effect of Botox on depression could instead be a placebo effect, a within-study bias. 
 
-Second,  51% of the outcomes measured were found not to have been reported by the study authors. This finding raises concerns about selective reporting: perhaps researchers examining the effects of Botox on depression only report the outcomes that demonstrate an effect, but not those that do not. In this scenario, any meta-analytic conclusions are potentially undermined by between-study bias.
+Second, @coles2019does estimated that about 50% of the outcomes that researchers had measured were not reported in the final publication. They suggested that this raises concerns about selective reporting: perhaps researchers examining the effects of Botox on depression only reported the outcomes that demonstrated an effect, but not the ones that do not. In this scenario, the overall effect size estimate in the meta-analysis could be impacted by between-study bias.
 :::
 
 ## Chapter summary: Meta-analysis
@@ -343,12 +343,12 @@ Taken together, Paluck and colleagues' use of meta-analysis provided several imp
 
 Overall, meta-analysis is a key technique for aggregating evidence across studies. Meta-analysis allows researchers to move beyond the bias of naive techniques like vote counting and towards a more quantitative summary of an experimental effect. Unfortunately, a meta-analysis is only as good as the literature it's based on, so the aspiring meta-analyst must be aware of both within- and between-study biases! 
 
-::: {.box .exercises}
-1. Imagine that you read the following result in the abstract of a meta-analysis: "In 83 randomized studies of middle school children, replacing one hour of class time with mindfulness meditation significantly improved standardized test scores (standardized mean difference $\widehat{\mu} = 0.05$; 95% confidence interval: [$0.01, 0.09$]; $p<0.05$)." Why is this a problematic way to report on meta-analysis results? Suggest a better sentence to replace this one.
+::: {.box .discussion_questions}
+1. (A) Imagine that you read the following result in the abstract of a meta-analysis: "In 83 randomized studies of middle school children, replacing one hour of class time with mindfulness meditation significantly improved standardized test scores (standardized mean difference $\widehat{\mu} = 0.05$; 95% confidence interval: [$0.01, 0.09$]; $p<0.05$)." Why is this a problematic way to report on meta-analysis results? Suggest a better sentence to replace this one.
 
-   As you read the rest of the meta-analysis, you find that the authors conclude that "These findings demonstrate robust benefits of meditation for children, suggesting that test scores improve even when the meditation is introduced as a replacement for normal class time." You recall that the heterogeneity estimate was $\widehat{\tau} = 0.90$. Do you think that this result regarding the heterogeneity tends to support, or rather tends to undermine, the concluding sentence of the meta-analysis? Why?
+1. (B) As you read the rest of the meta-analysis, you find that the authors conclude that "These findings demonstrate robust benefits of meditation for children, suggesting that test scores improve even when the meditation is introduced as a replacement for normal class time." You recall that the heterogeneity estimate was $\widehat{\tau} = 0.90$. Do you think that this result regarding the heterogeneity tends to support, or rather tends to undermine, the concluding sentence of the meta-analysis? Why?
 
-   What kinds of within-study biases would concern you in this meta-analysis? How might you assess the credibility of the meta-analyzed studies and of the meta-analysis as whole in light of these possible biases?
+1. (C) What kinds of within-study biases would concern you in this meta-analysis? How might you assess the credibility of the meta-analyzed studies and of the meta-analysis as whole in light of these possible biases?
 
 2. Imagine you conduct a meta-analysis on a literature in which statistically significant results in either direction are much more likely to be published that non-significant results. Draw the funnel plot you would expect to see. Is the plot funnel symmetric or asymmetric?
 

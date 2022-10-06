@@ -1,16 +1,27 @@
-import TOC                   from './components/toc'
-import Box                   from './components/box'
+import TOC                   from './components/TOC'
+import Box                   from './components/Box'
 import { routes }            from '/contents.json'
 import parse, { domToReact } from 'html-react-parser'
 import render                from 'preact-render-to-string'
 import library               from 'preact'
 
-const descendants = ({ children = [] }) => [
-	children,
-	children.map(descendants),
-].flat(Infinity).filter(Boolean)
+// const descendants = ({ children = [] }) => [
+// 	children,
+// 	children.map(descendants),
+// ].flat(Infinity).filter(Boolean)
 
-const box = ({ attribs, children }) => {
+const isLastPage = url => url == routes.at(-1)
+
+const isRefs = node => node.attribs?.id == 'refs'
+const isTOC  = node => node.attribs?.id == 'TOC'
+const isBox  = node => node.attribs?.class?.match(/\bbox\b/)
+
+// const isPageButton = node => node.name == 'p' && descendants(node)
+// .some(node => node.name == 'button' && descendants(node)
+// 	.some(node => node.data.match(/^(Next|Previous)$/))
+// )
+
+const convertBox = ({ attribs, children }) => {
 	let title;
 
 	const [ , type ] = attribs.class.split(' ');
@@ -41,21 +52,15 @@ export default ({ url, html }) => {
 		return <div id={ id } children={ node }/>;
 	}
 
-	const isBox       = node => node.attribs?.class?.match(/\bbox\b/)
-	const isTOC       = node => node.attribs?.id == 'TOC'
-	const isLastRefs  = node => node.attribs?.id == 'refs' && url == routes.at(-1)
-	const isNavButton = node => node.name == 'p' && descendants(node)
-	.some(node => node.name == 'button' && descendants(node)
-		.some(node => node.data.match(/^(Next|Previous)$/))
-	)
+	const replace = node => {
+		if (isTOC(node)) return island(<TOC/>);
 
-	const replace = node => (
-		isBox(node)       ? island(<Box { ... box(node) }/>) :
-		isTOC(node)       ? island(<TOC/>)                   :
-		isLastRefs(node)  ? <></>                            :
-		isNavButton(node) ? <></>                            :
-		null
-	)
+		if (isBox(node)) return island(<Box { ... convertBox(node) }/>);
+
+		// if (isPageButton(node)) return <></>;
+
+		if (isRefs(node) && isLastPage(url)) return <></>;
+	}
 
 	const body = render(parse(html, { library, replace }));
 

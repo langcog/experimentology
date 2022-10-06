@@ -41,7 +41,7 @@ These maps make abstract statistics visible: By assigning higher cumulative case
 And we're not limited by the spatial layout of a map.
 We're now also used to seeing the horizontal axis correspond to *time* and the vertical axis correspond to some value at that time.
 Curves like the following, showing the 7-day average of new cases, allow us to see other patterns, like the *rate of change*.
-Even though more and more cases accumulate every day, we can see at a glance the different 'waves' of cases, and when they peaked (Figure \@ref(fig:viz-cases)). 
+Even though more and more cases accumulate every day, we can see at a glance the different "waves" of cases, and when they peaked (Figure \@ref(fig:viz-cases)). 
 
 ```{r viz-cases, fig.cap="7-day average of new reported COVID cases (reproduced from the New York Times)"}
 knitr::include_graphics("images/viz/covid-cases.png")
@@ -65,7 +65,7 @@ In this chapter, we will explore how to use visualizations in our own carefully 
 
 ## Basic principles of (confirmatory) visualization
 
-In this section, we begin by introducing a few simple guidelines to keep in mind when making informative visualizations in the context of experimental psychology.^[For the purposes of understanding the examples in this chapter, it should be sufficient to work through the tutorials on data manipulation and visualization in Appendices C and D.]
+In this section, we begin by introducing a few simple guidelines to keep in mind when making informative visualizations in the context of experimental psychology.^[For the purposes of understanding the examples in this chapter, it should be sufficient to work through the tutorials on data manipulation and visualization in Appendices \@ref(tidyverse) and \@ref(ggplot).]
 Remember that our needs may be distinct from other fields, such as journalism or public policy.
 You may have seen beautiful and engaging full-page graphics with small print and a wealth of information.
 The art of designing and producing these graphics is typically known as **infoviz** and should be distinguished from what we call **statistical visualization** [@gelman2013].
@@ -90,8 +90,7 @@ The first principle guiding good statistical visualizations is to *show the desi
 The first confirmatory plot you shuld have in mind for your experiment is the **design plot**.
 Analogous to the "default model" in Chapter \@ref(models), the design plot should show the key dependent variable of the experiment, broken down by all of the key manipulations.
 Critically, design plots should neither omit particular manipulations because they didn't yield an effect or include extra covariates because they seemed interesting after looking at the data.
-Both of these steps are the visual analogue of p-hacking! Instead, the design plot is the "preregistered analysis" of your visualization: it illustrates a first look at the estimated causal effects from your experimental manipulations.
-^[It can sometimes be a challenge to represent the full pattern of manipulations from an experiment in a single plot. Below we give some tricks for maximizing the legible information in your plot. But if you have tried these and your design plot still looks crowded and messy, that could be an indication that your experiment is manipulating too many things at once!]
+Both of these steps are the visual analogue of p-hacking! Instead, the design plot is the "preregistered analysis" of your visualization: it illustrates a first look at the estimated causal effects from your experimental manipulations. In the words of @coppock2019, "visualize as you randomize"!^[It can sometimes be a challenge to represent the full pattern of manipulations from an experiment in a single plot. Below we give some tricks for maximizing the legible information in your plot. But if you have tried these and your design plot still looks crowded and messy, that could be an indication that your experiment is manipulating too many things at once!]
 
 There are strong (unwritten) conventions about how your confirmatory analysis is expected to map onto graphical elements, and following these conventions can minimize confusion.
 Start with the variables you manipulate, and make sure they are clearly visible.
@@ -101,7 +100,7 @@ Other critical variables of interest (e.g. secondary manipulations, demographics
 ::: {.box .code}
 The visualization library `ggplot` (see Appendix \@ref(ggplot)) makes the mapping of variables in the data to visual data. The first part of a ggplot call is an `aesthetics` layer:
 
-```
+```{r, eval=FALSE, echo=TRUE}
 aes(
   x = ...,
   y = ...,
@@ -124,7 +123,7 @@ While we might be interested in whether some types of stimuli are systematically
 
 ### Principle 2: Facilitate comparison
 
-```{r viz-hierarchy, fig.margin = TRUE, fig.cap = "Principles of visual perception can help guide visualization choices."}
+```{r viz-hierarchy, fig.margin = TRUE, fig.cap = "Principles of visual perception can help guide visualization choices. Reproduced from @mackinlay1986automating (see also @cleveland1984graphical)"}
 knitr::include_graphics("images/viz/viz_hierarchy.png")
 ```
 
@@ -134,7 +133,8 @@ As long as we clearly label our choices, it shouldn't matter whether we use line
 It's true that there are many ways to show the same data.
 But being thoughtful about our choices can make it much easier for readers to interpret our findings.
 The second principle of statistical visualizations is to *facilitate comparison* along the dimensions relevant to our scientific questions.
-It is easier for our visual system to accurately compare the location of elements (e.g. noticing that one point is a certain distance away from another) than to compare their areas or colors (e.g. noticing that one point is bigger or brighter than another). Figure \@ref(fig:viz-hierarchy) shows an ordering of visual variables based on how accurate our visual system is in making comparisons.
+It is easier for our visual system to accurately compare the location of elements (e.g. noticing that one point is a certain distance away from another) than to compare their areas or colors (e.g. noticing that one point is bigger or brighter than another).
+Figure \@ref(fig:viz-hierarchy) shows an ordering of visual variables based on how accurate our visual system is in making comparisons.
 
 ```{r viz-prepost1}
 d <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/data/tidyverse/stiller_scales_data.csv") |>
@@ -142,35 +142,56 @@ d <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/da
          condition = factor(ifelse(condition == "Label", "Experimental", "Control")))
 ```
 
-We could start by plotting the accuracy of each age group as colors (Figure \@ref(fig:viz-prepost2)). 
+For example, we *could* start by plotting the accuracy of each age group as colors (Figure \@ref(fig:viz-prepost2)).
 
 ::: {.box .code}
-To make this (bad) visualization, we used a `ggplot` function called `geom_tile()`. 
+To make this (bad) visualization, we used a `ggplot` function called `geom_tile()`.
+
+```{r eval=FALSE, echo=TRUE}
+d |>
+  group_by(condition, age_group) |>
+  summarise(rating = mean(correct)) |>
+  ggplot(aes(x = age_group, y = condition, fill = rating)) +
+    geom_tile()
+```
+
 `geom_tile()` is commonly used to make [heat maps](https://en.wikipedia.org/wiki/Heat_map): for each value of some pair of variables (x, y), it shows a color representing the magnitude of a third variable (z).
 While a heat map is a silly way to visualize the @stiller2015 data, consider using `geom_tile()` when you have a pair of continuous variables, each taking a large range of values.
 In these cases, bar plots and line plots tend to get extremely cluttered, making it hard to see the relationship between the variables.
-Heat maps help these relationships to pop out as clear 'hot' and 'cold' regions. 
-For example, in @barnett2022, a heatmap was used to show a specific range of parameters where an effect of interest emerged.
+Heat maps help these relationships to pop out as clear "hot" and "cold" regions.
+For example, in @barnett2022, a heatmap was used to show a specific range of parameters where an effect of interest emerged (see Figure \@ref(fig:viz-heatmap)).
 
-```{r viz-heatmap, fig.margin=TRUE, fig.cap = "Heatmap showing a specific range of continuous parameters where an effect emerged [reproduced from @barnett2022]."}
+```{r viz-heatmap, fig.cap = "Heatmap showing a specific range of continuous parameters where an effect emerged [reproduced from @barnett2022]."}
 knitr::include_graphics("images/viz/viz_heatmap_example.png")
 ```
 :::
 
 ```{r viz-prepost2, fig.cap = "A first visualization of the Stiller et al. (2015) data."}
-d %>%
-  group_by(condition, age_group) %>%
-  summarise(rating = mean(correct)) %>%
+d |>
+  group_by(condition, age_group) |>
+  summarise(rating = mean(correct)) |>
   ggplot(aes(x = age_group, y = condition, fill = rating)) +
     geom_tile()
 ```
 
-Or as areas (Figure \@ref(fig:viz-prepost3)). 
+Or as sizes/areas (Figure \@ref(fig:viz-prepost3)).
+
+::: {.box .code}
+To make this (bad) visualization, we mapped the rating DV to the `size` element in our `aes()` call.
+
+```{r eval=FALSE, echo=TRUE}
+d |>
+  group_by(condition, age_group) |>
+  summarise(rating = mean(correct)) |>
+  ggplot(aes(x = age_group, y = condition, size = rating)) +
+    geom_point()
+```
+:::
 
 ```{r viz-prepost3, fig.cap = "Iterating on the Stiller data."}
-d %>%
-  group_by(condition, age_group) %>%
-  summarise(rating = mean(correct)) %>%
+d |>
+  group_by(condition, age_group) |>
+  summarise(rating = mean(correct)) |>
   ggplot(aes(x = age_group, y = condition, size = rating)) +
     geom_point()
 ```
@@ -186,19 +207,23 @@ By default, it creates 'stacked' bar plots, where all values associated with the
 Stacked bar plots can be useful if, for example, you're plotting proportions that sum up to 1, or want to show how some big count is broken down into subcategories.
 It's also common to use `geom_area()` for this purpose, which connects adjacent regions.
 But the more common bar plot used in psychology puts the bars next to one another, or 'dodges' them.
-To accomplish this, we use the following parameter:
+To accomplish this, we use the `position="dodge"` parameter:
 
-```
-geom_bar(position = 'dodge')
+```{r eval=FALSE, echo=TRUE}
+d |>
+  group_by(condition, age_group) |>
+  summarise(rating = mean(correct)) |>
+  ggplot(aes(x = condition, y = rating, fill = age_group)) +
+    geom_bar(stat = "identity", position = "dodge")
 ```
 :::
 
 ```{r viz-prepost4, fig.cap = "A bar graph of the Stiller data."}
-d %>% 
-  group_by(condition, age_group) %>%
-  summarise(rating = mean(correct)) %>%
+d |>
+  group_by(condition, age_group) |>
+  summarise(rating = mean(correct)) |>
   ggplot(aes(x = condition, y = rating, fill = age_group)) +
-    geom_bar(stat = 'identity', position = 'dodge')
+    geom_bar(stat = "identity", position = "dodge")
 ```
 
 This plot is slightly better: it's easier to compare the heights of bars than the 'blueness' of squares, and mapping age to color draws our eye to those contrasts.
@@ -211,13 +236,13 @@ What could help facilitate this comparison?
 Consider the line plot in Figure \@ref(fig:viz-prepost5). 
 
 ```{r viz-prepost5, fig.cap = "A line graph of the Stiller data promotes comparison."}
-d %>% 
-  group_by(condition, age_group) %>%
-  summarise(rating = mean(correct)) %>%
+d |> 
+  group_by(condition, age_group) |>
+  summarise(rating = mean(correct)) |>
   ggplot(aes(x = age_group, y = rating, color = condition, group = condition)) +
     geom_point() +
     geom_line() +
-  ylab("Proportion correct")
+    ylab("Proportion correct")
 ```
 
 The interaction contrast we want to interpret is highlighted visually in this plot.
@@ -256,14 +281,14 @@ Figure \@ref(fig:viz-show-data1) shows the Stiller data with error bars.
 A common problem arises when we want to add error bars to a dodged bar plot.
 Naively, we'd expect we could just dodge the error bars in the same way we dodged the bars themselves:
 
-```
-geom_bar(position = 'dodge') +
-geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), position = 'dodge')
+```{r eval=FALSE, echo=TRUE}
+geom_bar(position = "dodge") +
+geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), position = "dodge")
 ```
 
 But this doesn't work! The rationale is kind of technical, but the width of the error bars is much narrower than the width of the bars, so we need to manually specify how much to dodge the error bars with the `position_dodge()` function:
 
-```
+```{r eval=FALSE, echo=TRUE}
 geom_bar(position = position_dodge()) +
 geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), 
               position = position_dodge(width = 0.9))
@@ -273,14 +298,14 @@ This does the trick!
 :::
 
 ```{r viz-show-data1, fig.cap = "Error bars (95\\% CIs) added to the Stiller data line graph."}
-d %>% 
-  group_by(condition, age_group) %>%
-  tidyboot::tidyboot_mean(correct) %>%
+d |> 
+  group_by(condition, age_group) |>
+  tidyboot::tidyboot_mean(correct) |>
   ggplot(aes(x = age_group, y = empirical_stat, color = condition, group = condition)) +
     geom_point() +
     geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
     geom_line() +
-    labs(y = 'mean accuracy')
+    labs(y = "Mean Accuracy")
 ```
 
 But we can do even better. 
@@ -298,18 +323,20 @@ Lines then extend out to the biggest and smallest values (excluding outliers, wh
 
 :::{.box .code}
 In `ggplot`, we can make box plots using the `geom_boxplot` command:
-```
+
+```{r eval=FALSE, echo=TRUE}
 geom_boxplot(alpha = 0.8)
 ```
+
 A common problem to run into is that `geom_boxplot` requires the variable assigned to `x` to discrete.
 If you have discrete levels of a numeric variable (e.g. age groups), make sure you've actually converted that variable to a `factor`.
 Otherwise, if it's still coded as `numeric`, `ggplot` will collapse all of the levels together!
 :::
 
 ```{r viz-show-data2, fig.cap = "Boxplot of the Stiller data."}
-d %>%
-group_by(condition, age_group, subid) %>%
-summarize(rating = mean(correct)) %>%
+d |>
+group_by(condition, age_group, subid) |>
+summarize(rating = mean(correct)) |>
   ggplot(aes(x = age_group, y = rating, color = condition)) +
     geom_boxplot(alpha = 0.8)
 ```
@@ -317,23 +344,53 @@ summarize(rating = mean(correct)) %>%
 It is also common to show the raw data as jittered values with low transparency.
 In Figure \@ref(fig:viz-show-data3), we jitter the points because many participants have the same numbers (e.g. 50%) and if they overlap it is hard to see how many points there are.
 
-```{r viz-show-data3, fig.cap = "Jittered points representing the data distribution of the Stiller data."}
-mss <- d %>% 
-  group_by(condition, age_group, subid) %>%
+
+:::{.box .code}
+Adding the jittered points is simple using `geom_jitter`, but we are starting to have a fairly complex plot so maybe it's worth taking stock of how we get there. 
+
+To plot both *condition* means and *participant* means, we need to create two different data frames. Here `mss` is a data frame of means for each participant; `ms` is a data frame with means and confidence intervals *across* participants. For this purpose, we use the `tidyboot` package and the `tidyboot_mean` function, which gives us bootstrapped 95% confidence intervals for the means. 
+
+```{r eval=FALSE, echo=TRUE}
+mss <- d |> 
+  group_by(condition, age_group, subid) |>
   summarize(rating = mean(correct)) 
 
-ms <- mss %>%
-  group_by(condition, age_group) %>%
+ms <- mss |>
+  group_by(condition, age_group) |>
+  tidyboot::tidyboot_mean(rating) 
+```
+
+With these two dataframes in hand, we can now make our `ggplot`. 
+
+```
+ggplot(ms, 
+       aes(x = age_group, y = empirical_stat, color = condition, group = condition)) +
+    geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
+    geom_line() +
+    geom_jitter(data = mss, aes(x = age_group, y = rating, color = condition),
+                alpha = 0.25, width = 0.1) +
+    ylab("mean response")
+```
+
+The most noteworthy aspect of this code is that the `geom_jitter` argument doesn't just take a different aesthetic, it also takes a different dataframe altogether! Mixing dataframes can be an important tool for creating complex plots.
+:::
+
+```{r viz-show-data3, fig.cap = "Jittered points representing the data distribution of the Stiller data."}
+mss <- d |> 
+  group_by(condition, age_group, subid) |>
+  summarize(rating = mean(correct)) 
+
+ms <- mss |>
+  group_by(condition, age_group) |>
   tidyboot::tidyboot_mean(rating) 
 
 ggplot(ms, 
        aes(x = age_group, y = empirical_stat, color = condition, group = condition)) +
-    geom_point() +
+    geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
     geom_line() +
-    geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
     geom_jitter(data = mss, aes(x = age_group, y = rating, color = condition),
                 alpha = 0.25, width = 0.1) +
-    labs(y = 'mean response')
+    ylab("mean response")
 ```
 
 Perhaps the format that takes this principle the furthest is the so-called "raincloud plot" [@allen2019raincloud] shown in Figure \@ref(fig:viz-raincloud).
@@ -364,36 +421,37 @@ Analytic estimators of confidence intervals can in principle be derived for thes
 As long as you can write a code snippet to compute a value from a dataset, you can use the bootstrap. 
 
 ```{r viz-boot, fig.cap="Three different error bars for the Stiller data: bootstrapped 95\\% confidence intervals (left), standard error of the mean (middle), and analytically computed confidence intervals (right)."}
-boot <- d %>% 
-  group_by(condition, age_group, subid) %>%
-  summarize(rating = mean(correct)) %>%
-  group_by(condition, age_group) %>%
-  tidyboot::tidyboot_mean(rating) %>%
-  select(-n, -mean) %>%
-  mutate(method = 'bootstrapped 95% CI')
+boot <- d |> 
+  group_by(condition, age_group, subid) |>
+  summarize(rating = mean(correct)) |>
+  group_by(condition, age_group) |>
+  tidyboot::tidyboot_mean(rating) |>
+  select(-n, -mean) |>
+  mutate(method = "bootstrapped 95% CI")
 
-ci_sem <- d %>%
-  group_by(condition, age_group, subid) %>%
-  summarize(rating = mean(correct)) %>%
-  group_by(condition, age_group) %>%
+ci_sem <- d |>
+  group_by(condition, age_group, subid) |>
+  summarize(rating = mean(correct)) |>
+  group_by(condition, age_group) |>
   summarise(empirical_stat = mean(rating), 
             sem = sd(rating)/sqrt(length(rating)),
             ci_lower = mean(rating) - sem,
-            ci_upper = mean(rating) + sem) %>%
-  mutate(method = 'standard error')
+            ci_upper = mean(rating) + sem) |>
+  mutate(method = "standard error")
 
-ci_ci <- ci_sem %>%
+ci_ci <- ci_sem |>
   mutate(ci_lower = empirical_stat - 1.96 * sem,
-         ci_upper = empirical_stat + 1.96 * sem) %>%
-  mutate(method = 'analytic 95% CI')
+         ci_upper = empirical_stat + 1.96 * sem) |>
+  mutate(method = "analytic 95% CI")
 
-bind_rows(boot, ci_sem, ci_ci) %>%
-  ggplot(aes(x = age_group, y = empirical_stat, color = condition, group = condition)) +
+bind_rows(boot, ci_sem, ci_ci) |>
+  ggplot(aes(x = age_group, y = empirical_stat, 
+             color = condition, group = condition)) +
     geom_point() +
     geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
     geom_line() +
     facet_wrap(~ method) +
-    labs(y = 'mean response') +
+    labs(y = "mean response") +
     theme_few() +
     theme(aspect.ratio = 1)
 ```
@@ -413,7 +471,7 @@ Now that we have the basic graphical elements in place to show our design and da
 There are well-founded principles to make the difference between an effective visualization and a confusing or obfuscating one.
 Simply put, we should try to use the simplest possible presentation of the maximal amount of information: we should maximize the "data-ink ratio".
 To calculate the amount of information shown, @tufte2001visual suggested a measure called the "data density index," the "numbers plotted per square inch".
-The worst offenders have a very low density while also using a lot of excess ink (e.g., Figures @\ref(fig:viz-bad) and @\ref(fig:viz-bad2))
+The worst offenders have a very low density while also using a lot of excess ink (e.g., Figures \@ref(fig:viz-bad) and \@ref(fig:viz-bad2))
 
 ```{r viz-bad, fig.margin = TRUE, fig.cap = "This figure uses a lot to ink to show exactly three numbers, for a \"ddi\" of $0.2$ [This came from the Washington Post, 1978; see @wainer1984display for other examples]."}
 knitr::include_graphics("images/viz/bad-viz1.png")
@@ -427,20 +485,37 @@ The defaults in modern visualization libraries like `ggplot` prevent some of the
 For example: consider whether the visual complexity introduced by the default grey background and grid lines in Figure \@ref(fig:viz-themes0) is justified, or whether a more minimal theme would be sufficient (see the [`ggthemes`](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/) package for a good collection of themes). 
 
 ```{r viz-themes0, fig.cap="Standard \"gray\" themed Stiller figure."}
-library(ggrepel)
-
 ggplot(ms, aes(x = age_group, y = empirical_stat, 
              color = condition, group = condition)) +
     geom_point() +
     geom_line() +
     # geom_text_repel(aes(label = condition, colour = condition), 
-    #                 data = . %>% filter(age_group == "(4,5]")) +
+    #                 data = . |> filter(age_group == "(4,5]")) +
     geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
     geom_jitter(aes(x = age_group, y = rating, color = condition, fill = condition), alpha = 0.25, width = 0.05, data = mss) +
-    labs(x = 'age group', y = 'mean accuracy') +
+    labs(x = "Age Group", y = "Mean Accuracy") +
     theme_gray()
 ```
 Figure \@ref(fig:viz-themes) shows a slightly more "styled" version of the same plot with labels directly on the plot and a lighter-weight theme. 
+
+
+::: {.box .code}
+To produce the plot below, we've added a few styling elements including:
+
+* The nice and minimal `theme_few` from the `ggthemes` package.
+* A corresponding color palette (`scale_colour_few`) from the same package. 
+* Manual specification of the aspect ratio (`theme(aspect.ratio = 1)`).
+* Direct labels using the `geom_text_repel` call from `ggrepel`. 
+
+This last item is a bit trickier to implement. To do so, we select one set of points to label and feed these in as a filtered data frame. A few manual arguments customize the placement of the labels (you can spend hours tweaking this sort of thing by hand).
+
+```{r eval=FALSE, echo=TRUE}
+geom_text_repel(data = ms |> filter(age_group == "(3,4]"),
+                aes(label = condition, colour = condition), 
+                nudge_y = .1, nudge_x = .5, segment.color = NA)
+```
+
+:::
 
 ```{r viz-themes, fig.cap="Custom themed Stiller figure with direct labels."}
 library(ggrepel)
@@ -450,15 +525,16 @@ ggplot(ms, aes(x = age_group, y = empirical_stat,
     geom_point() +
     geom_line() +
     geom_text_repel(aes(label = condition, colour = condition), 
-                    data = . %>% filter(age_group == "(3,4]"), 
+                    data = ms |> filter(age_group == "(3,4]"), 
                     nudge_y = .1, nudge_x = .5, segment.color = NA) +
     geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
     geom_jitter(aes(x = age_group, y = rating, color = condition, fill = condition), alpha = 0.25, width = 0.05, data = mss) +
-    labs(x = 'age group', y = 'mean accuracy') +
+    labs(x = "Age Group", y = "Mean Accuracy") +
     scale_colour_few() +
     theme_few() +
-    theme(aspect.ratio = 1, legend.position = 'none') 
+    theme(aspect.ratio = 1, legend.position = "none") 
 ```
+
 
 Here are a few final tips for making good confirmatory visualizations:
 
@@ -489,7 +565,7 @@ In this section, we consider some best practices for exploratory visualization.
 
 ### Examining distributional information
 
-```{r viz-anscome, fig.margin = TRUE, fig.cap = "Anscombe's quartet [@anscombe1973graphs]."}
+```{r viz-anscombe, fig.margin = TRUE, fig.cap = "Anscombe's quartet [@anscombe1973graphs]."}
 knitr::include_graphics("images/viz/viz_anscombe.png")
 ```
 
@@ -525,7 +601,7 @@ Fourteen of these students failed to notice a gorilla, suggesting that they eval
 Another group of 14 students were simply asked what, if anything, they could conclude (without being given explicit hypotheses).
 More of these students apparently made the visualization, but five of them still failed to notice the gorilla (Figure \@ref(fig:viz-gorilla))!
 
-```{r viz-gorilla, fig.margin=TRUE, fig.cap="A dataset was constructed by @yanai2020 which revealed a picture of a gorilla when the raw data were plotted."}
+```{r viz-gorilla, fig.cap="A dataset was constructed by @yanai2020 which revealed a picture of a gorilla when the raw data were plotted."}
 knitr::include_graphics("images/viz/gorilla.png")
 ```
 
@@ -537,33 +613,49 @@ So it is highly surprising to find exactly the same number of drivers in every m
 While further specialized analyses revealed further evidence of fraud (e.g. based on patterns of rounding and pairs of duplicated data points), this humble histogram was already enough to set off alarm bells.
 A recurring regret raised by the co-authors of this paper is that they never thought to make this visualization before reporting their statistical tests.
 
-```{r viz-uniform, fig.margin=TRUE, fig.cap="A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!"}
+```{r viz-uniform, fig.cap="A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!"}
 knitr::include_graphics("images/viz/data_colada_uniform.png")
 ```
 :::
 
 Our data are always messier than we expect.
 There might be a bug in our coding scheme, a column might be mislabeled, or might contain a range of values that we didn't expect. 
-Maybe our design wasn't perfectly balanced, or something went wrong with a particular participant's keyboard presses.  
-Most of the time, it's not tractable to manually scroll through our raw data looking for such problems. 
-Visualization is our first line of defense for the all-important process of running "data diagnostics."
-If there is a weird artifact in our data, it will pop out if we just make the right visualizations. 
+Maybe our design wasn't perfectly balanced, or something went wrong with a particular participant's keyboard presses. Most of the time, it's not tractable to manually scroll through our raw data looking for such problems. Visualization is our first line of defense for the all-important process of running "data diagnostics." If there is a weird artifact in our data, it will pop out if we just make the right visualizations.
 
-So which visualizations should we start with?
-The best practice is to always start by making histograms of the raw data. 
-As an example, let's consider the data reported by @blake2015ontogeny in their article "Ontogeny of fairness in seven societies."
+So which visualizations should we start with? The best practice is to always start by making histograms of the raw data. As an example, let's consider the rich and interesting dataset shared by Blake, McAuliffe, and colleagues [-@blake2015ontogeny] in their article "Ontogeny of fairness in seven societies." This article studies the emergence of children's reasoning about fairness -- both when it benefits them and when it harms them -- across cultures.
 
-```{r viz-blake1}
-d <- read_csv("data/ontogeny_of_fairness.csv") %>%
+::: {.box .code}
+If you want to follow along with this example at home, you can load the data from our repository!
+
+```{r eval=FALSE, echo=TRUE}
+d <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/data/ontogeny_of_fairness.csv") |>
   mutate(trial_num = as.numeric(gsub(".(\\d+)", "\\1", trial)),
          trial_type = factor(eq.uneq,
                              levels = c("E","U"),
                              labels = c("Equal","Unequal")),
          condition = factor(condition,
                       levels = c("AI","DI"),
-                      labels = c("Advantageous","Disadvantageous"))) %>%
+                      labels = c("Advantageous","Disadvantageous"))) |>
   arrange(country, condition, actor.id, trial_num)
 ```
+
+:::
+
+```{r viz-blake1}
+d <- read_csv("data/ontogeny_of_fairness.csv") |>
+  mutate(trial_num = as.numeric(gsub(".(\\d+)", "\\1", trial)),
+         trial_type = factor(eq.uneq,
+                             levels = c("E","U"),
+                             labels = c("Equal","Unequal")),
+         condition = factor(condition,
+                      levels = c("AI","DI"),
+                      labels = c("Advantageous","Disadvantageous")),
+         age = floor(actor.age.years),
+         reject = decision == "reject") |>
+  arrange(country, condition, actor.id, trial_num)
+```
+
+
 
 In this study, pairs of children played the "inequity game": they sat across from one another and were given a particular allocation of snacks.
 On some trials, each participant was allocated the same amount (Equal trials) and on some trials they were allocated different amounts (Unequal trials).
@@ -573,22 +665,56 @@ Some pairs were assigned to the Disadvantageous condition, where the actor was a
 Others were assigned to the Advantageous condition, where they were allocated more (e.g. 4 vs. 1).
 
 The confirmatory **design plot** for this study would focus on contrasting developmental trajectories for Advantageous vs. Disadvantageous inequality.
-However, this is an incredibly rich dataset, including 866 pairs from different age groups and different testing sites across the world which used subtly different protocols.
+However, this is a complex, multivariate dataset, including 866 pairs from different age groups and different testing sites across the world which used subtly different protocols.
 How might we go about the process of exploratory visualization for this dataset?
 
-### Check data collection details
+### Plot data collection details
 
 Let's start by getting a handle on some of the basic sample characteristics.
 For example, how many participants were in each age bin (Figure \@ref(fig:viz-blake3))?
 
+::: {.box .code}
+Exploratory histograms are often a combination of an aggregation step and a plotting step. In the aggregation step, we make use of the convenience `count` function, which gives the number (`n`) of rows in a particular grouping. Here we `count` twice in order to get first one row per participant and then count the number of participants within each age group. 
+
+```{r eval=FALSE, echo=TRUE}
+ps_by_age <- d |>
+  mutate(age = floor(actor.age.years)) |>
+  count(age, actor.id) |>
+  count(age) 
+```
+
+And then we plot using `ggplot`:
+
+```{r eval=FALSE, echo=TRUE}
+ggplot(ps_by_age, aes(x = age, y = n)) +
+    geom_bar(stat = "identity") +
+    xlim(0, 18) +
+    ggthemes::theme_few()
+```
+
+An alternative (perhaps more elegant) workflow here would be to use a histogram:
+
+```
+ps_by_age <- d |>
+  mutate(age = floor(actor.age.years)) |>
+  count(age, actor.id) 
+  
+ggplot(ps_by_age, aes(x = age)) +
+    geom_histogram(binwidth = 1)
+```
+
+Histograms are intended by `ggplot` to be for continuous data, however, and so they don't give the discrete bars that our earlier workflow did. 
+:::
+
+
+
+
 ```{r viz-blake3, fig.cap="Participants by age in the Blake data."}
-d %>%
-  mutate(age = floor(actor.age.years)) %>%
-  group_by(age, actor.id) %>%
-  tally() %>%
-  group_by(age) %>%
-  tally() %>%
-  ggplot(aes(x = age, y = n)) +
+ps_by_age <- d |>
+  count(age, actor.id) |>
+  count(age) 
+
+ggplot(ps_by_age, aes(x = age, y = n)) +
     geom_bar(stat = "identity") +
     xlim(0, 18) +
     ggthemes::theme_few()
@@ -596,13 +722,28 @@ d %>%
 
 How many participants were included from each country (Figure \@ref(fig:viz-blake5))?
 
+::: {.box .code}
+Here we are going to make things even terser and use a pipe chain that *includes* the ggplot, just so we are writing only a single call to produce our plot. It's up to you whether you think this enhances the readability of your code or decreases it. We find that it's sometimes useful when you don't plan on keeping the intermediate data frame for any other use than plotting.
+
+```{r eval=FALSE, echo=TRUE}
+d |>
+  count(country, actor.id) |>
+  count(country) |>
+  mutate(country = fct_reorder(country, -n)) |>
+  ggplot(aes(x = country, y = n)) +
+    geom_bar(stat = "identity") 
+```
+
+If you use this technique, be careful to pipe (`|>` or `%>%`) between `tidyverse` operators but add (`+`) the `ggplot` operators!
+
+The only other trick to point out here is that we use the `fct_reorder` call to order the levels of the `country` factor in descending order. This function is found in the very useful `forcats` package of the `tidyverse`, which contains all sorts of functions for working with factors.
+:::
+
 ```{r viz-blake5, fig.cap="Participants by country in the Blake data."}
-d %>%
-  group_by(country, actor.id) %>%
-  tally() %>%
-  group_by(country) %>%
-  tally() %>%
-  mutate(country = fct_reorder(country, -n)) %>%
+d |>
+  count(country, actor.id) |>
+  count(country) |>
+  mutate(country = fct_reorder(country, -n)) |>
   ggplot(aes(x = country, y = n)) +
     geom_bar(stat = "identity") +
     ggthemes::theme_few()
@@ -610,18 +751,32 @@ d %>%
 
 Are ages roughly similar across each country (Figure \@ref(fig:viz-blake5))?
 
-```{r viz-blake6, fig.cap="Age distribution across countries in the Blake data."}
-d %>%
-  mutate(age = floor(actor.age.years)) %>%
-  group_by(country, age, actor.id) %>%
-  tally() %>%
-  group_by(country, age) %>%
-  tally() %>%
-  ungroup() %>%
-  mutate(country = fct_reorder(country, -n)) %>%
+::: {.box .code}
+This next plot simply combines the grouping factors of each of the last two plots, and uses `facet_wrap` to show a separate histogram by country: 
+
+```{r eval=FALSE, echo=TRUE}
+d |>
+  mutate(age = floor(actor.age.years)) |>
+  count(country, age, actor.id) |>
+  count(country, age) |>
+  mutate(country = fct_reorder(country, -n)) |>
   ggplot(aes(x = age, y = n)) +
     geom_bar(stat = "identity") +
-    facet_grid(~ country) +
+    facet_wrap(~ country) +
+    xlim(0, 18) 
+```
+
+:::
+
+```{r viz-blake6, fig.cap="Age distribution across countries in the Blake data."}
+d |>
+  mutate(age = floor(actor.age.years)) |>
+  count(country, age, actor.id) |>
+  count(country, age) |>
+  mutate(country = fct_reorder(country, -n)) |>
+  ggplot(aes(x = age, y = n)) +
+    geom_bar(stat = "identity") +
+    facet_wrap(~ country) +
     xlim(0, 18) +
     ggthemes::theme_few() +
     theme(aspect.ratio = 1)
@@ -631,66 +786,87 @@ These exploratory visualizations help us read off some descriptive properties of
 For example, we can see that age ranges differ somewhat across sites: the maximum age is 11 in India but 15 in Mexico.
 We can also see that age groups are fairly imbalanced: in Canada, there are 18 11-year-olds but only 5 6-year-olds.
 
-None of these properties are problematic, but it gives us a degree of awareness that might shape our downstream analytic decisions.
+None of these properties are problematic, but seeing them gives us a degree of awareness that could shape our downstream analytic decisions.
 For example, if we did not appropriately model random effects, our estimates would be dominated by the countries with larger sample sizes.
-And if we were planning to compare specific groups of 6-year-olds for some reason, this analysis would be underpowered.
+And if we were planning to compare specific groups of 6-year-olds (for some reason), this analysis would be underpowered.
 
 ### Explorating distributions
 
 Now that we have a handle on the sample, let's get a sense of the dependent variable: the participant's decision to accept or reject the allocation.
 Before we start taking means, let's look at how the "rejection rate" variable is distributed.
-We'll aggregate at the participant-level, and check the frequency of different rejection rates, overall (Figure \@ref(fig:viz-blake7)).
+We'll aggregate at the participant level, and check the frequency of different rejection rates, overall (Figure \@ref(fig:viz-blake7)).
+
+::: {.box .code}
+Rejection rate is a continuous variable, so we switch to using a histogram in this case, choosing .05 as a reasonable bin width to see the distribution.
+
+```{r eval=FALSE, echo=TRUE}
+d |>
+  filter(!is.na(eq.uneq)) |>
+  group_by(actor.id) |>
+  summarise(reject = mean(reject, na.rm=TRUE)) |>
+  ggplot(aes(x = reject)) +
+    geom_histogram(binwidth = .05)
+```
+
+:::
 
 ```{r viz-blake7, fig.cap="Rejection rates in the Blake data."}
-ms <- d %>%
-  filter(!is.na(eq.uneq)) %>%
-  mutate(age = floor(actor.age.years),
-         decision = decision == "reject")
+d.indiv.rates <- d |>
+  filter(!is.na(eq.uneq)) |>
+  group_by(actor.id) |>
+  summarise(reject = mean(reject, na.rm=TRUE))
 
-ms %>%
-  group_by(country, trial_type, condition, age, actor.id) %>%
-  summarise(decision = mean(decision, na.rm=TRUE)) %>%
-  group_by(decision) %>%
-  tally() %>%
-  ggplot(aes(x = decision, y = n)) +
-    geom_bar(stat = 'identity') +
-    xlim(-0.01, 1.01) +
+d |>
+  filter(!is.na(eq.uneq)) |>
+  group_by(actor.id) |>
+  summarise(reject = mean(reject, na.rm=TRUE)) |>
+  ggplot(aes(x = reject)) +
+    geom_histogram(binwidth = .05) +
     ggthemes::theme_few()
 ```
 
-We immediately notice that the vast majority (44\%) of participants never reject in the entire experiment.
-Zero rejections is the modal behavior.
+We notice that many participants (`r round(mean(d.indiv.rates$reject == 0),2)*100`%) never reject in the entire experiment.
 This kind of "zero-inflated" distribution is not uncommon in psychology, and may warrant special consideration when designing the statistical model.
 We also notice that there is clumping around certain values.
-We then check how many trials each participant is completing (Figure \@ref(fig:viz-blake8)).
+This clumping leads us to check how many trials each participant is completing (Figure \@ref(fig:viz-blake8)).
+
+::: {.box .code}
+This histogram is very similar to the ones above; however, we now `count` twice, first getting the trial counts for each participant and then counting how many times each count occurs overall!
+
+```{r eval=FALSE, echo=TRUE}
+d |>
+  filter(!is.na(eq.uneq)) |>
+  count(actor.id) |>
+  count(n) |>
+  ggplot(aes(x = n, y = nn)) +
+    geom_bar(stat = "identity") +
+    labs(x = "# trials", y = "proportion of participants") 
+```
+
+:::
 
 ```{r viz-blake8, fig.cap="Trials per participant in the Blake data."}
-ms %>%
-  group_by(country, trial_type, condition, age, actor.id) %>%
-  tally() %>%
-  group_by(n) %>%
-  tally() %>%
-  ungroup() %>%
-  mutate(p = nn / sum(nn)) %>%
-  ggplot(aes(x = n, y = p)) +
-    geom_bar(stat = 'identity') +
-    xlim(5, 11) +
-    labs(x = '# trials', y = 'proportion of participants') +
+d |>
+  filter(!is.na(eq.uneq)) |>
+  count(actor.id) |>
+  count(n) |>
+  ggplot(aes(x = n, y = nn)) +
+    geom_bar(stat = "identity") +
+    labs(x = "# trials", y = "proportion of participants") +
     ggthemes::theme_few()
 ```
 
-We find that there's some variation here: 69% of participants completed 8 trials, 30% of participant completed 6 trials, and a small number of participants have odd numbers like 7 or 10 trials.
+There's some variation here: most participants completed 17 trials, but some  participant completed 8 trials, and a small number of participants have 14 or 15.
 Given the logistical complexity of large multi-site studies, it is common to have some changes in experimental protocol across data collection.
-India and Peru only have 6 trials but it appears that additional trials were added at other sites.
-In a design where the number of trials was careful controlled, seeing unexpected numbers here (like the 7 or 10 trial bins) are clues that something else may be going on in the data.
-For example, there may have been a coding error, or a response may have been double-counted due to a technical problem.
-This visualization may lead us to look up the participant IDs in these bins and manually inspect their data to see what might be going on.
+Indeed, looking at the supplement for the study, we see that while India and Peru had 12 trials, additional trials were added at the other sites.
+In a design where the number of trials was careful controlled, seeing unexpected numbers here (like the 14 or 15 trial bins) are clues that something else may be going on in the data. In this case, it was a small number of trials with missing data. 
+More generally, seeing this kind of signal in a visualization of our own data typically leads us to look up the participant IDs in these bins and manually inspect their data to see what might be going on.
 
-You can also learn a lot from looking at *pairwise* relationships in datasets with multiple continuous predictors.
-By making scatter plots of the different variables, you may notice that some are strongly correlated with one another, and might start to worry about collinearity problems in regression models trying to tease them apart.
-You may also notice more complicated relationships; for example,  one cloud of points that is strongly correlated, and another cloud of points that is not.
-Reporting a single correlation and claiming a relationship might therefore be misleading.
-Instead, we would want to be careful to break this relationship out by other variables and try to understand why there are two separate clouds.
+<!-- You can also learn a lot from looking at *pairwise* relationships in datasets with multiple continuous predictors. -->
+<!-- By making scatter plots of the different variables, you may notice that some are strongly correlated with one another, and might start to worry about whether this could cause problems in regression models trying to tease them apart. -->
+<!-- You may also notice more complicated relationships; for example, one cloud of points that is strongly correlated, and another cloud of points that is not. -->
+<!-- Reporting a single correlation and claiming a relationship might therefore be misleading. -->
+<!-- Instead, we would want to be careful to break this relationship out by other variables and try to understand why there are two separate clouds. -->
 
 ### Hypothesis-driven exploration
 
@@ -700,24 +876,50 @@ Let's start by just looking at the data from the largest site (Figure \@ref(fig:
 :::{.box .code}
 Here, we are using `geom_smooth()` to overlay regression trends over the raw data.
 `geom_smooth()` takes a number of different options corresponding to different smoothing techniques.
-The default is a non-parametric regression, `geom_smooth(method = 'loess')`, which essentially stitches together means as you slide a window across your data (the `span` parameter controls the size of this window).
 Non-parametric smoothing can be a good choice for exploratory visualizations if you have a lot of data and want to make minimal assumptions about the form of the trend.
 
-Here, however, we show the linear regression trend, `geom_smooth(method = 'lm')`, which better corresponds to the predictions of the study and the statistical model being used (see Chapter \@ref(models)).
+Here, however, we show the linear regression trend, `geom_smooth(method = "lm")`, which better corresponds to the predictions of the study and the statistical model being used (see Chapter \@ref(models)).
 Other regression forms can be specified with the `formula` argument.
-For example, we could show quadratic smoothing with `geom_smooth(method = 'lm', formula = y ~ poly(x, 2))`.
+For example, we could show quadratic smoothing with `geom_smooth(method = "lm", formula = y ~ poly(x, 2))`.
 The form of smoothing you use may differ across exploratory and confirmatory visualizations. 
 In a confirmatory visualization --- if you are going to include a smoothing curve --- it is typically best to use the one specified by your statistical model, as the slopes will correspond to the inferences being testing.
+
+We begin by making a summary dataset:
+
+```{r eval=FALSE, echo=TRUE}
+ms <- d |>
+  filter(!is.na(reject)) |>
+  group_by(country, trial_type, condition, age, actor.id) |>
+  summarise(reject = mean(reject, na.rm=TRUE)) |>
+  group_by(country, trial_type, condition, age) |>
+  summarise(reject = mean(reject, na.rm=TRUE),
+            n = n()) 
+```
+
+Then we can create the visualization (labels and styling omitted for clarity):
+
+```{r eval=FALSE, echo=TRUE}
+ggplot(filter(ms, country == "US"),
+       aes(x = age, y = reject, col = country)) +
+    geom_point(aes(size = n)) +
+    facet_grid(trial_type ~ condition) +
+    geom_smooth(method="lm", se = FALSE)
+```
+
+We often find it convenient to filter the summary dataset in the plotting call, so that we can reuse it again. 
 :::
+
 ```{r viz-blake9, fig.cap="Rejection rates in the US data from Blake, plotted by age."}
-ms %>%
-  filter(country == "US") %>%
-  group_by(country, trial_type, condition, age, actor.id) %>%
-  summarise(decision = mean(decision, na.rm=TRUE)) %>%
-  group_by(country, trial_type, condition, age) %>%
-  summarise(decision = mean(decision, na.rm=TRUE),
-            n = n()) %>%
-  ggplot(aes(x = age, y = decision, col = country)) +
+ms <- d |>
+  filter(!is.na(reject)) |>
+  group_by(country, trial_type, condition, age, actor.id) |>
+  summarise(reject = mean(reject, na.rm=TRUE)) |>
+  group_by(country, trial_type, condition, age) |>
+  summarise(reject = mean(reject, na.rm=TRUE),
+            n = n()) 
+
+ggplot(filter(ms, country == "US"),
+       aes(x = age, y = reject, col = country)) +
     geom_point(aes(size = n)) +
     facet_grid(trial_type ~ condition) +
     geom_smooth(method="lm", se = FALSE) +
@@ -728,33 +930,56 @@ ms %>%
     ggthemes::scale_color_solarized()
 ```
 
-Figure \@ref(fig:viz-blake9) is definitely not a figure we'd put in a paper, but it helps us get a sense of the predicted pattern.
+Figure \@ref(fig:viz-blake9) is not a figure we'd put in a paper, but it helps us get a sense of the pattern in the data.
 There appears to be an age trend that's specific to the Unequal trials, with rejection rates rising over time (compared to roughly even or decreasing rates in the Equal trials).
 Meanwhile, rejection rates for the Disadvantageous group also seem slightly higher than those in the Advantageous group.
-Now let's re-bin the data into 3-year age groups so that individual point estimates are a bit more reliable, and add the other countries back in.^[Binning data is a trick that we often use for reducing complexity in a plot when data are noisy. It should be used with care, however, since different binning decisions can sometimes lead to different conclusions. Here we tried several binning intervals and decided that 3-year age bins showed the underlying trends pretty well.]
+Now let's re-bin the data into two-year age groups so that individual point estimates are a bit more reliable, and add the other countries back in.^[Binning data is a trick that we often use for reducing complexity in a plot when data are noisy. It should be used with care, however, since different binning decisions can sometimes lead to different conclusions. Here we tried several binning intervals and decided that two-year age bins showed the underlying trends pretty well.]
+
+::: {.box .code}
+Despite the difference between the plot above and this one, the code to produce them is actually very similar. The only difference is the creation of the binned variable and a slight shift of aesthetic and faceting variables. 
+
+```{r eval=FALSE, echo=TRUE}
+ms <- d |>
+  filter(!is.na(reject)) |>
+  mutate(age_binned = floor(actor.age.years/2)*2) |>
+  group_by(country, trial_type, condition, age_binned, actor.id) |>
+  summarise(reject = mean(reject, na.rm=TRUE)) |>
+  group_by(country, trial_type, condition, age_binned) |>
+  summarise(reject = mean(reject, na.rm=TRUE),
+            n = n()) 
+
+ggplot(ms, aes(x = age_binned, y = reject, col = condition)) +
+    geom_point(aes(size = n), alpha = .5) +
+    facet_grid(trial_type ~ country) +
+    geom_smooth(method="lm", se = FALSE)
+```
+
+:::
 
 ```{r viz-blake10, fig.cap="Rejection rates by age for all data in the Blake dataset."}
-d %>%
-  filter(!is.na(eq.uneq)) %>%
-  mutate(age = floor(actor.age.years/2)*2,
-         decision = decision == "reject") %>%
-  group_by(country, trial_type, condition, age, actor.id) %>%
-  summarise(decision = mean(decision, na.rm=TRUE)) %>%
-  group_by(country, trial_type, condition, age) %>%
-  summarise(decision = mean(decision, na.rm=TRUE),
-            n = n()) %>%
-  ggplot(aes(x = age, y = decision, col = condition)) +
-    geom_point(aes(size = n)) +
+
+ms <- d |>
+  filter(!is.na(reject)) |>
+  mutate(age_binned = floor(actor.age.years/2)*2) |>
+  group_by(country, trial_type, condition, age_binned, actor.id) |>
+  summarise(reject = mean(reject, na.rm=TRUE)) |>
+  group_by(country, trial_type, condition, age_binned) |>
+  summarise(reject = mean(reject, na.rm=TRUE),
+            n = n()) 
+
+ggplot(ms, aes(x = age_binned, y = reject, col = condition)) +
+    geom_point(aes(size = n), alpha = .5) +
     facet_grid(trial_type ~ country) +
     geom_smooth(method="lm", se = FALSE) +
     ylab("Proportion offers rejected") +
     xlab("Age (years)") +
     ylim(c(0,1)) +
     ggthemes::theme_few() +
-    theme(aspect.ratio = 1)
+    theme(aspect.ratio = 1) + 
+    theme(legend.position = "bottom")
 ```
 
-Figure \@ref(fig:viz-blake10) is now looking much closer to a quick-and-dirty version of a design plot we might include in a paper.
+Figure \@ref(fig:viz-blake10) is now looking much closer to a quick-and-dirty version of a "design plot" we might include in a paper.
 The DV (rejection rate) is on the y-axis, and the primary variable of interest (age) is on the x-axis. 
 Other elements of the design (country and trial type) are mapped to color and facets, respectively.
 
@@ -777,6 +1002,13 @@ We particularly focused on the need to make visualization part of the experiment
 Picking up the idea of a "default model" from Chapter \@ref(models), we discussed a default "design plot" that reflects the key choices made in the experimental design.
 Within this framework, we then discussed different visualizations of distribution and variability that better align our graphics with the principles of measurement and attention to raw data that we have been advocating throughout.
 
+::: {.box .discussion_questions}
+1. Choose a recent piece of research that you've heard about and try to sketch the "design plot" on with pencil and paper. What does and doesn't work? How does your sketch differ from the visualizations in the paper?
+
+2. The "design plot" idea that we've discussed here can run into problems when an experimental design is too complex to show on a single plot. Imagine you had data from a trial of attention deficit hyperactivity disorder (ADHD) treatment that manipulated both whether a medication was given and whether patients received therapy in a crossed design. The researchers measured two different outcomes: parent report symptom severity and teacher report symptom severity in four different time-points (baseline, 3 months, 6 months, and 9 months). How could you show the data from such an experiment in a transparent way? 
+:::
+
+
 ::: {.box .readings}
 There are many good introductions to data visualization. Here are two social-science focused books whose advice we agree with and that also contain a lot of practical information and helpful R code for the same packages we use here.  
 
@@ -785,6 +1017,7 @@ There are many good introductions to data visualization. Here are two social-sci
 * Wilke, C. O. (2019). *Fundamentals of Data Visualization*. O'Reilly Media. Available free online at [https://clauswilke.com/dataviz/]().
 
 For a more classical treatment, see:
+
 * Tukey, J. W. (1977). *Exploratory data analysis*. Pearson. 
 
 * Tufte, E. R. (1997). *The Visual Display of Quantitative Information*. Graphics Press. 

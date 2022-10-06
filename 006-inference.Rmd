@@ -23,8 +23,8 @@ The instinct to "go test for significance" before visualizing your data and tryi
 
 In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. All practicing experimentalists need to understand NHST, both to read the literature and also to apply this method in appropriate situations. For example, NHST may be a reasonable tool for testing whether an intervention leads to a difference between a treatment condition and an appropriate control, although it still doesn't tell you about the size of the intervention effect! But we will also try to contextualize NHST as a very special case of a broader set of strategies around modeling and inference. Further, we will continue to flesh out our account of how some of the pathologies of NHST have been a driver of the replication crisis.
 
-```{r krushke, fig.margin=TRUE, fig.cap="Clarifying the distinctions between Bayesian and Frequentist paradigms and the ways that they approach inference and estimation. For many settings, we think the estimation mindset is more useful. From Kruschke and Liddell (2018). "}
-knitr::include_graphics("images/inference/krushke.png")
+```{r krushke, fig.margin=TRUE, fig.cap="Clarifying the distinctions between Bayesian and Frequentist paradigms and the ways that they approach inference and estimation. For many settings, we think the estimation mindset is more useful. Adapted from Kruschke and Liddell (2018). "}
+knitr::include_graphics("images/inference/krushke2.png")
 ```
 
 What should replace NHST? There has been a recent move towards the use of Bayes Factors to quantify the evidence in support of a hypothesis. Bayes Factors can help answer questions like (2). We introduce these tools, and believe that they have broader applicability than the NHST framework and should be known by students. On the other hand, Bayes Factors are not a panacea. They have the same problems as NHST when they are applied dichotomously.
@@ -43,11 +43,9 @@ In Chapter \@ref(estimation), we introduced Fisher's tea-tasting experiment and 
 
 To characterize the uncertainty in an estimate, it helps to picture what is called its **sampling distribution**, which is the distribution of the estimate across different, hypothetical samples. That is, let's imagine -- purely hypothetically -- that we conducted the tea experiment with $n=48$ not just once, but hundreds or even thousands of times. This idea is often called **repeated sampling** as a shorthand. For each hypothetical sample, we use similar recruitment methods to recruit a new sample of participants, and we estimate $\widehat{\beta}$ in that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability. If we plotted these estimates, $\widehat{\beta}$, across thousands of samples, we would get the sampling distribution in Figure \@ref(fig:inference-sampling-48). 
 
-```{r inference-helper}
-source("helper/tea_helper.R")
-```
-
 ```{r inference-sampling-48, fig.margin = TRUE, fig.cap= "Sampling distribution for the treatment effect in the tea-tasting experiment, given 1000 different experiments, each with N=48."}
+source("helper/tea_helper.R")
+
 samps <- tibble(sim = 1:1000) |>
   mutate(data = map(sim, ~make_tea_data())) |>
   unnest(cols = "data")
@@ -66,7 +64,7 @@ ggplot(tea_summary_48,
 ::: {.box .code}
 To do this simulation, we're using a special tidyverse function from the `purrr` library: `map`. `map` is an extremely powerful function that allows us to run another function (in this case, the `make_tea_data` function that we introduced last chapter) many times with different inputs. Here we create a tibble made up of a set of 1000 runs of the `make_tea_data` function.
 
-```
+```{r eval=FALSE, echo=TRUE}
 samps <- tibble(sim = 1:1000) |>
   mutate(data = map(sim, ~make_tea_data(n_total = 48))) |>
   unnest(cols = "data")
@@ -74,7 +72,7 @@ samps <- tibble(sim = 1:1000) |>
 
 Next, we just use the `group_by` and `summarise` workflow from Appendix \@ref(tidyverse) to get the estimated treatment effect for each of these 1000 simulations.
 
-```
+```{r eval=FALSE, echo=TRUE}
 tea_summary_48 <- samps |>
   group_by(sim) |>
   summarise(delta = mean(rating[condition == "milk first"]) - 
@@ -149,7 +147,7 @@ For this simulation, we again use the `map` function. We set up a tibble with th
 
 One trick we make use of here is that `rbinom` takes an extra argument that says how many of these random values you want to generate. Here we generate `nsamps = 1000` samples, giving us 1000 independent replicates at each `n`. But returning an array of 1000 values for a single value of `n_flips` results in something odd: the value for each element of `flips` is an array. To deal with that, we use the `unnest` function, which expands the array back into a normal tibble. 
 
-```
+```{r eval=FALSE, echo=TRUE}
 n_samps <- 1000
 n_flips_list <- c(2, 8, 32, 128)
 
@@ -204,7 +202,7 @@ ggplot(null_model_summary, aes(x =delta)) +
 ::: {.box .code}
 To simulate our null model, we can do the same kind of thing we did before, just specifying to our `make_tea_data` function that the true difference in effects is zero!
 
-```
+```{r eval=FALSE, echo=TRUE}
 null_model <- expand_grid(sim = 1:n_sims, 
                           n = 48) |>
   rowwise() |>
@@ -214,7 +212,7 @@ null_model <- expand_grid(sim = 1:n_sims,
 
 Now again we can `group_by` and `summarise` to get the distribution of treatment effects under the null hypothesis. 
 
-```
+```{r eval=FALSE, echo=TRUE}
 null_model_summary <- null_model |>
   group_by(n, sim) |>
   summarise(delta = mean(rating[condition == "milk first"]) - 
@@ -329,7 +327,7 @@ tea_bf_large <- BayesFactor::ttestBF(x = tea_data_large$rating[tea_data_large$co
 ::: {.box .code}
 Bayes Factors are delightfully easy to compute using the `BayesFactor` R package. All we do is feed in the two sets of ratings to the `ttestBF` function!
 
-```
+```{r eval=FALSE, echo=TRUE}
 tea_bf <- ttestBF(x = tea_data$rating[tea_data$condition == "milk first"],
                                y = tea_data$rating[tea_data$condition == "tea first"],
                                paired = FALSE)
@@ -357,7 +355,7 @@ tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
 ::: {.box .code}
 The standard `t.test` function is built into R via the default `stats` package. Here we simply make sure to specify the variety of test we want by using the `paired = FALSE` and `var.equal = TRUE` (equal variances) flags. 
 
-```
+```{r eval=FALSE, echo=TRUE}
 tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
                 y = tea_data$rating[tea_data$condition == "tea first"], 
                 paired = FALSE, var.equal = TRUE)
@@ -508,7 +506,7 @@ Let's take a look at just a few. Misconception 1 is that, if $p= .05$, the null 
 
 Beyond these misconceptions, there's another problem. The $p$-value is a probability of a certain set of events happening (corresponding to the observed data or any "more extreme" data, that is to say, data further from the null). Since $p$-values are probabilities, we can combine them together across different events. If we run a null experiment -- an experiment where the expected effect is zero -- the probability of a dataset with $p < .05$ is of course .05. But if we run two such experiments, we can get $p < .05$ with probability `r round(2*.05 - .05*.05,2)`. By the time we run 20 experiments, we have an `r round(1 - .95^20,2)` chance of getting a positive result.
 
-It would obviously be a major mistake to run 20 null experiments and then report only the positive ones (which, by design, are false positives) as though these still were "statistically significant." The same thing applies to doing 20 different statistical tests within a single experiment. There are many statistical corrections that can be made to adjust for this problem.[^inference-19] But the the broader issue is one of transparency: unless you *know* what the appropriate set of experiments or tests is, it's not possible to implement one of these corrections![^inference-20]
+It would obviously be a major mistake to run 20 null experiments and then report only the positive ones (which, by design, are false positives) as though these still were "statistically significant." The same thing applies to doing 20 different statistical tests within a single experiment. There are many statistical corrections that can be made to adjust for this problem, which is known as the problem of **multiple comparisons**.[^inference-19] But the the broader issue is one of transparency: unless you *know* what the appropriate set of experiments or tests is, it's not possible to implement one of these corrections![^inference-20]
 
 [^inference-19]: The simplest and most versatile one, the Bonferroni correction, just divides .05 (or technically, whatever your threshold is) by the number of comparisons you are making. Using that correction, if you do 20 null experiments, you would have a `r round((1 - .95^20)/20)` chance of a false positive, which is actually a little conservative.
 
@@ -594,7 +592,7 @@ ggplot(tea_data_large,
 ::: {.box .code}
 Computing confidence intervals analytically is pretty easy. Here we first compute the standard error for the difference between conditions. The only tricky bit here is that we need to compute a pooled standard deviation.
 
-```
+```{r eval=FALSE, echo=TRUE}
 tea_ratings <- tea_data$rating[tea_data$condition == "tea first"]
 milk_ratings <- tea_data$rating[tea_data$condition == "milk first"]
 n_tea <- length(tea_ratings)
@@ -675,7 +673,7 @@ Despite the reasons to be worried about $p$-values, for many practicing scientis
 As a group, some of us are more Bayesian than frequentist, while others are more frequentist than Bayesian -- but all of us recognize the need to move flexibly between statistical paradigms. Furthermore, a lot of the time we're not so worried about which paradigm we're using. The paradigms are at their most divergent when making binary inferences, whether they are at $p < .05$ or $BF > 3$. 
 In sum, the practicing experimentalist should see binary inference tools as only one part of a bigger toolkit for data analysis. This toolkit should also include estimation approaches from the previous chapter as well as the methods for quantifying precision and uncertainty that we introduced above. Further, for more complex situations, the toolkit needs to include some tools for building models. Towards this goal, the next chapter provides some initial tools for how to use models for estimation and inference about experimental effects.
 
-::: {.box .exercises}
+::: {.box .discussion_questions}
 1. Step away from the computer. Can you write the definition of a $p$-value and a Bayes Factor? 
 
 2. Take three of Goodman's (2008) "dirty dozen" in Table \@ref(tab:dirty-dozen) and write a description of why each is a misconception. (These can be checked against the original article, which gives a nice discussion). 
