@@ -1,68 +1,154 @@
 .toc {
-	--darker: #111;
-
-	white-space: pre;
+	// width: 100%;
+	// position: relative;
+	// box-sizing: border-box;
+	// position: sticky;
+	// position: fixed;
+	// position: absolute;
+	// display: flex;
+	// align-items: flex-end;
+	// left: 0;
+	// top: 0;
+	// width: 100%;
+	// display: flex;
+	// flex-direction: column;
+	// padding-bottom: 10em;
+	// box-sizing: border-box;
+	// min-width: 87.5%;
+	// max-width: fit-content;
+	// width: fit-content;
+	// margin: 0 auto;
+	// min-width: min-content;
+	// margin: 12.5% 12.5% 0 0;
+	// margin: 12.5% 0;
 	font-size: 1.4rem;
-	margin-top: 3em;
 	color: dimgray;
 
-	counter-reset: part chapter appendix;
+	:link { background: none; }
 
-	* {
-		transition-duration: 0.5s;
-		transition-property: width, height, color, border-color;
-	}
-
-	&, * { display: flex; }
-	&, .part, .dropdown { flex-direction: column; }
-
-	:link {
-		background: none;
-		text-shadow: none;
-	}
+	// * { transition: 1s; }
 }
 
-.book_title, .part_title, .dropdown { padding: 0.2em 0; }
+.book_title {
+	padding: 0.4em;
+	font-style: italic;
 
-.book_title { font-style: italic; }
+	&:hover { color: black; }
+}
 
-.part_title_rest, .chapter_title { overflow: hidden; }
-
-.part_title {
-	border-width: 1px 0;
+.parts {
+	// position: fixed;
+	// top: 0;
+	display: flex;
+	justify-content: space-between;
+	// flex-wrap: wrap;
+	// max-width: fit-content;
 	border-style: solid;
-	border-color: lightgray;
+	border-width: 2px 0;
+
+	@media screen and (max-width: 760px) {
+		flex-direction: column;
+	}
 }
 
-:is(.book_title, .chapter_title):hover { color: var(--darker); }
+@mixin count($name, $style) {
+	&::before {
+		content: counter($name, $style);
+		counter-increment: $name;
+		padding-right: 0.4em;
+		font-size: 0.7em;
+		font-weight: bold;
+		text-align: right;
+
+		@if $style == decimal { min-width: 2ch; }
+	}
+}
+
+@mixin part     { @include count( part,     upper-roman ); }
+@mixin chapter  { @include count( chapter,  decimal     ); }
+@mixin appendix { @include count( appendix, upper-latin ); }
+
+:root { counter-reset: part chapter appendix; }
 
 .part {
-	&:not(:first-child) > * { padding-left:  0.4em; }
-	&:not(:last-child)  > * { padding-right: 0.4em; }
+	// flex: 0;
+	// flex-basis: 0%;
+	// flex: 0 0 100%;
+	// display: flex;
+	// display: inline-flex;
+	// flex-direction: column;
+	// flex-wrap: wrap;
 
-	&:hover .part_title {
-		border-bottom-width: 2px;
-		border-bottom-color: black;
+	&:not(:last-child) { .part_title    { @include part;     } }
+	&:not(:last-child) { .chapter_title { @include chapter;  } }
+	&:last-child       { .chapter_title { @include appendix; } }
 
-		// color: var(--darker);
-		* { color: var(--darker); }
+	&_open {
+		// flex: 1;
+		.outer {
+			// border: medium solid black;
+		}
 	}
-
-	.part_title_first::before { --counter: part;     --style: upper-roman; }
-	.chapter_title::before    { --counter: chapter;  --style: decimal;     }
 }
 
-.part:last-child {
-	.part_title_first::before {                      --style: none;        }
-	.chapter_title::before    { --counter: appendix; --style: upper-latin; }
+.part_title {
+	// flex: 0;
+	// flex-basis: 100%;
+	display: flex;
+	align-items: center;
+	padding: 0.4em;
+
+	&:global(.is-open) {
+	// &_open {
+		// transition: 0.1s;
+		color: black;
+	}
 }
 
-:is(.part_title_first, .chapter_title)::before {
-	content: counter(var(--counter), var(--style));
-	counter-increment: var(--counter);
-	min-width: 2ch;
-	padding-right: 0.4em;
-	font-size: 0.7em;
-	font-weight: bold;
-	align-self: center;
+.outer {
+	// align-self: flex-start;
+	// display: flex;
+	// flex-basis: 100%;
+	// flex-direction: column;
+	// flex-grow: 0;
+	// flex: 0 0 100%;
+	// flex: 0;
+	// float: right;
+	// left: 0;
+	// max-width: min-content;
+	// min-width: 0;
+	position: absolute;
+	// position: fixed;
+	// position: relative;
+	// position: sticky;
+	// left: calc(87.5vw - 10%);
+}
+
+.inner {
+	// display: flex;
+	// display: inline-flex;
+	// flex-direction: column;
+	// flex-wrap: wrap;
+	// float: left;
+	// inset: 100%;
+	// position: absolute;
+	// position: fixed;
+	// position: relative;
+	// position: sticky;
+	// right: 12.5%;
+	// right: 50%;
+	white-space: pre;
+	background: white;
+	border-radius: 0 0 8px 8px;
+	border: 3px solid black;
+}
+
+.chapter_title {
+	// flex: 0;
+
+	display: flex;
+	align-items: center;
+	padding: 0.4em;
+
+	&:hover { color: black; }
 }

@@ -1,4 +1,4 @@
-import './Box.scss'
+import './box.scss'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import icons               from '/src/icons'
