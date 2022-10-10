@@ -7,6 +7,7 @@ import {
 	faCode               as code,
 	faLandmark           as depth,
 	faPenRuler           as discussion_questions,
+	faPenRuler           as exercises,
 	faBook               as readings,
 } from '@fortawesome/free-solid-svg-icons'
 
@@ -19,5 +20,6 @@ export default {
 	code,
 	depth,
 	discussion_questions,
+	exercisesm
 	readings,
 }
