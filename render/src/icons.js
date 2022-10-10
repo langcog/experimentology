@@ -20,6 +20,6 @@ export default {
 	code,
 	depth,
 	discussion_questions,
-	exercisesm
+	exercises,
 	readings,
 }
