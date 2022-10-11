@@ -50,8 +50,6 @@ const boxes = {
 const Box = ({ title, type, content }) => {
 	const { [ type ]: { color, icon, open, preview } } = boxes;
 
-	console.log({ color, icon, open, preview });
-
 	return (
 		<div class={ style.box } style={{ '--color': theme[color] }}>
 			<Collapsible
