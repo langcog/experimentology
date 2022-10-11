@@ -20,25 +20,17 @@ export default {
 			],
 		}),
 		preact(),
-		// reload([ 'src/**' ]),
+		reload([ 'src/**' ]),
 		ssr(),
 	],
 
-	// optimizeDeps : {
-	// 	include : [
-	// 		'preact/devtools',
-	// 		'preact/debug',
-	// 		'preact/jsx-dev-runtime',
-	// 		'preact',
-	// 		'preact/hooks',
-	// 	]
-	// },
-
-	// css : {
-	// 	devSourcemap : true,
-	// },
+	css : {
+		devSourcemap : true,
+	},
 
 	esbuild : {
-		logOverride : { 'this-is-undefined-in-esm' : 'silent' },
+		logOverride : {
+			'this-is-undefined-in-esm' : 'silent',
+		},
 	},
 }

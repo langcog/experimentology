@@ -1,46 +1,80 @@
-import style        from './toc.module.scss'
-import Collapsible  from 'react-collapsible'
-import StickyBox    from 'react-sticky-box'
-import { StickyContainer, Sticky } from 'react-sticky'
-import { useState } from 'preact/hooks'
+import {
+	toc,
+	book_title,
+	part,
+	part_title,
+	part_title_first,
+	part_title_rest,
+	dropdown,
+	chapter_title,
+} from './toc.module.scss'
 
-const TOC = ({ title, subtitle, parts }) => {
-	const [ open, setOpen ] = useState(null);
+import { title, subtitle, parts }      from '/contents.json'
+import { useState, useEffect, useRef } from 'preact/hooks'
+
+const TOC = () => (
+	<header class={ toc } id='toc'>
+		<a class={ book_title } href='/'>{ `${title}: ${subtitle}` }</a>
+		<nav>
+		{ parts.map(props => <Part { ... props }/>) }
+		</nav>
+	</header>
+)
+
+const Part = ({ first, rest, chapters }) => {
+	const [ hover, setHover ] = useState(true);
+
+	const node = useRef();
+	const rect = useRef();
+	const show = rect.current;
+	const hide = { width: 0 };
+
+	useEffect(() => {
+		const { width } = node.current.getBoundingClientRect();
+		rect.current    = { width };
+
+		setHover(false);
+	}, []);
 
 	return (
-		// <StickyContainer>
-			<header class={ style.toc }>
-				<a class={ style.book_title } href='/'>{title}: {subtitle}</a>
-				{/*<Sticky>*/}
-				<nav class={ style.parts } onMouseLeave={ () => setOpen(null) }>
-					{parts.map(({ title, chapters }, index) => (
-						<Collapsible
-							classParentString={ style.part }
-							// className={ style.part }
-							// openedClassName={ style.part_open }
-							triggerClassName={ style.part_title }
-							triggerOpenedClassName={ style.part_title }
-							contentOuterClassName={ style.outer }
-							contentInnerClassName={ style.inner }
-							// transitionTime={ 100 }
-							// transitionCloseTime={ 100 }
-							// easing='ease'
-							// easing='step-start'
-							// overflowWhenOpen='visible'
-							trigger={ title }
-							triggerElementProps={{ onMouseEnter: () => setOpen(index) }}
-							open={ index == open }
-							// open={ true }
-						>
-							{chapters.map(({ title, href }) => (
-								<a class={ style.chapter_title } href={ href }>{ title }</a>
-							))}
-						</Collapsible>
-					))}
-				</nav>
-				{/*</Sticky>*/}
-			</header>
-		// </StickyContainer>
+		<div
+			class={ part }
+			onMouseEnter={ () => setHover(true)  }
+			onMouseLeave={ () => setHover(false) }
+		>
+			<div class={ part_title }>
+				<div class={ part_title_first }>{ first }</div>
+				<div
+					class={ part_title_rest }
+					ref={ node }
+					style={ hover ? show : hide }
+				>{ rest }</div>
+			</div>
+			<div class={ dropdown }>
+				{ chapters.map(props => <Chapter hover={ hover } { ... props }/>) }
+			</div>
+		</div>
+	);
+}
+
+const Chapter = ({ title, href, hover }) => {
+	const node = useRef();
+	const rect = useRef();
+	const show = rect.current;
+	const hide = { width: 0, height: 0 };
+
+	useEffect(() => {
+		const { width, height } = node.current.getBoundingClientRect();
+		rect.current            = { width, height };
+	}, []);
+
+	return (
+		<a
+			class={ chapter_title }
+			ref={ node }
+			href={ href }
+			style={ hover ? show : hide }
+		>{ title }</a>
 	);
 }
 
