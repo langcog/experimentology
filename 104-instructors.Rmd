@@ -116,15 +116,16 @@ For undergraduate instructors, we have labelled advanced topics in purple. We ex
 ### 10 weeks, skills
 
 ```{r}
-syllabi <- read_csv("data/Syllabi.csv")
+syllabi <- read_csv("data/Syllabi.csv") 
+color.me <- which(syllabi$Category == "Content + Skills (10 weeks)" & syllabi$Color!="white")
 
 syllabi |>
-  select(-Color) |> 
   mutate(Chapter = str_replace(Chapter, "Chapter ", ""), 
          Chapter = ifelse(!is.na(Chapter), Chapter, "")) |>
   filter(Category == "Content + Skills (10 weeks)") |>
-  select(-Category) |>
-  knitr::kable(Caption = "A sample 10-week schedule with both skills and content materials")
+  select(-c(Category, Color)) |>
+  knitr::kable(Caption = "A sample 10-week syllabus with both skills and content materials") |> 
+  row_spec(color.me, bold = F, color = "black", background = "#ebe8fc")
 ```
 
 ### 10 weeks, content only
@@ -132,14 +133,15 @@ syllabi |>
 
 ```{r}
 syllabi <- read_csv("data/Syllabi.csv")
+color.me <- which(syllabi$Category == "Content ONLY (10 weeks)" & syllabi$Color!="white")
 
 syllabi |>
-  select(-Color) |> 
   mutate(Chapter = str_replace(Chapter, "Chapter ", ""), 
          Chapter = ifelse(!is.na(Chapter), Chapter, "")) |>
   filter(Category == "Content ONLY (10 weeks)") |>
-  select(-Category) |>
-  knitr::kable(Caption = "A sample 10-week schedule with both skills and content materials")
+  select(-c(Category, Color)) |>
+  knitr::kable(Caption = "A sample 10-week schedule with both skills and content materials") |> 
+  row_spec(color.me, bold = F, color = "black", background = "#ebe8fc")
 ```
 
 ### 16 weeks, skills 
@@ -147,42 +149,29 @@ syllabi |>
 
 ```{r}
 syllabi <- read_csv("data/Syllabi.csv")
+color.me <- which(syllabi$Category == "Content + Skills (16 weeks)" & syllabi$Color!="white")
 
 syllabi |>
-  select(-Color) |> 
   mutate(Chapter = str_replace(Chapter, "Chapter ", ""), 
          Chapter = ifelse(!is.na(Chapter), Chapter, "")) |>
   filter(Category == "Content + Skills (16 weeks)") |>
-  select(-Category) |>
-  knitr::kable(Caption = "A sample 10-week schedule with both skills and content materials")
+  select(-c(Category, Color)) |>
+  knitr::kable(Caption = "A sample 10-week schedule with both skills and content materials") |> 
+  row_spec(color.me, bold = F, color = "black", background = "#ebe8fc")
 ```
-<!-- ```{r} -->
-<!-- library(tidyverse) -->
-<!-- library(bs4cards) -->
-
-<!-- syllabi <- read_csv("data/Syllabi.csv") -->
-
-<!-- syllabi %>%  -->
-<!--   cards( -->
-<!--     title = paste("Week", Week), -->
-<!--     text = Topic, -->
-<!--     tags = Category, -->
-<!--     footer = paste("Reading:", Chapter), -->
-<!--     label_colour = paste(Color) -->
-<!--   ) -->
-<!-- ``` -->
 
 ### 16 weeks, content only 
 
 
 ```{r}
 syllabi <- read_csv("data/Syllabi.csv")
+color.me <- which(syllabi$Category == "Content ONLY (16 weeks)" & syllabi$Color!="white")
 
 syllabi |>
-  select(-Color) |> 
   mutate(Chapter = str_replace(Chapter, "Chapter ", ""), 
          Chapter = ifelse(!is.na(Chapter), Chapter, "")) |>
   filter(Category == "Content ONLY (16 weeks)") |>
-  select(-Category) |>
-  knitr::kable(Caption = "A sample 10-week schedule with both skills and content materials")
+  select(-c(Category, Color)) |>
+  knitr::kable(Caption = "A sample 10-week schedule with both skills and content materials") |> 
+  row_spec(color.me, bold = F, color = "black", background = "#ebe8fc")
 ```
