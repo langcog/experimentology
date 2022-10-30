@@ -25,27 +25,52 @@ One important and unusual element of the experiment was its treatment of potenti
 
 ## Estimating a quantity
 
-If experiments are about estimating effects, how do we actually use our experimental data to make these estimates? With apologies to Fisher, for our example we'll design a slightly more modern version of his experiment using a Likert scale (1--7 ratings) and a between-participants design (so each participant gets only one cup of tea). Each of these elements will be discussed in more detail in future chapters. 
+If experiments are about estimating effects, how do we actually use our experimental data to make these estimates? With apologies to Fisher, for our example we'll design a slightly more modern version of his experiment, shown in Figure \@ref(fig:estimation-expt). 
 
-Our causal theory is that the tea quality is affected by milk-tea ordering, so we'll test that by rating tea quality both milk-first and tea-first. We'll do this as a field trial in an English tea cafe: when people order tea with milk, we'll randomly present it milk-first or tea-first and then elicit a rating on a Likert scale from 1 (terrible) to 7 (delicious). We'll do this for 48 customers and then take a look at the data.^[Right now we're going to assume that our ratings are just simple numerical values and not worry about the fact that they come from a rating scale. This is what people often do, though it can cause problems in certain cases. If you're curious about Likert scales, we'll talk a bit more about them in Chapter \@ref(measurement).]
 
-Eventually, we'll want to estimate the effect of milk-first preparation on quality ratings (our effect of interest). But for now, our goal will be to estimate the quality of the tea when it is milk-first [the better way, according to some data; @kennedy2003]. More formally, we want to use our **sample** of 24 milk-first tea judgments to estimate a **population parameter** that we can't directly observe, namely the true perceived quality of all possible milk-first cups. 
+```{r estimation-expt, fig.cap="The structure of our tea tasting experiment.", fig.width=5}
+knitr::include_graphics("images/estimation/tea-expt.png")
+```
 
-We'll try to go easy on notation but some amount will make things clearer. We will use $\theta_{\textrm{milk-first}}$ ("theta") to denote the parameter we want to estimate (the **population parameter**) and $\widehat{\theta}_{\textrm{milk-first}}$, its **sample estimate**.^[Statisticians use "hats" like this to denote estimates from a specific sample. One way to remember this is that the "person in the hat" is wearing a hat to dress up as the actual quantity. Feel free to ignore this mnemonic; it helps us.]
+Our causal theory is that the tea quality is affected by milk-tea ordering, so we'll test that by rating tea quality both milk-first and tea-first. Our intended population to generalize to is the set of all tea drinkers, and towards that goal we sample a set of tea-drinkers. In practice, we might do a field trial in a cafe in which we approach patrons and ask them to participate in our experiment in exchange for a free cup of tea. Although this sample size is probably too small to get precise estimates, for the purpose of this example, we'll sample 18 tea drinkers -- nine in each condition. 
+
+As our manipulation, we randomly assign participants who give consent to participate into to one of our two conditions: milk-first and tea-first. This design is a between-participants design (so each participant gets only one cup of tea). They receive their cup of tea and taste it. Then as our measure, we ask for a rating of the tea on a Likert scale from 1 (terrible) to 7 (delicious).^[Right now we're going to assume that our ratings are just simple numerical values and not worry about the fact that they come from a rating scale. This is what people often do, though it can cause problems in certain cases. If you're curious about Likert scales, we'll talk a bit more about them in Chapter \@ref(measurement).]
+
+
+```{r estimation-data, fig.margin=TRUE, fig.cap="Schematic data from the tea tasting experiment."}
+knitr::include_graphics("images/estimation/data.png")
+```
+
+A sample dataset from our experiment is shown in Figure \@ref(fig:estimation-data). Eventually, we'll want to estimate the effect of milk-first preparation on quality ratings (our effect of interest). But for now, our goal will be to estimate the quality of the tea when it is milk-first [the better way, according to some data; @kennedy2003]. More formally, we want to use our **sample** of 9 milk-first tea judgments to estimate a **population parameter** that we can't directly observe, namely the true perceived quality of all possible milk-first cups. 
+
+We'll try to go easy on notation but some amount will make things clearer. We will use $\theta_{\textrm{M}}$ ("theta") to denote the parameter we want to estimate (the **population parameter**) and $\widehat{\theta}_{\textrm{M}}$, its **sample estimate**.^[Statisticians use "hats" like this to denote estimates from a specific sample. One way to remember this is that the "person in the hat" is wearing a hat to dress up as the actual quantity. Feel free to ignore this mnemonic; it helps us.]
 
 ### Maximum likelihood estimation
 
-OK, you are probably saying, if we want our estimate of milk-first quality, shouldn't we just take the average rating across the 24 cups of milk-first tea? The answer is yes. But let's unpack that choice: taking the sample mean as our estimate $\widehat{\theta}_{\textrm{milk-first}}$ is an example of an estimation approach called **maximum likelihood estimation**. In general terms, maximum likelihood estimation is a two-step process.
+OK, you are probably saying, if we want our estimate of milk-first quality, shouldn't we just take the average rating across the 9 cups of milk-first tea? The answer is yes. But let's unpack that choice: taking the sample mean as our estimate $\widehat{\theta}_{\textrm{M}}$ is an example of an estimation approach called **maximum likelihood estimation**. In general terms, maximum likelihood estimation is a two-step process.
 
 First, we assume a **model** for how the data were generated. This model is specified in terms of certain population parameters. In our example, the "model" is as simple as they come: we just assume there is some average level of tea quality and that the measurements vary around it.
 
-Second, we try to find the values of the population parameters that make our observed data as likely as possible. For example, if our sample mean is $\widehat{\theta}_{\textrm{milk-first}} = 4.5$, what underlying value of $\widehat{\theta}_{\textrm{milk-first}}$ would make these data most likely to occur? Well, suppose the underlying parameter were $\widehat{\theta}_{\textrm{milk-first}}=2.5$. Then it would be pretty unlikely that our sample mean would be so much bigger. So $\widehat{\theta}_{\textrm{milk-first}}=2.5$ is a poor guess for the population parameter based on these data. Conversely, if the parameter were $\widehat{\theta}_{\textrm{milk-first}}=6.5$, it would be a bit unlikely that our sample mean would be so much *smaller*. The value of $\widehat{\theta}_{\textrm{milk-first}}$ that makes these data most likely is just 4.5 itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate.
 
-### Estimating variation in ratings
+```{r estimation-ml, fig.margin= TRUE, fig.cap="The best-fitting normal distribution for data from the milk-first condition.", fig.width=5}
+knitr::include_graphics("images/estimation/maximum-likelihood.png")
+```
 
-Let's visualize our 24 milk-first tea ratings. Since ratings on our scale are discrete, Figure \@ref(fig:estimation-milk-first) shows them as a histogram. Our estimate of the mean, $\widehat{\theta}_{\textrm{milk-first}}$, is shown as a blue dashed line.
+Let's take a look at the data from the milk-first condition, shown in Figure \@ref(fig:estimation-ml)). Our observations are clustered around the mean, but they also show some variation. Some are higher and some are lower. Variation of this type is a feature of every data set. This variation can be summarized via a **probability distribution**, a mathematical entity that describes the properties of possible datasets. The only probability distribution we'll discuss here is the ubiquitous **normal distribution** (also sometimes called a "Gaussian distribution"). A normal distribution has two **parameters**, a **mean** and a **standard deviation**. These two parameters define the shape of the curve. The mean describes where its center goes, and the standard deviation describes how wide it is.
 
-```{r estimation-data}
+How do we fit a normal distribution to our data? We try to find the values of the population parameters that make our observed data as likely as possible. Let's start with the mean. 
+
+```{r estimation-ml2, fig.margin= TRUE, fig.cap="The best-fitting normal distribution for data from the milk-first condition.", fig.width=5}
+knitr::include_graphics("images/estimation/maximum-likelihood2.png")
+```
+
+For example, if our sample mean is $\widehat{\theta}_{\textrm{M}} = 4.5$, what underlying value of $\widehat{\theta}_{\textrm{M}}$ would make these data most likely to occur? Well, suppose the underlying parameter were $\widehat{\theta}_{\textrm{M}}=2.5$. Then it would be pretty unlikely that our sample mean would be so much bigger. So $\widehat{\theta}_{\textrm{M}}=2.5$ is a poor guess for the population parameter based on these data (Figure \@ref(fig:estimation-ml2)). Conversely, if the parameter were $\widehat{\theta}_{\textrm{M}}=6.5$, it would be a bit unlikely that our sample mean would be so much *smaller*. The value of $\widehat{\theta}_{\textrm{M}}$ that makes these data most likely is just 4.5 itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate.
+
+The second parameter of the normal distribution is the standard deviation. The standard deviation is just exactly what its name says: the average deviation between the mean and any given observation. We won't discuss how to estimate the standard deviation for your sample here; you can do this computation easily in any software package. What's important for now is just that the standard deviation gives us a way to describe the width of the normal distribution.
+
+<!-- Let's visualize our milk-first tea ratings. Since ratings on our scale are discrete, Figure \@ref(fig:estimation-milk-first) shows them as a histogram. Our estimate of the mean, $\widehat{\theta}_{\textrm{M}}$, is shown as a blue dashed line. -->
+
+```{r estimation-data2}
 source("helper/tea_helper.R")
 
 sigma <- 1.25
@@ -54,144 +79,82 @@ n_total <- 48
 tea_data <- make_tea_data(n_total, sigma)
 ```
 
-::: {.box .code}
-In this chapter and the subsequent statistics and visualization chapters of the book, we'll try to facilitate understanding and using these concepts in practice by giving the R code we use in our examples in these code boxes. We'll assume that you have some knowledge of base R and the Tidyverse -- go ahead and take a look at Appendix \@ref(tidyverse) if you haven't already. 
+<!-- ::: {.box .code} -->
+<!-- In this chapter and the subsequent statistics and visualization chapters of the book, we'll try to facilitate understanding and using these concepts in practice by giving the R code we use in our examples in these code boxes. We'll assume that you have some knowledge of base R and the Tidyverse -- go ahead and take a look at Appendix \@ref(tidyverse) if you haven't already.  -->
 
-Since we're going to be working with lots of data from the tea tasting example, we wrote a function called `make_tea_data` that creates a `tibble` with some (made up) data from our modern tea-tasting experiment. 
+<!-- Since we're going to be working with lots of data from the tea tasting example, we wrote a function called `make_tea_data` that creates a `tibble` with some (made up) data from our modern tea-tasting experiment.  -->
 
-```{r eval=FALSE, echo=TRUE}
-tea_data <- make_tea_data(n_total, sigma)
-```
+<!-- ```{r eval=FALSE, echo=TRUE} -->
+<!-- tea_data <- make_tea_data(n_total, sigma) -->
+<!-- ``` -->
 
-Here's what the first few rows of those data look like:
+<!-- Here's what the first few rows of those data look like: -->
 
-```{r}
-knitr::kable(head(tea_data), digits = 2)
-```
-:::
+<!-- ```{r} -->
+<!-- knitr::kable(head(tea_data), digits = 2) -->
+<!-- ``` -->
+<!-- ::: -->
 
-```{r estimation-milk-first, fig.cap="Ratings of the quality of milk-first tea, with the best fitting normal distribution shown in blue (mean shown by the dashed line)."}
-td <- filter(tea_data, condition == "milk first")
-ggplot(td, aes(x = rating)) + 
-  geom_histogram(aes(y = ..count..), binwidth = 1) + 
-  xlim(1,7) + 
-  geom_vline(xintercept = mean(td$rating), lty = 2, col = "blue") + 
-  stat_function(fun = function(x) 
-    {dnorm(x, mean = mean(td$rating), sd = sd(td$rating)) * 24}, 
-    col = "blue") +
-  ylab("Number of ratings") + 
-  xlab("Quality rating (1-7)")
+<!-- ```{r estimation-milk-first, fig.cap="Ratings of the quality of milk-first tea, with the best fitting normal distribution shown in blue (mean shown by the dashed line)."} -->
+<!-- ggplot(td, aes(x = rating)) + -->
+<!--   geom_histogram(aes(y = ..count..), binwidth = 1) + -->
+<!--   xlim(1,7) + -->
+<!--   geom_vline(xintercept = mean(td$rating), lty = 2, col = "blue") + -->
+<!--   stat_function(fun = function(x) -->
+<!--     {dnorm(x, mean = mean(td$rating), sd = sd(td$rating)) * 24}, -->
+<!--     col = "blue") + -->
+<!--   ylab("Number of ratings") + -->
+<!--   xlab("Quality rating (1-7)") -->
 
-```
+<!-- ``` -->
 
-Our observations are clustered around the mean, but they also show some variation. Some are higher and some are lower. Variation of this type is a feature of every data set. This variation can be summarized via a **probability distribution**, a mathematical entity that describes the properties of possible datasets. The only probability distribution we'll discuss here is the ubiquitous **normal distribution** (also sometimes called a "Gaussian distribution"). A normal distribution has two **parameters**, a **mean** and a **standard deviation**. These two parameters define the shape of the curve. The mean describes where its center goes, and the standard deviation describes how wide it is.
-
-The blue curve shown in Figure \@ref(fig:estimation-milk-first) is the normal distribution that is closest to the data in our milk-first condition. Its mean is of course $\widehat{\theta}_{\textrm{milk-first}}$, the parameter we just estimated. But to plot this curve, we also had to estimate the standard deviation. It turns out that the standard deviation is just exactly what its name says: the average deviation between the mean and any given observation. We won't discuss how to estimate the standard deviation for your sample here; you can do this computation easily in any software package. What's important for now is just that the standard deviation gives us a way to describe the width of the normal distribution.
 
 ### Bayesian estimation
 
-The  maximum likelihood estimation example above describes a common approach to estimating values, where the researcher completely puts aside their prior expectations about what these values might be. Often this approach makes sense, especially when we have no prior expectations about the values we are estimating. But sometimes we *do* have relevant beliefs about the value. For example, before we perform our tea experiment, we don't know exactly what $\theta_{\textrm{milk-first}}$ will be, but it seems a bit unlikely that tea would be consistently rated as either horrible (1) or perfect (7). We have what you might call *weak prior expectations* about the kinds of ratings we'll receive.
+The  maximum likelihood estimation example above describes a common approach to estimating values, where the researcher completely puts aside their prior expectations about what these values might be. Often this approach makes sense, especially when we have no prior expectations about the values we are estimating. But sometimes we *do* have relevant beliefs about the value. For example, before we perform our tea experiment, we don't know exactly what $\theta_{\textrm{M}}$ will be, but it seems a bit unlikely that tea would be consistently rated as either horrible (1) or perfect (7). We have what you might call *weak prior expectations* about the kinds of ratings we'll receive.
 
 These kind of expectations are most useful when we have a very small amount of data. For example, if our very first participant in the experiment rated their tea as terrible, we wouldn't want to jump to the conclusion that the tea was actually bad. Instead, we might speculate that the participant was having a bad day or just brushed their teeth. On the other hand, if all of our participants gave bad ratings to their tea, the data would be more persuasive; in that case, we might want to tell the cafe that they are serving substandard tea. With a little data, our prior expectations should moderate our conclusions; as we get more, we should put greater weight on the data.
 
-How do we quantify this tradeoff between our prior expectations and our current observations? We can do this via **Bayesian estimation** of $\widehat{\theta}_{\textrm{milk-first}}$. Bayesian estimation provides a principled framework for integrating prior beliefs and data. These estimation techniques can be very helpful in cases where data are sparse or prior beliefs are strong.
+How do we quantify this tradeoff between our prior expectations and our current observations? We can do this via **Bayesian estimation** of $\widehat{\theta}_{\textrm{M}}$. Bayesian estimation provides a principled framework for integrating prior beliefs and data. These estimation techniques can be very helpful in cases where data are sparse or prior beliefs are strong.
 
-In Bayesian estimation, we observe some data $d$, consisting of the set of correct and incorrect responses in the experiment. Now we can use **Bayes' rule**, a tool from basic probability theory, to estimate this number. Bayes' rule says:
-
-$$
-\color{purple}{p(\theta_{\textrm{milk-first}} | \text{data})} = \frac{\color{red}{p(\text{data} | \theta_{\textrm{milk-first}} )} \color{blue}{p(\theta_{\textrm{milk-first}} )}}{\color{black}{p(\text{data})}}.
-$$
-
-\noindent Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(\theta_{\textrm{milk-first}} |\text{data})$) is called the **posterior probability** -- it tell us what we should believe about the population parameter on tea quality, given the data we observed.^[We're making the posterior `r colorize("purple","purple")` to indicate the combination of likelihood (`r colorize("red","red")`) and prior (`r colorize("blue","blue")`).]
-
-The first part of the numerator is $p(\text{data}|H)$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.^[Speaking informally, "likelihood" is just a synonym for probability, but this is a technical meaning for the term, which can get a bit confusing.] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the tea is of high quality (say $\theta_{\textrm{milk-first}} = 6.5$) then the probability of a bunch of low accuracy observations will be fairly low.
-
-The second term in the numerator, $p(\theta_{\textrm{milk-first}} )$, is called the **prior**. This term encodes our beliefs about the likely distribution of tea quality. Intuitively, if we think that the tea is likely of high quality, we should require more evidence to convince us that it's bad. In contrast, if we think it's probably bad, a few examples of low ratings might serve to convince us.
+In Bayesian estimation, we observe some data $d$, consisting of the set of correct and incorrect responses in the experiment. Now we can use **Bayes' rule**, a tool from basic probability theory, to estimate this number (Figure \@ref(fig:estimation-bayes)). 
 
 
-```{r inference-bayes-demo, fig.cap="Examples of Bayesian inference about tea ratings under two different priors (panels) and a small sample size. Blue lines give the prior probability distribution, red lines give the likelihood of the data, and purple lines give the posterior distribution from combining likelihood and prior."}
-
-# example follows math here: https://people.eecs.berkeley.edu/~jordan/courses/260-spring10/lectures/lecture5.pdf
-
-td_subsample <- td[1:3,]
-
-n <- length(td_subsample$rating)
-mu_hat <- mean(td_subsample$rating)
-
-sigma2_0 <- 4
-sigma2 <- sigma^2
-sigma2_post <- 1 /  (1/sigma2_0 + n/sigma2)
-sigma_post <- sqrt(sigma2_post)
-
-bayes <- expand_grid(x = seq(1,7,.1),
-                     mu0 = c(2.5, 6.5)) |>
-  rowwise() |>
-  mutate(h = dnorm(x = x, mean = mu0, sd = sqrt(sigma2_0)),
-         d_given_h = dnorm(x = x, mean = mu_hat, sd = sigma),
-         h_given_d = dnorm(x = x, 
-                           mean = sigma2_post * (mu0 / sigma2_0 + ((n * mu_hat) / sigma2)), 
-                           sd = sigma_post)) |>
-  group_by(mu0) %>%
-  mutate(h_norm = h / sum(h),
-         h_given_d_norm = h_given_d / sum(h_given_d),
-         d_given_h_norm = d_given_h / sum(d_given_h),
-         map = x[h_given_d == max(h_given_d)],
-         label = case_when(mu0 == 2.5 ~ "Prior: low rating",
-                           mu0 == 6.5 ~ "Prior: high rating"),
-         label = fct_relevel(label, "Flat", "Prior: low rating"))
-
-ggplot(bayes, aes(x = x, y = h_norm)) +
-  geom_line(col = "blue") +
-  geom_line(aes(y = h_given_d_norm), col = "purple") +
-  geom_line(aes(y = d_given_h_norm), col = "red") +
-  geom_vline(xintercept = .5, lty = 2) +
-  geom_vline(aes(xintercept = map), col = "purple", lty = 3) +
-  facet_wrap(~label) +
-  ylab("Normalized probability") +
-  xlab("Rating level")
+```{r estimation-bayes, fig.margin= TRUE, fig.cap="Bayes rule, annotated."}
+knitr::include_graphics("images/estimation/bayes.png")
 ```
 
+<!-- $$ -->
+<!-- \color{purple}{p(\theta_{\textrm{M}} | \text{data})} = \frac{\color{red}{p(\text{data} | \theta_{\textrm{M}} )} \color{blue}{p(\theta_{\textrm{M}} )}}{\color{black}{p(\text{data})}}. -->
+<!-- $$ -->
 
-Figure \@ref(fig:inference-bayes-demo) gives an example of the combination of prior and data. In this example, we look at what difference the prior makes after observing `r n` ratings.  If we go in assuming that the tea is likely to be bad, we are biased downward in our highest posterior probability estimate of `r bayes$map[bayes$label == "Prior: low rating"][1]`; if we go in that tea is likely to be good, we end up biased upwards to `r bayes$map[bayes$label == "Prior: high rating"][1]`.^[Note that this prior is operating only over on ratings -- estimates on tea quality. Later on when we talk about comparing milk-first and tea-first cups, we can consider putting a prior on tea discrimination.]
+\noindent Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(\theta_{\textrm{M}} |\text{data})$) is called the **posterior probability** -- it tell us what we should believe about the population parameter on tea quality, given the data we observed.^[We're making the posterior `r colorize("purple","purple")` to indicate the combination of likelihood (`r colorize("red","red")`) and prior (`r colorize("blue","blue")`).]
 
+The first part of the numerator is $p(\text{data}|\theta_{\textrm{M}})$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.^[Speaking informally, "likelihood" is just a synonym for probability, but this is a technical meaning for the term, which can get a bit confusing.] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the tea is of high quality (say $\theta_{\textrm{M}} = 6.5$) then the probability of a bunch of low accuracy observations will be fairly low.
 
-```{r inference-bayes-demo2, fig.cap="Bayesian inference about tea ratings under two different priors with the full dataset."}
+The second term in the numerator, $p(\theta_{\textrm{M}} )$, is called the **prior**. This term encodes our beliefs about the likely distribution of tea quality. Intuitively, if we think that the tea is likely of high quality, we should require more evidence to convince us that it's bad. In contrast, if we think it's probably bad, a few examples of low ratings might serve to convince us.
 
-n <- length(td$rating)
-mu_hat <- mean(td$rating)
+```{r estimation-bayes-curves, fig.cap="Bayesian inference about tea ratings with a low prior."}
 
-sigma2_post <- 1 /  (1/sigma2_0 + n/sigma2)
-sigma_post <- sqrt(sigma2_post)
-
-bayes_full <- expand_grid(x = seq(1,7,.1),
-                     mu0 = c(2.5, 6.5)) |>
-  rowwise() |>
-  mutate(h = dnorm(x = x, mean = mu0, sd = sqrt(sigma2_0)),
-         d_given_h = dnorm(x = x, mean = mu_hat, sd = sigma),
-         h_given_d = dnorm(x = x, 
-                           mean = sigma2_post * (mu0 / sigma2_0 + ((n * mu_hat) / sigma2)), 
-                           sd = sigma_post)) |>
-  group_by(mu0) %>%
-  mutate(h_norm = h / sum(h),
-         h_given_d_norm = h_given_d / sum(h_given_d),
-         d_given_h_norm = d_given_h / sum(d_given_h),
-         map = x[h_given_d == max(h_given_d)],
-         label = case_when(mu0 == 2.5 ~ "Prior: low rating",
-                           mu0 == 6.5 ~ "Prior: high rating"),
-         label = fct_relevel(label, "Flat", "Prior: low rating"))
-
-ggplot(bayes_full, aes(x = x, y = h_norm)) +
-  geom_line(col = "blue") +
-  geom_line(aes(y = h_given_d_norm), col = "purple") +
-  geom_line(aes(y = d_given_h_norm), col = "red") +
-  geom_vline(xintercept = .5, lty = 2) +
-  geom_vline(aes(xintercept = map), col = "purple", lty = 3) +
-  facet_wrap(~label) +
-  ylab("Normalized probability") +
-  xlab("Rating level")
+knitr::include_graphics("images/estimation/bayes-curves.png")
 ```
 
-Contrast that figure with Figure \@ref(fig:inference-bayes-demo2), which runs the same Bayesian estimation but with the full dataset of `r n` observations. Now the posterior distribution is much more peaked. The prior also makes much less difference to our highest-probability estimates. With the low prior, our estimate is `r bayes_full$map[bayes_full$label == "Prior: low rating"][1]`; with the high prior it is `r bayes_full$map[bayes_full$label == "Prior: high rating"][1]` also! 
+Figure \@ref(fig:estimation-bayes-curves) gives an example of the combination of prior and data. In this example, we look at what difference the prior makes after observing 9 ratings.  If we go in assuming that the tea is likely to be bad, we are biased downward in our posterior mean (purple line) relative to the maximum likelihood estimate (red line).^[Note that this prior is operating only over on ratings -- estimates of tea quality. Later on when we talk about comparing milk-first and tea-first ratings to get an estimate of the experimental effect, we could consider putting a prior on tea *discrimination* (e.g., the experimental effect).]
+
+
+```{r estimation-bayes-curves-weak, fig.cap="Bayesian inference about tea ratings with more data."}
+
+knitr::include_graphics("images/estimation/bayes-curves-weak.png")
+```
+
+Priors aren't usually as strong as the one shown above. Figure \@ref(fig:estimation-bayes-curves-weak) shows how the picture shifts when we have a weaker prior. Now the posterior mean (purple) is closer to the maximum likelihood mean (red). This situation is more common -- the prior encodes a weak assumption that ratings won't cluster around the ends of the scale.
+
+```{r estimation-bayes-curves-moredata, fig.cap="Bayesian inference about tea ratings with more data."}
+
+knitr::include_graphics("images/estimation/bayes-curves-moredata.png")
+```
+
+The effect of the prior is also decreased when you have more data. Take a look at Figure \@ref(fig:estimation-bayes-curves-moredata): now the posterior distribution is much more peaked and also much closer to the data -- the prior makes much less difference.   
 
 Bayesian estimation is most important when you have strong beliefs and not a lot of data. That can be a case where you have just a few participants in your experiment, but it's also good -- and perhaps more common -- to use Bayesian methods when you have a lot of data, but maybe not that much data about particular units that you care about. For example, you might have a large dataset about the effects of an educational intervention but not that much data about how it affects a particular subgroup. In general, though, Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior (a prior that makes any value equally likely) or as you get infinite data.
 
@@ -203,9 +166,14 @@ We've now covered estimating a single parameter (the mean in just the milk-first
 
 Let's refer to the causal effect we care about as our **treatment effect**. In practice, estimating $\beta$ is going to be a pretty straightforward extension to what we did before.
 
-In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution, but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let's term the parameters for the tea-first group $\theta_{\textrm{tea-first}}$ and $\sigma$. To estimate the treatment effect, we are positing a **model** in which the milk-first ratings are normally distributed with mean $\theta_{\textrm{milk-first}} = \theta_{\textrm{tea-first}} + \beta$ and with standard deviation $\sigma$.^[For simplicity, we're assuming that the standard deviations in each tea group are equal.]
+In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution, but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let's term the parameters for the tea-first group $\theta_{\textrm{T}}$ and $\sigma$. To estimate the treatment effect, we are positing a **model** in which the milk-first ratings are normally distributed with mean $\theta_{\textrm{M}} = \theta_{\textrm{T}} + \beta$ and with standard deviation $\sigma$.^[For simplicity, we're assuming that the standard deviations in each tea group are equal.]
 
-As in the one-sample case (i.e., estimating the mean of just the milk-first group), maximum likelihood estimation would then proceed by finding the value of $\beta$ that makes the data most likely under the assumed model. As you'd probably expect, this estimate $\widehat{\beta}$ turns out to be simply the difference in sample means, $\theta_{\textrm{milk-first}} - \theta_{\textrm{tea-first}}$.
+
+```{r estimation-data-difference, fig.margin=TRUE, fig.cap="Schematic data from the tea tasting experiment."}
+knitr::include_graphics("images/estimation/data-difference.png")
+```
+
+As in the one-sample case (i.e., estimating the mean of just the milk-first group), maximum likelihood estimation would then proceed by finding the value of $\beta$ that makes the data most likely under the assumed model. As you'd probably expect, this estimate $\widehat{\beta}$ turns out to be simply the difference in sample means, $\theta_{\textrm{M}} - \theta_{\textrm{T}}$. You can see this difference pictured in Figure \@ref(fig:estimation-data-difference).
 
 In the Bayesian framework, we would again specify a prior $p(\beta)$ that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could  specify a flat prior, $p(\beta) \propto 1$. If we believe the treatment effect is likely to favor milk-first pouring ($\beta>0$), we could specify a normal prior centered at some positive value (e.g., $\beta=0.5$); the standard deviation of this prior would encode how certain we are about our prior beliefs. And if we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at 0, which has the effect of "shrinking" the estimates closer to 0.^[The measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Of course, this is only one kind of uncertainty! A more holistic view of the overall credibility of an estimate should also account for other things outside of the model, like study design issues and bias.]
 
@@ -220,14 +188,14 @@ But what about our participants' ratings of tea quality, which were provided on 
 To provide a common language for describing these relationships, some researchers use *standardized effect sizes.* A common standardized effect size is Cohen's *d*, which provides a standardized estimate of the difference between two means. There are many different ways to calculate Cohen's *d* [@lakens2013], but all approaches are usually some variant of the following formula:
 
 $$
-d = \frac{\theta_{\textrm{milk-first}} - \theta_{\textrm{tea-first}}}{\sigma_{\text{pooled}}}
+d = \frac{\theta_{\textrm{M}} - \theta_{\textrm{T}}}{\sigma_{\text{pooled}}}
 $$
 
-\noindent where the difference between means ($\theta_{\textrm{tea-first}}$ and $\theta_{\textrm{milk-first}}$) is divided by the pooled standard deviation $\sigma_{\text{pooled}}$.^[We're dropping the hats here because we're now working with a whole bunch of estimates, so everything would have a hat!] Intuitively, what you're doing is taking the study effect ($\beta$) and dividing it -- scaling it -- by the variation we saw between individuals in the study. 
+\noindent where the difference between means ($\theta_{\textrm{T}}$ and $\theta_{\textrm{M}}$) is divided by the pooled standard deviation $\sigma_{\text{pooled}}$.^[We're dropping the hats here because we're now working with a whole bunch of estimates, so everything would have a hat!] Intuitively, what you're doing is taking the study effect ($\beta$) and dividing it -- scaling it -- by the variation we saw between individuals in the study. 
 
-Let's compute this measure for our tea-drinking study. We can just plug in the estimates we made earlier in the chapter and compute the standard deviation of our observed data:
+Let's compute this measure for our tea-drinking study. We can just plug in the estimates we see in Figure \@ref(fig:estimation-data-difference) and compute the standard deviation of our observed data:
 
-$$d = \frac{\theta_{\textrm{milk-first}} - \theta_{\textrm{tea-first}}}{\sigma_{\text{pooled}}} = \frac{4.5- 3.5}{1.25} = \frac{1}{1.25} = 0.80$$
+$$d = \frac{\theta_{\textrm{M}} - \theta_{\textrm{T}}}{\sigma_{\text{pooled}}} = \frac{4.5- 3.5}{1.25} = \frac{1}{1.25} = 0.80$$
 \noindent In other words, the effect size of the difference between the two conditions is .8 standard deviations. 
 
 We previously said that people who drank milk-first tea had quality ratings that were, on average, 1 point higher on a 7-point scale ($\widehat{\beta} = 1$ point). Cohen's *d* translates the arbitrary units of our rating scale into a **unit-less** effect size that is measured in terms of the variation in the data. You may find yourself wondering: "why would I ever describe things in terms of standard deviations?" The key benefit is that it allows us to compare the size of the effect to studies that use different measures.
@@ -238,7 +206,7 @@ It might at first seem reasonable just to normalize by the length of the scale. 
 
 Let's compute the effect size for the cross-cultural replication. We'll imagine that participants who drank milk-first tea gave an average rating of 50/100 and participants who drank tea-first tea rated it 49 on average. But if their variability was also relatively lower, perhaps the standard deviation of their ratings was only 5. Using the formula above, we find 
 
-$${d_{US}} = \frac{\theta_{\text{tea-first}} - \theta_{\text{milk-first}}}{\sigma_{\text{pooled}}} = \frac{50 - 49}{5} = \frac{1}{5}=  0.2$$
+$${d_{US}} = \frac{\theta_{\text{T}} - \theta_{\text{M}}}{\sigma_{\text{pooled}}} = \frac{50 - 49}{5} = \frac{1}{5}=  0.2$$
 
 \noindent A Cohen's *d* of .2 means that US cafe patrons rated their tea .2 standard deviations higher when it was milk-first, much smaller than the .8 standard deviation difference in the UK patrons. 
 
@@ -256,7 +224,7 @@ Standardizing effect sizes, though, has limitations. For example, if two interve
 
 For example, imagine we conducted our tea experiment again, but this time with (decaf) tea, and focusing on children. Maybe milk-first tea tastes the same amount better than tea-first tea for kids and for adults. But it's pretty well known that kids are more variable in their responding. This higher level of variability would lead us to observe a smaller effect size in kids vs. adults. Recall that our UK adult SD was 1.25, and our effect size was $d = .8$. Imagine that children's SD is 2.5. In this scenario, even if tea led to the same 1-point absolute change in feelings of excitement among adults and children, the standardized effect size for kids would look half as big:
 
-$${d_{kids}} = \frac{\theta_{\text{tea-first}} - \theta_{\text{milk-first}}}{\sigma_{\text{pooled}}} = \frac{5- 4}{2.5} = \frac{1}{2.5} =  .4$$
+$${d_{kids}} = \frac{\theta_{\text{T}} - \theta_{\text{M}}}{\sigma_{\text{pooled}}} = \frac{5- 4}{2.5} = \frac{1}{2.5} =  .4$$
 
 This example highlights some of the challenges with standardization. If we focused on the fact that both adults and children experienced a 1-point change in excitement levels ($\widehat{\beta} = 1$), we would conclude that milk-first tea is equally tasty for adults and kids. If we focused on the standardized effect sizes, however, we would conclude that the effect of tea is twice as big for adults.
 
