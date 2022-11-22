@@ -91,7 +91,10 @@ const TOC = props => {
 					width={ width }
 					{ ... props }
 				/>
-				: <Mobile background={ background }/>
+				: <Mobile
+					background={ background }
+					{ ... props }
+				/>
 			}
 		</nav>
 	);
