@@ -1,80 +1,99 @@
-import {
-	toc,
-	book_title,
-	part,
-	part_title,
-	part_title_first,
-	part_title_rest,
-	dropdown,
-	chapter_title,
-} from './toc.module.scss'
+import style                     from './toc.module.scss'
+import Sticky                    from 'react-stickynode'
+import SiteNav, { ContentGroup } from 'react-site-nav'
+import { slide as Menu }         from 'react-burger-menu'
+import { useState, useEffect }   from 'preact/hooks'
 
-import { title, subtitle, parts }      from '/contents.json'
-import { useState, useEffect, useRef } from 'preact/hooks'
-
-const TOC = () => (
-	<header class={ toc } id='toc'>
-		<a class={ book_title } href='/'>{ `${title}: ${subtitle}` }</a>
-		<nav>
-		{ parts.map(props => <Part { ... props }/>) }
-		</nav>
-	</header>
-)
-
-const Part = ({ first, rest, chapters }) => {
-	const [ hover, setHover ] = useState(true);
-
-	const node = useRef();
-	const rect = useRef();
-	const show = rect.current;
-	const hide = { width: 0 };
-
-	useEffect(() => {
-		const { width } = node.current.getBoundingClientRect();
-		rect.current    = { width };
-
-		setHover(false);
-	}, []);
+const Desktop = ({ book, parts, width, color, background, ... props }) => {
+	const columnWidth = width / parts.length;
+	const rowHeight   = 40;
 
 	return (
-		<div
-			class={ part }
-			onMouseEnter={ () => setHover(true)  }
-			onMouseLeave={ () => setHover(false) }
-		>
-			<div class={ part_title }>
-				<div class={ part_title_first }>{ first }</div>
-				<div
-					class={ part_title_rest }
-					ref={ node }
-					style={ hover ? show : hide }
-				>{ rest }</div>
-			</div>
-			<div class={ dropdown }>
-				{ chapters.map(props => <Chapter hover={ hover } { ... props }/>) }
-			</div>
-		</div>
+		<header class={ style.desktop } style={{ '--rowHeight' : rowHeight }}>
+			<Sticky className={ style.sticky } innerZ={ 2 }>
+				<a class={ style.book } href='/'>{ book }</a>
+				<SiteNav
+					columnWidth={ columnWidth }
+					rowHeight={ rowHeight }
+					color={ color }
+					background={ background }
+					contentColor={ color }
+					contentBackground={ background }
+					{ ... props }
+				>
+					{parts.map(({ part, chapters }, i, { length }) => {
+						const isLast = i < length - 1;
+						const group  = isLast ? style.part    : style.appendices;
+						const item   = isLast ? style.chapter : style.appendix;
+
+						return (
+							<ContentGroup
+								title={ <a class={ group }>{ part }</a> }
+								width={ columnWidth * 1.75 }
+								height={ rowHeight * chapters.length }
+							>
+								{chapters.map(({ chapter, href }) => (
+									<a class={ item } href={ href }>{ chapter }</a>
+								))}
+							</ContentGroup>
+						);
+					})}
+				</SiteNav>
+			</Sticky>
+		</header>
 	);
 }
 
-const Chapter = ({ title, href, hover }) => {
-	const node = useRef();
-	const rect = useRef();
-	const show = rect.current;
-	const hide = { width: 0, height: 0 };
+const Mobile = ({ book, parts }) => (
+	<header class={ style.mobile }>
+		<Menu right styles={{ bmOverlay: { background: 'none' } }}>
+			<a class={ style.book } href='/'>{ book }</a>
+			{parts.map(({ part, chapters }, i, { length }) => {
+				const isLast = i < length - 1;
+				const group  = isLast ? style.part    : style.appendices;
+				const item   = isLast ? style.chapter : style.appendix;
+
+				return (
+					<div class={ style.group }>
+						<a class={ group }>{ part }</a>
+						{chapters.map(({ chapter, href }) => (
+							<a class={ item } href={ href }>{ chapter }</a>
+						))}
+					</div>
+				);
+			})}
+		</Menu>
+	</header>
+)
+
+const TOC = props => {
+	const [ width, setWidth ] = useState(innerWidth);
 
 	useEffect(() => {
-		const { width, height } = node.current.getBoundingClientRect();
-		rect.current            = { width, height };
+		addEventListener('resize', () => setWidth(innerWidth));
 	}, []);
 
+	const color      = 'hsl( 0, 0%,  80% )';
+	const background = 'hsl( 0, 0%,  30% )';
+	const breakpoint = 760;
+
 	return (
-		<a
-			class={ chapter_title }
-			ref={ node }
-			href={ href }
-			style={ hover ? show : hide }
-		>{ title }</a>
+		<nav class={ style.toc } style={{
+			'--color'      : color,
+			'--background' : background,
+		}}>
+			{
+				width > breakpoint
+				? <Desktop
+					color={ color }
+					background={ background }
+					breakpoint={ breakpoint }
+					width={ width }
+					{ ... props }
+				/>
+				: <Mobile background={ background }/>
+			}
+		</nav>
 	);
 }
 

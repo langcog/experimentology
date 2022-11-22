@@ -1,67 +1,87 @@
+@mixin count($name, $style) {
+	&::before {
+		content: counter($name, $style);
+		counter-increment: $name;
+		padding: 0 0.5em;
+		font-size: 0.7em;
+		min-width: 2ch;
+		text-align: right;
+	}
+}
+
+.sticky {
+	position: relative;
+	top: -8px;
+	margin-left: -12.5vw;
+}
+
 .toc {
-	--darker: #111;
-
-	white-space: pre;
+	font-family: Source Sans Pro;
+	font-variant: small-caps;
 	font-size: 1.4rem;
-	margin-top: 3em;
-	color: dimgray;
-
 	counter-reset: part chapter appendix;
 
-	* {
-		transition-duration: 0.5s;
-		transition-property: width, height, color, border-color;
+	.part     { @include count( part,     upper-roman ); }
+	.chapter  { @include count( chapter,  decimal     ); }
+	.appendix { @include count( appendix, upper-latin ); }
+
+	a {
+		all: unset;
+		display: flex;
+		align-items: center;
+		background: var(--background);
+		color: var(--color);
 	}
 
-	&, * { display: flex; }
-	&, .part, .dropdown { flex-direction: column; }
+	.book, .chapter, .appendix {
+		cursor: pointer;
+		transition: color 0.4s;
+		&:hover { color: white; }
+	}
 
-	:link {
-		background: none;
-		text-shadow: none;
+	.desktop {
+		.book { justify-content: center; }
+
+		a {
+			white-space: pre;
+			height: calc(var(--rowHeight) * 1px);
+		}
+	}
+
+	.mobile {
+		.part, .appendices {
+			padding-top: 0.5em;
+			border-top: medium solid gray;
+		}
+
+		.book, .group { margin: 0.5em 0; }
+
+		.chapter, .appendix { padding-left: 1.5em; }
+
+		a { padding: 0 0.5em; }
 	}
 }
 
-.book_title, .part_title, .dropdown { padding: 0.2em 0; }
-
-.book_title { font-style: italic; }
-
-.part_title_rest, .chapter_title { overflow: hidden; }
-
-.part_title {
-	border-width: 1px 0;
-	border-style: solid;
-	border-color: lightgray;
-}
-
-:is(.book_title, .chapter_title):hover { color: var(--darker); }
-
-.part {
-	&:not(:first-child) > * { padding-left:  0.4em; }
-	&:not(:last-child)  > * { padding-right: 0.4em; }
-
-	&:hover .part_title {
-		border-bottom-width: 2px;
-		border-bottom-color: black;
-
-		* { color: var(--darker); }
+:global {
+	.bm-burger-button {
+		position: fixed;
+		width: 24px;
+		height: 20px;
+		left: 10px;
+		top: 10px;
 	}
 
-	.part_title_first::before { --counter: part;     --style: upper-roman; }
-	.chapter_title::before    { --counter: chapter;  --style: decimal;     }
-}
+	.bm-burger-bars {
+		background: var(--background);
+		border-radius: 2px;
+	}
 
-.part:last-child {
-	.part_title_first::before {                      --style: none;        }
-	.chapter_title::before    { --counter: appendix; --style: upper-latin; }
-}
+	.bm-menu-wrap {
+		position: fixed;
+		top: -8px;
+	}
 
-:is(.part_title_first, .chapter_title)::before {
-	content: counter(var(--counter), var(--style));
-	counter-increment: var(--counter);
-	min-width: 2ch;
-	padding-right: 0.4em;
-	font-size: 0.7em;
-	font-weight: bold;
-	align-self: center;
+	.bm-menu {
+		background: var(--background);
+	}
 }

@@ -47,28 +47,37 @@ const boxes = {
 	readings               : { color: 'magenta', icon: faBook,                open: false, preview: false },
 };
 
-const Box = ({ title, type, content }) => {
+const Box = ({ type, content }) => {
 	const { [ type ]: { color, icon, open, preview } } = boxes;
+
+	const trigger = (
+		<>
+			<FontAwesomeIcon icon={ icon }/>
+			<span>{ type.replace('_', ' ') }</span>
+			<FontAwesomeIcon icon={ faAnglesDown }/>
+		</>
+	);
+
+	const children = parse(content)
+	.filter(node => node.type)
+	.map(node => {
+		const { props: { children } } = node;
+		const [ title ] = children.match?.(/(?<=\(TITLE\) ).+/) ?? [];
+
+		return title ? <h3>{ title }</h3> : node;
+	});
 
 	return (
 		<div class={ style.box } style={{ '--color': theme[color] }}>
 			<Collapsible
-				open={ open }
 				className={ preview && style.preview }
+				trigger={ trigger }
+				children={ children }
+				open={ open }
 				overflowWhenOpen='visible'
 				easing='ease'
 				transitionTime={ 300 }
-				trigger={
-					<>
-						<FontAwesomeIcon icon={ icon }/>
-						<span>{ type.replace('_', ' ') }</span>
-						<FontAwesomeIcon icon={ faAnglesDown }/>
-					</>
-				}
-			>
-				{ title && <h3>{ title }</h3> }
-				{ parse(content) }
-			</Collapsible>
+			/>
 		</div>
 	);
 }

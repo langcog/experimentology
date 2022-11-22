@@ -5,7 +5,7 @@ import Box         from './components/box'
 import { getPage } from 'vite-plugin-ssr/client'
 import { hydrate } from 'preact'
 
-const render = async () => {
+const main = async () => {
 	const { islands } = await getPage();
 
 	islands.forEach(({ id, name, props }) => {
@@ -24,4 +24,4 @@ const render = async () => {
 	});
 }
 
-render();
+main();
