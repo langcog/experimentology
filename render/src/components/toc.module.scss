@@ -1,64 +1,83 @@
-@mixin count($name, $style) {
-	&::before {
-		content: counter($name, $style);
-		counter-increment: $name;
-		padding: 0 0.5em;
-		font-size: 0.7em;
-		min-width: 2ch;
-		text-align: right;
-	}
-}
+$sections:    '.part',    '.appendices';
+$subsections: '.chapter', '.appendix';
+$links:       '.book',    $subsections;
+$titles:      $links,     $sections;
 
-.sticky {
-	position: relative;
-	top: -8px;
-	margin-left: -12.5vw;
-}
+$counters: (
+	part:     upper-roman,
+	chapter:  decimal,
+	appendix: upper-latin,
+);
 
 .toc {
-	font-family: Source Sans Pro;
-	font-variant: small-caps;
 	font-size: 1.4rem;
-	counter-reset: part chapter appendix;
+	counter-reset: join(map-keys($counters), (), space);
 
-	.part     { @include count( part,     upper-roman ); }
-	.chapter  { @include count( chapter,  decimal     ); }
-	.appendix { @include count( appendix, upper-latin ); }
+	@each $name, $style in $counters {
+		.#{$name}::before {
+			content: counter($name, $style);
+			counter-increment: $name;
+			text-align: right;
+			font-weight: bold;
+			font-size: 0.7em;
+			padding-right: 0.5em;
+			min-width: 2ch;
+		}
+	}
 
-	a {
+	#{$titles} {
 		all: unset;
 		display: flex;
 		align-items: center;
-		background: var(--background);
-		color: var(--color);
 	}
 
-	.book, .chapter, .appendix {
+	#{$links} {
 		cursor: pointer;
 		transition: color 0.4s;
-		&:hover { color: white; }
+		&:hover { color: var(--hover); }
+	}
+}
+
+.desktop {
+	nav {
+		border-top: medium solid gray;
+		border-bottom: medium solid gray;
 	}
 
-	.desktop {
-		.book { justify-content: center; }
-
-		a {
-			white-space: pre;
-			height: calc(var(--rowHeight) * 1px);
-		}
+	.sticky {
+		position: relative;
+		top: -8px;
+		margin-left: -12.5vw;
 	}
 
-	.mobile {
-		.part, .appendices {
-			padding-top: 0.5em;
-			border-top: medium solid gray;
-		}
+	.book {
+		justify-content: center;
+		color: var(--color);
+		background: var(--background);
+	}
 
-		.book, .group { margin: 0.5em 0; }
+	#{$titles} {
+		white-space: pre;
+		height: calc(var(--rowHeight) * 1px);
+	}
 
-		.chapter, .appendix { padding-left: 1.5em; }
+	#{$subsections} { padding-left: 0.5em; }
+}
 
-		a { padding: 0 0.5em; }
+.mobile {
+	#{$titles} {
+		padding: 0 1em;
+
+		&:first-child { padding-top:    1em; }
+		&:last-child  { padding-bottom: 1em; }
+	}
+
+	#{$subsections} { padding-left: 2em; }
+
+	#{$sections} {
+		margin-top: 0.5em;
+		padding-top: 0.5em;
+		border-top: medium solid gray;
 	}
 }
 
@@ -76,12 +95,10 @@
 		border-radius: 2px;
 	}
 
-	.bm-menu-wrap {
-		position: fixed;
-		top: -8px;
-	}
+	.bm-menu-wrap { top: 0; }
 
 	.bm-menu {
+		color: var(--color);
 		background: var(--background);
 	}
 }

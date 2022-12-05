@@ -6,36 +6,30 @@ import parse, { domToReact }     from 'html-react-parser'
 import { JSDOM }                 from 'jsdom'
 import { dangerouslySkipEscape } from 'vite-plugin-ssr'
 
-const parseContents = html => {
-	const { window: { document } } = new JSDOM(html);
-
-	const book = [ '.title', '.subtitle' ]
-	.map(selector => document.querySelector(selector).textContent)
-	.join(': ');
-
-	const parts = [ ... document.querySelectorAll('#TOC li') ]
-	.reduce((parts, { firstChild: { textContent, href } }) => {
-		const title = textContent.replace(/^\S+?\s/, '');
-
-		if (! href) {
-			parts.push({ part: title, chapters: [] });
-		} else {
-			href = href.replace(/\.html.*$/, '');
-			parts.at(-1).chapters.push({ chapter: title, href });
-		}
-
-		return parts;
-	}, []);
-
-	return { book, parts };
-}
-
 const files = import.meta.glob('/r/*.html', { as: 'raw', eager: true });
 
-const contents = parseContents(files['/r/index.html']);
+const { window: { document } } = new JSDOM(files['/r/index.html']);
 
-const pages = Object.fromEntries([ '', '404', ... contents.parts
-	.flatMap(({ chapters }) => chapters.map(({ href }) => href))
+const name = [ '.title', '.subtitle' ]
+.map(selector => document.querySelector(selector).textContent)
+.join(': ');
+
+const items = [ ... document.querySelectorAll('#TOC li') ]
+.reduce((items, { firstChild: { textContent, href } }) => {
+	const name = textContent.replace(/^\S+?\s/, '');
+
+	if (! href) {
+		items.push({ name, items: [] });
+	} else {
+		href = href.replace(/\.html.*$/, '');
+		items.at(-1).items.push({ name, href });
+	}
+
+	return items;
+}, []);
+
+const pages = Object.fromEntries([ '', '404', ... items
+	.flatMap(({ items }) => items.map(({ href }) => href))
 ].map(path => {
 	const route = `/${path}`;
 	const file  = `/r/${path || 'index'}.html`;
@@ -61,35 +55,34 @@ export const render = ({ route, page }) => {
 
 	const island = node => {
 		const { type: { name }, props } = node;
-		const id = `island_${islands.length}`;
 
-		islands.push({ id, name, props });
+		islands.push({ name, props });
 
 		return (
-			<div id={ id }/>
+			<div island/>
 		);
 	}
 
-	const box = node => {
-		const [ , type ] = classes(node);
-		const content    = renderToString(domToReact(node.children, { library }));
+	const id          = node => node.attribs?.id
+	const className   = node => node.attribs?.class
+	const textContent = node => node.children?.[0]?.data
 
-		return { type, content };
+	const replace = node => {
+		const wrap = node => domToReact(node.children, { library, replace })
+
+		const [ isTitle, title ] = textContent(node)?.match?.(/\(TITLE\) (.+)/) ?? [];
+		const [ isBox, type ]    = className(node)?.match(/box (.+)/) ?? [];
+		const isTOC              = id(node) == 'TOC'
+		const isLastRefs         = id(node) == 'refs' && route == routes.at(-1)
+
+		return (
+			isTOC      ? island(<TOC name={ name } items={ items }/>)    :
+			isBox      ? island(<Box type={ type }>{ wrap(node) }</Box>) :
+			isTitle    ? <h3>{ title }</h3>                              :
+			isLastRefs ? <></>                                           :
+			null
+		);
 	}
-
-	const classes = node => node.attribs?.class?.split(' ') ?? []
-	const id      = node => node.attribs?.id
-
-	const isBox      = node => classes(node).includes('box')
-	const isLastRefs = node => id(node) == 'refs' && route == routes.at(-1)
-	const isTOC      = node => id(node) == 'TOC'
-
-	const replace = node => (
-		isBox(node)      ? island(<Box { ... box(node) }/>) :
-		isTOC(node)      ? island(<TOC { ... contents  }/>) :
-		isLastRefs(node) ? <></>                            :
-		null
-	)
 
 	const vdom         = parse(page, { library, replace });
 	const html         = renderToString(vdom);

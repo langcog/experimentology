@@ -2,101 +2,79 @@ import style                     from './toc.module.scss'
 import Sticky                    from 'react-stickynode'
 import SiteNav, { ContentGroup } from 'react-site-nav'
 import { slide as Menu }         from 'react-burger-menu'
-import { useState, useEffect }   from 'preact/hooks'
+import { useWindowWidth }        from '@react-hook/window-size/throttled'
 
-const Desktop = ({ book, parts, width, color, background, ... props }) => {
-	const columnWidth = width / parts.length;
+const TOC = ({ name, items }) => {
+	const sections    = items.length;
+	const width       = useWindowWidth();
+	const breakpoint  = 760;
+	const isDesktop   = width > breakpoint;
+	const columnWidth = width / sections;
 	const rowHeight   = 40;
 
-	return (
-		<header class={ style.desktop } style={{ '--rowHeight' : rowHeight }}>
-			<Sticky className={ style.sticky } innerZ={ 2 }>
-				<a class={ style.book } href='/'>{ book }</a>
-				<SiteNav
-					columnWidth={ columnWidth }
-					rowHeight={ rowHeight }
-					color={ color }
-					background={ background }
-					contentColor={ color }
-					contentBackground={ background }
-					{ ... props }
-				>
-					{parts.map(({ part, chapters }, i, { length }) => {
-						const isLast = i < length - 1;
-						const group  = isLast ? style.part    : style.appendices;
-						const item   = isLast ? style.chapter : style.appendix;
+	const [ background, color, hover ] = isDesktop
+	? [ 'white',   'dimgray',   'black' ]
+	: [ 'dimgray', 'lightgray', 'white' ];
 
-						return (
-							<ContentGroup
-								title={ <a class={ group }>{ part }</a> }
-								width={ columnWidth * 1.75 }
-								height={ rowHeight * chapters.length }
-							>
-								{chapters.map(({ chapter, href }) => (
-									<a class={ item } href={ href }>{ chapter }</a>
-								))}
-							</ContentGroup>
-						);
-					})}
-				</SiteNav>
-			</Sticky>
-		</header>
+	const title = (
+		<a class={ style.book } href='/'>{ name }</a>
 	);
-}
 
-const Mobile = ({ book, parts }) => (
-	<header class={ style.mobile }>
-		<Menu right styles={{ bmOverlay: { background: 'none' } }}>
-			<a class={ style.book } href='/'>{ book }</a>
-			{parts.map(({ part, chapters }, i, { length }) => {
-				const isLast = i < length - 1;
-				const group  = isLast ? style.part    : style.appendices;
-				const item   = isLast ? style.chapter : style.appendix;
+	const children = items.map(({ name, items }, i) => {
+		const subsections = items.length;
 
-				return (
-					<div class={ style.group }>
-						<a class={ group }>{ part }</a>
-						{chapters.map(({ chapter, href }) => (
-							<a class={ item } href={ href }>{ chapter }</a>
-						))}
-					</div>
-				);
-			})}
-		</Menu>
-	</header>
-)
+		const [ section, subsection ] = i < sections - 1
+		? [ style.part,       style.chapter  ]
+		: [ style.appendices, style.appendix ];
 
-const TOC = props => {
-	const [ width, setWidth ] = useState(innerWidth);
+		const title = (
+			<a class={ section }>{ name }</a>
+		);
 
-	useEffect(() => {
-		addEventListener('resize', () => setWidth(innerWidth));
-	}, []);
+		const children = items.map(({ name, href }) => (
+			<a class={ subsection } href={ href }>{ name }</a>
+		));
 
-	const color      = 'hsl( 0, 0%,  80% )';
-	const background = 'hsl( 0, 0%,  30% )';
-	const breakpoint = 760;
+		return isDesktop
+		? <ContentGroup
+			title={ title }
+			height={ rowHeight * subsections }
+			children={ children }
+		/>
+		: [ title, children ];
+	});
 
 	return (
-		<nav class={ style.toc } style={{
-			'--color'      : color,
+		<header class={ style.toc } style={{
 			'--background' : background,
+			'--color'      : color,
+			'--hover'      : hover,
+			'--rowHeight'  : rowHeight,
 		}}>
+			<nav class={ isDesktop ? style.desktop : style.mobile }>
 			{
-				width > breakpoint
-				? <Desktop
-					color={ color }
-					background={ background }
-					breakpoint={ breakpoint }
-					width={ width }
-					{ ... props }
-				/>
-				: <Mobile
-					background={ background }
-					{ ... props }
+				isDesktop
+				? <Sticky className={ style.sticky } innerZ={ 1 }>
+					{ title }
+					<SiteNav
+						breakpoint={ breakpoint }
+						columnWidth={ columnWidth }
+						rowHeight={ rowHeight }
+						background={ background }
+						color={ color }
+						contentBackground={ background }
+						contentColor={ color }
+						children={ children }
+					/>
+				</Sticky>
+				: <Menu
+					right
+					styles={{ bmOverlay: { background: 'none' } }}
+					children={[ title, children ]}
 				/>
 			}
-		</nav>
+			</nav>
+		</header>
 	);
 }
 

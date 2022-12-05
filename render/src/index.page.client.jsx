@@ -8,19 +8,19 @@ import { hydrate } from 'preact'
 const main = async () => {
 	const { islands } = await getPage();
 
-	islands.forEach(({ id, name, props }) => {
-		const { [ name ]: Component } = { TOC, Box };
-		const container = document.getElementById(id);
+	document.querySelectorAll('[island]').forEach((node, index) => {
+		const { [ index ]: { name, props } } = islands;
+		const { [ name ]: Island } = { TOC, Box };
 
-		hydrate(<Component { ... props }/>, container);
+		hydrate(<Island { ... props }/>, node);
+	});
 
-		document.querySelectorAll('a[href]').forEach(a => {
-			if (new URL(a.href).origin == origin) {
-				a.href = a.href
-				.replace(location.origin, '')
-				.replace(/^\/(\w+-([^-].+))\.html#\2$/, '$1');
-			};
-		});
+	document.querySelectorAll('a[href]').forEach(a => {
+		if (new URL(a.href).origin == origin) {
+			a.href = a.href
+			.replace(location.origin, '')
+			.replace(/^\/(\w+-([^-].+))\.html#\2$/, '$1');
+		};
 	});
 }
 

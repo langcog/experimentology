@@ -1,5 +1,4 @@
 import style               from './box.module.scss'
-import parse               from 'html-react-parser'
 import Collapsible         from 'react-collapsible'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -47,7 +46,7 @@ const boxes = {
 	readings               : { color: 'magenta', icon: faBook,                open: false, preview: false },
 };
 
-const Box = ({ type, content }) => {
+const Box = ({ type, children }) => {
 	const { [ type ]: { color, icon, open, preview } } = boxes;
 
 	const trigger = (
@@ -57,15 +56,6 @@ const Box = ({ type, content }) => {
 			<FontAwesomeIcon icon={ faAnglesDown }/>
 		</>
 	);
-
-	const children = parse(content)
-	.filter(node => node.type)
-	.map(node => {
-		const { props: { children } } = node;
-		const [ title ] = children.match?.(/(?<=\(TITLE\) ).+/) ?? [];
-
-		return title ? <h3>{ title }</h3> : node;
-	});
 
 	return (
 		<div class={ style.box } style={{ '--color': theme[color] }}>
