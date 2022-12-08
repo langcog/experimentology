@@ -35,76 +35,50 @@ This isn't a statistics book and we won't attempt to teach the full array of imp
 
 ## Sampling variation
 
-In Chapter \@ref(estimation), we introduced Fisher's tea-tasting experiment and discussed how to estimate means and differences in means from our observed data. These so-called "point estimates" represent our best guesses about the population parameters given the data and possibly also given our prior beliefs. But on their own, point estimates do not say anything about how much statistical uncertainty is involved in these point estimates.[^inference-7] Quantifying and reasoning about this uncertainty is an important goal: If we were to repeat the tea-tasting experiment with 500 participants instead of 48, we would have less uncertainty with 500 participants, even if the point estimates happened to be identical.
+In Chapter \@ref(estimation), we introduced Fisher's tea-tasting experiment and discussed how to estimate means and differences in means from our observed data. These so-called "point estimates" represent our best guesses about the population parameters given the data and possibly also given our prior beliefs. But on their own, point estimates do not say anything about how much statistical uncertainty is involved in these point estimates.[^inference-7] Quantifying and reasoning about this uncertainty is an important goal: If we were to repeat the tea-tasting experiment with 500 participants in each group instead of 9, we would have less uncertainty, even if the point estimates happened to be identical.
 
 ### Standard errors
 
 [^inference-7]: The measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Sampling-based uncertainty is only one kind of uncertainty, though: a more holistic view of the overall credibility of an estimate should also account for study design and bias, among other things
 
-To characterize the uncertainty in an estimate, it helps to picture what is called its **sampling distribution**, which is the distribution of the estimate across different, hypothetical samples. That is, let's imagine -- purely hypothetically -- that we conducted the tea experiment with $n=48$ not just once, but hundreds or even thousands of times. This idea is often called **repeated sampling** as a shorthand. For each hypothetical sample, we use similar recruitment methods to recruit a new sample of participants, and we estimate $\widehat{\beta}$ in that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability. If we plotted these estimates, $\widehat{\beta}$, across thousands of samples, we would get the sampling distribution in Figure \@ref(fig:inference-sampling-48). 
+To characterize the uncertainty in an estimate, it helps to picture what is called its **sampling distribution**, which is the distribution of the estimate across different, hypothetical samples. That is, let's imagine -- purely hypothetically -- that we conducted the tea experiment not just once, but hundreds or even thousands of times. This idea is often called **repeated sampling** as a shorthand. For each hypothetical sample, we use similar recruitment methods to recruit a new sample of participants, and we estimate $\widehat{\beta}$ in that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability. If we plotted these estimates, $\widehat{\beta}$, across thousands of samples, we would get the sampling distribution in Figure \@ref(fig:inference-sampling-small). 
 
 <!-- CODE BOX CHUNK In this chapter and the subsequent statistics and visualization chapters of the book, we'll try to facilitate understanding and using these concepts in practice by giving the R code we use in our examples in these code boxes. We'll assume that you have some knowledge of base R and the Tidyverse -- go ahead and take a look at Appendix \@ref(tidyverse) if you haven't already. -->
 
-```{r inference-sampling-48, fig.margin = TRUE, fig.cap= "Sampling distribution for the treatment effect in the tea-tasting experiment, given 1000 different experiments, each with N=48."}
-source("helper/tea_helper.R")
-
-samps <- tibble(sim = 1:1000) |>
-  mutate(data = map(sim, ~make_tea_data())) |>
-  unnest(cols = "data")
-
-tea_summary_48 <- samps |>
-  group_by(sim) |>
-  summarise(delta = mean(rating[condition == "milk first"]) - 
-              mean(rating[condition == "tea first"]))
-
-ggplot(tea_summary_48, 
-       aes(x = delta)) + 
-  geom_histogram() + 
-  xlab("Treatment effect") + 
-  xlim(-.5,2.5)
+```{r inference-sampling-small, fig.margin = TRUE, fig.cap= "Sampling distribution for the treatment effect in the tea-tasting experiment, given many different repetitions of the same experiment, each with N=9."}
+knitr::include_graphics("images/estimation/sampling-small.png")
 ```
-::: {.box .code}
-To do this simulation, we're using a special tidyverse function from the `purrr` library: `map`. `map` is an extremely powerful function that allows us to run another function (in this case, the `make_tea_data` function that we introduced last chapter) many times with different inputs. Here we create a tibble made up of a set of 1000 runs of the `make_tea_data` function.
+<!-- ::: {.box .code} -->
+<!-- To do this simulation, we're using a special tidyverse function from the `purrr` library: `map`. `map` is an extremely powerful function that allows us to run another function (in this case, the `make_tea_data` function that we introduced last chapter) many times with different inputs. Here we create a tibble made up of a set of 1000 runs of the `make_tea_data` function. -->
 
-```{r eval=FALSE, echo=TRUE}
-samps <- tibble(sim = 1:1000) |>
-  mutate(data = map(sim, ~make_tea_data(n_total = 48))) |>
-  unnest(cols = "data")
-```
+<!-- ```{r eval=FALSE, echo=TRUE} -->
+<!-- samps <- tibble(sim = 1:1000) |> -->
+<!--   mutate(data = map(sim, ~make_tea_data(n_total = 48))) |> -->
+<!--   unnest(cols = "data") -->
+<!-- ``` -->
 
-Next, we just use the `group_by` and `summarise` workflow from Appendix \@ref(tidyverse) to get the estimated treatment effect for each of these 1000 simulations.
+<!-- Next, we just use the `group_by` and `summarise` workflow from Appendix \@ref(tidyverse) to get the estimated treatment effect for each of these 1000 simulations. -->
 
-```{r eval=FALSE, echo=TRUE}
-tea_summary_48 <- samps |>
-  group_by(sim) |>
-  summarise(delta = mean(rating[condition == "milk first"]) - 
-              mean(rating[condition == "tea first"]))
-```
+<!-- ```{r eval=FALSE, echo=TRUE} -->
+<!-- tea_summary_48 <- samps |> -->
+<!--   group_by(sim) |> -->
+<!--   summarise(delta = mean(rating[condition == "milk first"]) -  -->
+<!--               mean(rating[condition == "tea first"])) -->
+<!-- ``` -->
 
-This tibble gives us what we need to make our histogram.
-:::
+<!-- This tibble gives us what we need to make our histogram. -->
+<!-- ::: -->
 
-Now imagine we also did thousands of repetitions of the experiment with $n=500$ instead of $n=48$. Figure \@ref(fig:inference-sampling-500) shows what the sampling distribution might look like. Notice how much narrower the sampling distribution becomes when we increase the sample size, showing our decreased uncertainty. More formally, the standard deviation of the sampling distribution itself, called the **standard error**, decreases as the sample size increases.
+Now imagine we also did thousands of repetitions of the experiment with $n=200$ instead of $n=9$. Figure \@ref(fig:inference-sampling-big) shows what the sampling distribution might look like in that case. Notice how much narrower the sampling distribution becomes when we increase the sample size, showing our decreased uncertainty. More formally, the standard deviation of the sampling distribution itself, called the **standard error**, decreases as the sample size increases.
 
-```{r inference-sampling-500, fig.margin = TRUE, fig.cap= "Sampling distribution for the treatment effect as above, but now with N=500."}
-samps_500 <- tibble(sim = 1:1000) |>
-  mutate(data = map(sim, ~make_tea_data(n_total = 500))) |>
-  unnest(cols = "data")
+```{r inference-sampling-big, fig.margin = TRUE, fig.cap= "Comparing sampling distributions for the treatment effect with smaller and larger size samples."}
+knitr::include_graphics("images/estimation/sampling-big.png")
 
-tea_summary_500 <- samps_500 |>
-  group_by(sim) |>
-  summarise(delta = mean(rating[condition == "milk first"]) - 
-              mean(rating[condition == "tea first"]))
-
-ggplot(tea_summary_500, 
-       aes(x = delta)) + 
-  geom_histogram() + 
-  xlab("Treatment effect") + 
-  xlim(-.5,2.5)
 ```
 
 
-The sampling distribution is not the same thing as the distribution of tea ratings in a single sample. Instead, it's a distribution of *estimates across samples of a given size*. Internalizing this distinction is a crucial component to understanding all statistical models and tests. If we were in the classroom with you, we would pound our fist on the lecture podium for emphasis!
+The sampling distribution is not the same thing as the distribution of tea ratings in a single sample. Instead, it's a distribution of *estimates across samples of a given size*. Internalizing this distinction is a crucial component to understanding all statistical models and tests. 
+<!-- If we were in the classroom with you, we would pound our fist on the lecture podium for emphasis! -->
 
 ### The central limit theorem
 
@@ -112,55 +86,59 @@ We talked in the last chapter about the normal distribution, a convenient and ub
 
 For example, say we are flipping a coin and we want to estimate the probability that it lands heads ($p_H$). If we draw samples each consisting of only $n=2$ coin flips, Figure \@ref(fig:inference-coin-2) is the sampling distribution of the estimates ($\widehat{p}_H$). This sampling distribution doesn't look normally distributed at all -- it doesn't have the characteristic "bell curve" look! $\widehat{p}_H$ can only take on the values 0, 0.5, or 1 in a sample of only 2 coin flips. 
 
-```{r inference-coin-2, fig.margin = TRUE, fig.cap="Samping distribution of samples from a biased coin with N=2 flips in each sample."}
+```{r inference-coin-2, fig.margin = TRUE, fig.cap="Samping distribution of samples from a biased coin with N=2 flips in each sample. Bar height shows the proportion of flips resulting in a particular mean."}
+knitr::include_graphics("images/estimation/cl-2.png")
 
-n_samps <- 1000
-
-sample_p <- tibble(p = rbinom(n_samps, 2, .7)/2)
-
-ggplot(sample_p,
-       aes(x = p)) +
-  geom_histogram(binwidth = 1/32) + 
-  xlab("P(heads)")
+# 
+# n_samps <- 1000
+# 
+# sample_p <- tibble(p = rbinom(n_samps, 2, .7)/2)
+# 
+# ggplot(sample_p,
+#        aes(x = p)) +
+#   geom_histogram(binwidth = 1/32) + 
+#   xlab("P(heads)")
 ```
 
 
 ```{r inference-coin-ns, fig.margin = TRUE, fig.cap="Sampling distribution for 2, 8, 32, and 128 flips."}
+knitr::include_graphics("images/estimation/cl-ns.png")
 
-n_samps <- 1000
-ns <- c(2, 8, 32, 128)
-
-sample_p <- tibble(n = ns) |>
-  group_by(n) |>
-  mutate(flips = map(n, ~rbinom(n_samps, n, .7))) |>
-  unnest(cols = c(flips)) |>
-  mutate(p = flips / n)
-
-ggplot(sample_p,
-       aes(x = p)) +
-  geom_histogram(binwidth = 1/32) + 
-  xlab("P(heads)") + 
-  facet_wrap(~n, scales = "free") +
-  xlim(-.05,1.05)
+# 
+# n_samps <- 1000
+# ns <- c(2, 8, 32, 128)
+# 
+# sample_p <- tibble(n = ns) |>
+#   group_by(n) |>
+#   mutate(flips = map(n, ~rbinom(n_samps, n, .7))) |>
+#   unnest(cols = c(flips)) |>
+#   mutate(p = flips / n)
+# 
+# ggplot(sample_p,
+#        aes(x = p)) +
+#   geom_histogram(binwidth = 1/32) + 
+#   xlab("P(heads)") + 
+#   facet_wrap(~n, scales = "free") +
+#   xlim(-.05,1.05)
 ```
 
-::: {.box .code}
-For this simulation, we again use the `map` function. We set up a tibble with the different values we want to to try (which we call `n_flips`). Then we make use of the `map` function to run `rbinom` (random binomial samples) for each value of `n_flips`. 
+<!-- ::: {.box .code} -->
+<!-- For this simulation, we use the `map` function. We set up a tibble with the different values we want to to try (which we call `n_flips`). Then we make use of the `map` function to run `rbinom` (random binomial samples) for each value of `n_flips`.  -->
 
-One trick we make use of here is that `rbinom` takes an extra argument that says how many of these random values you want to generate. Here we generate `nsamps = 1000` samples, giving us 1000 independent replicates at each `n`. But returning an array of 1000 values for a single value of `n_flips` results in something odd: the value for each element of `flips` is an array. To deal with that, we use the `unnest` function, which expands the array back into a normal tibble. 
+<!-- One trick we make use of here is that `rbinom` takes an extra argument that says how many of these random values you want to generate. Here we generate `nsamps = 1000` samples, giving us 1000 independent replicates at each `n`. But returning an array of 1000 values for a single value of `n_flips` results in something odd: the value for each element of `flips` is an array. To deal with that, we use the `unnest` function, which expands the array back into a normal tibble.  -->
 
-```{r eval=FALSE, echo=TRUE}
-n_samps <- 1000
-n_flips_list <- c(2, 8, 32, 128)
+<!-- ```{r eval=FALSE, echo=TRUE} -->
+<!-- n_samps <- 1000 -->
+<!-- n_flips_list <- c(2, 8, 32, 128) -->
 
-sample_p <- tibble(n_flips = n_flips_list) |>
-  group_by(n_flips) |>
-  mutate(flips = map(n_flips, ~rbinom(n = n_samps, size = n_flips, prob = .7))) |>
-  unnest(cols = c(flips)) |>
-  mutate(p = flips / n_flips)
-```
+<!-- sample_p <- tibble(n_flips = n_flips_list) |> -->
+<!--   group_by(n_flips) |> -->
+<!--   mutate(flips = map(n_flips, ~rbinom(n = n_samps, size = n_flips, prob = .7))) |> -->
+<!--   unnest(cols = c(flips)) |> -->
+<!--   mutate(p = flips / n_flips) -->
+<!-- ``` -->
 
-:::
+<!-- ::: -->
 
 But look what happens as we draw increasingly larger samples in Figure \@ref(fig:inference-coin-ns): We get a normal distribution! This tendency of sampling distributions to become normal as $n$ becomes very large reflects a deep and elegant mathematical law called the **Central Limit Theorem**. Aesthetic swooning aside, the practical upshot is that the Central Limit Theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\widehat{SE} = \sigma/\sqrt{n}$. That is why the sampling distribution becomes narrower as the sample size increases.
 
@@ -179,25 +157,25 @@ Let's take a look at what the null model might look like. We already tried out r
 Let's apply Fisher's standard. If our observation has less than a 5% probability under the null model, then the null model is likely wrong. The red dashed lines on Figure \@ref(fig:inference-null-model) show the point below which only 2.5% of the data are found and the point above which only 2.5% of the data are found. These are called the **tails** of the distribution. Because we'd be equally willing to accept milk-first tea or tea-first tea being better, we consider both positive and negative observations as possible.^[Because we're looking at both tails of the distribution, this is called a "two-tailed" test.]
 
 ```{r inference-null-model, fig.margin = TRUE, fig.cap="Distribution of treatment effects under the null model of no difference in tea preparation order. The red lines indicate the threshold outside of which less than 5\\% of observations fall."}
-
-n_sims <- 10000
-
-null_model <- expand_grid(sim = 1:n_sims, 
-                          n = 48) |>
-  rowwise() |>
-  mutate(data = map(n, ~make_tea_data(n_total = n, sigma = 1.25, delta = 0))) |>
-  unnest(cols = c(data))
-
-null_model_summary <- null_model |>
-  group_by(n, sim) |>
-  summarise(delta = mean(rating[condition == "milk first"]) - 
-              mean(rating[condition == "tea first"]))
-
-ggplot(null_model_summary, aes(x =delta)) + 
-  geom_histogram(binwidth = .125) +
-  geom_vline(xintercept = quantile(null_model_summary$delta, c(.025, .975)), 
-             lty = 2, col = "red") + 
-  ylab("Frequency") + xlab("Difference in rating)")
+# 
+# n_sims <- 10000
+# 
+# null_model <- expand_grid(sim = 1:n_sims, 
+#                           n = 48) |>
+#   rowwise() |>
+#   mutate(data = map(n, ~make_tea_data(n_total = n, sigma = 1.25, delta = 0))) |>
+#   unnest(cols = c(data))
+# 
+# null_model_summary <- null_model |>
+#   group_by(n, sim) |>
+#   summarise(delta = mean(rating[condition == "milk first"]) - 
+#               mean(rating[condition == "tea first"]))
+# 
+# ggplot(null_model_summary, aes(x =delta)) + 
+#   geom_histogram(binwidth = .125) +
+#   geom_vline(xintercept = quantile(null_model_summary$delta, c(.025, .975)), 
+#              lty = 2, col = "red") + 
+#   ylab("Frequency") + xlab("Difference in rating)")
 
 ```
 
