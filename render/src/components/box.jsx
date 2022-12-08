@@ -1,5 +1,4 @@
 import style               from './box.module.scss'
-import parse               from 'html-react-parser'
 import Collapsible         from 'react-collapsible'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -47,28 +46,28 @@ const boxes = {
 	readings               : { color: 'magenta', icon: faBook,                open: false, preview: false },
 };
 
-const Box = ({ title, type, content }) => {
+const Box = ({ type, children }) => {
 	const { [ type ]: { color, icon, open, preview } } = boxes;
+
+	const trigger = (
+		<>
+			<FontAwesomeIcon icon={ icon }/>
+			<span>{ type.replace('_', ' ') }</span>
+			<FontAwesomeIcon icon={ faAnglesDown }/>
+		</>
+	);
 
 	return (
 		<div class={ style.box } style={{ '--color': theme[color] }}>
 			<Collapsible
-				open={ open }
 				className={ preview && style.preview }
+				trigger={ trigger }
+				children={ children }
+				open={ open }
 				overflowWhenOpen='visible'
 				easing='ease'
 				transitionTime={ 300 }
-				trigger={
-					<>
-						<FontAwesomeIcon icon={ icon }/>
-						<span>{ type.replace('_', ' ') }</span>
-						<FontAwesomeIcon icon={ faAnglesDown }/>
-					</>
-				}
-			>
-				{ title && <h3>{ title }</h3> }
-				{ parse(content) }
-			</Collapsible>
+			/>
 		</div>
 	);
 }

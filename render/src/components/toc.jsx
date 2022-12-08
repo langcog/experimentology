@@ -1,80 +1,80 @@
-import {
-	toc,
-	book_title,
-	part,
-	part_title,
-	part_title_first,
-	part_title_rest,
-	dropdown,
-	chapter_title,
-} from './toc.module.scss'
+import style                     from './toc.module.scss'
+import Sticky                    from 'react-stickynode'
+import SiteNav, { ContentGroup } from 'react-site-nav'
+import { slide as Menu }         from 'react-burger-menu'
+import { useWindowWidth }        from '@react-hook/window-size/throttled'
 
-import { title, subtitle, parts }      from '/contents.json'
-import { useState, useEffect, useRef } from 'preact/hooks'
+const TOC = ({ name, items }) => {
+	const sections    = items.length;
+	const width       = useWindowWidth();
+	const breakpoint  = 760;
+	const isDesktop   = width > breakpoint;
+	const columnWidth = width / sections;
+	const rowHeight   = 40;
 
-const TOC = () => (
-	<header class={ toc } id='toc'>
-		<a class={ book_title } href='/'>{ `${title}: ${subtitle}` }</a>
-		<nav>
-		{ parts.map(props => <Part { ... props }/>) }
-		</nav>
-	</header>
-)
+	const [ background, color, hover ] = isDesktop
+	? [ 'white',   'dimgray',   'black' ]
+	: [ 'dimgray', 'lightgray', 'white' ];
 
-const Part = ({ first, rest, chapters }) => {
-	const [ hover, setHover ] = useState(true);
-
-	const node = useRef();
-	const rect = useRef();
-	const show = rect.current;
-	const hide = { width: 0 };
-
-	useEffect(() => {
-		const { width } = node.current.getBoundingClientRect();
-		rect.current    = { width };
-
-		setHover(false);
-	}, []);
-
-	return (
-		<div
-			class={ part }
-			onMouseEnter={ () => setHover(true)  }
-			onMouseLeave={ () => setHover(false) }
-		>
-			<div class={ part_title }>
-				<div class={ part_title_first }>{ first }</div>
-				<div
-					class={ part_title_rest }
-					ref={ node }
-					style={ hover ? show : hide }
-				>{ rest }</div>
-			</div>
-			<div class={ dropdown }>
-				{ chapters.map(props => <Chapter hover={ hover } { ... props }/>) }
-			</div>
-		</div>
+	const title = (
+		<a class={ style.book } href='/'>{ name }</a>
 	);
-}
 
-const Chapter = ({ title, href, hover }) => {
-	const node = useRef();
-	const rect = useRef();
-	const show = rect.current;
-	const hide = { width: 0, height: 0 };
+	const children = items.map(({ name, items }, i) => {
+		const subsections = items.length;
 
-	useEffect(() => {
-		const { width, height } = node.current.getBoundingClientRect();
-		rect.current            = { width, height };
-	}, []);
+		const [ section, subsection ] = i < sections - 1
+		? [ style.part,       style.chapter  ]
+		: [ style.appendices, style.appendix ];
+
+		const title = (
+			<a class={ section }>{ name }</a>
+		);
+
+		const children = items.map(({ name, href }) => (
+			<a class={ subsection } href={ href }>{ name }</a>
+		));
+
+		return isDesktop
+		? <ContentGroup
+			title={ title }
+			height={ rowHeight * subsections }
+			children={ children }
+		/>
+		: [ title, children ];
+	});
 
 	return (
-		<a
-			class={ chapter_title }
-			ref={ node }
-			href={ href }
-			style={ hover ? show : hide }
-		>{ title }</a>
+		<header class={ style.toc } style={{
+			'--background' : background,
+			'--color'      : color,
+			'--hover'      : hover,
+			'--rowHeight'  : rowHeight,
+		}}>
+			<nav class={ isDesktop ? style.desktop : style.mobile }>
+			{
+				isDesktop
+				? <Sticky className={ style.sticky } innerZ={ 1 }>
+					{ title }
+					<SiteNav
+						breakpoint={ breakpoint }
+						columnWidth={ columnWidth }
+						rowHeight={ rowHeight }
+						background={ background }
+						color={ color }
+						contentBackground={ background }
+						contentColor={ color }
+						children={ children }
+					/>
+				</Sticky>
+				: <Menu
+					right
+					styles={{ bmOverlay: { background: 'none' } }}
+					children={[ title, children ]}
+				/>
+			}
+			</nav>
+		</header>
 	);
 }
 
