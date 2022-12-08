@@ -43,36 +43,54 @@ In Chapter \@ref(estimation), we introduced Fisher's tea-tasting experiment and 
 
 To characterize the uncertainty in an estimate, it helps to picture what is called its **sampling distribution**, which is the distribution of the estimate across different, hypothetical samples. That is, let's imagine -- purely hypothetically -- that we conducted the tea experiment not just once, but hundreds or even thousands of times. This idea is often called **repeated sampling** as a shorthand. For each hypothetical sample, we use similar recruitment methods to recruit a new sample of participants, and we estimate $\widehat{\beta}$ in that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability. If we plotted these estimates, $\widehat{\beta}$, across thousands of samples, we would get the sampling distribution in Figure \@ref(fig:inference-sampling-small). 
 
-<!-- CODE BOX CHUNK In this chapter and the subsequent statistics and visualization chapters of the book, we'll try to facilitate understanding and using these concepts in practice by giving the R code we use in our examples in these code boxes. We'll assume that you have some knowledge of base R and the Tidyverse -- go ahead and take a look at Appendix \@ref(tidyverse) if you haven't already. -->
-
-```{r inference-sampling-small, fig.margin = TRUE, fig.cap= "Sampling distribution for the treatment effect in the tea-tasting experiment, given many different repetitions of the same experiment, each with N=9."}
-knitr::include_graphics("images/estimation/sampling-small.png")
+```{r}
+source("helper/tea_helper.R")
 ```
-<!-- ::: {.box .code} -->
-<!-- To do this simulation, we're using a special tidyverse function from the `purrr` library: `map`. `map` is an extremely powerful function that allows us to run another function (in this case, the `make_tea_data` function that we introduced last chapter) many times with different inputs. Here we create a tibble made up of a set of 1000 runs of the `make_tea_data` function. -->
 
-<!-- ```{r eval=FALSE, echo=TRUE} -->
-<!-- samps <- tibble(sim = 1:1000) |> -->
-<!--   mutate(data = map(sim, ~make_tea_data(n_total = 48))) |> -->
-<!--   unnest(cols = "data") -->
-<!-- ``` -->
+::: {.box .code}
+In this chapter and the subsequent statistics and visualization chapters of the book, we'll try to facilitate understanding and using these concepts in practice by giving the R code we use in constructing our examples in these code boxes. We'll assume that you have some knowledge of base R and the Tidyverse -- go ahead and take a look at Appendix \@ref(tidyverse) if you haven't already. Although our figures are all drawn by hand, they are based on actual simulation results!
 
-<!-- Next, we just use the `group_by` and `summarise` workflow from Appendix \@ref(tidyverse) to get the estimated treatment effect for each of these 1000 simulations. -->
+Since we're going to be working with lots of data from the tea tasting example, we wrote a function called `make_tea_data` that creates a `tibble` with some (made up) data from our modern tea-tasting experiment. You can find the function at [this link](https://raw.githubusercontent.com/langcog/experimentology/main/helper/tea_helper.R) if you want to follow along.
 
-<!-- ```{r eval=FALSE, echo=TRUE} -->
-<!-- tea_summary_48 <- samps |> -->
-<!--   group_by(sim) |> -->
-<!--   summarise(delta = mean(rating[condition == "milk first"]) -  -->
-<!--               mean(rating[condition == "tea first"])) -->
-<!-- ``` -->
+```{r echo=TRUE}
+tea_data <- make_tea_data(n_total = 18)
+```
 
-<!-- This tibble gives us what we need to make our histogram. -->
-<!-- ::: -->
+Here's what the first few rows of those data look like:
 
-Now imagine we also did thousands of repetitions of the experiment with $n=200$ instead of $n=9$. Figure \@ref(fig:inference-sampling-big) shows what the sampling distribution might look like in that case. Notice how much narrower the sampling distribution becomes when we increase the sample size, showing our decreased uncertainty. More formally, the standard deviation of the sampling distribution itself, called the **standard error**, decreases as the sample size increases.
+```{r}
+knitr::kable(head(tea_data), digits = 2)
+```
+:::
+
+```{r inference-sampling-small, fig.margin = TRUE, fig.cap= "Sampling distribution for the treatment effect in the tea-tasting experiment, given many different repetitions of the same experiment, each with N=9 per group."}
+knitr::include_graphics("images/inference/sampling-small.png")
+```
+::: {.box .code}
+To do this simulation, we're using a special tidyverse function from the `purrr` library: `map`. `map` is an extremely powerful function that allows us to run another function (in this case, the `make_tea_data` function that we introduced last chapter) many times with different inputs. Here we create a tibble made up of a set of 1000 runs of the `make_tea_data` function.
+
+```{r eval=FALSE, echo=TRUE}
+samps <- tibble(sim = 1:1000) |>
+  mutate(data = map(sim, ~make_tea_data(n_total = 18))) |>
+  unnest(cols = "data")
+```
+
+Next, we just use the `group_by` and `summarise` workflow from Appendix \@ref(tidyverse) to get the estimated treatment effect for each of these 1000 simulations.
+
+```{r eval=FALSE, echo=TRUE}
+tea_summary <- samps |>
+  group_by(sim) |>
+  summarise(delta = mean(rating[condition == "milk first"]) -
+              mean(rating[condition == "tea first"]))
+```
+
+This tibble gives us what we need to make our histogram.
+:::
+
+Now imagine we also did thousands of repetitions of the experiment with $n=200$ per group instead of $n=9$ per group. Figure \@ref(fig:inference-sampling-big) shows what the sampling distribution might look like in that case. Notice how much narrower the sampling distribution becomes when we increase the sample size, showing our decreased uncertainty. More formally, the standard deviation of the sampling distribution itself, called the **standard error**, decreases as the sample size increases.
 
 ```{r inference-sampling-big, fig.margin = TRUE, fig.cap= "Comparing sampling distributions for the treatment effect with smaller and larger size samples."}
-knitr::include_graphics("images/estimation/sampling-big.png")
+knitr::include_graphics("images/inference/sampling-big.png")
 
 ```
 
@@ -87,60 +105,33 @@ We talked in the last chapter about the normal distribution, a convenient and ub
 For example, say we are flipping a coin and we want to estimate the probability that it lands heads ($p_H$). If we draw samples each consisting of only $n=2$ coin flips, Figure \@ref(fig:inference-coin-2) is the sampling distribution of the estimates ($\widehat{p}_H$). This sampling distribution doesn't look normally distributed at all -- it doesn't have the characteristic "bell curve" look! $\widehat{p}_H$ can only take on the values 0, 0.5, or 1 in a sample of only 2 coin flips. 
 
 ```{r inference-coin-2, fig.margin = TRUE, fig.cap="Samping distribution of samples from a biased coin with N=2 flips in each sample. Bar height shows the proportion of flips resulting in a particular mean."}
-knitr::include_graphics("images/estimation/cl-2.png")
-
-# 
-# n_samps <- 1000
-# 
-# sample_p <- tibble(p = rbinom(n_samps, 2, .7)/2)
-# 
-# ggplot(sample_p,
-#        aes(x = p)) +
-#   geom_histogram(binwidth = 1/32) + 
-#   xlab("P(heads)")
+knitr::include_graphics("images/inference/cl-2.png")
 ```
 
 
 ```{r inference-coin-ns, fig.margin = TRUE, fig.cap="Sampling distribution for 2, 8, 32, and 128 flips."}
-knitr::include_graphics("images/estimation/cl-ns.png")
-
-# 
-# n_samps <- 1000
-# ns <- c(2, 8, 32, 128)
-# 
-# sample_p <- tibble(n = ns) |>
-#   group_by(n) |>
-#   mutate(flips = map(n, ~rbinom(n_samps, n, .7))) |>
-#   unnest(cols = c(flips)) |>
-#   mutate(p = flips / n)
-# 
-# ggplot(sample_p,
-#        aes(x = p)) +
-#   geom_histogram(binwidth = 1/32) + 
-#   xlab("P(heads)") + 
-#   facet_wrap(~n, scales = "free") +
-#   xlim(-.05,1.05)
+knitr::include_graphics("images/inference/cl-ns.png")
 ```
 
-<!-- ::: {.box .code} -->
-<!-- For this simulation, we use the `map` function. We set up a tibble with the different values we want to to try (which we call `n_flips`). Then we make use of the `map` function to run `rbinom` (random binomial samples) for each value of `n_flips`.  -->
+::: {.box .code}
+For this simulation, we use the `map` function. We set up a tibble with the different values we want to to try (which we call `n_flips`). Then we make use of the `map` function to run `rbinom` (random binomial samples) for each value of `n_flips`.
 
-<!-- One trick we make use of here is that `rbinom` takes an extra argument that says how many of these random values you want to generate. Here we generate `nsamps = 1000` samples, giving us 1000 independent replicates at each `n`. But returning an array of 1000 values for a single value of `n_flips` results in something odd: the value for each element of `flips` is an array. To deal with that, we use the `unnest` function, which expands the array back into a normal tibble.  -->
+One trick we make use of here is that `rbinom` takes an extra argument that says how many of these random values you want to generate. Here we generate `nsamps = 1000` samples, giving us 1000 independent replicates at each `n`. But returning an array of 1000 values for a single value of `n_flips` results in something odd: the value for each element of `flips` is an array. To deal with that, we use the `unnest` function, which expands the array back into a normal tibble.
 
-<!-- ```{r eval=FALSE, echo=TRUE} -->
-<!-- n_samps <- 1000 -->
-<!-- n_flips_list <- c(2, 8, 32, 128) -->
+```{r eval=FALSE, echo=TRUE}
+n_samps <- 1000
+n_flips_list <- c(2, 8, 32, 128)
 
-<!-- sample_p <- tibble(n_flips = n_flips_list) |> -->
-<!--   group_by(n_flips) |> -->
-<!--   mutate(flips = map(n_flips, ~rbinom(n = n_samps, size = n_flips, prob = .7))) |> -->
-<!--   unnest(cols = c(flips)) |> -->
-<!--   mutate(p = flips / n_flips) -->
-<!-- ``` -->
+sample_p <- tibble(n_flips = n_flips_list) |>
+  group_by(n_flips) |>
+  mutate(flips = map(n_flips, ~rbinom(n = n_samps, size = n_flips, prob = .7))) |>
+  unnest(cols = c(flips)) |>
+  mutate(p = flips / n_flips)
+```
 
-<!-- ::: -->
+:::
 
-But look what happens as we draw increasingly larger samples in Figure \@ref(fig:inference-coin-ns): We get a normal distribution! This tendency of sampling distributions to become normal as $n$ becomes very large reflects a deep and elegant mathematical law called the **Central Limit Theorem**. Aesthetic swooning aside, the practical upshot is that the Central Limit Theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\widehat{SE} = \sigma/\sqrt{n}$. That is why the sampling distribution becomes narrower as the sample size increases.
+But look what happens as we draw increasingly larger samples in Figure \@ref(fig:inference-coin-ns): We get a normal distribution! This tendency of sampling distributions to become normal as $n$ becomes very large reflects a deep and elegant mathematical law called the **Central Limit Theorem**. The practical upshot is that the Central Limit Theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\widehat{SE} = \sigma/\sqrt{n}$. That is why the sampling distribution becomes narrower as the sample size increases.
 
 ## From variation to inference
 
@@ -156,26 +147,8 @@ Let's take a look at what the null model might look like. We already tried out r
 
 Let's apply Fisher's standard. If our observation has less than a 5% probability under the null model, then the null model is likely wrong. The red dashed lines on Figure \@ref(fig:inference-null-model) show the point below which only 2.5% of the data are found and the point above which only 2.5% of the data are found. These are called the **tails** of the distribution. Because we'd be equally willing to accept milk-first tea or tea-first tea being better, we consider both positive and negative observations as possible.^[Because we're looking at both tails of the distribution, this is called a "two-tailed" test.]
 
-```{r inference-null-model, fig.margin = TRUE, fig.cap="Distribution of treatment effects under the null model of no difference in tea preparation order. The red lines indicate the threshold outside of which less than 5\\% of observations fall."}
-# 
-# n_sims <- 10000
-# 
-# null_model <- expand_grid(sim = 1:n_sims, 
-#                           n = 48) |>
-#   rowwise() |>
-#   mutate(data = map(n, ~make_tea_data(n_total = n, sigma = 1.25, delta = 0))) |>
-#   unnest(cols = c(data))
-# 
-# null_model_summary <- null_model |>
-#   group_by(n, sim) |>
-#   summarise(delta = mean(rating[condition == "milk first"]) - 
-#               mean(rating[condition == "tea first"]))
-# 
-# ggplot(null_model_summary, aes(x =delta)) + 
-#   geom_histogram(binwidth = .125) +
-#   geom_vline(xintercept = quantile(null_model_summary$delta, c(.025, .975)), 
-#              lty = 2, col = "red") + 
-#   ylab("Frequency") + xlab("Difference in rating)")
+```{r inference-null-model, fig.margin = TRUE, fig.cap="One example of the distribution of treatment effects under the null model (with N=9 per group). The red regions indicate the part of the distribution in  which less than 5\\% of observations should fall."}
+knitr::include_graphics("images/inference/p-region.png")
 
 ```
 
@@ -184,9 +157,9 @@ To simulate our null model, we can do the same kind of thing we did before, just
 
 ```{r eval=FALSE, echo=TRUE}
 null_model <- expand_grid(sim = 1:n_sims, 
-                          n = 48) |>
+                          n = 18) |>
   rowwise() |>
-  mutate(data = map(n, ~make_tea_data(n_total = n, sigma = 1.25, delta = 0))) |>
+  mutate(data = map(n, ~make_tea_data(n_total = n, delta = 0))) |>
   unnest(cols = c(data))
 ```
 
@@ -202,38 +175,50 @@ null_model_summary <- null_model |>
 
 That's the logic of Fisherian NHST: if the observed data fall in the region that has a probability of less than .05 under the null model, then we reject the null. So then when we observe some particular treatment effect $\hat{\beta}$ in a single (real) instance of our experiment, we can compute the probability of these data or any data more extreme than ours under the null model. This probability is our $p$-value, and if it is small, it gives us license to conclude that the null is false.
 
-As we saw before, the larger the sample size, the smaller the standard error. That's true for the null model too! Let's take a look at running tea-tasting experiments with 12, 24, 48, and 96 participants. Figure \@ref(fig:inference-null-model2) shows the expected null distributions in each of these, again with the 5% boundaries shown in red. 
+As we saw before, the larger the sample size, the smaller the standard error. That's true for the null model too! Figure \@ref(fig:inference-null-model2) shows the expected null distribution for a bigger experiment. 
 
-```{r inference-null-model2, fig.cap="Distribution of treatment effects under the null model for different numbers of participants (facets). Red lines indicate the p < .05 threshold."}
+```{r inference-null-model2, fig.cap="Example distribution of treatment effects under the null model for a larger experiment."}
+knitr::include_graphics("images/inference/p-region-bigger.png")
+```
+:::{.box .code}
 
+We can do a more systematic simulation of the null regions for different sample sizes by simply adding a parameter to our simulation. 
+
+```{r eval=FALSE, echo=TRUE}
 n_sims <- 10000
 
-null_model_multin <- expand_grid(sim = 1:n_sims, 
+null_model_multi_n <- expand_grid(sim = 1:n_sims, 
                           n = c(12,24,48,96)) |>
   rowwise() |>
-  mutate(data = map(n, ~make_tea_data(n_total = n, sigma = 1.25, delta = 0))) |>
+  mutate(data = map(n, ~make_tea_data(n_total = n, delta = 0))) |>
   unnest(cols = c(data))
 
-null_model_summary_multin <- null_model_multin |>
+null_model_summary_multi_n <- null_model_multi_n |>
   group_by(n, sim) |>
   summarise(delta = mean(rating[condition == "milk first"]) - 
               mean(rating[condition == "tea first"]))
 
-null_model_quantiles_multin <- null_model_summary_multin |>
+null_model_quantiles_multi_n <- null_model_summary_multi_n |>
   group_by(n) |>
   summarise(q25 = quantile(delta, .025), 
             q975 = quantile(delta, .975)) 
+```
 
-ggplot(null_model_summary_multin, aes(x =delta)) + 
+Here is the plotting code to produce a comparable figure to our illustration:
+
+```{r eval=FALSE, echo=TRUE}
+ggplot(null_model_summary_multi_n, aes(x =delta)) + 
   geom_histogram(binwidth = .25) +
-  geom_vline(data = null_model_quantiles_multin, 
+  geom_vline(data = null_model_quantiles_multi_n, 
              aes(xintercept = q25), col = "red", lty = 2) + 
-  geom_vline(data = null_model_quantiles_multin, 
+  geom_vline(data = null_model_quantiles_multi_n, 
              aes(xintercept = q975), col = "red", lty = 2) + 
   facet_wrap(~n) +
   xlim(-2.5, 2.5) + 
   ylab("Frequency") + xlab("Difference in rating")
 ```
+
+:::
 
 The more participants in the experiment, the tighter the null distribution becomes, and hence the smaller the region in which we should expect a null treatment effect to fall. Because our expectation based on the null becomes more precise, we will be able to reject the null based on smaller treatment effects. In inference of this type, as with estimation, our goals matter. If we're merely testing a hypothesis out of curiosity, perhaps we don't want to measure too many cups of tea. But if we were designing the tea strategy for a major cafe chain, the stakes would be higher and a more precise estimate might necessary; in that case, maybe we'd want to do a more extensive experiment! 
 
@@ -248,13 +233,12 @@ By defining a $p$-value, we got one procedure for giving this answer. If $p < .0
 
 ### Bayes Factors
 
-Bayes Factors are a method for quantifying the support for one hypothesis over another, based on an observed dataset. Informally, we've now talked about two different distinct hypotheses about the tea situation: our participant could have *no* tea discrimination ability -- leading to chance performance. We call this $H_0$. Or they could have some non-zero ability -- leading to greater than chance performance. We call this $H_1$. The Bayes Factor is simply the likelihood of the data (in the technical sense used above) under $H_1$ vs. under $H_0$:
 
-$$
-BF = \frac{\color{red}{p( \text{data} | H_1)}}{\color{red}{p(\text{data} | H_0)}}.
-$$ 
+```{r inference-bf, fig.cap="The Bayes Factor (BF)."}
+knitr::include_graphics("images/inference/bf.png")
+```
 
-The Bayes Factor is a ratio, so if it is greater than 1, the data are more likely under $H_1$ than they are under $H_0$ -- and vice versa for values between 1 and 0. A BF of 3 means there is three times as much evidence for $H_1$ than $H_0$, or equivalently 1/3 as much evidence for $H_0$ as $H_1$.[^inference-10] 
+Bayes Factors are a method for quantifying the support for one hypothesis over another, based on an observed dataset. Informally, we've now talked about two different distinct hypotheses about the tea situation: our participant could have *no* tea discrimination ability -- leading to chance performance. We call this $H_0$. Or they could have some non-zero ability -- leading to greater than chance performance. We call this $H_1$. The Bayes Factor is simply the likelihood of the data (in the technical sense used above) under $H_1$ vs. under $H_0$ (Figure \@ref(fig:inference-bf)). The Bayes Factor is a ratio, so if it is greater than 1, the data are more likely under $H_1$ than they are under $H_0$ -- and vice versa for values between 1 and 0. A BF of 3 means there is three times as much evidence for $H_1$ than $H_0$, or equivalently 1/3 as much evidence for $H_0$ as $H_1$.[^inference-10] 
 
 [^inference-10]: Sometimes people refer to the BF in favor of $H_1$ as the $BF_{10}$ and the BF in favor of $H_0$ as the $BF_{01}$. This notation strikes us as a bit confusing because a reader might wonder what the 10 in the subscript means.
 
@@ -279,43 +263,41 @@ In practice, the thing that is both tricky and good about Bayes Factors is that 
 
 [^inference-12]: Two good ones are @gelman1995 (a bit more statistical) and @kruschke2014 (a bit more focused on psychological data analysis). An [in-prep web-book by Nicenboim et al.](https://vasishth.github.io/bayescogsci/book/) also looks great.
 
-```{r inference-milk-first, fig.cap="Ratings of the quality of milk-first tea."}
-sigma <- 1.25
-n_total <- 48
+<!-- ```{r inference-milk-first, fig.cap="Ratings of the quality of milk-first tea."} -->
+<!-- sigma <- 1.25 -->
+<!-- n_total <- 48 -->
 
-tea_data <- make_tea_data(n_total, sigma)
+<!-- tea_data <- make_tea_data(n_total, sigma) -->
 
-ggplot(tea_data, aes(x = rating, fill = condition)) + 
-  geom_dotplot(position = position_dodge(), 
-               aes(y = ..count..)) + 
-  xlim(1,7) + 
-  ylab("Number of ratings") + 
-  xlab("Quality rating (1-7)") + 
-  theme(axis.text.y=element_blank(),
-        axis.ticks.y=element_blank()) 
+<!-- ggplot(tea_data, aes(x = rating, fill = condition)) +  -->
+<!--   geom_dotplot(position = position_dodge(),  -->
+<!--                aes(y = ..count..)) +  -->
+<!--   xlim(1,7) +  -->
+<!--   ylab("Number of ratings") +  -->
+<!--   xlab("Quality rating (1-7)") +  -->
+<!--   theme(axis.text.y=element_blank(), -->
+<!--         axis.ticks.y=element_blank())  -->
 
-tea_bf <- BayesFactor::ttestBF(x = tea_data$rating[tea_data$condition == "milk first"],
-                               y = tea_data$rating[tea_data$condition == "tea first"], 
-                               paired = FALSE)
+<!-- tea_bf <- BayesFactor::ttestBF(x = tea_data$rating[tea_data$condition == "milk first"], -->
+<!--                                y = tea_data$rating[tea_data$condition == "tea first"],  -->
+<!--                                paired = FALSE) -->
 
-tea_data_large <- make_tea_data(n_total *2, sigma)
-tea_bf_large <- BayesFactor::ttestBF(x = tea_data_large$rating[tea_data_large$condition == "milk first"],
-                               y = tea_data_large$rating[tea_data_large$condition == "tea first"], 
-                               paired = FALSE)
-```
+<!-- tea_data_large <- make_tea_data(n_total *2, sigma) -->
+<!-- tea_bf_large <- BayesFactor::ttestBF(x = tea_data_large$rating[tea_data_large$condition == "milk first"], -->
+<!--                                y = tea_data_large$rating[tea_data_large$condition == "tea first"],  -->
+<!--                                paired = FALSE) -->
+<!-- ``` -->
 
 ::: {.box .code}
 Bayes Factors are delightfully easy to compute using the `BayesFactor` R package. All we do is feed in the two sets of ratings to the `ttestBF` function!
 
 ```{r eval=FALSE, echo=TRUE}
 tea_bf <- ttestBF(x = tea_data$rating[tea_data$condition == "milk first"],
-                               y = tea_data$rating[tea_data$condition == "tea first"],
-                               paired = FALSE)
+                  y = tea_data$rating[tea_data$condition == "tea first"],
+                  paired = FALSE)
 ```
 
 :::
-
-Figure \@ref(fig:inference-milk-first) shows one example dataset. Once we set up our models, we can compute the relative likelihood of the data under each.^[In this case, we use the default Bayesian $t$-test provided by the `BayesFactor` package.] The resulting BF is `r round(extractBF(tea_bf)$bf, 2)`, somewhere between anecdotal and substantial evidence. On the other hand, if we double the size of the experiment to 96 participants, the BF goes up to `r round(extractBF(tea_bf_large)$bf, 2)`, which is quite strong evidence.
 
 That's the Bayes Factor. Now let's turn back to NHST and the $p$-value.
 
@@ -326,6 +308,8 @@ We already have a working definition of what a $p$-value is from our discussion 
 Next we can use a simple statistical test, a $t$-test, to compute $p$-values for our experiment. In case you haven't encountered one, a $t$-test is a procedure for computing a $p$-value by comparing the distribution of two variables using the null hypothesis that there is no difference between them.^[$t$-tests can also be used in cases where one sample is being compared to some baseline.] The $t$-test uses the data to compute a **test statistic** whose distribution under the null hypothesis is known. Then the value of this statistic can be converted to $p$-values for making an inference. 
 
 ```{r inference-t-test}
+set.seed(42)
+tea_data <- make_tea_data(n_total = 48)
 tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
                 y = tea_data$rating[tea_data$condition == "tea first"], 
                 paired = FALSE, var.equal = TRUE)
@@ -342,29 +326,29 @@ tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
 ```
 :::
 
-When we conduct a $t$-test on our experimental results, we see that the difference between the two groups is significant at $p<.05$: `r papaja::apa_print(tea_t)$statistic`. Here we've given a standard American Psychological Association report of a $t$-test. The first part of this report on the test gives the $t$ value, qualified by the **degrees of freedom** for the test in parentheses. We won't focus much on the idea of degrees of freedom here, but for now it's enough to know that this number quantifies the amount of information given by the data, in this case 48 datapoints minus the two means (one for each of the samples).
+Imagine we conduct a tea-tasting experiment with $N=48$ and perform a $t$-test on our experimental results. In this case, we see that the difference between the two groups is significant at $p<.05$: `r papaja::apa_print(tea_t)$statistic`. Here we've given a standard American Psychological Association report of a $t$-test. The first part of this report on the test gives the $t$ value, qualified by the **degrees of freedom** for the test in parentheses. We won't focus much on the idea of degrees of freedom here, but for now it's enough to know that this number quantifies the amount of information given by the data, in this case 48 datapoints minus the two means (one for each of the samples).
 
 Let's compare $p$ values and default Bayes Factors for a couple of different conditions. In Table \@ref(tab:p-bf-comparison), you can see a set of simulated experiments with varying total numbers of participants and varying average treatment effects. Both $p$ and BF go up with more participants and larger effects. In general BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ can sometimes translate to a BF of less than 3 [@benjamin2018]. 
 
 ```{r p-bf-comparison}
-set.seed(10)
+set.seed(11)
 options(scipen = 999) # remove scientific notation here
 
 expand_grid(N = c(12,24,48,96), 
-       Delta = c(.5, 1, 1.5)) |>
+       Effect = c(.5, 1, 1.5)) |>
   rowwise() |>
-  mutate(data = map2(N, Delta, 
-                     ~make_tea_data(n_total = N, delta = Delta))) |>
+  mutate(data = map2(N, Effect, 
+                     ~make_tea_data(n_total = N, delta = Effect))) |>
   unnest(cols = c(data)) |>
-  group_by(N, Delta) |>
+  group_by(N, Effect) |>
   summarise(`p value` = printp(t.test(x = rating[condition == "milk first"],
                              y = rating[condition == "tea first"], 
                              paired = FALSE, 
                              var.equal = TRUE)$p.value),
          BF = round(extractBF(
            BayesFactor::ttestBF(x = rating[condition == "milk first"],
-                               y = rating[condition == "tea first"], 
-                               paired = FALSE))$bf)) %>%
+                                y = rating[condition == "tea first"], 
+                                paired = FALSE))$bf,1)) %>%
   kable(booktabs = TRUE, digits = 3, caption = "Comparison of p-value and BF for several different (randomly-generated) tea-tasting scenarios.")
 ```
 
@@ -386,61 +370,23 @@ Setting these rates is a decision problem: If you are too conservative in your c
 
 As we saw in Figure \@ref(fig:inference-null-model), the greater the sample, the better your chance of rejecting the null for any given non-null effect. But these chances will depend also on the effect size you are using. This formulation gives rise to the idea of classical power analysis, which we cover in Chapter \@ref(sampling). Most folks who defend binary inference using $p$-values are interested in using the Neyman-Pearson approach. In our view, this approach has its place (it's especially useful for power analysis) but it still suffers from the substantial issues that plague all binary inference techniques, especially those that use $p$-values. 
 
-<!-- ::: {.box .depth} -->
-<!-- (TITLE) Nonparameteric resampling under the null -->
+::: {.box .depth}
+(TITLE) Nonparameteric resampling under the null
 
-<!-- As we've seen above, hypothesis testing hinges on approximating the null distribution of the statistical estimate. In the examples above, it was easy to use statistical theory to work out the null distribution: for example, in Figure \@ref(fig:inference-null-model), we knew that the null distribution must be binomial since we had a binary outcome, and the binomial distribution parameter $p$ must be 0.5, because that is what the null says. -->
+As we've seen above, hypothesis testing hinges on approximating the null distribution of the statistical estimate. In the examples above, it was easy to use statistical theory to work out the null distribution (using our knowlege of the binomial or normal distribution). But sometimes we don't know what the null distribution would look like. Consider a case in which the ratings data from our tea-tasting experiment was very skewed (Figure (\@ref(fig:inference-skewed))).  
 
-<!-- But sometimes we don't know what the null distribution would look like. Suppose we want to estimate group differences in a highly skewed continuous outcome, like salary, but we had a small sample size (e.g., $n=10$ per group), as shown in Figure \@ref(fig:inference-permutation-1) -->
+```{r inference-permutation-1, fig.margin = TRUE, fig.cap="A small tea-tasting  experiment with a skewed distribution of ratings."}
+knitr::include_graphics("images/inference/skewed.png")
+```
 
-<!-- ```{r inference-permutation-1, fig.margin = TRUE, fig.cap="A small experiment with a skewed distribution for its outcome variable."} -->
-<!-- # print(d) -->
+We can't proceed with a t-test in good conscience because, with only $n=18$, we can't necessarily trust that the Central Limit Theorem has "kicked in" sufficiently for the test to work despite the skewness. Stated otherwise, we can't be sure that the null distribution is normal (Gaussian) in this case.
 
-<!-- set.seed(451) -->
-<!-- n.per.group = 10 -->
-<!-- d <- data.frame(Y = c( rexp( n = n.per.group, rate = 4 ), -->
-<!--                        rexp( n = n.per.group, rate = 4 ) + 0.3 ), -->
-<!--                 Group = c( rep( "Control", n.per.group ), -->
-<!--                            rep ( "Treatment", n.per.group ) ) ) -->
+When we can't rely on theory, another way to approximate a null distribution is through nonparametric resampling. "Resampling" means that we're going to cleverly draw new samples *from our existing sample*, and "nonparametric" means that we will do this in a way that obviates assumptions about the shape of the null distribution (in contrast to parametric approaches that do rely on such assumptions).
 
-<!-- ggplot( data = d, -->
-<!--         aes(x = Y, group = Group ) ) + -->
-<!--   geom_dotplot( aes( fill=Group ), alpha=0.4, binwidth = .05 ) + -->
-<!--   xlab("Y") + -->
-<!--   ylab("") +  -->
-<!--   theme(legend.position = "bottom") -->
-<!-- ``` -->
+The idea is that, if the treatment truly had no effect on the outcome, then the observations would be **exchangeable** between the treatment and control groups. That is, there would not be systematic differences between the treatment and control groups. This may or may not be true in our observed sample (after all, that's why we're doing a hypothesis test in the first place), but we could draw new samples from our existing sample in a manner that forces exchangability. 
 
-<!-- We can't proceed with a t-test in good conscience because, with only $n=20$, we can't necessarily trust that the Central Limit Theorem has "kicked in" sufficiently for the test to work despite the skewness. Stated otherwise, we can't be sure that the null distribution is normal in this case. -->
-
-<!-- When we can't rely on theory, another way to approximate a null distribution is through nonparametric resampling. "Resampling" means that we're going to cleverly draw new samples *from our existing sample*, and "nonparametric" means that we will do this in a way that obviates assumptions about the shape of the null distribution (in contrast to parametric approaches that do rely on such assumptions). -->
-
-<!-- The central idea is that, if the treatment truly had no effect on the outcome, then the observations would be **exchangeable** between the treatment and control groups. That is, there would not be systematic differences between the treatment and control groups. This may or may not be true in our observed sample (after all, that's why we're doing a hypothesis test in the first place), but we could draw new samples from our existing sample in a manner that forces exchangability. In this case, we could randomly permute the column of outcomes in our dataset while leaving the column of treatment assignments fixed. -->
-
-<!-- ```{r inference-permutation-2, fig.margin = TRUE, fig.cap="A small experiment with a skewed distribution for its outcome variable."} -->
-<!-- # show construction of a single permuted dataset -->
-<!-- # library(modelr) -->
-<!-- # library(purrr) -->
-<!-- perm.reps = 100 -->
-<!-- perms = gtools::permute(data = d, n = perm.reps, Y) -->
-
-<!-- # show the first permuted dataset -->
-<!-- print( perms$perm[[1]]$data ) -->
-
-<!-- #@WHY ARE THESE ALL THE SAME?? -->
-<!-- cbind( perms$perm[[1]]$data$Y, perms$perm[[2]]$data$Y ) -->
-<!-- # c.f. package example for debugging -->
-<!-- perms2 <- gtools::permute(mtcars,  1000, mpg) -->
-<!-- cbind( perms2$perm[[1]]$data$mpg, perms2$perm[[2]]$data$mpg ) -->
-<!-- # also the same?? -->
-
-<!-- # get group mean differences for each permutation via OLS -->
-<!-- ols = map(perms$perm, ~ lm(Y ~ 1, data = .)) -->
-<!-- ATEs = lapply( ols, function(.ols) as.numeric( coef(.ols)["(Intercept)"] ) ) -->
-
-<!-- # now plot the ATEs to show the null sampling distribution -->
-<!-- ``` -->
-<!-- ::: -->
+In this case, we could randomly permute the column of ratings in our dataset while leaving the column of conditions fixed. If we do this hundreds or thousands of times and compute the treatment effect in each case, we create a null distribution over what we might expect the treatment effect to look like if there was no condition effect. We can then compare our *actual* treatment effect to this nonparametric null distribution. If it is smaller than the 2.5th percentile, or larger than the 97.5th percentile, we can reject the null with $p < .05$, just the same as if we had used a parametric test like a $t$-test.
+:::
 
 ## Inference and its discontents
 
@@ -535,37 +481,32 @@ One thing we often want to do is to make an inference about how similar our esti
 The **confidence interval** is a convenient frequentist way to summarize the variability of the sampling distribution -- and hence how precise our point estimate is. The confidence interval represents the range of possible values for the parameter of interest that are plausible given the data. More formally, a 95% confidence interval for some estimate (call it $\widehat{\beta}$, as in the our example) is defined as a range of possible values for $\beta$ such that, if we did repeated sampling, 95% of the intervals generated by those samples would contain the true parameter, $\beta$. 
 
 
-```{r inference-tea-se}
-tea_ratings <- tea_data$rating[tea_data$condition == "tea first"]
-milk_ratings <- tea_data$rating[tea_data$condition == "milk first"]
-n_tea <- length(tea_ratings)
-n_milk <- length(milk_ratings)
-sd_tea <- sd(tea_ratings)
-sd_milk <- sd(milk_ratings)
-tea_sd_pooled <- sqrt(((n_tea-1)*sd_tea^2 + (n_milk-1)*sd_milk^2) / 
-                        (n_tea + n_milk - 2))
+<!-- ```{r inference-tea-se} -->
+<!-- tea_ratings <- tea_data$rating[tea_data$condition == "tea first"] -->
+<!-- milk_ratings <- tea_data$rating[tea_data$condition == "milk first"] -->
+<!-- n_tea <- length(tea_ratings) -->
+<!-- n_milk <- length(milk_ratings) -->
+<!-- sd_tea <- sd(tea_ratings) -->
+<!-- sd_milk <- sd(milk_ratings) -->
+<!-- tea_sd_pooled <- sqrt(((n_tea-1)*sd_tea^2 + (n_milk-1)*sd_milk^2) / -->
+<!--                         (n_tea + n_milk - 2)) -->
 
 
-tea_se <- tea_sd_pooled * sqrt((1/n_tea) + (1/n_milk))
+<!-- tea_se <- tea_sd_pooled * sqrt((1/n_tea) + (1/n_milk)) -->
 
-delta_hat <- mean(milk_ratings) - mean(tea_ratings)
-tea_ci_lower <- delta_hat - tea_se *1.96
-tea_ci_upper <- delta_hat + tea_se *1.96
-```
+<!-- delta_hat <- mean(milk_ratings) - mean(tea_ratings) -->
+<!-- tea_ci_lower <- delta_hat - tea_se *1.96 -->
+<!-- tea_ci_upper <- delta_hat + tea_se *1.96 -->
+<!-- ``` -->
 
-Confidence intervals are constructed by estimating the middle 95% of the sampling distribution of $\widehat{\beta}$. Because of our hero, the Central Limit Theorem, we can treat the sampling distribution as normal for reasonably large samples. Given this, it's common to construct a 95% confidence intervals $\widehat{\beta} \pm 1.96 \widehat{SE}$.^[This type of CI is called a "Wald" confidence interval.] For the tea example, we had $\widehat{SE} = \sigma/\sqrt{n} = `r round(tea_se,2)`$, yielding the confidence interval: [`r round(tea_ci_lower,2)`, `r round(tea_ci_upper,2)`]. If we were to conduct the experiment 100 times and calculate a confidence interval each time, we should expect 95 of the intervals to contain the true $\beta$, whereas we would expect the remaining 5 to not contain $\beta$.[^inference-8] 
+Confidence intervals are constructed by estimating the middle 95% of the sampling distribution of $\widehat{\beta}$. Because of our hero, the Central Limit Theorem, we can treat the sampling distribution as normal for reasonably large samples. Given this, it's common to construct a 95% confidence intervals $\widehat{\beta} \pm 1.96 \widehat{SE}$.^[This type of CI is called a "Wald" confidence interval.] If we were to conduct the experiment 100 times and calculate a confidence interval each time, we should expect 95 of the intervals to contain the true $\beta$, whereas we would expect the remaining 5 to not contain $\beta$.[^inference-8] 
 
 [^inference-8]: In case you don't have enough tea to do the experiment 100 times to confirm this, you can do it virtually [here](https://istats.shinyapps.io/ExploreCoverage/).
 
 Confidence intervals are like betting on the inferences drawn from your sample. The sample you drew is like one pull of a slot machine that will pay off (i.e., have the confidence interval contain the true parameter) 95% of the time. Put more concisely: 95% of 95% confidence intervals contain the true value of the mean.
 
-
-```{r inference-condition-cis, fig.margin=TRUE, fig.cap = "Confidence intervals on each of the two condition estimates."}
-ggplot(tea_data_large, 
-       aes(x = condition, y= rating)) + 
-  stat_summary(fun.data = "mean_cl_normal") + 
-  ylab("Quality rating (1-7)") + 
-  xlab("Condition")
+```{r inference-condition-cis, fig.margin=TRUE, fig.cap = "Confidence intervals on each of the two condition estimates, as well as on the condition difference."}
+knitr::include_graphics("images/inference/power-alpha.png")
 ```
 
 
@@ -596,7 +537,7 @@ tea_ci_upper <- delta_hat + tea_se *1.96
 :::
 
 
-For visualization purposes, we can show the confidence intervals on individual estimates (Figure \@ref(fig:inference-condition-cis)). These tell us about the precision of our estimates of each quantity relative to the population estimate. But we've been talking primarily about the CI on the treatment effect $\widehat{\beta}$, which is shown in Figure \@ref(fig:inference-treatment-ci). This CI allows us to make an inference about whether or not it overlaps with zero -- which is actually equivalent in this case to whether or not the t-test is statistically significant. 
+For visualization purposes, we can show the confidence intervals on individual estimates (left side of Figure \@ref(fig:inference-condition-cis)). These tell us about the precision of our estimates of each quantity relative to the population estimate. But we've been talking primarily about the CI on the treatment effect $\widehat{\beta}$ (right side of Figure \@ref(fig:inference-condition-cis)). This CI allows us to make an inference about whether or not it overlaps with zero -- which is actually equivalent in this case to whether or not the $t$-test is statistically significant. 
 
 ```{r inference-treatment-ci, fig.margin=TRUE, fig.cap = "Confidence intervals on the treatment effect."}
 treatment_ci <- tibble(ymin = tea_ci_lower, 
