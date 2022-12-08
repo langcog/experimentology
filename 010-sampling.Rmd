@@ -151,6 +151,9 @@ Multi-lab, multi-nation studies can help to address questions about heterogeneit
 
 In fields like econometrics or epidemiology that use observational methods to estimate causal effects, reasoning about **sampling biases** is a critical part of estimating generalizable effects. That's because the measure that these fields are interested in -- for example, outcomes to do with health and wealth -- vary widely across individuals. So the way you sample can affect your estimated effect. In the kind of experimental work we are discussing, some of these issues are addressed by random assignment, but others are not. 
 
+<!-- MM: General comment about the causal material: I worry that it might be more confusing than elucidating to discuss colliders, etc., without saying what they are (structurally) and describing the basic rules of assessing d-separation, which are pretty simple and elegant, if a little abstract for students on their first exposure. Sander Greenland et al. describe it very well in "Causal diagrams for epidemiologic research". A more compact definition in Pearl's textbook; will put the snippet in Slack. -->
+
+
 ### The role of random assignment
 
 Imagine you want to measure the association between wealth and happiness through a (non-experimental) survey. As we discussed in Chapter \@ref(experiments), there are plenty of confounds that we can come up with: factors that might make you both wealthier and happier. We can also *create* other sorts of problems if we are careless in our sampling. One prominent problem that we can induce is called **collider bias**. 
@@ -158,14 +161,20 @@ Imagine you want to measure the association between wealth and happiness through
 ```{r sampling-money, fig.margin=TRUE, fig.cap="Four reasons why money and happiness can be correlated in a particular sample: 1. causal relationship, 2. reverse causality, 3. confounding with friendship, and 4. collider bias in your sample."}
 knitr::include_graphics("images/sampling/money3-drawing.png")
 ```
+<!-- MM: In my comments, S=selection indicator, A=exposure, Y=outcome. These are good examples, but in DAG 4, should indicate that S is conditioned. Typically, this is done with a box around the node. Collider variables that are not conditioned actually block rather than open paths, preventing association. -->
 
 Suppose we recruited our sample from the clients of a social services agency. Unfortunately, both of our variables might have a causal relationship with presence in a social service agency (Figure \@ref(fig:sampling-money): people might be interacting with the agency for financial or benefits assistance, or else for psychological services (perhaps due to depression). In this sample, we might see a *negative* association between wealth and happiness -- on average the people coming for financial assistance would have less wealth and more happiness than the people coming for psychological services -- instead of the *positive* but confounded association we talked about in Chapter \@ref(experiments). The take-home here is that if there is a causal relationship between your variables of interest and presence in your sample, you have **collider bias**.
+<!-- MM: Re: last sentence, not necessarily. There can be causal relationships as described even if S isn't collider. And there can be causal relationships between A, Y, and S that do not cause bias of any form, collider-induced or not. -->
+
 
 ```{r sampling-money2, fig.margin=TRUE, fig.cap="Random assignment to an experimental intervention removes collider bias (but issues of generalizability remain)."}
 knitr::include_graphics("images/sampling/money5-drawing.png")
 ```
 
 Luckily, random assignment saves the day! Even if we start with a sample that has collider bias, we can sever these outgoing causal links by randomly assigning some part of our sample to receive money (Figure \@ref(fig:sampling-money2)). Then we can simply estimate the intervention's effect via a subtraction (as in Chapter \@ref(estimation)) without risk of collider bias. 
+<!-- MM: (1) Random assignment shouldn't be depicted as an A -> Y arrow on the DAG. Arrows are reserved for causal relationships, not interventions. Interventions can be depicted using SWIGs, but those are too technical for this book. (2) I don't understand this example. Random assignment itself does not remove collider bias nor block the A -> S <- Y path. In fact, for this causal structure, it is actually impossible to block that path. In other cases, there is some other variable that could be conditioned to eliminate the bias (some DAG examples in the working paper I sent, though that concept is not new). The only way to remove the collider bias for this DAG is to avoid conditioning S itself. For this reason, I would suggest describing this section as "collider bias" rather than "random assignment". (3) "Severing" arrows is not standard terminology -- I'd suggest using the more conventional ideas of open and closed paths, and blocking open paths. -->
+
+
 
 Even though random assignment "works" in samples like this one -- meaning, allows an unbiased estimate of the effect of money on happiness -- doing your study in this sample still raises a number of issues. First, the sample is heterogeneous on both baseline money and happiness, leading to problems with both the manipulation and the measure. A money manipulation may do more for participants who have less money and do less for others who have more, and a happiness measure may be at floor for some participants or ceiling for others. Second, just as we have discussed for other convenience samples, our estimate of the experimental effect may not generalize to individuals who don't share characteristics with the convenience sample. So a money-happiness experiment using this population might still not be a good idea.
 
@@ -180,8 +189,10 @@ knitr::include_graphics("images/sampling/attrition-drawing.png")
 ```
 
 But there is a further problem with attrition. If one of your conditions leads to more attrition than the other, you can have a bias that confounds your conclusions, even in the presence of random assignment [@nunan2018]! 
+<!-- MM: Pet peeve, but "confound" should not be used interchangeably for "confounding" (a precise structural concept) and "any arbitrary bias". What's described here is not confounding. -->
 
 Imagine students in the control condition of your math intervention experiment stayed in the sample, but the math intervention itself was so tough that most families dropped out. Now, when you compare math scores at the end of the experiment, you have a confound (Figure \@ref(fig:sampling-attrition)): scores in the math condition could be higher simply because the families that remain in the study have a higher degree of interest in math.^[Using a longitudinal design doesn't help with this issue -- the self-selected high math interest families could coach their kids on the curriculum, leading to greater growth over time even when controlling for baseline math scores.]
+<!-- MM: I don't understand the DAG here, which looks like high math interest (S) is actually a mediator which is also being conditioned, such that we are identifying a direct effect conditional on high math interest. Maybe remove the A -> S arrow so that it's just a simple story of selection on a variable that affects Y? -->
 
 You might think this kind of problem isn't something we have to worry about, but it turns out that attrition bias can be pretty common even in short studies, especially when they are conducted online. And this bias can lead to false conclusions. For example, @zhou2016 ran an experiment in which they asked online participants to write about either 4 happy events (low difficulty) or 12 happy events (high difficulty) from the last year and then asked the participants to rate the difficulty of the task. Surprisingly, the high difficulty task was rated as easier than the low difficulty task! Selective attrition was the culprit for this counter-intuitive conclusion: while only 26% of participants dropped out of the low difficulty condition, a full 69% dropped out of the high difficulty task. The 31% that were left were so happy that it was actually quite easy for them to generate 12 happy events, and so they rated the objectively harder task as less difficult. 
 
