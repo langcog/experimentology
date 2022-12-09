@@ -3,7 +3,7 @@
 ::: {.box .learning_goals}
 -   Discuss the purpose of statistical inference
 -   Define *p*-values and Bayes Factors
--   Consider common fallacies about inference (especially for $p$-values)
+-   Consider common fallacies about inference (especially for *p*-values)
 -   Reason about sampling variability 
 -   Define and reason about confidence intervals
 :::
@@ -41,6 +41,11 @@ In Chapter \@ref(estimation), we introduced Fisher's tea-tasting experiment and 
 
 [^inference-7]: The measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Sampling-based uncertainty is only one kind of uncertainty, though: a more holistic view of the overall credibility of an estimate should also account for study design and bias, among other things
 
+
+```{r inference-sampling-small, fig.margin = TRUE, fig.cap= "Sampling distribution for the treatment effect in the tea-tasting experiment, given many different repetitions of the same experiment, each with N=9 per group."}
+knitr::include_graphics("images/inference/sampling-small.png")
+```
+
 To characterize the uncertainty in an estimate, it helps to picture what is called its **sampling distribution**, which is the distribution of the estimate across different, hypothetical samples. That is, let's imagine -- purely hypothetically -- that we conducted the tea experiment not just once, but hundreds or even thousands of times. This idea is often called **repeated sampling** as a shorthand. For each hypothetical sample, we use similar recruitment methods to recruit a new sample of participants, and we estimate $\widehat{\beta}$ in that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability. If we plotted these estimates, $\widehat{\beta}$, across thousands of samples, we would get the sampling distribution in Figure \@ref(fig:inference-sampling-small). 
 
 ```{r}
@@ -63,9 +68,14 @@ knitr::kable(head(tea_data), digits = 2)
 ```
 :::
 
-```{r inference-sampling-small, fig.margin = TRUE, fig.cap= "Sampling distribution for the treatment effect in the tea-tasting experiment, given many different repetitions of the same experiment, each with N=9 per group."}
-knitr::include_graphics("images/inference/sampling-small.png")
+Now imagine we also did thousands of repetitions of the experiment with $n=200$ per group instead of $n=9$ per group. Figure \@ref(fig:inference-sampling-big) shows what the sampling distribution might look like in that case. Notice how much narrower the sampling distribution becomes when we increase the sample size, showing our decreased uncertainty. More formally, the standard deviation of the sampling distribution itself, called the **standard error**, decreases as the sample size increases.
+
+```{r inference-sampling-big, fig.margin = TRUE, fig.cap= "Comparing sampling distributions for the treatment effect with smaller and larger size samples."}
+knitr::include_graphics("images/inference/sampling-big.png")
+
 ```
+
+
 ::: {.box .code}
 To do this simulation, we're using a special tidyverse function from the `purrr` library: `map`. `map` is an extremely powerful function that allows us to run another function (in this case, the `make_tea_data` function that we introduced last chapter) many times with different inputs. Here we create a tibble made up of a set of 1000 runs of the `make_tea_data` function.
 
@@ -86,14 +96,6 @@ tea_summary <- samps |>
 
 This tibble gives us what we need to make our histogram.
 :::
-
-Now imagine we also did thousands of repetitions of the experiment with $n=200$ per group instead of $n=9$ per group. Figure \@ref(fig:inference-sampling-big) shows what the sampling distribution might look like in that case. Notice how much narrower the sampling distribution becomes when we increase the sample size, showing our decreased uncertainty. More formally, the standard deviation of the sampling distribution itself, called the **standard error**, decreases as the sample size increases.
-
-```{r inference-sampling-big, fig.margin = TRUE, fig.cap= "Comparing sampling distributions for the treatment effect with smaller and larger size samples."}
-knitr::include_graphics("images/inference/sampling-big.png")
-
-```
-
 
 The sampling distribution is not the same thing as the distribution of tea ratings in a single sample. Instead, it's a distribution of *estimates across samples of a given size*. Internalizing this distinction is a crucial component to understanding all statistical models and tests. 
 <!-- If we were in the classroom with you, we would pound our fist on the lecture podium for emphasis! -->
@@ -135,7 +137,7 @@ But look what happens as we draw increasingly larger samples in Figure \@ref(fig
 
 ## From variation to inference
 
-OK, let's go back to Fisher's tea-tasting experiment. The first innovation of that experiment was the use of randomization to recover an estimate of the causal effect of milk ordering. But there was more to Fisher's analysis than we described. 
+Let's go back to Fisher's tea-tasting experiment. The first innovation of that experiment was the use of randomization to recover an estimate of the causal effect of milk ordering. But there was more to Fisher's analysis than we described. 
 
 The second innovation of the tea-tasting experiment was the idea of creating a model of what might happen during the experiment. Specifically, Fisher described a hypothetical **null model** that would arise if the nameless lady had chosen cups by chance rather than because of some tea sensitivity. In our tea-rating experiment, the null model describes what happens when there is no difference in ratings between tea-first and milk-first cups. Under the null model, the treatment effect ($\beta$) is zero. 
 
@@ -177,7 +179,7 @@ That's the logic of Fisherian NHST: if the observed data fall in the region that
 
 As we saw before, the larger the sample size, the smaller the standard error. That's true for the null model too! Figure \@ref(fig:inference-null-model2) shows the expected null distribution for a bigger experiment. 
 
-```{r inference-null-model2, fig.cap="Example distribution of treatment effects under the null model for a larger experiment."}
+```{r inference-null-model2, fig.cap="Example distribution of treatment effects under the null model for a larger experiment.", fig.margin=TRUE}
 knitr::include_graphics("images/inference/p-region-bigger.png")
 ```
 :::{.box .code}
@@ -234,7 +236,7 @@ By defining a $p$-value, we got one procedure for giving this answer. If $p < .0
 ### Bayes Factors
 
 
-```{r inference-bf, fig.cap="The Bayes Factor (BF)."}
+```{r inference-bf, fig.cap="The Bayes Factor (BF).", fig.margin=TRUE}
 knitr::include_graphics("images/inference/bf.png")
 ```
 
@@ -262,6 +264,8 @@ The second thing to notice about the Bayes Factor is that it doesn't depend on o
 In practice, the thing that is both tricky and good about Bayes Factors is that you need to define an actual model of what $H_0$ and $H_1$ are. That process involves making some assumptions explicit. We won't go into how to make these models here -- this is a big topic that is covered extensively in books on Bayesian data analysis.[^inference-12] Below and in Chapter \@ref(models) we will provide some guidance for how to compute Bayes Factors for simple experimental designs. The goal here is just to give a sense of how they work.
 
 [^inference-12]: Two good ones are @gelman1995 (a bit more statistical) and @kruschke2014 (a bit more focused on psychological data analysis). An [in-prep web-book by Nicenboim et al.](https://vasishth.github.io/bayescogsci/book/) also looks great.
+
+<!-- That's the Bayes Factor.  -->
 
 <!-- ```{r inference-milk-first, fig.cap="Ratings of the quality of milk-first tea."} -->
 <!-- sigma <- 1.25 -->
@@ -299,11 +303,10 @@ tea_bf <- ttestBF(x = tea_data$rating[tea_data$condition == "milk first"],
 
 :::
 
-That's the Bayes Factor. Now let's turn back to NHST and the $p$-value.
 
 ### *p*-values
 
-We already have a working definition of what a $p$-value is from our discussion above: it's the **probability of the data (or any data that would be more extreme) under the null hypothesis**. How is this quantity related to either our Bayesian estimate or the BF? Well, the first thing to notice is that the $p$-value is very close (but not identical) to the likelihood itself.^[The likelihood -- for both Bayesians and frequentists --  is the probability of the data, just like the $p$-value. But unlike the $p$-value, it doesn't include the probability of more extreme data as well.] 
+Now let's turn back to NHST and the $p$-value. We already have a working definition of what a $p$-value is from our discussion above: it's the **probability of the data (or any data that would be more extreme) under the null hypothesis**. How is this quantity related to either our Bayesian estimate or the BF? Well, the first thing to notice is that the $p$-value is very close (but not identical) to the likelihood itself.^[The likelihood -- for both Bayesians and frequentists -- is the probability of the data, just like the $p$-value. But unlike the $p$-value, it doesn't include the probability of more extreme data as well.] 
 
 Next we can use a simple statistical test, a $t$-test, to compute $p$-values for our experiment. In case you haven't encountered one, a $t$-test is a procedure for computing a $p$-value by comparing the distribution of two variables using the null hypothesis that there is no difference between them.^[$t$-tests can also be used in cases where one sample is being compared to some baseline.] The $t$-test uses the data to compute a **test statistic** whose distribution under the null hypothesis is known. Then the value of this statistic can be converted to $p$-values for making an inference. 
 
@@ -317,7 +320,7 @@ tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
 ```
 
 ::: {.box .code}
-The standard `t.test` function is built into R via the default `stats` package. Here we simply make sure to specify the variety of test we want by using the `paired = FALSE` and `var.equal = TRUE` (equal variances) flags. 
+The standard `t.test` function is built into R via the default `stats` package. Here we simply make sure to specify the variety of test we want by using the flags `paired = FALSE` and `var.equal = TRUE` (denoting the assumption of equal variances). 
 
 ```{r eval=FALSE, echo=TRUE}
 tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
@@ -326,9 +329,11 @@ tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
 ```
 :::
 
-Imagine we conduct a tea-tasting experiment with $N=48$ and perform a $t$-test on our experimental results. In this case, we see that the difference between the two groups is significant at $p<.05$: `r papaja::apa_print(tea_t)$statistic`. Here we've given a standard American Psychological Association report of a $t$-test. The first part of this report on the test gives the $t$ value, qualified by the **degrees of freedom** for the test in parentheses. We won't focus much on the idea of degrees of freedom here, but for now it's enough to know that this number quantifies the amount of information given by the data, in this case 48 datapoints minus the two means (one for each of the samples).
+Imagine we conduct a tea-tasting experiment with $N=48$ and perform a $t$-test on our experimental results. In this case, we see that the difference between the two groups is significant at $p<.05$: `r papaja::apa_print(tea_t)$statistic`. 
 
-Let's compare $p$ values and default Bayes Factors for a couple of different conditions. In Table \@ref(tab:p-bf-comparison), you can see a set of simulated experiments with varying total numbers of participants and varying average treatment effects. Both $p$ and BF go up with more participants and larger effects. In general BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ can sometimes translate to a BF of less than 3 [@benjamin2018]. 
+The expression `r papaja::apa_print(tea_t)$statistic` is a standard American Psychological Association report of a $t$-test. The first part of this report on the test gives the $t$ value, qualified by the **degrees of freedom** for the test in parentheses. We won't focus much on the idea of degrees of freedom here, but for now it's enough to know that this number quantifies the amount of information given by the data, in this case 48 datapoints minus the two means (one for each of the samples).
+
+Let's compare $p$ values and default Bayes Factors. In Table \@ref(tab:p-bf-comparison), you can see a set of simulated experiments with varying total numbers of participants and varying average treatment effects. Both $p$ and BF go up with more participants and larger effects. In general, BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ can sometimes translate to a BF of less than 3 [@benjamin2018]. 
 
 ```{r p-bf-comparison}
 set.seed(11)
@@ -349,14 +354,14 @@ expand_grid(N = c(12,24,48,96),
            BayesFactor::ttestBF(x = rating[condition == "milk first"],
                                 y = rating[condition == "tea first"], 
                                 paired = FALSE))$bf,1)) %>%
-  kable(booktabs = TRUE, digits = 3, caption = "Comparison of p-value and BF for several different (randomly-generated) tea-tasting scenarios.")
+  kable(booktabs = TRUE, digits = 3, align = "rrrr", caption = "Comparison of p-value and BF for several different (randomly-generated) tea-tasting scenarios.")
 ```
 
-The critical thing about $p$-values, though, is not just that they are a specific kind of data likelihoods. It is that they are used in a specific inferential procedure. The logic of NHST is that we make a binary decision about the presence of an effect. If $p < .05$, the null hypothesis is rejected; otherwise not. As @fisher1949 wrote,
+The critical thing about $p$-values, though, is not just that they are a kind of data likelihoods. It is that they are used in a *specific inferential procedure*. The logic of NHST is that we make a binary decision about the presence of an effect. If $p < .05$, the null hypothesis is rejected; otherwise not. As @fisher1949 wrote,
 
 > It should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis. (p. 19)
 
-As we mentioned, though, we are usually interested in not just rejecting the null hypothesis but also in the evidence for the alternative (the one we are interested in). The Bayes Factor is one approach to quantifying positive evidence. This issue with the Fisher approach to $p$-values has been known for a long time, though, and so there is an alternative approach. 
+The main problem with $p$-values from a scientific perspective is that researchers are usually interested in not just rejecting the null hypothesis but also in the evidence for the alternative (the one we are interested in). The Bayes Factor is one approach to quantifying positive evidence. This issue with the Fisher approach to $p$-values has been known for a long time, though, and so there is an alternative approach. 
 
 ### The Neyman-Pearson approach
 
@@ -371,32 +376,34 @@ Setting these rates is a decision problem: If you are too conservative in your c
 As we saw in Figure \@ref(fig:inference-null-model), the greater the sample, the better your chance of rejecting the null for any given non-null effect. But these chances will depend also on the effect size you are using. This formulation gives rise to the idea of classical power analysis, which we cover in Chapter \@ref(sampling). Most folks who defend binary inference using $p$-values are interested in using the Neyman-Pearson approach. In our view, this approach has its place (it's especially useful for power analysis) but it still suffers from the substantial issues that plague all binary inference techniques, especially those that use $p$-values. 
 
 ::: {.box .depth}
-(TITLE) Nonparameteric resampling under the null
+(TITLE) Nonparametric resampling under the null
 
-As we've seen above, hypothesis testing hinges on approximating the null distribution of the statistical estimate. In the examples above, it was easy to use statistical theory to work out the null distribution (using our knowlege of the binomial or normal distribution). But sometimes we don't know what the null distribution would look like. Consider a case in which the ratings data from our tea-tasting experiment was very skewed (Figure (\@ref(fig:inference-skewed))).  
+Hypothesis testing requires knowing the null distribution. In the examples above, it was easy to use statistical theory to work out the null distribution using knowledge of the binomial or normal distribution. But sometimes we don't know what the null distribution would look like. What if the ratings data from our tea-tasting experiment was very skewed, such that there were many low ratings and a few very high ratings (as in Figure \@ref(fig:inference-skewed))?  
 
 ```{r inference-permutation-1, fig.margin = TRUE, fig.cap="A small tea-tasting  experiment with a skewed distribution of ratings."}
 knitr::include_graphics("images/inference/skewed.png")
 ```
 
-We can't proceed with a t-test in good conscience because, with only $n=18$, we can't necessarily trust that the Central Limit Theorem has "kicked in" sufficiently for the test to work despite the skewness. Stated otherwise, we can't be sure that the null distribution is normal (Gaussian) in this case.
+With skewed data like this, we couldn't proceed with a $t$-test in good conscience because, with only $n=18$, we can't necessarily trust that the Central Limit Theorem has "kicked in" sufficiently for the test to work despite the skewness. Put another way, we can't be sure that the null distribution is normal (Gaussian) in this case.
 
-When we can't rely on theory, another way to approximate a null distribution is through nonparametric resampling. "Resampling" means that we're going to cleverly draw new samples *from our existing sample*, and "nonparametric" means that we will do this in a way that obviates assumptions about the shape of the null distribution (in contrast to parametric approaches that do rely on such assumptions).
+An alternative way to approximate a null distribution is through nonparametric resampling. **Resampling** means that we're going to draw new samples *from our existing sample*, and **nonparametric** means that we will do this in a way that obviates assumptions about the shape of the null distribution -- in contrast to **parametric** approaches that do rely on such assumptions).
 
-The idea is that, if the treatment truly had no effect on the outcome, then the observations would be **exchangeable** between the treatment and control groups. That is, there would not be systematic differences between the treatment and control groups. This may or may not be true in our observed sample (after all, that's why we're doing a hypothesis test in the first place), but we could draw new samples from our existing sample in a manner that forces exchangability. 
+The idea is that, if the treatment truly had no effect on the outcome, then the observations would be **exchangeable** between the treatment and control groups. That is, there would not be systematic differences between the treatment and control groups. This may or may not be true in our observed sample (after all, that's why we're doing a hypothesis test in the first place), but we can draw new samples from our existing sample in a manner that forces exchangability. 
 
-In this case, we could randomly permute the column of ratings in our dataset while leaving the column of conditions fixed. If we do this hundreds or thousands of times and compute the treatment effect in each case, we create a null distribution over what we might expect the treatment effect to look like if there was no condition effect. We can then compare our *actual* treatment effect to this nonparametric null distribution. If it is smaller than the 2.5th percentile, or larger than the 97.5th percentile, we can reject the null with $p < .05$, just the same as if we had used a parametric test like a $t$-test.
+To perform this kind of test with our tea-tasting data, we would randomly permute the column holding the ratings in our dataset -- shuffling them -- while leaving the column of condition assignments fixed. If we did this thousands of times and computed the treatment effect in each case, the result would be a null distribution: what we might expect the treatment effect to look like if there was *no* condition effect. We could then compare our *actual* treatment effect to this nonparametric null distribution. If it was smaller than the 2.5th percentile, or larger than the 97.5th percentile, we would reject the null with $p < .05$, just the same as if we had used a $t$-test.
 :::
 
 ## Inference and its discontents
 
-In the prior sections of this chapter, we reviewed NHST and Bayesian approaches to inference. Now it's time to step back and think about some of the ways that inference practices -- especially those related to NHST -- have been problematic for psychology research. We'll begin with some issues surrounding $p$-values and then give a specific accident report related to the process of "$p$-hacking." We end by discussing the foundations for thinking about probability in light of these issues.
+In prior sections of this chapter, we reviewed NHST and Bayesian approaches to inference. Now it's time to step back and think about some of the ways that inference practices -- especially those related to NHST -- have been problematic for psychology research. We'll begin with some issues surrounding $p$-values and then give a specific accident report related to the process of "$p$-hacking." We end by discussing the foundations for thinking about probability in light of these issues.
 
 ### Problems with the interpretation of *p*
 
-$p$-values are basically likelihoods. The likelihood of the data under the null hypothesis is a critical number to know -- for computing the Bayes Factor among other reasons. But it doesn't tell us a lot of things that we might like to know! For example, it doesn't tell us the probability of the data under any positive hypothesis that we might be interested in -- that's the posterior probability $p(H_1 | d)$. Lots of folks mistake these two for one another, e.g. that the probability of the data given the null is the probability of the null given the data.
+$p$-values are basically likelihoods. The likelihood of the data under the null hypothesis is a critical number to know -- for computing the Bayes Factor among other reasons. But it doesn't tell us a lot of things that we might like to know! 
 
-Another $p$-value problem that comes up frequently is what to conclude when $p>.05$. According to the classical logic of NHST, the answer is "nothing"! That is, a failure to reject the null does not mean that you can *accept* the null. Even if the probability of the data (or some more extreme data) under $H_0$ is high, their probability might be just as high or higher under $H_1$.[^inference-18] But many practicing researchers make this mistake. @aczel2018 coded a sample of articles from 2015 and found that 72% of negative statements were inconsistent with the logic of their statistical paradigm of choice -- most were cases where researchers said that an effect was not present when they had simply failed to reject the null.
+For example, $p$-values don't tell us the probability of the data under any positive hypothesis that we might be interested in -- that's the posterior probability $p(H_1 | d)$. When our tea-tasting $t$-test yielded `r papaja::apa_print(tea_t)$statistic`, that's *not* the probability of the null hypothesis being true! And it's definitely not the probability of milk-first tea being better. 
+
+What can you conclude when $p>.05$? According to the classical logic of NHST, the answer is "nothing"! That is, a failure to reject the null does not mean that you can *accept* the null. Even if the probability of the data (or some more extreme data) under $H_0$ is high, their probability might be just as high or higher under $H_1$.[^inference-18] But many practicing researchers make this mistake. @aczel2018 coded a sample of articles from 2015 and found that 72% of negative statements were inconsistent with the logic of their statistical paradigm of choice -- most were cases where researchers said that an effect was not present when they had simply failed to reject the null.
 
 [^inference-18]: Of course, weighing these two against one another brings you back to the Bayes Factor.
 
@@ -427,8 +434,6 @@ knitr::kable(dozen,
 These are not the only issues with $p$-values. In fact, people have so much trouble understanding what $p$-values *do* say that there are whole articles written about these misconceptions. Table \@ref(tab:dirty-dozen) shows a set of misconceptions documented and refuted by @goodman2008. 
 
 Let's take a look at just a few. Misconception 1 is that, if $p= .05$, the null has a 5% chance of being true. This misconception is a result of confusing $p(H_0 | \text{data})$ (the posterior) and $p(\text{data} | H_0)$ (the likelihood -- also known as the $p$-value). Misconception 2 -- that $p > .05$ allows us to *accept* the null -- also stems from this reversal of posterior and likelihood. And misconception 3 is a misinterpretation of the $p$-value as an effect size (which we learned about in the last chapter): a large effect is likely to be clinically important, but with a small enough sample size, you can get a small $p$-value even for a very small effect. We won't go through all the misconceptions here, but we encourage you to challenge yourself to work through them (as in the exercise below). 
-
-<!-- NC: The dirty dozen table doesn't seem that useful if we do not explain why these things are incorrect. MM agrees. We can probably discuss the fallacies for one or the other and then just invoke the CI-p-value duality for why the other set of fallacies is also wrong. Mika and I discuss the CI fallacies below. -->
 
 Beyond these misconceptions, there's another problem. The $p$-value is a probability of a certain set of events happening (corresponding to the observed data or any "more extreme" data, that is to say, data further from the null). Since $p$-values are probabilities, we can combine them together across different events. If we run a null experiment -- an experiment where the expected effect is zero -- the probability of a dataset with $p < .05$ is of course .05. But if we run two such experiments, we can get $p < .05$ with probability `r round(2*.05 - .05*.05,2)`. By the time we run 20 experiments, we have an `r round(1 - .95^20,2)` chance of getting a positive result.
 
@@ -506,7 +511,7 @@ Confidence intervals are constructed by estimating the middle 95% of the samplin
 Confidence intervals are like betting on the inferences drawn from your sample. The sample you drew is like one pull of a slot machine that will pay off (i.e., have the confidence interval contain the true parameter) 95% of the time. Put more concisely: 95% of 95% confidence intervals contain the true value of the mean.
 
 ```{r inference-condition-cis, fig.margin=TRUE, fig.cap = "Confidence intervals on each of the two condition estimates, as well as on the condition difference."}
-knitr::include_graphics("images/inference/power-alpha.png")
+knitr::include_graphics("images/inference/cis.png")
 ```
 
 
