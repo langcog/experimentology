@@ -55,7 +55,6 @@ const TOC = ({ name, items }) => {
 			{
 				isDesktop
 				? <Sticky className={ style.sticky } innerZ={ 1 }>
-					{/*{ title }*/}
 					<SiteNav
 						breakpoint={ breakpoint }
 						columnWidth={ columnWidth }
@@ -67,12 +66,7 @@ const TOC = ({ name, items }) => {
 						children={ children }
 					/>
 				</Sticky>
-				: <Menu
-					right
-					styles={{ bmOverlay: { background: 'none' } }}
-					// children={[ title, children ]}
-					children={ children }
-				/>
+				: <Menu right noOverlay children={ children }/>
 			}
 			</nav>
 		</header>
