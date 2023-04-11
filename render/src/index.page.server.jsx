@@ -1,10 +1,10 @@
 import TOC                       from './components/toc'
 import Box                       from './components/box'
-import library                   from 'preact'
+import * as library              from 'preact'
 import renderToString            from 'preact-render-to-string'
 import parse, { domToReact }     from 'html-react-parser'
 import { JSDOM }                 from 'jsdom'
-import { dangerouslySkipEscape } from 'vite-plugin-ssr'
+import { dangerouslySkipEscape } from 'vite-plugin-ssr/server'
 
 const files = import.meta.glob('/r/*.html', { as: 'raw', eager: true });
 
@@ -43,8 +43,8 @@ export const passToClient = [ 'islands' ];
 
 export const prerender = () => routes
 
-export const onBeforeRender = ({ url }) => {
-	const route = url.replace(/(index)?(\.html.*)?$/, '');
+export const onBeforeRender = ({ urlOriginal }) => {
+	const route = urlOriginal.replace(/(index)?(\.html.*)?$/, '');
 	const page  = pages[route];
 
 	return { pageContext: { route, page } };

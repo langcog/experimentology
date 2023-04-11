@@ -2,12 +2,9 @@ import '/src/global.scss'
 
 import TOC         from './components/toc'
 import Box         from './components/box'
-import { getPage } from 'vite-plugin-ssr/client'
 import { hydrate } from 'preact'
 
-const main = async () => {
-	const { islands } = await getPage();
-
+export async function render({ islands }) {
 	document.querySelectorAll('[island]').forEach((node, index) => {
 		const { [ index ]: { name, props } } = islands;
 		const { [ name ]: Island } = { TOC, Box };
@@ -23,5 +20,3 @@ const main = async () => {
 		};
 	});
 }
-
-main();
