@@ -1,0 +1,45 @@
+on:
+  push:
+     branches:
+       - dev
+
+name: renderbook
+
+jobs:
+  bookdown:
+    name: Render-Book
+    concurrency: ci-${{ github.ref }}
+    runs-on: macOS-latest
+    steps:
+    
+      - uses: actions/checkout@v2
+      
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.2.0'
+          
+      - uses: r-lib/actions/setup-pandoc@v2
+      
+      - uses: r-lib/actions/setup-renv@v2
+
+      - name: Render Book
+        run: Rscript -e 'rmarkdown::render_site()'
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: current
+
+      - name: Render
+        run: |
+          npm install
+          npm run build
+        working-directory: ./render
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4.3.0
+        with:
+          repository-name: langcog/experimentology-dev
+          branch: main
+          folder: render/dist/client
+          clean: true
