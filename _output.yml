@@ -3,10 +3,17 @@ bookdown::tufte_html_book:
   toc: yes
   toc_depth: 1
   split_by: "chapter+number"
-  margin_references: false
-  keep_md: TRUE
+  margin_references: no
+  keep_md: yes
 bookdown::tufte_book2:
   keep_tex: yes
   dev: "png"
   latex_engine: xelatex
-  toc_depth: 2
+  citation_package: natbib
+  pandoc_args:
+    - '--lua-filter=lua/section-bibliographies.lua'
+    - '--lua-filter=lua/latex-box.lua'
+    - '-V biblio-title=References'
+  toc_depth: 1
+  includes:
+    in_header: preamble.tex
