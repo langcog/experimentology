@@ -2,7 +2,7 @@
 
 ::: {.box .learning_goals}
 * Articulate a model-building strategy for experimental effect estimation
-* Build intuitions about how statistical tests relate to linear regression
+* Build intuitions about how common statistical tests relate to linear regression
 * Explore variations of the linear model, including generalized linear models and mixed effects models
 * Reason about tradeoffs and strategies for model specification, including the use of control variables
 :::
@@ -32,7 +32,7 @@ source("helper/tea_helper.R")
 tea_data <- make_tea_data(n = 24)
 ```
 
-Let's start with one of these special cases, namely estimating a treatment effect, $\beta$, in a two-group design. In Chapter \@ref(estimation), we solved this exact challenge for the tea-tasting experiment. We posited a model in which the milk-first ratings were normally distributed with mean $\theta_{\text{milk-first}} = \theta_{\text{tea-first}} + \beta$ and with standard deviation $\sigma$.^[Here's a quick reminder that "model" here is a way of saying "set of assumptions about the data generating procedure." So saying that some equation is a "model" is the same as saying, we think this is where the data came from. We can "turn the crank" -- generate data through the process that's specified in those equations, e.g., pulling numbers from a normal distribution with mean $\theta_{\text{milk-first}}$ and standard deviation $\sigma$. In essence, we're committing to the idea that this process will give us data that are substantively similar to the ones we have already.] 
+Let's start with one of these special cases, namely estimating a treatment effect, $\beta$, in a two-group design. In Chapter \@ref(estimation), we solved this exact challenge for the tea-tasting experiment. We posited a model in which the milk-first ratings were normally distributed with mean $\theta_{\text{M}} = \theta_{\text{T}} + \beta$ and with standard deviation $\sigma$.^[Here's a quick reminder that "model" here is a way of saying "set of assumptions about the data generating procedure." So saying that some equation is a "model" is the same as saying, we think this is where the data came from. We can "turn the crank" -- generate data through the process that's specified in those equations, e.g., pulling numbers from a normal distribution with mean $\theta_{\text{M}}$ and standard deviation $\sigma$. In essence, we're committing to the idea that this process will give us data that are substantively similar to the ones we have already.] 
 
 Let's now write that model as a regression model, that is, as a model that predicts each participant's tea rating, $Y_i$, given that participant's treatment assignment, $X_i$. $X_i=0$ represents the control (milk-first) group and $X_i=1$ represents the treatment (tea-first) group. Here, $Y_i$ is the dependent variable, and $X_i$ is the independent variable. The subscripts $i$ index the participants. To make this concrete, you can see some sample tea-tasting data (N=24 for simplicity) below, with the index $i$, the condition and its predictor $X_i$, and the rating $Y$.
 
@@ -46,7 +46,7 @@ tea_data |>
   kableExtra::kable_styling(full_width = FALSE, position = "left")
 ```
 
-Let's write this model more formally as a **linear regression of Y on X**. Conventionally, regression models are written with "$\beta$'' symbols for all parameters, so we'll now use $\beta_0 = \theta_{\text{milk-first}}$ for the mean in the milk-first group and $\beta_1 = \theta_{\text{tea-first}} - \theta_{\text{milk-first}}$ as the average difference between the tea-first and milk-first groups.
+Let's write this model more formally as a **linear regression of Y on X**. Conventionally, regression models are written with "$\beta$'' symbols for all parameters, so we'll now use $\beta_0 = \theta_{\text{M}}$ for the mean in the milk-first group and $\beta_1 = \theta_{\text{T}} - \theta_{\text{M}}$ as the average difference between the tea-first and milk-first groups.
 
 \begin{align}
 \label{eq:ols_ttest}
