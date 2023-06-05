@@ -1,3 +1,226 @@
+--- 
+title: "Experimentology"
+subtitle: "An Open Science Approach to Experimental Psychology Methods"
+author: "Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke, Robert Hawkins, Maya Mathur, and Rondeline Williams"
+
+site: bookdown::bookdown_site
+documentclass: book
+classoption: twoside,symmetric
+
+bibliography: experimentology.bib
+csl: apa.csl
+link-citations: yes
+---
+
+# {.unlisted .unnumbered}
+
+Placeholder
+
+
+## The story of this book {-}
+## What this book is and isn't about {-}
+## How to use this book {-}
+## Themes {-}
+## The software toolkit of the behavioral researcher (and of this book) {-}
+## Onward! {-}
+
+<!--chapter:end:index.Rmd-->
+
+
+# (PART) Preliminaries {-}
+# Experiments {#experiments}
+
+Placeholder
+
+
+## Observational studies don't reveal causality
+### Describing causal relationships
+### The problem of confounding 
+## Experiments help us answer causal questions
+### We can't hold people constant
+### Randomization saves the day
+## Generalizability 
+## Anatomy of a randomized experiment
+## Chapter summary: Experiments
+
+<!--chapter:end:001-experiments.Rmd-->
+
+
+# Theories {#theories}
+
+Placeholder
+
+
+## What makes a psychological theory?
+### Psychological constructs 
+### The "nomological network": relations between constructs
+## Specific theories vs. general frameworks
+## How do theories make contact with data? Popper's view
+## Theories and data -- a holistic viewpoint
+## Theory testing in psychology
+### Measurements (and theories) need to be precise
+### Theories should make risky predictions
+## Models and theories 
+## Chapter summary: Theories
+
+<!--chapter:end:002-theories.Rmd-->
+
+
+# Replication {#replication}
+
+Placeholder
+
+
+## Reproducibility
+## Replication
+### Conceptual frameworks for replication
+### The meta-science of replication
+### Causes of replication failure
+## Replication, reproducibility, theory building, and open science
+### Reciprocity between replication and theory
+### Deciding when to replicate to maximize epistemic value
+### Open science
+## Chapter summary: Replication
+
+<!--chapter:end:003-replication.Rmd-->
+
+
+# Ethics {#ethics}
+
+Placeholder
+
+
+## Ethical frameworks
+### Consequentialist theories
+### Deontological  approaches
+### Virtue-based Approaches
+## Ethical responsibilities to research participants
+### Institutional review boards
+### Risks and benefits
+## Ethical responsibilities in analysis and reporting of research 
+## Ethical responsibilities to the broader scientific community
+## Chapter summary: Ethics 
+
+<!--chapter:end:004-ethics.Rmd-->
+
+
+# (PART) Statistics {-}
+# Estimation {#estimation}
+
+Placeholder
+
+
+## Estimating a quantity
+### Maximum likelihood estimation
+### Bayesian estimation
+## Estimating and comparing effects
+### Estimating the treatment effect 
+### Measures of effect size
+### Pros and cons of standardizing effect sizes
+## Chapter summary: Estimation
+
+<!--chapter:end:005-estimation.Rmd-->
+
+
+# Inference {#inference}
+
+Placeholder
+
+
+## Sampling variation
+### Standard errors
+### The central limit theorem
+## From variation to inference
+## Making inferences
+### Bayes Factors
+### *p*-values
+### The Neyman-Pearson approach
+## Inference and its discontents
+### Problems with the interpretation of *p*-values
+### Philosophical (and empirical) views of probability
+## Estimating precision
+### Confidence intervals
+### Confidence in confidence intervals? 
+## Chapter summary: Inference
+
+<!--chapter:end:006-inference.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+library(Hmisc)
+library(tidyverse)
+library(glue)
+library(here)
+library(knitr)
+library(shiny)
+library(metafor)
+library(ggthemes) # viz
+library(ggrepel) # viz
+library(GGally) # viz
+library(BayesFactor) # inference
+library(papaja)
+library(lme4)
+library(boot) # for inv.logit
+library(kableExtra)
+library(xaringanExtra)
+library(agreement) # for measurement
+library(pwr) # for power analysis
+
+opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  error = FALSE,
+  comment = "#>",
+  collapse = TRUE,
+  cache = TRUE,
+  echo = FALSE,
+  cache.lazy = FALSE,
+  dev = "png",
+  dpi = 300,
+  out.width = "\\linewidth"
+)
+kable <- function(...) knitr::kable(..., booktabs = TRUE, linesep = "")
+
+set.seed(42)
+
+.font <- "Source Sans Pro"
+if (!(.font %in% sysfonts::font_families()))
+  sysfonts::font_add_google(.font, .font)
+showtext::showtext_auto()
+
+theme_set(theme_bw(base_size = 14, base_family = .font))
+theme_update(panel.grid = ggplot2::element_blank(),
+             strip.background = ggplot2::element_blank(),
+             legend.key = ggplot2::element_blank(),
+             panel.border = ggplot2::element_blank(),
+             axis.line = ggplot2::element_line(),
+             strip.text = ggplot2::element_text(face = "bold"))
+.grey <- "grey70"
+.refline <- "dotted"
+.coef_line <- element_line(colour = .grey, size = 0.1)
+
+.pal <- ggthemes::ptol_pal
+.scale_colour_discrete <- ggthemes::scale_colour_ptol
+.scale_color_discrete <- .scale_colour_discrete
+.scale_fill_discrete <- ggthemes::scale_fill_ptol
+
+.scale_colour_continuous <- viridis::scale_colour_viridis
+.scale_color_continuous <- .scale_colour_continuous
+.scale_fill_continuous <- viridis::scale_fill_viridis
+
+.scale_colour_numerous <- scale_colour_discrete
+.scale_color_numerous <- .scale_colour_numerous
+.scale_fill_numerous <- scale_fill_discrete
+
+# from https://bookdown.org/yihui/rmarkdown-cookbook/font-color.html
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color,
+            x)
+  } else x
+}
+```
 # Models {#models} 
 
 ::: {.box .learning_goals}
@@ -595,4 +818,389 @@ In the last three chapters, we have spelled out a framework for data analysis th
 
 <!-- structure in your data so that you can better estimate the particular effects of interest. -->
 <!-- *** The advice not to model covariates that aren't very correlated with your outcome is very frequentist, with the idea being that you lose power when you condition on too many things. In contrast, Gelman & Hill (2006) give more Bayesian advice: if you think a variable matters to your outcome, keep it in the model. This advice is consistent with the idea of modeling experimental covariates, even if they don't have a big correlation with the outcome. In the Bayesian framework, including this extra information should (maybe only marginally) improve your precision but you aren't "spending degrees of freedom" in the same way. -->
+
+
+<!--chapter:end:007-models.Rmd-->
+
+
+# (PART) Design {-}
+# Measurement {#measurement}
+
+Placeholder
+
+
+## Reliability
+### Measurement scales
+### Measuring reliability
+### Practical advice for computing reliability
+## Validity
+### Validity arguments in practice
+### Avoid questionable measurement practices!
+## How to select a good measure?
+### Simple vs. complex behaviors
+### Implicit vs. explicit behaviors
+## The temptation to measure lots of things
+## Chapter summary: Measurement
+
+<!--chapter:end:008-measurement.Rmd-->
+
+
+# Design {#design}
+
+Placeholder
+
+
+## Experimental designs
+### A two-factor experiment
+### Generalized factorial designs
+### Between- vs. within-participant designs
+### Repeated measurements and experimental items
+### Discrete and continuous experimental manipulations 
+## Choosing your manipulation
+### Internal validity threats: Confounding 
+### Internal validity threats: Placebo, demand, and expectancy
+### External validity of manipulations
+## Summary: Experimental design
+
+<!--chapter:end:009-design.Rmd-->
+
+
+# Sampling {#sampling}
+
+Placeholder
+
+
+## Sampling theory
+### Classical probability sampling
+### Representative samples and stratified sampling
+## Convenience samples, generalizability, and the WEIRD problem
+### The worst version of the problem 
+### Reasons for hope and ways forward
+## Sampling bias 
+### Collider bias
+### Bias through attrition 
+## Sample size planning 
+### Classic power analysis
+### Power analysis in practice
+### Alternative approaches to sample size planning
+## Chapter summary: Sampling
+
+<!--chapter:end:010-sampling.Rmd-->
+
+
+# (PART) Execution {-}
+# Preregistration {#prereg}
+
+Placeholder
+
+
+## Lost in a garden of forking paths
+### Data-dependent analysis
+### Hypothesizing after results are known
+## Reducing risk of bias, increasing transparency, and calibrating confidence with preregistration
+## How to preregister
+## Chapter summary: Preregistration
+
+<!--chapter:end:012-prereg.Rmd-->
+
+
+# Data collection {#collection}
+
+Placeholder
+
+
+## Informed consent and debriefing
+### Getting consent
+### Prerequisites of consent
+### Debriefing participants
+### Special considerations for vulnerable populations
+## Designing the "research experience"
+### Ensuring good experiences for in-lab participants
+### Ensuring good experiences for online participants
+### When to collect data online?
+## Ensuring high quality data
+### Conduct effective pilot studies
+### Measure participant compliance
+### Keep consistent data collection records
+## Chapter summary: Data collection
+
+<!--chapter:end:013-collection.Rmd-->
+
+
+# Project management {#management}
+
+Placeholder
+
+
+## Principles of project management
+### Organizing your project
+### Versioning
+### File names
+## Data Management
+### Save your raw data
+### Document your data collection process
+### Organize your data for later analysis (spreadsheet version)
+### Organize your data for later analysis (software version)
+### Document the format of your data
+## Sharing Research Products
+### Where and how to share
+### What you can and can't share
+## Chapter summary
+
+<!--chapter:end:014-manangement.Rmd-->
+
+
+# (PART) Reporting {-}
+# Writing {#writing}
+
+Placeholder
+
+
+## Writing clearly
+### The structure of a scientific paper
+### Paragraphs, sentences, and words
+## Advice
+### Drafting and revision
+## Writing reproducibly
+### Why write reproducible reports?
+### Principles of reproducible writing
+### The reproducibility-collaboration trade-off
+## Writing responsibly
+### Responsible disclosure and interpretation
+### Responsible handling of errors
+### Responsible citation
+### Responsible authorship practices
+## Chapter summary: Writing
+
+<!--chapter:end:015-writing.Rmd-->
+
+
+# Visualization {#viz}
+
+Placeholder
+
+
+## Basic principles of (confirmatory) visualization
+### Principle 1: Show the design
+### Principle 2: Facilitate comparison
+### Principle 3: Show the data
+### Principle 4: Maximize information, minimize ink
+## Exploratory visualization
+### Examining distributional information
+### Data diagnostics
+### Plot data collection details
+### Explorating distributions
+### Hypothesis-driven exploration
+### Visualization as debugging
+## Chapter summary: Visualization
+
+<!--chapter:end:016-viz.Rmd-->
+
+
+# Meta-analysis {#meta}
+
+Placeholder
+
+
+## The basics of evidence synthesis
+### How not to synthesize evidence
+### Fixed-effects meta-analysis
+### Limitations of fixed-effects meta-analysis
+### Random-effects meta-analysis
+## Bias in meta-analysis
+### Within-study biases
+### Across-study biases
+### Across-study bias correction
+## Chapter summary: Meta-analysis
+
+<!--chapter:end:018-meta.Rmd-->
+
+
+# Conclusions {#conclusions}
+
+Placeholder
+
+
+## Summarizing our approach
+## Forward the field
+## Final thoughts
+
+<!--chapter:end:019-conclusions.Rmd-->
+
+
+# (APPENDIX) Appendices {-}
+# GitHub {#git}
+
+Placeholder
+
+
+## Introduction {.unnumbered}
+## 0. Review basic terminal commands {-}
+## 1. Install git {.unnumbered}
+### 1.1 Did you successfully install? {.unnumbered}
+### 1.2 Other versions {.unnumbered}
+### 1.3 Set your name and email address {.unnumbered}
+## 2. Make a repo on GitHub, clone it to your computer {.unnumbered}
+### 2.1 Setting up authentication {.unnumbered}
+### 2.2 Cloning the repo {.unnumbered}
+## 3. Make some commits {.unnumbered}
+### 3.1 Update your README file {.unnumbered}
+### 3.2 Add and commit changes to git {.unnumbered}
+### 3.3 Add another file to the repo + commit it {.unnumbered}
+## 4. Push your changes to GitHub {.unnumbered}
+## 5. Make more changes to the repo {.unnumbered}
+## 6. Rolling back to previous versions {.unnumbered}
+## 7. What not to put on git {.unnumbered}
+## Further Resources {.unnumbered}
+
+<!--chapter:end:100-github.Rmd-->
+
+
+# R Markdown {#rmarkdown}
+
+Placeholder
+
+
+## Getting Started
+## Structure of an R Markdown file
+### Header
+### Body text
+### Code chunks
+### Output formats
+## Markdown syntax
+## Headers, graphs, and tables
+### Headers 
+### Graphs
+### Tables
+### Statistics
+## Writing APA-format papers
+## Bibiographic management
+## Collaboration 
+## R Markdown: Chapter summary
+
+<!--chapter:end:101-rmarkdown.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+library(Hmisc)
+library(tidyverse)
+library(glue)
+library(here)
+library(knitr)
+library(shiny)
+library(metafor)
+library(ggthemes) # viz
+library(ggrepel) # viz
+library(GGally) # viz
+library(BayesFactor) # inference
+library(papaja)
+library(lme4)
+library(boot) # for inv.logit
+library(kableExtra)
+library(xaringanExtra)
+library(agreement) # for measurement
+library(pwr) # for power analysis
+
+opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  error = FALSE,
+  comment = "#>",
+  collapse = TRUE,
+  cache = TRUE,
+  echo = FALSE,
+  cache.lazy = FALSE,
+  dev = "png",
+  dpi = 300,
+  out.width = "\\linewidth"
+)
+kable <- function(...) knitr::kable(..., booktabs = TRUE, linesep = "")
+
+set.seed(42)
+
+.font <- "Source Sans Pro"
+if (!(.font %in% sysfonts::font_families()))
+  sysfonts::font_add_google(.font, .font)
+showtext::showtext_auto()
+
+theme_set(theme_bw(base_size = 14, base_family = .font))
+theme_update(panel.grid = ggplot2::element_blank(),
+             strip.background = ggplot2::element_blank(),
+             legend.key = ggplot2::element_blank(),
+             panel.border = ggplot2::element_blank(),
+             axis.line = ggplot2::element_line(),
+             strip.text = ggplot2::element_text(face = "bold"))
+.grey <- "grey70"
+.refline <- "dotted"
+.coef_line <- element_line(colour = .grey, size = 0.1)
+
+.pal <- ggthemes::ptol_pal
+.scale_colour_discrete <- ggthemes::scale_colour_ptol
+.scale_color_discrete <- .scale_colour_discrete
+.scale_fill_discrete <- ggthemes::scale_fill_ptol
+
+.scale_colour_continuous <- viridis::scale_colour_viridis
+.scale_color_continuous <- .scale_colour_continuous
+.scale_fill_continuous <- viridis::scale_fill_viridis
+
+.scale_colour_numerous <- scale_colour_discrete
+.scale_color_numerous <- .scale_colour_numerous
+.scale_fill_numerous <- scale_fill_discrete
+
+# from https://bookdown.org/yihui/rmarkdown-cookbook/font-color.html
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color,
+            x)
+  } else x
+}
+```
+# Tidyverse {#tidyverse}
+
+<iframe src="https://langcog.shinyapps.io/tidyverse/" width="90%" height="1000px" style="border:none;" />
+
+<!--chapter:end:102-tidyverse.Rmd-->
+
+
+# ggplot {#ggplot}
+
+Placeholder
+
+
+## Exploring ggplot2 using `qplot`
+## Making more complex plots with `ggplot`
+## Facets
+## Geoms
+## Themes and plot cleanup
+## Plot inheritance example
+## Conclusion
+
+<!--chapter:end:103-ggplot.Rmd-->
+
+
+# Instructor's guide {#instructors}
+
+Placeholder
+
+
+## Introduction 
+## Why Teach a Project-Based Course?
+## Logistics
+### Syllabus considerations
+### Grading
+### Course budget
+### Course-related Institutional Review Board application
+## Scenarios for different course layouts
+### Student level
+### Course resources
+#### Teaching assistants 
+#### Course funding 
+## Sample course schedules {.panelset}
+### 10 weeks, skills
+### 10 weeks, content only
+### 16 weeks, skills 
+### 16 weeks, content only 
+
+<!--chapter:end:104-instructors.Rmd-->
 
