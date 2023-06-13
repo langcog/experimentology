@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang xmlLang><head><meta charSet="utf-8" /><meta name="generator" content="pandoc" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta property="og:title" content="D ggplot | Experimentology" /><meta property="og:type" content="book" /><meta name="author" content="Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke, Robert Hawkins, Maya Mathur, and Rondeline Williams" /><script type="text/x-mathjax-config">
+<html lang xmlLang><head><link rel="stylesheet" type="text/css" href="/assets/static/index.page.client.51f615d5.css"><link rel="preload" href="/assets/static/SourceSansPro-Regular.71d10a86.ttf" as="font" type="font/ttf" crossorigin><meta charSet="utf-8"/><meta name="generator" content="pandoc"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta property="og:title" content="D ggplot | Experimentology"/><meta property="og:type" content="book"/><meta name="author" content="Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke, Robert Hawkins, Maya Mathur, and Rondeline Williams"/><script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
-</script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><meta name="description" content="D ggplot | Experimentology" /><title>D ggplot | Experimentology</title><link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" /><link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" /><link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" /><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" /><style type="text/css">code{white-space: pre;}</style><style type="text/css">
+</script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><meta name="description" content="D ggplot | Experimentology"/><title>D ggplot | Experimentology</title><link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet"/><link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet"/><link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet"/><script src="libs/kePrint-0.0.1/kePrint.js"></script><link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet"/><style type="text/css">code{white-space: pre;}</style><style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -88,7 +88,7 @@ div.csl-right-inline {
 div.csl-indent {
   margin-left: 2em;
 }
-</style><link rel="stylesheet" type="text/css" href="/assets/src/index.page.client.jsx.599828d4.css"><link rel="preload" as="font" crossorigin type="font/ttf" href="/assets/SourceSansPro-Regular.71d10a86.ttf"></head><body>
+</style></head><body>
 
 
 
@@ -101,83 +101,10 @@ div.csl-indent {
 <div class="col-sm-12">
 <div id="ggplot" class="section level1" number="21">
 <h1><span class="header-section-number">D</span> ggplot</h1>
-<div id="exploring-ggplot2-using-qplot" class="section level2" number="21.1">
-<h2><span class="header-section-number">D.1</span> Exploring ggplot2 using <code>qplot</code></h2>
-<p>We’ll start by using <code>qplot</code>. <code>qplot</code> is the easy interface, meant to replace <code>plot</code>. You can give it simple <code>qplot(x,y)</code> examples, or slightly more complex examples like <code>qplot(x, y, col=grp, data=d)</code>.</p>
-<p>We’re going to be using the <code>diamonds</code> dataset. This is a set of measurements of diamonds, along with their price etc.</p>
-<pre><code>#> # A tibble: 6 × 10
-#>   carat cut       color clarity depth table price     x     y     z
-#>   &lt;dbl> &lt;ord>     &lt;ord> &lt;ord>   &lt;dbl> &lt;dbl> &lt;int> &lt;dbl> &lt;dbl> &lt;dbl>
-#> 1  0.23 Ideal     E     SI2      61.5    55   326  3.95  3.98  2.43
-#> 2  0.21 Premium   E     SI1      59.8    61   326  3.89  3.84  2.31
-#> 3  0.23 Good      E     VS1      56.9    65   327  4.05  4.07  2.31
-#> 4  0.29 Premium   I     VS2      62.4    58   334  4.2   4.23  2.63
-#> 5  0.31 Good      J     SI2      63.3    58   335  4.34  4.35  2.75
-#> 6  0.24 Very Good J     VVS2     62.8    57   336  3.94  3.96  2.48</code></pre>
-<p><img src="experimentology_files/figure-html/ggplot-diamonds-1.png" width="\linewidth" /></p>
-<p>Scatter plots are trivial, and easy to add features to. Modify this plot so that it uses the dataframe rather than working from variables in the general namespace (good to get away from retyping <code>diamonds$</code> every time you reference a variable).</p>
-<p><img src="experimentology_files/figure-html/ggplot-diamonds-viridis-1.png" width="\linewidth" /></p>
-<div island></div>
-</div>
-<div id="making-more-complex-plots-with-ggplot" class="section level2" number="21.2">
-<h2><span class="header-section-number">D.2</span> Making more complex plots with <code>ggplot</code></h2>
-<p><code>ggplot</code> is just a way of building <code>qplot</code> calls up more systematically.
-It’s sometimes easier to use and sometimes a bit more complicated.
-What I want to show off here is the functionality of being able to build up complex plots with multiple elements.
-Once you get used to thinking in <code>ggplot</code> style — building up plots one ‘layer’ at a time — it’s hard to go back!</p>
-<p><code>ggplot</code> is the basic call, where you specify (A) a dataframe and (B) an aesthetic (<code>aes</code>) mapping from variables in the plot space to variables in the dataset.</p>
-<p><img src="experimentology_files/figure-html/ggplot-diamonds-more-1.png" width="\linewidth" /><img src="experimentology_files/figure-html/ggplot-diamonds-more-2.png" width="\linewidth" /></p>
-<p>Try writing this as a single set of additions (e.g. one line of R code, though you can put in linebreaks). This is the most common workflow for me.</p>
-<p><img src="experimentology_files/figure-html/ggplot-diamonds-singleline-1.png" width="\linewidth" /></p>
-</div>
-<div id="facets" class="section level2" number="21.3">
-<h2><span class="header-section-number">D.3</span> Facets</h2>
-<p>Let’s try out another version of the <code>qplot</code> example above. Rewrite the last qplot example with ggplot.</p>
-<p><img src="experimentology_files/figure-html/ggplot-diamonds-facets-1.png" width="\linewidth" /></p>
-<p>One of the primary benefits of <code>ggplot2</code> is the use of facets - also known as small multiples in the Tufte vocabulary. That last plot was probably hard to read. Facets could make it better. Try adding <code>facet_grid(x ~ y)</code>. <code>x ~ y</code> means row facets are by <code>x</code>, column facets by <code>y</code>.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-72-1.png" width="\linewidth" /></p>
-<p>But facets can also get overwhelming. Try to strike a good balance between color, shape, and faceting.</p>
-<p>HINT: <code>facet_grid(. ~ x)</code> puts x on the columns, but <code>facet_wrap(~ x)</code> (no dot) <em>wraps</em> the facets.</p>
-<p><img src="experimentology_files/figure-html/unnamed-chunk-73-1.png" width="\linewidth" /></p>
-</div>
-<div id="geoms" class="section level2" number="21.4">
-<h2><span class="header-section-number">D.4</span> Geoms</h2>
-<p>As you’ve seen above, the basic unit of a ggplot plot is a “geom” - a mapping between data (via an “aesthetic”) and a particular geometric configuration on coordinate axes.</p>
-<p>Let’s try adding some geoms and manipulating their parameters. One combo I really like is a scatterplot with a smoothing layer (<code>geom_smooth</code>). Try adding one onto this plot.</p>
-<p><img src="experimentology_files/figure-html/ggplot-diamonds-geoms-1.png" width="\linewidth" /></p>
-<div island></div>
-<p><img src="experimentology_files/figure-html/ggplot-diamonds-density-1.png" width="\linewidth" /></p>
-</div>
-<div id="themes-and-plot-cleanup" class="section level2" number="21.5">
-<h2><span class="header-section-number">D.5</span> Themes and plot cleanup</h2>
-<p>I like a slightly cleaner look to my plots. Luckily, ggplot allows you to add “themes” to your plots. Try doing the same plot but adding <code>+ theme_bw()</code> or <code>+ theme_classic()</code>. Different themes work better for different applications, in my experience. My favorite right now is <code>ggthemes::theme_few</code>.</p>
-<p>You can also try different color scales. Experiment with <code>scale_color_...</code> - try writing that and hitting TAB for autocomplete options. Check out the help on this.</p>
-<p>You can also try transparency/different point sizes to clean up scatterplots. Try <code>alpha = .1</code> or <code>pch = &quot;.&quot;</code> to make transparent or small points.</p>
-<p>Finally, don’t forget to “fix the axis labels”!</p>
-<p>Here’s a somewhat ugly plot - see if you can make it look awesome.</p>
-<p><img src="experimentology_files/figure-html/ggplot-diamonds-cleanup-1.png" width="\linewidth" /></p>
-</div>
-<div id="plot-inheritance-example" class="section level2" number="21.6">
-<h2><span class="header-section-number">D.6</span> Plot inheritance example</h2>
-<p>Let’s take this base plot.</p>
-<p><img src="experimentology_files/figure-html/ggplot-diamonds-inheritance-1.png" width="\linewidth" /></p>
-<p>Say I want to map clarity to be mapped to size. Try adding it to the top level. This doesn’t work.</p>
-<p><img src="experimentology_files/figure-html/ggplot-diamonds-inheritance-2-1.png" width="\linewidth" />
-The reason is inheritance. I want the POINTS to have sizes, but the smoothing lines not to have that AES feature.</p>
-<p><img src="experimentology_files/figure-html/ggplot-diamonds-inheritance-3-1.png" width="\linewidth" /></p>
-</div>
-<div id="conclusion" class="section level2" number="21.7">
-<h2><span class="header-section-number">D.7</span> Conclusion</h2>
-<p>There’s a lot more to learn about <code>ggplot</code>, and some fairly simple operations end up being surprisingly challenging.
-Remember: to use <code>ggplot</code> successfully, you don’t need to memorize all of the geoms, or be able to write out all the options from scratch.
-Plots are made through trial and error, and you have the entire <a href="https://stackoverflow.com/questions/tagged/ggplot2">Internet</a> at your fingertips.
-Even experts find themselves Googling “how to change aspect ratio in ggplot” and copy-pasting the code they find.
-Over time, as you make more plots, you will get faster at finding what you’re looking for.
-When you’re ready to apply your <code>ggplot</code> skills, go to Chapter <a href="15-viz.html#viz">15</a> for more examples of how to use visualizations in your research workflow.</p>
+<iframe src="https://langcog.shinyapps.io/ggplot/" width="90%" height="1000px" style="border:none;">
 
-</div>
-</div>
-<p style="text-align: center;">
+</iframe></div>
+<p style="text-align:center;">
 <a href="C-tidyverse.html"><button class="btn btn-default">Previous</button></a>
 <a href="E-instructors.html"><button class="btn btn-default">Next</button></a>
 </p>
@@ -186,4 +113,4 @@ When you’re ready to apply your <code>ggplot</code> skills, go to Chapter <a h
 
 
 
-<script type="module" src="/assets/src/index.page.client.jsx.92c55cbc.js"></script><script id="vite-plugin-ssr_pageContext" type="application/json">{"pageContext":{"_pageId":"/src/index","islands":[{"name":"TOC","props":{"name":"Experimentology: An Open Science Approach to Experimental Psychology Methods","items":[{"name":"Preliminaries","items":[{"name":"Experiments","href":"1-experiments"},{"name":"Theories","href":"2-theories"},{"name":"Replication","href":"3-replication"},{"name":"Ethics","href":"4-ethics"}]},{"name":"Statistics","items":[{"name":"Estimation","href":"5-estimation"},{"name":"Inference","href":"6-inference"},{"name":"Models","href":"7-models"}]},{"name":"Design","items":[{"name":"Measurement","href":"8-measurement"},{"name":"Design","href":"9-design"},{"name":"Sampling","href":"10-sampling"}]},{"name":"Execution","items":[{"name":"Preregistration","href":"11-prereg"},{"name":"Data collection","href":"12-collection"},{"name":"Project management","href":"13-management"}]},{"name":"Reporting","items":[{"name":"Writing","href":"14-writing"},{"name":"Visualization","href":"15-viz"},{"name":"Meta-analysis","href":"16-meta"},{"name":"Conclusions","href":"17-conclusions"}]},{"name":"Appendices","items":[{"name":"GitHub","href":"A-git"},{"name":"R Markdown","href":"B-rmarkdown"},{"name":"Tidyverse","href":"C-tidyverse"},{"name":"ggplot","href":"D-ggplot"},{"name":"Instructor’s guide","href":"E-instructors"}]}]}},{"name":"Box","props":{"type":"exercises","children":["\n",{"type":"p","props":{"children":"Try adding clarity and cut, using shape and color as your visual variables."},"key":1,"ref":"!undefined","__k":null,"__":null,"__b":0,"__e":null,"__d":"!undefined","__c":null,"__h":null,"constructor":"!undefined","__v":22045},"\n"]}},{"name":"Box","props":{"type":"exercises","children":["\n",{"type":"p","props":{"children":["You could also try starting with a histogram and adding densities. (",{"type":"code","props":{"children":"geom_density"},"key":1,"ref":"!undefined","__k":null,"__":null,"__b":0,"__e":null,"__d":"!undefined","__c":null,"__h":null,"constructor":"!undefined","__v":22094},"), Try ",{"type":"a","props":{"href":"https://stackoverflow.com/questions/5688082/ggplot2-overlay-histogram-with-density-curve","children":"this link"},"key":3,"ref":"!undefined","__k":null,"__":null,"__b":0,"__e":null,"__d":"!undefined","__c":null,"__h":null,"constructor":"!undefined","__v":22095},"."]},"key":1,"ref":"!undefined","__k":null,"__":null,"__b":0,"__e":null,"__d":"!undefined","__c":null,"__h":null,"constructor":"!undefined","__v":22096},"\n"]}}]}}</script></body></html>
+<script type="module" src="/assets/entries/entry-server-routing.588f1c02.js" defer></script><link rel="modulepreload" href="/assets/entries/src_index.page.client.8b33797c.js" as="script" type="text/javascript"><link rel="modulepreload" href="/assets/chunks/chunk-078aa1fb.js" as="script" type="text/javascript"><script id="vite-plugin-ssr_pageContext" type="application/json">{"pageContext":{"_pageId":"/src/index","islands":[{"name":"TOC","props":{"name":"Experimentology: An Open Science Approach to Experimental Psychology Methods","items":[{"name":"Preliminaries","items":[{"name":"Experiments","href":"1-experiments"},{"name":"Theories","href":"2-theories"},{"name":"Replication","href":"3-replication"},{"name":"Ethics","href":"4-ethics"}]},{"name":"Statistics","items":[{"name":"Estimation","href":"5-estimation"},{"name":"Inference","href":"6-inference"},{"name":"Models","href":"7-models"}]},{"name":"Design","items":[{"name":"Measurement","href":"8-measurement"},{"name":"Design","href":"9-design"},{"name":"Sampling","href":"10-sampling"}]},{"name":"Execution","items":[{"name":"Preregistration","href":"11-prereg"},{"name":"Data collection","href":"12-collection"},{"name":"Project management","href":"13-management"}]},{"name":"Reporting","items":[{"name":"Writing","href":"14-writing"},{"name":"Visualization","href":"15-viz"},{"name":"Meta-analysis","href":"16-meta"},{"name":"Conclusions","href":"17-conclusions"}]},{"name":"Appendices","items":[{"name":"GitHub","href":"A-git"},{"name":"R Markdown","href":"B-rmarkdown"},{"name":"Tidyverse","href":"C-tidyverse"},{"name":"ggplot","href":"D-ggplot"},{"name":"Instructor’s guide","href":"E-instructors"}]}]}}]}}</script></body></html>
