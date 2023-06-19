@@ -1,37 +1,36 @@
-import express                from 'express'
-import { dirname }            from 'path'
-import { fileURLToPath }      from 'url'
-import { createServer }       from 'vite'
-import { createPageRenderer } from 'vite-plugin-ssr'
+import express           from 'express'
+import { dirname }       from 'path'
+import { fileURLToPath } from 'url'
+import { createServer }  from 'vite'
+import { renderPage }    from 'vite-plugin-ssr/server'
 
 const port = process.env.PORT || 3000;
 const root = dirname(fileURLToPath(import.meta.url));
 
-const startServer = async () => {
+startServer();
+
+async function startServer() {
 	const app = express();
 
 	const viteDevServer = await createServer({
-		server: { middlewareMode: 'ssr' },
+		root,
+		server: { middlewareMode: true },
 	});
-
-	const render = createPageRenderer({ root, viteDevServer });
 
 	app.use(viteDevServer.middlewares);
 
 	app.get('*', async (req, res, next) => {
-		const { url }          = req;
-		const { httpResponse } = await render({ url });
+		const pageContextInit = { urlOriginal: req.originalUrl };
+		const pageContext     = await renderPage(pageContextInit);
 
-		if (! httpResponse) return next();
+		if (pageContext.httpResponse === null) return next();
 
-		const { body, statusCode, contentType } = httpResponse;
+		const { body, statusCode, contentType } = pageContext.httpResponse;
 
 		res.status(statusCode).type(contentType).send(body);
-	});
+	})
 
 	app.listen(port);
 
 	console.log(`http://localhost:${port}`);
 }
-
-startServer();

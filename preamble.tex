@@ -1,0 +1,128 @@
+% page layout
+\geometry{
+  dvips=false, pdftex=false, vtex=false, % drivers can have unexpected behaviors
+  papersize={8in,10in}, % specified by MIT Press
+  centering, % split margins equally
+  margin=.75in, % margins (must be at least .5in on all sides)
+  includemp, includehead % include sidenotes and header within body
+  % showframe % reveal page structure (only for testing/debugging)
+}
+% put on letter page, show frame around print area
+\usepackage[frame,letter,center,noinfo]{crop}
+
+% headers/footers
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}} % prevent chaptermark from uppercasing
+% left header on even pages
+\fancyhead[LE]{\sffamily\thepage\quad\textsc{\plaintitle}} % page number then book title
+% right header on odd pages
+\fancyhead[RO]{%
+  \sffamily
+  \ifnum\value{chapter}>0 \thechapter\hspace{3pt} \fi % include chapter number if not 0
+  \textsc{\leftmark}\quad\thepage % chapter title then page number
+}
+
+% part and chapter headings
+\titleformat{\part}%
+  [hang]% shape
+  {\sffamily\scshape\Huge\center}% format applied to label+text
+  {\thepart}% label
+  {.5em}% horizontal separation between label and title body
+  {} % before the title body
+  
+\titleformat{\chapter}%
+  [hang]% shape
+  {\sffamily\scshape\huge}% format applied to label+text
+  {\thechapter}% label
+  {.5em}% horizontal separation between label and title body
+  {} % before the title body
+
+% table of contents
+\usepackage[titles]{tocloft}
+% part fonts
+\renewcommand{\cftpartfont}{\sffamily\scshape\Large}
+\renewcommand{\cftpartpagefont}{\sffamily\scshape\Large}
+% % part layout
+% chapter fonts
+\renewcommand{\cftchapfont}{\sffamily\scshape\Large}
+\renewcommand{\cftchappagefont}{\sffamily\scshape\Large}
+% chapter layout
+\renewcommand{\cftchapnumwidth}{1em}
+\setlength{\cftchapindent}{2em}
+\setlength{\cftbeforechapskip}{.5em}
+
+% lists
+\usepackage{enumitem}
+\setlist[itemize]{
+  label={--}, % en-dash as bullet symbol
+  topsep=0em % no space before/after list
+}
+
+% colors (solarized) (must be in cmyk)
+\definecolor{.yellow}{cmyk}{0,.24,1,.29}
+\definecolor{.orange}{cmyk}{0,.63,.89,.20}
+\definecolor{.red}{cmyk}{0,.77,.79,.14}
+\definecolor{.magenta}{cmyk}{0,.74,.38,.17}
+\definecolor{.violet}{cmyk}{.45,.42,0,.23}
+\definecolor{.blue}{cmyk}{.82,.34,0,.18}
+\definecolor{.cyan}{cmyk}{7.4,0,.06,.37}
+\definecolor{.green}{cmyk}{.13,0,1,.40}
+\definecolor{.base0}{cmyk}{.13,.01,0,.41}
+
+% icons (not using fontawesome5 package because some needed icons are from 6)
+\usepackage{fontspec}
+\newfontfamily{\fa}[Path=fonts/]{Font Awesome 6 Free-Solid-900.otf}
+\def\faAppleWhole{{\fa \symbol{"F5D1}}}
+\def\faMicroscope{{\fa \symbol{"F610}}}
+\def\faLeaf{{\fa \symbol{"F06C}}}
+\def\faPersonFallingBurst{{\fa \symbol{"E547}}}
+\def\faCode{{\fa \symbol{"F121}}}
+\def\faMagnifyingGlassPlus{{\fa \symbol{"F00E}}}
+\def\faPenRuler{{\fa \symbol{"F5AE}}}
+\def\faComments{{\fa \symbol{"F086}}}
+\def\faBook{{\fa \symbol{"F02D}}}
+
+% boxes
+\usepackage{tcolorbox}
+\tcbuselibrary{skins} % allow changing skin
+\tcbuselibrary{breakable} % allow breaking across pages
+
+% set options for all boxes
+\tcbset{enhanced jigsaw, % skin
+        breakable, % break across pages
+        boxrule=2pt, % border width
+        colback=white, % background color
+        fonttitle=\sffamily\scshape\LARGE, % title sans serif and small caps
+        left=2mm, right=2mm, bottom=1mm, top=1mm, % padding inside box
+        toptitle=1mm, bottomtitle=1mm, % spacing above/below title
+        before upper={\justifying\parindent1.0pc}} % font changes inside
+
+% define box for each type (color, icon, title)
+\newtcolorbox{learning_goals}{%
+  colframe=.red, title=\faAppleWhole \enspace Learning goals}
+\newtcolorbox{case_study}{%
+  colframe=.blue, title=\faMicroscope \enspace Case study}
+\newtcolorbox{ethical_considerations}{%
+  colframe=.green, title=\faLeaf \enspace Ethical considerations}
+\newtcolorbox{accident_report}{%
+  colframe=.orange, title=\faPersonFallingBurst \enspace Accident report}
+\newtcolorbox{code}{%
+  colframe=.base0, title=\faCode \enspace Code}
+\newtcolorbox{depth}{%
+  colframe=.violet, title=\faMagnifyingGlassPlus \enspace Depth}
+\newtcolorbox{exercises}{%
+  colframe=.yellow, title=\faPenRuler \enspace Exercises}
+\newtcolorbox{discussion_questions}{%
+  colframe=.cyan, title=\faComments \enspace Discussion questions}
+\newtcolorbox{readings}{%
+  colframe=.magenta, title=\faBook \enspace Readings}
+
+% define within-box title as subsection
+\newcommand{\boxtitle}[1]{\subsection*{#1}}
+
+% define box for figures within boxes
+\usepackage{caption}
+\newtcolorbox[blend into=figures]{boxfigure}[1][]{%
+  boxrule=0pt,colframe=white,colback=white,#1} %title={#2},
+
+% for testing/debugging
+\usepackage{lipsum}
