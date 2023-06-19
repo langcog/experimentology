@@ -20,27 +20,53 @@ site: bookdown::bookdown_site
 ---
 
 ```{r}
-# hook to reformat latex output for figures in boxes
+# hooks to reformat latex output
 if (knitr::is_latex_output()) {
-  default_hook <- knitr::knit_hooks$get("plot")
+  
+  # default_chunk_hook <- knitr::knit_hooks$get("chunk")
   knitr::knit_hooks$set(
-    plot = function(x, options) {
-      x <- default_hook(x, options)
-      message(options$fig.env)
-      message(options$boxfigure)
-      # if (options$fig.env == "boxfigure") {
-      if (!is.null(options$boxfigure)) {
-        # replace \caption[text]{text} -> \captionof{figure}{text}
-        x <- x |> stringr::str_replace("\\\\caption\\[.*\\]\\{(.*)\\}",
-                                       "\\\\captionof\\{figure\\}\\{\\1\\}") |>
-          # override figure or marginfigure environment
-          stringr::str_replace("\\\\begin\\{.*\\}", "\\\\begin\\{boxfigure\\}") |>
-          stringr::str_replace("\\\\end\\{.*\\}", "\\\\end\\{boxfigure\\}")
+    # tables
+    chunk = function(x, options) {
+      if (stringr::str_detect(x, "\\\\begin\\{table\\*?\\}")) {
+        message(x)
+        # put label after caption (instead of label nested within caption)
+        x <- x |>
+          # variant for \caption{(\#tab:LABEL)CAPTION}
+          str_replace(regex("(\\\\begin\\{table\\*?\\}.*\\\\caption)\\{(\\(\\\\#tab.*?\\))(.*)\\}",
+                            dotall = TRUE),
+                      "\\1\\{\\3\\}\\2") |>
+          # variant for \caption{\label{tab:LABEL}CAPTION}
+          str_replace(regex("(\\\\begin\\{table\\*?\\}.*\\\\caption)\\{(\\\\label\\{.*?\\})(.*)\\}",
+                            dotall = TRUE),
+                      "\\1\\{\\3\\}\\2")
+        message(x)
       }
       return(x)
     })
+  
+  default_plot_hook <- knitr::knit_hooks$get("plot")
+  knitr::knit_hooks$set(
+    # boxfigures
+    plot = function(x, options) {
+      # first apply default hook
+      x <- default_plot_hook(x, options)
+      # message(x)
+      if (!is.null(options$boxfigure)) {
+        message(x)
+        # replace \caption[text]{text} -> \captionof{figure}{text}
+        x <- x |>
+          str_replace("\\\\caption\\[.*\\]\\{(.*)\\}",
+                               "\\\\captionof\\{figure\\}\\{\\1\\}") |>
+          # override figure or marginfigure environment with boxfigure environment
+          str_replace("\\\\begin\\{.*\\}", "\\\\begin\\{boxfigure\\}") |>
+          str_replace("\\\\end\\{.*\\}", "\\\\end\\{boxfigure\\}")
+      }
+      return(x)
+    })
+
 }
 ```
+
 
 # Preface {.unnumbered}
 
