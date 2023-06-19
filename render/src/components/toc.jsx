@@ -1,8 +1,10 @@
 import style                     from './toc.module.scss'
 import Sticky                    from 'react-stickynode'
 import SiteNav, { ContentGroup } from 'react-site-nav'
-import { slide as Menu }         from 'react-burger-menu'
+import burger                    from 'react-burger-menu'
 import { useWindowWidth }        from '@react-hook/window-size/throttled'
+
+const { slide: Menu } = burger;
 
 const TOC = ({ name, items }) => {
 	const sections    = items.length;
@@ -55,7 +57,6 @@ const TOC = ({ name, items }) => {
 			{
 				isDesktop
 				? <Sticky className={ style.sticky } innerZ={ 1 }>
-					{ title }
 					<SiteNav
 						breakpoint={ breakpoint }
 						columnWidth={ columnWidth }
@@ -67,11 +68,7 @@ const TOC = ({ name, items }) => {
 						children={ children }
 					/>
 				</Sticky>
-				: <Menu
-					right
-					styles={{ bmOverlay: { background: 'none' } }}
-					children={[ title, children ]}
-				/>
+				: <Menu right noOverlay children={ children }/>
 			}
 			</nav>
 		</header>

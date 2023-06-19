@@ -1,43 +1,116 @@
-@use 'sidenote';
+@use 'solarized';
 
 @font-face {
-	font-family: "Source Sans Pro";
-	src: url("SourceSansPro-Regular.ttf");
+	font-family: 'Source Sans Pro';
+	src: url('SourceSansPro-Regular.ttf');
 }
 
-body { max-width: none; }
+@media screen and not (max-width: 760px) {
+	ol, ul, h3.subtitle, h4.author, .references { width: 55%; }
+
+	ol, ul {
+		--padding: 5vw;
+		box-sizing: border-box;
+		padding: 0 var(--padding);
+	}
+
+	.sidenote, .marginnote {
+		left: calc(87.5vw * 0.055);
+		margin-right: -50%;
+	}
+
+	ol, ul, [class*='_box_'] {
+		.sidenote, .marginnote {
+			width:        calc(  50% + var(--padding)     );
+			margin-right: calc( -50% - var(--padding) * 2 );
+		}
+	}
+}
+
+@media screen and (max-width: 760px) {
+	body {
+		width: 94%;
+		padding-left: 6%;
+	}
+
+	ol, ul, h3.subtitle, h4.author, .references { width: 90%; }
+
+	div.figure {
+		display: flex;
+		flex-direction: column;
+		margin: 0;
+		margin-bottom: 1em;
+
+		.shownote {
+			display: flex;
+			order: 2;
+		}
+	}
+
+	.shownote {
+		display: contents;
+		left: 0;
+		margin: 0;
+		width: 100%;
+		margin-bottom: 1em;
+	}
+
+	.margin-toggle:checked + :is(.sidenote, .marginnote) {
+		--width: 55%;
+		position: absolute;
+		width: var(--width);
+		left: calc(90% - var(--width));
+		padding: 0.5em;
+		border: 4px solid black;
+		border-radius: 8px;
+		margin: 0;
+		box-sizing: border-box;
+		background: white;
+		z-index: 2;
+	}
+
+	label.sidenote-number::before {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		color: white;
+		background: black;
+		border-radius: 4px;
+		padding: 0 0.3em 0.3em 0.3em;
+		height: 1em;
+	}
+}
+
+body {
+	max-width: none;
+	counter-reset: sidenote-number;
+}
+
+label.sidenote-number { counter-increment: sidenote-number; }
+
+:is(label, span).sidenote-number {
+	visibility: hidden;
+	letter-spacing: -1ch;
+
+	&::before {
+		visibility: visible;
+		letter-spacing: normal;
+		font-size: 1rem;
+		content: counter(sidenote-number, decimal);
+	}
+}
 
 p, ol, ul {
-	width: 55%;
 	font-size: 1.2rem;
 	line-height: 1.6rem;
 	margin-top: 1rem;
 	margin-bottom: 1rem;
 }
 
-.sidenote, .marginnote {
-	left: calc(87.5vw * 0.055);
-	margin-right: -50%;
-}
-
-ol, ul {
-	--padding: 5vw;
-	box-sizing: border-box;
-	padding: 0 var(--padding);
-
-	.sidenote, .marginnote {
-		width:        calc(  50% + var(--padding)     );
-		margin-right: calc( -50% - var(--padding) * 2 );
-	}
-}
-
 ul { list-style-type: '—'; }
 li { padding-left: 0.5em; }
 
-p.caption {
-	color: #777;
-	margin-top: 10px;
-}
+a { word-break: break-word; }
 
 code {
 	white-space: inherit;
@@ -56,39 +129,39 @@ button {
 	serif;
 }
 
-.header-section-number { color: dimgrey; }
+h1 {
+	font-size: 2rem;
+	margin-top: 2rem;
+	margin-bottom: 1rem;
 
-h1.title {
-	font-size: 2.8rem;
-	margin-bottom: 0;
+	.title {
+		font-size: 2.8rem;
+		margin-bottom: 0;
+	}
 }
+
+h2 { font-size: 1.6rem; }
+
+h3 { font-size: 1.3rem; }
 
 h3.subtitle {
 	font-size: 1.9rem;
 	margin-top: 10;
 	margin-bottom: 0;
-	width: 55%;
 }
 
 h4.author {
 	font-size: 1.3rem;
-	width: 55%;
 	margin-left: 0;
 	line-height: 1.4rem;
 }
-
-h1 {
-	font-size: 2rem;
-	margin-top: 2rem;
-	margin-bottom: 1rem;
-}
-
-h2 { font-size: 1.6rem; }
-
-.references { width: 55%; }
 
 .csl-entry {
 	--indent: 1.5em;
 	text-indent: calc(var(--indent) * -1);
 	padding: 0.5em 0 0.5em var(--indent);
 }
+
+.shownote, .header-section-number { color: var(--base00); }
+
+img[width='0'] { width: 100%; }
