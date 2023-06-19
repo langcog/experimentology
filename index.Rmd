@@ -20,6 +20,28 @@ csl-refs: yes
 link-citations: yes
 ---
 
+```{r}
+# hook to reformat latex output for figures in boxes
+if (knitr::is_latex_output()) {
+  default_hook <- knitr::knit_hooks$get("plot")
+  knitr::knit_hooks$set(
+    plot = function(x, options) {
+      x <- default_hook(x, options)
+      message(options$fig.env)
+      message(options$boxfigure)
+      # if (options$fig.env == "boxfigure") {
+      if (!is.null(options$boxfigure)) {
+        # replace \caption[text]{text} -> \captionof{figure}{text}
+        x <- x |> stringr::str_replace("\\\\caption\\[.*\\]\\{(.*)\\}",
+                                       "\\\\captionof\\{figure\\}\\{\\1\\}") |>
+          # override figure or marginfigure environment
+          stringr::str_replace("\\\\begin\\{.*\\}", "\\\\begin\\{boxfigure\\}") |>
+          stringr::str_replace("\\\\end\\{.*\\}", "\\\\end\\{boxfigure\\}")
+      }
+      return(x)
+    })
+}
+```
 
 # Preface {.unnumbered}
 
