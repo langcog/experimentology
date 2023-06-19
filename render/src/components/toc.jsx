@@ -1,8 +1,10 @@
 import style                     from './toc.module.scss'
 import Sticky                    from 'react-stickynode'
 import SiteNav, { ContentGroup } from 'react-site-nav'
-import { slide as Menu }         from 'react-burger-menu'
+import burger                    from 'react-burger-menu'
 import { useWindowWidth }        from '@react-hook/window-size/throttled'
+
+const { slide: Menu } = burger;
 
 const TOC = ({ name, items }) => {
 	const sections    = items.length;
