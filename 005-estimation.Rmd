@@ -3,14 +3,14 @@
 # Estimation {#estimation}
 
 ::: {.box data-box="learning_goals"}
-- Estimate the causal effect of an experiment
+- Estimate the causal effect of a manipulation
 - Discuss differences between frequentist and Bayesian estimation
 - Reason about standardized effect sizes and their strengths and weaknesses 
 :::
 
 In the first section of this book, our goal was to set up some of the theoretical ideas that motivate our approach to experimental design and planning. We introduced our key thesis, namely that experiments are about measuring causal effects. We also began to discuss some of our key themes, including precision of measurement, reduction of bias, and generalization across populations. 
 
-In this next section of the book -- treating statistical topics -- we will integrate these ideas with an analytic toolkit for **estimating** effects, **quantifying the size and precision** of these estimates (this chapter), making **inferences** about the evidence for such effects (Chapter \@ref(inference)), and making **models** for estimation and inference in more complex settings (Chapter \@ref(models)). Although this book is not a statistics text, we hope that these chapters provide some practical foundations for beginning the statistical analysis of your experimental data.
+In this next section of the book -- treating statistical topics -- we will integrate these ideas with an analytic toolkit for **estimating** effects, **quantifying the size and precision** of these estimates (this chapter), making **inferences** about the evidence for such effects (Chapter \@ref(inference)), and building **models** for estimation and inference in more complex settings (Chapter \@ref(models)). Although this book does not provide an extensive treatment of statistics, we hope that these chapters provide some practical foundations for beginning the statistical analysis of your experimental data.
 
 
 ::: {.box data-box="case_study" data-title="The Lady Tasting Tea"}
@@ -64,6 +64,7 @@ Let's take a look at the data from the milk-first condition, shown in Figure \@r
 
 The only probability distribution we'll discuss here is the ubiquitous **normal distribution** (also sometimes called a "Gaussian distribution"). A normal distribution has two **parameters** (numbers that define its shape), a **mean** and a **standard deviation**. These two parameters define the shape of the curve. The mean describes where its center goes, and the standard deviation describes how wide it is.^[Now we can see that the population parameter that we are trying to estimate is a number that describes the shape of the population distribution.] Using a probability distribution to describe our dataset gives us a way of summarizing our observations through the parameters of the distribution and encoding an assumption about what future observations might look like.
 
+
 How do we fit a normal distribution to our data? We try to find the values of the population parameters that make our observed data as likely as possible. Let's start with the mean. 
 
 ```{r estimation-ml2, fig.margin= TRUE, fig.cap="Comparison of the best-fitting normal distribution and a substantially worse curve.", fig.width=5}
@@ -86,35 +87,6 @@ n_total <- 48
 tea_data <- make_tea_data(n_total, sigma)
 ```
 
-<!-- ::: {.box data-box="code"} -->
-<!-- In this chapter and the subsequent statistics and visualization chapters of the book, we'll try to facilitate understanding and using these concepts in practice by giving the R code we use in our examples in these code boxes. We'll assume that you have some knowledge of base R and the Tidyverse -- go ahead and take a look at Appendix \@ref(tidyverse) if you haven't already.  -->
-
-<!-- Since we're going to be working with lots of data from the tea tasting example, we wrote a function called `make_tea_data` that creates a `tibble` with some (made up) data from our modern tea-tasting experiment.  -->
-
-<!-- ```{r eval=FALSE, echo=TRUE} -->
-<!-- tea_data <- make_tea_data(n_total, sigma) -->
-<!-- ``` -->
-
-<!-- Here's what the first few rows of those data look like: -->
-
-<!-- ```{r} -->
-<!-- knitr::kable(head(tea_data), digits = 2) -->
-<!-- ``` -->
-<!-- ::: -->
-
-<!-- ```{r estimation-milk-first, fig.cap="Ratings of the quality of milk-first tea, with the best fitting normal distribution shown in blue (mean shown by the dashed line)."} -->
-<!-- ggplot(td, aes(x = rating)) + -->
-<!--   geom_histogram(aes(y = ..count..), binwidth = 1) + -->
-<!--   xlim(1,7) + -->
-<!--   geom_vline(xintercept = mean(td$rating), lty = 2, col = "blue") + -->
-<!--   stat_function(fun = function(x) -->
-<!--     {dnorm(x, mean = mean(td$rating), sd = sd(td$rating)) * 24}, -->
-<!--     col = "blue") + -->
-<!--   ylab("Number of ratings") + -->
-<!--   xlab("Quality rating (1-7)") -->
-
-<!-- ``` -->
-
 
 ### Bayesian estimation
 
@@ -122,7 +94,7 @@ The  maximum likelihood estimation example above describes a common approach to 
 
 Often this approach makes sense, especially when we have no prior expectations about the values we are estimating. But sometimes we *do* have relevant beliefs about the value. For example, before we perform our tea experiment, we don't know exactly what $\theta_{\textrm{M}}$ will be, but it seems a bit unlikely that tea would be consistently rated as either horrible (1) or perfect (7). We have what you might call *weak prior expectations* about the kinds of ratings we'll receive.
 
-These kind of expectations are most useful when we have a very small amount of data. For example, if our very first participant in the experiment rated their tea as terrible, we wouldn't want to jump to the conclusion that the tea was actually bad. Instead, we might speculate that the participant was having a bad day or just brushed their teeth. On the other hand, if all of our participants gave bad ratings to their tea, the data would be more persuasive; in that case, we might want to tell the cafe that they are serving substandard tea. With a little data, our prior expectations should moderate our conclusions; as we get more, we should put greater weight on the data.
+These kind of expectations are most useful when we have a very small amount of data. Remember that our goal is to estimate a population parameter using the sample data, and small data sets can be rather noisy. Taking into account our prior expectations can help to temper the influence of noise. For example, if our very first participant in the experiment rated their tea as terrible, we wouldn't want to jump to the conclusion that the tea was actually bad. Instead, we might speculate that the participant was having a bad day or just brushed their teeth. On the other hand, if all of our participants gave bad ratings to their tea, the data would be more persuasive; in that case, we might want to tell the cafe that they are serving substandard tea. The extent to which our prior expectations should moderate our conclusions should vary with the amount of sample data; with only a little data, our prior expectations should have more influence, but as we gather more, we should put greater weight on the data.
 
 
 ```{r estimation-bayes, fig.margin= TRUE, fig.cap="Bayes rule, annotated."}
@@ -133,7 +105,6 @@ knitr::include_graphics("images/estimation/bayes.png")
 How do we quantify this tradeoff between our prior expectations and our current observations? We can do this via **Bayesian estimation** of $\widehat{\theta}_{\textrm{M}}$. Bayesian estimation provides a principled framework for integrating prior beliefs and data. These estimation techniques can be very helpful in cases where data are sparse or prior beliefs are strong.
 
 In Bayesian estimation, we observe some data $d$, consisting of the set of responses in the experiment. Now we can use **Bayes' rule**, a tool from basic probability theory, to estimate this number (Figure \@ref(fig:estimation-bayes)). Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(\theta_{\textrm{M}} |\text{data})$) is called the **posterior probability** -- it tell us what we should believe about the population parameter on tea quality, given the data we observed.^[We're making the posterior `r colorize("purple","purple")` to indicate the combination of likelihood (`r colorize("red","red")`) and prior (`r colorize("blue","blue")`).]
-<!-- TODO: colormatch text to figure -->
 
 The first part of the numerator is $p(\text{data}|\theta_{\textrm{M}})$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.^[Speaking informally, "likelihood" is just a synonym for probability, but in Bayesian estimation, "likelihood" is a technical term specifically referring to probability of the data given our hypothesis. This ambiguity can get a bit confusing.] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the tea is of high quality (say $\theta_{\textrm{M}} = 6.5$) then the probability of a bunch of low ratings will be fairly low.
 
@@ -159,9 +130,9 @@ Priors aren't usually as strong as the one shown above. Figure \@ref(fig:estimat
 knitr::include_graphics("images/estimation/bayes-curves-moredata.png")
 ```
 
-The effect of the prior is also decreased when you have more data. Take a look at Figure \@ref(fig:estimation-bayes-curves-moredata): now the posterior distribution is much more peaked and also much closer to the data -- the prior makes much less difference.   
+The effect of the prior is also decreased when you have more data. Take a look at Figure \@ref(fig:estimation-bayes-curves-moredata). The prior is the same as in Figure \@ref(fig:estimation-bayes-curves), but we have more data. As a result, the posterior distribution is much more peaked and also much closer to the data -- the prior makes much less difference.
 
-Bayesian estimation is most important when you have strong beliefs and not a lot of data. That can be a case where you have just a few participants in your experiment, but it's also good -- and perhaps more common -- to use Bayesian methods when you have a lot of data, but maybe not that much data about particular units that you care about. For example, you might have a large dataset about the effects of an educational intervention but not that much data about how it affects a particular subgroup. In general, though, Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior (a prior that makes any value equally likely) or as you get infinite data.
+Bayesian estimation is most important when you have strong beliefs and not a lot of data. That can be a case where you have just a few participants in your experiment, but it's also good -- and perhaps more common -- to use Bayesian methods when you have a lot of data, but maybe not that much data about particular units that you care about. For example, you might have a large dataset about the effects of an educational intervention but not that much data about how it affects a particular subgroup. In general, though, Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior (a prior that makes any value equally likely) or as you gather infinite data.
 
 ## Estimating and comparing effects
 
@@ -182,15 +153,15 @@ As in the one-sample case (i.e., estimating the mean of just the milk-first grou
 
 In the Bayesian framework, we would again specify a prior $p(\beta)$ that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could  specify a flat prior, $p(\beta) \propto 1$.^[This equation says that the probability of any value of $\beta$ is "proportional to" 1, meaning that it's constant ("flat") regardless of what value $\beta$ takes.].  If we believe the treatment effect is likely to favor milk-first pouring ($\beta>0$), we could specify the prior is a normal distribution centered at some positive value (e.g., $\beta=0.5$); the standard deviation of this prior would encode how certain we are about our prior beliefs. And if we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at 0, which has the effect of "shrinking" the estimates closer to 0.^[The measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Statistical uncertainty is only one kind of uncertainty, though. A more holistic view of the overall credibility of an estimate should also account for other things outside of the model, like study design issues and bias.]
 
-As in our example above, maximum likelihood estimates and Bayesian estimates are going to be pretty similar if we have a lot of data. They will only diverge when we have strong priors or relatively little data. The reason we are setting up these two different frameworks, however, is that they will provide very different inferential tools in the next chapter.
+As in our example above, maximum likelihood estimates and Bayesian estimates are going to be pretty similar if we have a lot of data or weak priors. They will only diverge when we have strong priors or relatively little data. The reason we are setting up these two different frameworks, however, is that they will provide very different inferential tools in the next chapter.
 
 ### Measures of effect size
 
-Once we have measured something, we need to make a decision about how to describe this effect to the world. Sometimes we are working with fairly intuitive relationships that are easy to describe. A researcher might say, for example, that people who received milk-first tea drank the tea, on average, 5 minutes quicker than people who received tea-first tea (i.e., that $\widehat{\beta} = 5$ minutes). Time is measured in units like minutes and seconds and so we all have a shared understanding of what 5 minutes means.
+Once we have measured something, we need to make a decision about how to describe this effect to others. Sometimes we are working with fairly intuitive relationships that are easy to describe. A researcher might say, for example, that people who received milk-first tea drank the tea, on average, 5 minutes quicker than people who received tea-first tea (i.e., that $\widehat{\beta} = 5$ minutes). Time is measured in units like minutes and seconds and so we all have a shared understanding of what 5 minutes means.
 
 But what about our participants' ratings of tea quality, which were provided on an arbitrary 7-point rating scale that we devised? What does it mean to that participants who drank milk-first tea rated it 1 point higher than participants who drank tea-first tea (i.e., that $\widehat{\beta} = 1$ point)? And how is this difference comparable to, for instance, a 1-point change on a scale that has similar anchors ("terrible" and "delicious") but uses a 100-point rating system?
 
-```{r estimation-es-calc, fig.cap="Schematic effect size computation.."}
+```{r estimation-es-calc, fig.cap="Schematic effect size computation."}
 knitr::include_graphics("images/estimation/es-calc.png")
 ```
 
@@ -207,7 +178,7 @@ Let's compute this measure for our tea-drinking study. We can just plug in the e
 $$d = \frac{\theta_{\textrm{M}} - \theta_{\textrm{T}}}{\sigma_{\text{pooled}}} = \frac{4.5- 3.5}{1.25} = \frac{1}{1.25} = 0.80$$
 \noindent In other words, the effect size of the difference between the two conditions is .8 standard deviations. 
 
-We previously said that people who drank milk-first tea had quality ratings that were, on average, 1 point higher on a 7-point scale ($\beta = 1$ point). Cohen's *d* translates the arbitrary units of our rating scale into a **unit-less** effect size that is measured in terms of the variation in the data. You may find yourself wondering: "why would I ever describe things in terms of standard deviations?" The key benefit is that it allows us to compare the size of the effect to studies that use different measures.
+We previously said that people who drank milk-first tea had quality ratings that were, on average, 1 point higher on a 7-point scale ($\beta = 1$ point). Cohen's *d* translates the arbitrary units of our rating scale into a **unit-less** effect size that is measured in terms of the variation in the data. You may find yourself wondering: "why would I ever describe things in terms of standard deviations?" The key benefit is that it allows us to compare the size of the effect between studies that use different measures.
 
 Let's say that we ran a replication of our tea study with two changes: (1) we studied patrons in a US cafe instead of a UK cafe, and (2) we used a 100-point quality rating scale instead of a 7-point scale. Imagine that, just as we found that participants in the UK rated the milk-first tea 1-point higher on a 7-point quality scale, US participants rated the milk-first tea 1-point higher on a *100-point* quality scale. It seems clear that these effects are different because of the difference in scale. But how different? 
 
@@ -219,7 +190,7 @@ $${d_{US}} = \frac{\theta_{\text{T}} - \theta_{\text{M}}}{\sigma_{\text{pooled}}
 
 \noindent A Cohen's *d* of .2 means that US cafe patrons rated their tea .2 standard deviations higher when it was milk-first, much smaller than the .8 standard deviation difference in the UK patrons. 
 
-There are no hard and fast rules for interpreting what makes a big effect or a small effect, but people often refer back to standard suggested by @cohen1992. On those standards, $d = 0.8$ is a "large effect", and $d = 0.2$ is a "small effect." But these effect size interpretation norms are somewhat arbitrary. More broadly, though US and UK patrons had the same raw score change in quality ratings ($\widehat{\beta} = 1$), standardizing the differences allowed us to communicate that the difference was much larger among the UK patrons.
+There are no hard and fast rules for interpreting what makes a big effect or a small effect, but people often refer back to a standard suggested by @cohen1992. On those standards, $d = 0.8$ is a "large effect", and $d = 0.2$ is a "small effect." But these effect size interpretation norms are somewhat arbitrary. More broadly, though US and UK patrons had the same raw score change in quality ratings ($\widehat{\beta} = 1$) and standardizing the differences allowed us to communicate that the difference was much larger among the UK patrons.
 
 Cohen's *d* is one of many standardized effect sizes that researchers can use. Just as Cohen's *d* standardizes differences in group means, there are also ways of standardizing relationships between categorical variables (e.g., odds ratio), how well a predictor variable explains an outcome variable (e.g., Pearson's *r*, $r^2$, or $\eta^2$), and more. We'll be using effect sizes throughout the book, but in most cases -- for example, sample size planning in Chapter \@ref(sampling) and meta-analysis in Chapter \@ref(meta) -- we'll be using Cohen's *d* as our example.^[If you'd like to learn more about other varieties of effect size, take a look at @fritz2012.] 
 
@@ -246,9 +217,9 @@ In contrast, we recommend using standardized effect sizes for cases where the me
 In this chapter, we introduced the idea of estimating both individual measurements and treatment effects from observed data. These ideas are simple but they lay the foundations for hypothesis testing and modeling (our next two chapters). Further, we set up the distinction between Bayesian and frequentist approaches, which we will expand in the next chapter since these traditions provide different inferential tools.
 
 ::: {.box data-box="discussion_questions"}
-1. In this chapter you learned about estimation, and in this book more generally, we try to model "estimation talk" -- describing the goal of an experiment as providing a maximally precise estimate of a causal effect. Psychology as a field has often been criticized for focusing too much on hypothesis testing and too little on estimation. Find an article in the journal Psychological Science that reports on an experiment or series of experiments and read the abstract. Does it mention an estimate of any particular quantity? If it does not, do you think this is a weakness of the abstract?
+1. In this chapter you learned about estimation, and in this book more generally, we have argued that the goal of an experiment is to provide a maximally precise estimate of a causal effect. Psychology as a field has often been criticized for focusing too much on inference and too little on estimation. Find an article in the journal Psychological Science that reports on an experiment or series of experiments and read the abstract. Does it mention an estimate of any particular quantity? What might be the benefits of reporting estimates in the study abstract?
 
-2. Try the same exercise with a paper in the New England Journal of Medicine or Journal of the American Medical Association. Find a paper and check if there is a mention of any specific quantity being estimated. (We suspect there will be!) Consider this contrast between the medical article and the psychology article. What do you make of this difference between fields? 
+2. Try the same exercise with a paper in the New England Journal of Medicine or Journal of the American Medical Association. Find a paper and check if there is a mention of any specific quantity being estimated (we suspect there will be!). What do you make of this difference between medical article and psychology articles?
 :::
 
 ::: {.box data-box="readings"}
