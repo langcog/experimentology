@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # Inference {#inference}
 
 ::: {.box data-box="learning_goals"}
@@ -243,7 +248,7 @@ Bayes Factors are a method for quantifying the support for one hypothesis over a
 
 [^inference-10]: Sometimes people refer to the BF in favor of $H_1$ as the $BF_{10}$ and the BF in favor of $H_0$ as the $BF_{01}$. This notation strikes us as a bit confusing because a reader might wonder what the 10 in the subscript means.
 
-```{r inference-jeffreys, fig.margin=TRUE}
+```{r inference-jeffreys}
 jeffreys <- tribble(~`BF range`, ~`Interpretation`,
                     "< 1", "Negative evidence (supports H0)",
                     "1 -- 3", "Barely worth mentioning",
@@ -253,7 +258,8 @@ jeffreys <- tribble(~`BF range`, ~`Interpretation`,
                     "> 100", "Decisive")
 
 kable(jeffreys, #booktabs = TRUE, 
-      caption = "Jeffreys' (1961/1998) interpretation guidelines for Bayes Factors.")
+      caption = "Jeffreys' (1961/1998) interpretation guidelines for Bayes Factors.",
+      table.envir = "margintable")
 ```
 
 There are a couple of things to notice about the Bayes Factor. The first is that, like a p-value, it is inherently a continuous measure. You can artificially dichotomize decisions based on the Bayes Factor by declaring a cutoff (say, BF \> 3 or BF \> 10), but there is no intrinsic threshold at which you would say the evidence is "significant." Many people follow guidelines from @jeffreys1998, shown in Table \@ref(tab:inference-jeffreys). On the other hand, cutoffs like BF > 3 or $p < .05$ are not very informative. So although we provide this table to guide interpretation, we caution that you should always report and interpret the actual Bayes Factor, not whether it is above or below some cutoff. 
@@ -353,8 +359,7 @@ expand_grid(N = c(12,24,48,96),
            BayesFactor::ttestBF(x = rating[condition == "milk first"],
                                 y = rating[condition == "tea first"], 
                                 paired = FALSE))$bf,1)) %>%
-  kable(#booktabs = TRUE,
-        digits = 3, align = "rrrr", caption = "Comparison of p-value and BF for several different (randomly-generated) tea-tasting scenarios.")
+  kable(digits = 3, align = "rrrr", caption = "Comparison of p-value and BF for several different (randomly-generated) tea-tasting scenarios.", table.envir = "margintable")
 ```
 
 The critical thing about $p$-values, though, is not just that they are a kind of data likelihoods. It is that they are used in a *specific inferential procedure*. The logic of NHST is that we make a binary decision about the presence of an effect. If $p < .05$, the null hypothesis is rejected; otherwise not. As @fisher1949 wrote,
@@ -379,7 +384,7 @@ As we saw in Figure \@ref(fig:inference-null-model), the larger the sample, the 
 
 Hypothesis testing requires knowing the null distribution. In the examples above, it was easy to use statistical theory to work out the null distribution using knowledge of the binomial or normal distribution. But sometimes we don't know what the null distribution would look like. What if the ratings data from our tea-tasting experiment was very skewed, such that there were many low ratings and a few very high ratings (as in Figure \@ref(fig:inference-permutation-1))?  
 
-```{r inference-permutation-1, fig.margin = TRUE, fig.cap="A small tea-tasting  experiment with a skewed distribution of ratings."}
+```{r inference-permutation-1, fig.margin = TRUE, fig.cap="A small tea-tasting  experiment with a skewed distribution of ratings.", boxfigure=TRUE}
 knitr::include_graphics("images/inference/skewed.png")
 ```
 
@@ -410,23 +415,23 @@ What can you conclude when $p>.05$? According to the classical logic of NHST, th
 ```{r dirty-dozen}
 dozen <- tribble(
   ~` `, ~Misconception,
-  1,	"If *p* = .05, the null hypothesis has only a 5% chance of being true.",
-  2,	"A nonsignificant difference (eg, *p* ≥.05) means there is no difference between groups.",
+  1,	"If $p = .05$, the null hypothesis has only a 5\\% chance of being true.",
+  2,	"A nonsignificant difference (eg, $p \\geq .05$) means there is no difference between groups.",
   3,	"A statistically significant finding is clinically important.",
-  4,	"Studies with *p* values on opposite sides of .05 are conflicting.",
-  5,	"Studies with the same *p* value provide the same evidence against the null hypothesis.",
-  6,	"*p* = .05 means that we have observed data that would occur only 5% of the time under the null hypothesis.",
-  7,	"*p* = .05 and *p* ≤.05 mean the same thing.",
-  8,	"*p* values are properly written as inequalities (eg, \\'*p* ≤.02\\' when *p* = .015)",
-  9,	"*p* = .05 means that if you reject the null hypothesis, the probability of a false positive error is only 5%.",
-  10,	"With a *p* = .05 threshold for significance, the chance of a false positive error will be 5%.",
-  11,	"You should use a one-sided *p* value when you don't care about a result in one direction, or a difference in that direction is impossible.",
-  12,	"A scientific conclusion or treatment policy should be based on whether or not the *p* value is significant."
+  4,	"Studies with $p$ values on opposite sides of .05 are conflicting.",
+  5,	"Studies with the same $p$ value provide the same evidence against the null hypothesis.",
+  6,	"$p$ = .05 means that we have observed data that would occur only 5\\% of the time under the null hypothesis.",
+  7,	"$p$ = .05 and $p \\leq .05$ mean the same thing.",
+  8,	"$p$ values are properly written as inequalities (eg, \'$p \\leq .02$\' when $p = .015$)",
+  9,	"$p$ = .05 means that if you reject the null hypothesis, the probability of a false positive error is only 5\\%.",
+  10,	"With a $p$ = .05 threshold for significance, the chance of a false positive error will be 5\\%.",
+  11,	"You should use a one-sided $p$ value when you don't care about a result in one direction, or a difference in that direction is impossible.",
+  12,	"A scientific conclusion or treatment policy should be based on whether or not the $p$ value is significant."
   )
 
-knitr::kable(dozen, 
-             # booktabs = TRUE, 
-             caption = "A \"dirty dozen\" *p* value misconceptions. Adapted from Goodman (2008).")
+kable(dozen, escape = FALSE,
+      table.envir = "table*",
+      caption = "A \"dirty dozen\" $p$ value misconceptions. Adapted from Goodman (2008).")
 ```
 
 
@@ -456,7 +461,7 @@ Second, as we discussed, a $p$-value close to .05 does not necessarily provide s
 
 Finally, since precognition is not supported by any prior compelling scientific evidence (despite many attempts to obtain such evidence) and defines well-established physical laws, perhaps we should assign a low prior probability to Bem's $H_1$, a non-zero precognition effect. Taking a strong Bayesian position, Wagenmakers et al. suggest that we might do well to adopt a prior reflecting how unlikely precognition is, say $p(H_1) = 10^{-20}$. And if we adopt this prior, even a very well-designed, highly informative experiment (with a Bayes factor conveying substantial or even decisive evidence) would still lead to a very low posterior probability of precognition.
 
-Wagenmakers et al. concluded that, rather than supporting precognition, the conclusion that we all take from Bem's paper should be that psychologists need to change how they analyze their data![^inference-21]
+Wagenmakers et al. concluded that, rather than supporting precognition, the conclusion from Bem's paper should be psychologists should revise how they think about analyzing their data!
 :::
 
 [^inference-21]: If you are intrigued by this set of issues, you might enjoy Slate Star Codex's post on ESP research, ["The Control Group is Out of Control"](https://slatestarcodex.com/2014/04/28/the-control-group-is-out-of-control/). We don't agree with everything in it, but it's definitely thought-provoking and contains many interesting links.
@@ -548,7 +553,7 @@ In practice, confidence intervals are often misinterpreted by students and resea
 
 ```{r inference-ci-false}
 ci <- tribble(
-  ~` `, ~` `,
+  ~` `, ~Misconception,
   1, "The probability that the true mean is greater than 0 is at least 95%.",
   2, "The probability that the true mean equals 0 is smaller than 5%.",
   3, "The 'null hypothesis' that the true mean equals 0 is likely to be incorrect.",
@@ -557,9 +562,8 @@ ci <- tribble(
   6, "If we were to repeat the experiment over and over, then 95% of the time the true mean falls between 0.1 and 0.4."
 )
 
-knitr::kable(ci, 
-             # booktabs = TRUE, 
-             caption = "Confidence interval misconceptions for a confidence interval [0.1,0.4]. Adapted from Hoekstra et al. (2014).")
+kable(ci, table.envir = "table*",
+      caption = "Confidence interval misconceptions for a confidence interval [0.1,0.4]. Adapted from Hoekstra et al. (2014).")
 ```
 
 
