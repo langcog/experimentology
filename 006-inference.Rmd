@@ -8,9 +8,9 @@
 -   Define and reason about confidence intervals
 :::
 
-We've been arguing that experiments are about measuring effects. The effects we are interested in are causal effects for a group of people, but that group is almost always bigger than the participants in an experiment. **Statistical inference** is the process of going beyond the specific characteristics of the sample that you measured to make generalizations about the broader **population**.  Chapter \@ref(estimation) already showed us how to make one simple inference, going beyond the data from a particular sample to estimate population parameters using both frequentist and Bayesian techniques.
+We've been arguing that experiments are about measuring effects. The effects we are interested in are causal effects for a group of people, but that group is almost always bigger than the participants in an experiment. **Statistical inference** is the process of going beyond the specific characteristics of the sample that you measured to make generalizations about the broader **population**.  Chapter \@ref(estimation) already showed us how to make one simple inference: estimating population parameters using both frequentist and Bayesian techniques.
 
-Sometimes we want to make more sophisticated inferences, however, so that we can answer questions such as:
+Estimating population parameters is an important first step. But often we want to make more sophisticated inferences so that we can answer questions such as:
 
 1.  How likely is it that this pattern of measurements was produced by chance variation?
 2.  Do these data provide more support for one hypothesis or another?
@@ -19,7 +19,7 @@ Sometimes we want to make more sophisticated inferences, however, so that we can
 
 Question (1) is associated with one particular type of statistical inference method -- **null hypothesis significance testing** (NHST) in the **frequentist** statistical tradition. NHST has become synonymous with data analysis, such that in the vast majority of research papers (and research methods courses), all of the reported analyses are tests of this type. Yet this equivalence is quite problematic. 
 
-The instinct to "go test for significance" before visualizing your data and trying to understand sources of variation (participants, items, manipulations, etc.) is one of the most unhelpful things an experimenter can do. Whether $p < .05$ or not, a test of this sort gives you literally *one bit* of information about your data.^[In the information theoretic sense, as well as the common sense!] Considering effect sizes and their variation more holistically, including using the kinds of visualizations we advocate in Chapter \@ref(viz), gives you a much richer sense of what happened in your experiment!
+The move to "go test for significance" before visualizing your data and trying to understand sources of variation (participants, items, manipulations, etc.) is one of the most unhelpful strategies for an experimenter. Whether $p < .05$ or not, a test of this sort gives you literally *one bit* of information about your data.^[In the information theoretic sense, as well as the common sense!] Considering effect sizes and their variation more holistically, including using the kinds of visualizations we advocate in Chapter \@ref(viz), gives you a much richer sense of what happened in your experiment!
 
 In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. All practicing experimentalists need to understand NHST, both to read the literature and also to apply this method in appropriate situations. For example, NHST may be a reasonable tool for testing whether an intervention leads to a difference between a treatment condition and an appropriate control, although it still doesn't tell you about the size of the intervention effect! But we will also try to contextualize NHST as a very special case of a broader set of modeling and inference strategies. Further, we will continue to flesh out our account of how some of the pathologies of NHST have been a driver of the replication crisis.
 
@@ -31,7 +31,7 @@ What should replace NHST? Figure \@ref(fig:inference-krushke) shows one way of o
 
 Instead of dichotomous frequentist or Bayesian inference, we advocate for **estimation** and **modeling** strategies, which are more suited towards questions (3) and (4) [@cumming2014;@kruschke2018]. The goal of these strategies is to yield an accurate and precise estimate of the relationships underlying observed variation in the data. 
 
-This isn't a statistics book and we won't attempt to teach the full array of important statistical concepts that will allow students to build good models of a broad array of datasets. (Sorry!).^[If you're interested in going deeper, here are two books that have been really influential for us. The first is @gelman2006b and its successor @gelman2020, which teach regression and multi-level modeling from the perspective of data description. The second is @mcelreath2018, a course on building Bayesian models of the causal structure of your data. Honestly, neither is an easy book to sit down and read (unless you are the kind of person who reads stats books on the subway for fun) but both really reward detailed study. We encourage you to get together a reading group and go through the exercises together. It'll be well worth while in its impact on your statistical and scientific thinking.] But we do want you to be able to reason about inference and modeling. In this chapter, we'll start by making some inferences about our tea-tasting example from the last chapter, using this example to build up intuitions about inference and estimation. Then in Chapter \@ref(models), we'll start to look at more sophisticated models and how they can be fit to real datasets.
+This isn't a statistics book and we won't attempt to teach the full array of important statistical concepts that will allow students to build good models of a broad array of datasets. (Sorry!).^[If you're interested in going deeper, here are two books that have been really influential for us. The first is @gelman2006b and its successor @gelman2020, which teach regression and multi-level modeling from the perspective of data description. The second is @mcelreath2018, a course on building Bayesian models of the causal structure of your data. Honestly, neither is an easy book to sit down and read (unless you are the kind of person who reads statistics books on the subway for fun) but both really reward detailed study. We encourage you to get together a reading group and go through the exercises together. It'll be well worth while in its impact on your statistical and scientific thinking.] But we do want you to be able to reason about inference and modeling. In this chapter, we'll start by making some inferences about our tea-tasting example from the last chapter, using this example to build up intuitions about inference and estimation. Then in Chapter \@ref(models), we'll start to look at more sophisticated models and how they can be fit to real datasets.
 
 ## Sampling variation
 
@@ -39,21 +39,21 @@ In Chapter \@ref(estimation), we introduced Fisher's tea-tasting experiment and 
 
 ### Standard errors
 
-[^inference-7]: The measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Sampling-based uncertainty is only one kind of uncertainty, though: a more holistic view of the overall credibility of an estimate should also account for study design and bias, among other things
+[^inference-7]: The measures of variability that we discuss here account for statistical uncertainty, reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Sampling-based uncertainty is only one kind of uncertainty, though: a more holistic view of the overall credibility of an estimate should also account for study design and bias, among other things
 
 
 ```{r inference-sampling-small, fig.margin = TRUE, fig.cap= "Sampling distribution for the treatment effect in the tea-tasting experiment, given many different repetitions of the same experiment, each with N=9 per group. Circles represent average treatment effects from different individual experiments, while the thick line represents the form of the underlying distribution."}
 knitr::include_graphics("images/inference/sampling-small.png")
 ```
 
-To characterize the uncertainty in an estimate, it helps to picture what is called its **sampling distribution**, which is the distribution of the estimate across different, hypothetical samples. That is, let's imagine -- purely hypothetically -- that we conducted the tea experiment not just once, but hundreds or even thousands of times. This idea is often called **repeated sampling** as a shorthand. For each hypothetical sample, we use similar recruitment methods to recruit a new sample of participants, and we compute $\widehat{\beta}$ for that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability (noise). If we plotted these estimates, $\widehat{\beta}$, across thousands of samples, we would get the sampling distribution in Figure \@ref(fig:inference-sampling-small). 
+To characterize the uncertainty in an estimate, it helps to picture what is called its **sampling distribution**, which is the distribution of the estimate across different, hypothetical samples. That is, let's imagine -- purely hypothetically -- that we conducted the tea experiment not just once, but dozens, hundreds, or even thousands of times. This idea is often called **repeated sampling** as a shorthand. For each hypothetical sample, we use similar recruitment methods to recruit a new sample of participants, and we compute $\widehat{\beta}$ for that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability (noise). If we plotted these estimates, $\widehat{\beta}$, we would get the sampling distribution in Figure \@ref(fig:inference-sampling-small). 
 
 ```{r}
 source("helper/tea_helper.R")
 ```
 
 ::: {.box data-box="code"}
-In this chapter and the subsequent statistics and visualization chapters of the book, we'll try to facilitate understanding and illustrate how to use these concepts in practice by giving the R code we use in constructing our examples in these code boxes. We'll assume that you have some knowledge of base R and the Tidyverse -- to get started with these, go ahead and take a look at Appendix \@ref(tidyverse) if you haven't already. Although our figures are all drawn by hand, they are based on actual simulation results!
+In this chapter and the subsequent statistics and visualization chapters of the book, we'll try to facilitate understanding and illustrate how to use these concepts in practice by giving the R code we use in constructing our examples in these code boxes. We'll assume that you have some knowledge of base R and the Tidyverse -- to get started with these, go ahead and take a look at Appendix \@ref(tidyverse) if you haven't already. Although our figures are often drawn by hand, even the hand-drawn ones are based on actual simulation results!
 
 Since we're going to be working with lots of data from the tea tasting example, we wrote a function called `make_tea_data` that creates a `tibble` with some (made up) data from our modern tea-tasting experiment. You can find the function at [this link](https://raw.githubusercontent.com/langcog/experimentology/main/helper/tea_helper.R) if you want to follow along.
 
@@ -61,7 +61,9 @@ Since we're going to be working with lots of data from the tea tasting example, 
 tea_data <- make_tea_data(n_total = 18)
 ```
 
-Here's what the first few rows of those data look like:
+\noindent Here's what the first few rows of those data look like:
+
+\vspace{2ex}
 
 ```{r}
 knitr::kable(head(tea_data), digits = 2)
@@ -77,7 +79,7 @@ knitr::include_graphics("images/inference/sampling-big.png")
 
 
 ::: {.box data-box="code"}
-To do this simulation, we're using a special tidyverse function from the `purrr` library: `map`. `map` is an extremely powerful function that allows us to run another function (in this case, the `make_tea_data` function that we introduced last chapter) many times with different inputs. Here we create a tibble made up of a set of 1000 runs of the `make_tea_data` function.
+To do simulations where we repeat the tea-tasting experiment over and over again, we're using a special tidyverse function from the `purrr` library: `map`. `map` is an extremely powerful function that allows us to run another function (in this case, the `make_tea_data` function that we introduced last chapter) many times with different inputs. Here we create a tibble made up of a set of 1000 runs of the `make_tea_data` function.
 
 ```{r eval=FALSE, echo=TRUE}
 samps <- tibble(sim = 1:1000) |>
@@ -85,7 +87,7 @@ samps <- tibble(sim = 1:1000) |>
   unnest(cols = "data")
 ```
 
-Next, we just use the `group_by` and `summarise` workflow from Appendix \@ref(tidyverse) to get the estimated treatment effect for each of these 1000 simulations.
+Next, we just use the `group_by` and `summarise` workflow from Appendix \@ref(tidyverse) to get the estimated treatment effect for each of these simulations.
 
 ```{r eval=FALSE, echo=TRUE}
 tea_summary <- samps |>
@@ -97,26 +99,20 @@ tea_summary <- samps |>
 This tibble gives us what we would need to plot the sampling distributions above in Figures \@ref(fig:inference-sampling-small) and \@ref(fig:inference-sampling-big).
 :::
 
-The sampling distribution is not the same thing as the distribution of tea ratings in a single sample. Instead, it's a distribution of *estimates across samples of a given size*. Internalizing this distinction is a crucial component to understanding all statistical models and tests. 
-<!-- If we were in the classroom with you, we would pound our fist on the lecture podium for emphasis! -->
+The sampling distribution is not the same thing as the distribution of tea ratings in a single sample. Instead, it's a distribution of *estimates across samples of a given size*. In essence, it tells us what the mean of a new experiment might be, if we ran it with a particular sample size. 
 
 ### The central limit theorem
 
 We talked in the last chapter about the normal distribution, a convenient and ubiquitous tool for quantifying the distribution of measurements. A shocking thing about sampling distributions for many kinds of estimates -- and for *all* maximum likelihood estimates -- is that they become normally distributed as the sample size gets larger and larger. This result holds even for estimates that are not even remotely normally distributed in small samples! 
 
-For example, say we are flipping a coin and we want to estimate the probability that it lands heads ($p_H$). If we draw samples each consisting of only $n=2$ coin flips, Figure \@ref(fig:inference-coin-2) is the sampling distribution of the estimates ($\widehat{p}_H$). This sampling distribution doesn't look normally distributed at all -- it doesn't have the characteristic "bell curve" look! $\widehat{p}_H$ can only take on the values 0, 0.5, or 1 in a sample of only 2 coin flips. 
+For example, say we are flipping a coin and we want to estimate the probability that it lands heads ($p_H$). If we draw samples each consisting of only $n=2$ coin flips, Figure \@ref(fig:inference-coin-2) is the sampling distribution of the estimates ($\widehat{p}_H$). This sampling distribution doesn't look normally distributed at all -- it doesn't have the characteristic "bell curve" shape! In a sample of only two coin flips, $\widehat{p}_H$ can only take on the values 0, 0.5, or 1. 
 
 ```{r inference-coin-2, fig.margin = TRUE, fig.cap="Samping distribution of samples from a biased coin with N=2 flips in each sample. Bar height shows the proportion of flips resulting in a particular mean."}
 knitr::include_graphics("images/inference/cl-2.png")
 ```
 
-
-```{r inference-coin-ns, fig.margin = TRUE, fig.cap="Sampling distribution for 2, 8, 32, and 128 flips."}
-knitr::include_graphics("images/inference/cl-ns.png")
-```
-
 ::: {.box data-box="code"}
-For this simulation, we use the `map` function. We set up a tibble with the different values we want to to try (which we call `n_flips`). Then we make use of the `map` function to run `rbinom` (random binomial samples) for each value of `n_flips`.
+For our central limit theorem simulations, we again use the `map` function. We set up a tibble with the different values we want to to try (which we call `n_flips`). Then we make use of the `map` function to run `rbinom` (random binomial samples) for each value of `n_flips`.
 
 One trick we make use of here is that `rbinom` takes an extra argument that says how many of these random values you want to generate. Here we generate `nsamps = 1000` samples, giving us 1000 independent replicates at each `n`. But returning an array of 1000 values for a single value of `n_flips` results in something odd: the value for each element of `flips` is an array. To deal with that, we use the `unnest` function, which expands the array back into a normal tibble.
 
@@ -126,14 +122,21 @@ n_flips_list <- c(2, 8, 32, 128)
 
 sample_p <- tibble(n_flips = n_flips_list) |>
   group_by(n_flips) |>
-  mutate(flips = map(n_flips, ~rbinom(n = n_samps, size = n_flips, prob = .7))) |>
+  mutate(flips = map(n_flips, 
+                     ~rbinom(n = n_samps, size = n_flips, prob = .7))) |>
   unnest(cols = c(flips)) |>
   mutate(p = flips / n_flips)
 ```
 
 :::
 
-But look what happens as we draw increasingly larger samples in Figure \@ref(fig:inference-coin-ns): We get a normal distribution! This tendency of sampling distributions to become normal as $n$ becomes very large reflects a deep and elegant mathematical law called the **Central Limit Theorem**. The practical upshot is that the Central Limit Theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\widehat{SE} = \sigma/\sqrt{n}$. The sampling distribution becomes narrower as the sample size increases because we are dividing by the square root of the number of observations.
+```{r inference-coin-ns, fig.margin = TRUE, fig.cap="Sampling distribution for 2, 8, 32, and 128 flips."}
+knitr::include_graphics("images/inference/cl-ns.png")
+```
+
+But look what happens as we draw increasingly larger samples in Figure \@ref(fig:inference-coin-ns): We get a normal distribution! This tendency of sampling distributions to become normal as $n$ becomes very large reflects a deep and elegant mathematical law called the **Central Limit Theorem**. 
+
+The practical upshot is that the Central Limit Theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\widehat{SE} = \sigma/\sqrt{n}$. The sampling distribution becomes narrower as the sample size increases because we are dividing by the square root of the number of observations.
 
 ## From variation to inference
 
@@ -263,7 +266,7 @@ There are a couple of things to notice about the Bayes Factor. The first is that
 
 The second thing to notice about the Bayes Factor is that it doesn't depend on our prior probability of $H_1$ vs. $H_0$. We might think of $H_1$ as very implausible. But the BF is independent of that prior belief. So that means it's a measure of how much the evidence should shift our beliefs away from our prior. One nice way to think about this is that the Bayes Factor computes how much our beliefs -- whatever they are -- should be changed by the data [@morey2011].
 
-In practice, the thing that is both tricky and good about Bayes Factors is that you need to define an actual model of what $H_0$ and $H_1$ are. That process involves making some assumptions explicit. We won't go into how to make these models here -- this is a big topic that is covered extensively in books on Bayesian data analysis.[^inference-12] Below and in Chapter \@ref(models) we will provide some guidance for how to compute Bayes Factors for simple experimental designs. The goal here is just to give a sense of how they work.
+In practice, the thing that is both tricky and good about Bayes Factors is that you need to define an actual model of what $H_0$ and $H_1$ are. That process involves making some assumptions explicit. We won't go into how to make these models here -- this is a big topic that is covered extensively in books on Bayesian data analysis.[^inference-12] Below we will provide some guidance for how to compute Bayes Factors for simple experimental designs. The goal here is just to give a sense of how they work.
 
 [^inference-12]: Two good ones are @gelman1995 (a bit more statistical) and @kruschke2014 (a bit more focused on psychological data analysis). An [in-prep web-book by Nicenboim et al.](https://vasishth.github.io/bayescogsci/book/) also looks great.
 
@@ -335,19 +338,19 @@ Imagine we conduct a tea-tasting experiment with $N=48$ and perform a $t$-test o
 
 The expression `r papaja::apa_print(tea_t)$statistic` is the standard way to report of a $t$-test according to the American Psychological Association. The first part of this report gives the $t$ value, qualified by the **degrees of freedom** for the test in parentheses. We won't focus much on the idea of degrees of freedom here, but for now it's enough to know that this number quantifies the amount of information given by the data, in this case 48 datapoints minus the two means (one for each of the samples).
 
-Let's compare $p$ values and Bayes Factors (computed using the default setup in the `BayesFactor` R package). In Table \@ref(tab:p-bf-comparison), the rows represent simulated experiments with varying total numbers of participants (N) and varying average treatment effects. Both $p$ and BF go up with more participants and larger effects. In general, BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ can sometimes translate to a BF of less than 3 [@benjamin2018]. 
+Let's compare $p$ values and Bayes Factors (computed using the default setup in the `BayesFactor` R package). In Table \@ref(tab:p-bf-comparison), the rows represent simulated experiments with varying total numbers of participants (N) and varying average treatment effects. Both $p$ and BF go up with more participants and larger effects. In general, BFs tend to be a bit more conservative than $p$-values, such that $p<.05$ can sometimes translate to a BF of less than 3 [@benjamin2018]. For example, take a look at the row with 48 participants and an effect size of 1: the $p$ value is less than .05, but the Bayes Factor is only 2.0. 
 
 ```{r p-bf-comparison}
 set.seed(11)
 options(scipen = 999) # remove scientific notation here
 
 expand_grid(N = c(12,24,48,96), 
-       Effect = c(.5, 1, 1.5)) |>
+       `Effect size` = c(.5, 1, 1.5)) |>
   rowwise() |>
-  mutate(data = map2(N, Effect, 
+  mutate(data = map2(N, `Effect size`, 
                      ~make_tea_data(n_total = N, delta = Effect))) |>
   unnest(cols = c(data)) |>
-  group_by(N, Effect) |>
+  group_by(N, `Effect size`) |>
   summarise(`p value` = printp(t.test(x = rating[condition == "milk first"],
                              y = rating[condition == "tea first"], 
                              paired = FALSE, 
@@ -363,7 +366,7 @@ The critical thing about $p$-values, though, is not just that they are a kind of
 
 > It should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis. (p. 19)
 
-The main problem with $p$-values from a scientific perspective is that researchers are usually interested in not just rejecting the null hypothesis but also in the evidence for the alternative (the one we are interested in). The Bayes Factor is one approach to quantifying positive evidence. This issue with the Fisher approach to $p$-values has been known for a long time, though, and so there is an alternative approach. 
+The main problem with $p$-values from a scientific perspective is that researchers are usually interested in not just rejecting the null hypothesis but also in the evidence for the alternative (the one we are interested in). The Bayes Factor is one approach to quantifying positive evidence *for* the alternative hypothesis in a Bayesian framework. This issue with the Fisher approach to $p$-values has been known for a long time, though, and so there is an alternative frequentist approach as well. 
 
 ### The Neyman-Pearson approach
 
@@ -371,7 +374,7 @@ The main problem with $p$-values from a scientific perspective is that researche
 knitr::include_graphics("images/inference/power-alpha.png")
 ```
 
-One way to "patch" NHST is to introduce a decision-theoretic view, shown in Figure \@ref(fig:inference-power-alpha).^[A little bit of useful history here is given in @cohen1990.] On this view, called the Neyman-Pearson view, there is a real $H_1$, albeit one that is not specified. Then the true state of the world could be that $H_0$ is true or $H_1$ is true. The $p<.05$ criterion is the threshold at which we are willing to reject the null, and so this constitutes our **false positive** rate $\alpha$. But we also need to define a **false negative** rate, which is conventionally called $\Beta$.^[Unfortunately, $\beta$ gets used for regression coefficients very commonly, and for that reason we've used it for causal effects (which we'll estimate with regression models in the next chapter). Those $\beta$s are not to be confused with false negative rates.]
+One way to "patch" NHST is to introduce a decision-theoretic view, shown in Figure \@ref(fig:inference-power-alpha).^[A little bit of useful history here is given in @cohen1990.] On this view, called the Neyman-Pearson view, there is a real $H_1$, albeit one that is not specified. Then the true state of the world could be that $H_0$ is true or $H_1$ is true. The $p<.05$ criterion is the threshold at which we are willing to reject the null, and so this constitutes our **false positive** rate $\alpha$. But we also need to define a **false negative** rate, which is conventionally called $\beta$.^[Unfortunately, $\beta$ is very commonly used for regression coefficients -- and for that reason we've used it as our symbol for causal effects. We'll be using these $\beta$s in the next chapter as well. Those $\beta$s are not to be confused with false negative rates. Sorry, this is just a place where statisticians have used the same Greek letter for two different things.]
 
 Setting these rates is a decision problem: If you are too conservative in your criteria for the intervention having an effect, then you risk a false negative, where you incorrectly conclude that it doesn't work. And if you're too liberal in your assessment of the evidence, then you risk a false positive.^[To make really rational decisions, you could couple this chart to some kind of utility function that assessed the costs of different outcomes. For example, you might think it's worse to proceed with an intervention that doesn't work than to stay with business as usual. In that case, you'd assign a higher cost to a false positive and accordingly try to adopt a more conservative criterion. We won't cover this kind of decision analysis here, but @pratt1995 is a classic textbook on statistical decision theory if you're interested.] In practice, however, people usually leave $\alpha$ at .05 and try to control the false negative rate by increasing their sample size. 
 
@@ -389,16 +392,18 @@ With skewed data like this, we couldn't proceed with a $t$-test in good conscien
 
 An alternative way to approximate a null distribution is through nonparametric resampling. **Resampling** means that we're going to draw new samples *from our existing sample*, and **nonparametric** means that we will do this in a way that obviates assumptions about the shape of the null distribution -- in contrast to **parametric** approaches that do rely on such assumptions). These techniques are sometimes called "bootstrapping" techniques. 
 
-The idea is that, if the treatment truly had no effect on the outcome, then the observations would be **exchangeable** between the treatment and control groups. That is, there would not be systematic differences between the treatment and control groups. This may or may not be true in our observed sample (after all, that's why we're doing a hypothesis test in the first place), but we can draw new samples from our existing sample in a manner that forces exchangability. 
+The idea is, if the treatment truly had no effect on the outcome, then the observations would be **exchangeable** between the treatment and control groups. That is, there would not be systematic differences between the treatment and control groups. This property may or may not be true in our observed sample (after all, that's why we're doing a hypothesis test in the first place), but we can draw new samples from our existing sample in a manner that forces exchangability. 
 
-To perform this kind of test with our tea-tasting data, we would randomly permute (shuffle) the rows in the column holding the ratings in our dataset while leaving the column of condition assignments fixed. If we did this thousands of times and computed the treatment effect in each case, the result would be a null distribution: what we might expect the treatment effect to look like if there was *no* condition effect. We could then compare our *actual* treatment effect to this nonparametric null distribution. If it was smaller than the 2.5th percentile, or larger than the 97.5th percentile, we would reject the null with $p < .05$, just the same as if we had used a $t$-test. 
+To perform this kind of test with our tea-tasting data, we would randomly shuffle the ratings in our dataset while leaving the condition assignments fixed. If we did this thousands of times and computed the treatment effect in each case, the result would be a null distribution: what we might expect the treatment effect to look like if there was *no* condition effect. In essence we're using a simulated version of "random assignment" here to *break* the dependency between the condition manipulation and the observed data.
 
-Resampling tests are extremely useful in a wide variety of cases. They can sometimes be less powerful than parametric approaches and they almost always require more computation, but their versatility makes them a great generic tool for data analysis.
+We can then compare our *actual* treatment effect to this nonparametric null distribution. If the actual treatment was smaller than the 2.5th percentile or larger than the 97.5th percentile in the null distribution, we would reject the null with $p < .05$, just the same as if we had used a $t$-test. 
+
+Resampling-based tests are extremely useful in a wide variety of cases. They can sometimes be less powerful than parametric approaches and they almost always require more computation, but their versatility makes them a great generic tool for data analysis.
 :::
 
 ## Inference and its discontents
 
-In prior sections of this chapter, we reviewed NHST and Bayesian approaches to inference. Now it's time to step back and think about some of the ways that inference practices -- especially those related to NHST -- have been problematic for psychology research. We'll begin with some issues surrounding $p$-values and then give a specific accident report related to the process of "$p$-hacking." We end by discussing the foundations for thinking about probability in light of these issues.
+In earlier sections of this chapter, we reviewed NHST and Bayesian approaches to inference. Now it's time to step back and think about some of the ways that inference practices -- especially those related to NHST -- have been problematic for psychology research. We'll begin with some issues surrounding $p$-values and then give a specific accident report related to the process of "$p$-hacking" and some general philosophical discussion of how statistical testing relates to human reasoning. 
 
 ### Problems with the interpretation of *p*
 
@@ -450,32 +455,42 @@ It would obviously be a major mistake to run 20 null experiments and then report
 
 ::: {.box data-box="accident_report" data-title="Do extraordinary claims require extraordinary evidence?"}
 
-In a blockbuster paper that inadvertently kicked off the replication crisis, @bem2011 presented nine experiments he claimed provided evidence for precognition -- that is, he claimed that participants somehow had some foreknowledge of the future. In the first of these experiments, Bem showed each of a group of 100 undergraduates 36 two-alternative forced choice trials in which they had to guess which of two locations on a screen would reveal a picture immediately before the picture was revealed. By chance, participants should choose the correct side 50% of the time of course. Bem found that, specifically for erotic pictures, participants' guesses were 53.1% correct. This rate of guessing was unexpected under the null hypothesis of chance guessing ($p = .01$). Eight other studies with a total of more than 1,000 participants yielded apparently supportive evidence, with participants appearing to show a variety of psychological effects even before the stimuli were shown! On this basis, should we conclude that precognition exists?
+In a blockbuster paper that may have inadvertently kicked off the replication crisis, @bem2011 presented nine experiments he claimed provided evidence for precognition --  that participants somehow had foreknowledge of the future. In the first of these experiments, Bem showed each of a group of 100 undergraduates 36 two-alternative forced choice trials in which they had to guess which of two locations on a screen would reveal a picture immediately before the picture was revealed. By chance, participants should choose the correct side 50% of the time of course. Bem found that, specifically for erotic pictures, participants' guesses were 53.1% correct. This rate of guessing was unexpected under the null hypothesis of chance guessing ($p = .01$). Eight other studies with a total of more than 1,000 participants yielded apparently supportive evidence, with participants appearing to show a variety of psychological effects even before the stimuli were shown! 
 
-Probably not. @wagenmakers2011 gave an influential critique of Bem's findings, arguing that 1) Bem's experiments were exploratory (not pre-registered) in nature, 2) that Bem's conclusions were a-priori unlikely, and 3) that the level of statistical evidence from his experiments was quite low. We find each of these arguments alone compelling; together they present a knockdown case.
+Based on this evidence, should we conclude that precognition exists? Probably not. @wagenmakers2011 presented a critique of Bem's findings, arguing that 1) Bem's experiments were exploratory (not pre-registered) in nature, 2) that Bem's conclusions were *a priori* unlikely, and 3) that the level of statistical evidence from his experiments was quite low. We find each of these arguments alone compelling; together they present a knockdown case.
 
-First, we've already discussed the need to be skeptical about situations where experimenters have the opportunity for analytic flexibility in their choice of measures, manipulations, samples, and analyses. Flexibility leads to the possibility of cherry-picking those set of decisions from the "garden of forking paths" that lead to a positive outcome for the researcher's favored hypothesis (for more details, see Chapter \@ref(preregistration)). And there is plenty of flexibility on display even in Experiment 1 of Bem's paper. Although there were 100 participants in the study, they may have been combined post hoc from two distinct samples of 40 and 60, each of which saw different conditions. The 40 made guesses about the location of erotic, negative, and neutral pictures; the 60 saw erotic, positive non-romantic, and positive romantic pictures. The means of each of these conditions was presumably tested against chance (at least 6 comparisons, for a false positive rate of `r round(1 - .95^6,2)`), and had positive romantic pictures been found significant, an interpretation would have been available about this condition.
+First, we've already discussed the need to be skeptical about situations where experimenters have the opportunity for analytic flexibility in their choice of measures, manipulations, samples, and analyses. Flexibility leads to the possibility of cherry-picking those set of decisions from the "garden of forking paths" that lead to a positive outcome for the researcher's favored hypothesis (for more details, see Chapter \@ref(preregistration)). And there is plenty of flexibility on display even in Experiment 1 of Bem's paper. Although there were 100 participants in the study, they may have been combined post hoc from two distinct samples of 40 and 60, each of which saw different conditions. The 40 made guesses about the location of erotic, negative, and neutral pictures; the 60 saw erotic, positive non-romantic, and positive romantic pictures. The means of each of these conditions was presumably tested against chance (at least 6 comparisons, for a false positive rate of `r round(1 - .95^6,2)`). Had positive romantic pictures been found significant, Bem certainly could have interpreted this finding the same way he interpreted the erotic ones.
 
-Second, as we discussed, a $p$-value close to .05 does not necessarily provide strong evidence against the null hypothesis. Wagenmakers et al. computed the Bayes Factor for each of experiments in Bem's paper and found that, in many cases, the amount of evidence for $H_1$ was quite modest under a default Bayesian $t$-test. Experiment 1 was no exception: the BF was `r round(1/.61,2) # they reported bf_01`, giving "anecdotal" support for the hypothesis of some non-zero effect, even before the multiple-comparisons problem mentioned above.
+Second, as we discussed, a $p$-value close to .05 does not necessarily provide strong evidence against the null hypothesis. Wagenmakers et al. computed the Bayes Factor for each of experiments in Bem's paper and found that, in many cases, the amount of evidence for $H_1$ was quite modest under a default Bayesian $t$-test. Experiment 1 was no exception: the BF was `r round(1/.61,2) # they reported bf_01`, giving only "anecdotal" support for the hypothesis of some non-zero effect, even before the multiple-comparisons problem mentioned above.
 
-Finally, since precognition is not supported by any prior compelling scientific evidence (despite many attempts to obtain such evidence) and defines well-established physical laws, perhaps we should assign a low prior probability to Bem's $H_1$, a non-zero precognition effect. Taking a strong Bayesian position, Wagenmakers et al. suggest that we might do well to adopt a prior reflecting how unlikely precognition is, say $p(H_1) = 10^{-20}$. And if we adopt this prior, even a very well-designed, highly informative experiment (with a Bayes factor conveying substantial or even decisive evidence) would still lead to a very low posterior probability of precognition.
+Finally, since precognition is not supported by any prior compelling scientific evidence (despite many attempts to obtain such evidence) and defies well-established physical laws, perhaps we should assign a low prior probability to Bem's $H_1$, a non-zero precognition effect. Taking a strong Bayesian position, Wagenmakers et al. suggest that we might do well to adopt a prior reflecting how unlikely precognition is, say $p(H_1) = 10^{-20}$. And if we adopt this prior, even a very well-designed, highly informative experiment (with a Bayes factor conveying substantial or even decisive evidence) would still lead to a very low posterior probability of precognition.
 
 Wagenmakers et al. concluded that, rather than supporting precognition, the conclusion from Bem's paper should be psychologists should revise how they think about analyzing their data!
 :::
 
-[^inference-21]: If you are intrigued by this set of issues, you might enjoy Slate Star Codex's post on ESP research, ["The Control Group is Out of Control"](https://slatestarcodex.com/2014/04/28/the-control-group-is-out-of-control/). We don't agree with everything in it, but it's definitely thought-provoking and contains many interesting links.
+<!-- [^inference-21]: If you are intrigued by this set of issues, you might enjoy Slate Star Codex's post on ESP research, ["The Control Group is Out of Control"](https://slatestarcodex.com/2014/04/28/the-control-group-is-out-of-control/). We don't agree with everything in it, but it's definitely thought-provoking and contains many interesting links. -->
 
 ### Philosophical (and empirical) views of probability
 
 Up until now we've presented Bayesian and frequentist tools as two different sets of computations. But in fact, these different tools derive from fundamentally different philosophical perspectives on what a probability even is. Very roughly, frequentist approaches tend to believe that probabilities quantify the long-run frequencies of certain events. So, if we say that some outcome of an event has probability .5, we're saying that if that event happened thousands of times, the long run frequency of the outcome would be 50% of the total events. In contrast, the Bayesian viewpoint doesn't depend on this sense that events could be exactly repeated. Instead, the **subjective Bayesian** interpretation of probability is that it quantifies a person's degree of belief in a particular outcome.[^inference-22]
 
-[^inference-22]: This is really a very rough description. If you're interested in learning more about this philosophical background, we recommend the Stanford Encyclopedia of Philosophy entry on "interpretations of probability": <https://plato.stanford.edu/entries/probability-interpret/>.
+[^inference-22]: This is really a very rough description. If you're interested in learning more about this philosophical background, we recommend the Stanford Encyclopedia of Philosophy entry, "[Interpretations of Probability](<https://plato.stanford.edu/entries/probability-interpret/)".
 
-You don't have to take sides in this deep philosophical debate about what probability is. But it's helpful to know that people actually seem to reason about the world in ways that are well described by the subjective Bayesian view of probability. Recent cognitive science research has made a lot of headway in describing reasoning as a process of Bayesian inference [for review, see @probmods2] where probabilities describe degrees of belief in different hypotheses. These hypotheses in turn are a lot like the theories we described in Chapter \@ref(theories): they describe the relationships between different abstract entities [@tenenbaum2011]. You might think that scientists are different from lay-people in this regard, but one of the striking findings from the literature on probabilistic reasoning and judgment is that expertise doesn't matter that much. Statistically-trained scientists -- and even statisticians -- make many of the same reasoning mistakes as their un-trained students [@kahneman1979]. Even children seem to reason intuitively in a way that looks a bit like creating probabilistic models [@gopnik2012].
+You don't have to take sides in this deep philosophical debate about what probability is. But it's helpful to know that people actually seem to reason about the world in ways that are well described by the subjective Bayesian view of probability. Recent cognitive science research has made a lot of headway in describing reasoning as a process of Bayesian inference [for review, see @probmods2] where probabilities describe degrees of belief in different hypotheses. These hypotheses in turn are a lot like the theories we described in Chapter \@ref(theories): they describe the relationships between different abstract entities [@tenenbaum2011]. You might think that scientists are different from lay-people in this regard, but one of the striking findings from research on probabilistic reasoning and judgment is that expertise doesn't matter that much. Statistically-trained scientists -- and even statisticians -- make many of the same reasoning mistakes as their un-trained students [@kahneman1979]. Even children seem to reason intuitively in a way that looks a bit like Bayesian inference [@gopnik2012].
 
-These cognitive science findings help to explain some of the problems that people (scientists included) have reasoning about $p$-values. If you are an intuitively Bayesian reasoner, the quantity that you're probably tracking is how much you believe in your hypothesis (its posterior probability). So, many people treat the $p$-value as the posterior probability of the null hypothesis.[^inference-23] That's exactly what fallacy \#1 in Table dirty-dozen states -- "If *p* = .05, the null hypothesis has only a 5% chance of being true.". It doesn't. Written in math, $p(\text{data} | H_0)$ (the likelihood that lets us compute the p-value) is not the same thing as $p(H_0 | \text{data})$ (the posterior that we want). Pulling from our accident report above, even if the probability of the data given the null hypothesis of ESP is low, that doesn't mean that the probability of ESP is high.
+These cognitive science findings help to explain some of the problems that people (scientists included) have in reasoning about $p$-values. If you are an intuitively Bayesian reasoner, the quantity that you're probably tracking is how much you believe in your hypothesis (its posterior probability). So, many people treat the $p$-value as the posterior probability of the null hypothesis.[^inference-23] That's exactly what fallacy \#1 in Table dirty-dozen states -- "If *p* = .05, the null hypothesis has only a 5% chance of being true." But this equivalence is incorrect! Written in math, $p(\text{data} | H_0)$ (the likelihood that lets us compute the p-value) is not the same thing as $p(H_0 | \text{data})$ (the posterior that we want). Pulling from our accident report above, even if the *probability of the observed ESP data given the null hypothesis* is low, that doesn't mean that the *probability of ESP* is high.
 
 [^inference-23]: @cohen1994 is a great treatment of this issue.
+
+### What framework to use?
+
+The problem with binary inferences is that they enable behaviors that can introduce bias into the scientific ecosystem. By the logic of statistical significance, either an experiment "worked" or it didn't. Because everyone would usually rather have an experiment that worked than one that didn't, inference criteria like $p$-values often become a target for selection, as we discussed in Chapter \@ref(replication).^[More generally, this is probably an example of Goodhart's law, which states that when a measure becomes a target, it ceases to be a good measure [@strathern1997]. Once the outcomes of statistical inference procedures become targets for publication, they are subject to selection biases that make them less meaningful.]
+
+If you want to quantify evidence for or against a hypothesis, it's worth considering whether Bayes Factors address your question better than $p$-values. In practice, $p$-values are hard to understand and many people misuse them -- though to be fair, BFs are misused plenty too. These issues may be rooted in basic facts about how human beings reason about probability.
+
+Despite the reasons to be worried about $p$-values, for many practicing scientists (at least at time of writing) there is no one right answer about whether to use them or not. Even if we'd like to be Bayesian all the time, there are a number of obstacles. First, though new computational tools make fitting Bayesian models and extracting Bayes Factors much easier than before, it's still on average quite a bit harder to fit a Bayesian model than it is a frequentist one. Second, because Bayesian analyses are less familiar, it may be an uphill battle to convince advisors, reviewers, and funders to use them. 
+
+As a group, some of us are more Bayesian than frequentist, while others are more frequentist than Bayesian -- but all of us recognize the need to move flexibly between statistical paradigms. Furthermore, a lot of the time we're not so worried about which paradigm we're using. The paradigms are at their most divergent when making binary inferences, and they often look much more similar when they are used in the context of estimation.
 
 ## Estimating precision
 
@@ -483,7 +498,7 @@ Our last section presented an argument against using $p$-values for making *dich
 
 ### Confidence intervals
 
-As outlined in Chapter \@ref(estimation) we often want to make an inference about how similar an estimate from a sample of data is to the population parameter of interest. For example, how close is our tea-tasting effect estimate to the true effect in the population? We don't know what the true effect is, but our knowledge of sampling distributions lets us make some guesses about how precise our estimate is. 
+One alternative to binary hypothesis testing is to ask about the precision of our estiamates, in particular how similar an estimate from a particular sample is to the population parameter of interest. For example, how close is our tea-tasting effect estimate to the true effect in the population? We don't know what the true effect is, but our knowledge of sampling distributions lets us make some guesses about how precise our estimate is. 
 
 The **confidence interval** is a convenient frequentist way to summarize the variability of the sampling distribution -- and hence how precise our point estimate is. The confidence interval represents the range of possible values for the parameter of interest that are plausible given the data. More formally, a 95% confidence interval for some estimate (call it $\widehat{\beta}$, as in our example) is defined as a range of possible values for $\beta$ such that, if we did repeated sampling, 95% of the intervals generated by those samples would contain the true parameter, $\beta$. 
 
@@ -508,11 +523,11 @@ The **confidence interval** is a convenient frequentist way to summarize the var
 
 Confidence intervals are constructed by estimating the middle 95% of the sampling distribution of $\widehat{\beta}$. Because of our hero, the Central Limit Theorem, we can treat the sampling distribution as normal for reasonably large samples. Given this, it's common to construct 95% confidence intervals $\widehat{\beta} \pm 1.96 \widehat{SE}$.^[This type of CI is called a "Wald" confidence interval.] If we were to conduct the experiment 100 times and calculate a confidence interval each time, we should expect 95 of the intervals to contain the true $\beta$, whereas we would expect the remaining 5 to not contain $\beta$.[^inference-8] 
 
-[^inference-8]: In case you don't have enough tea to do the experiment 100 times to confirm this, you can do it virtually [here](https://istats.shinyapps.io/ExploreCoverage/).
+[^inference-8]: In case you don't have enough tea to do the experiment 100 times to confirm this, you can do it virtually using [this nice simulation tool ](https://istats.shinyapps.io/ExploreCoverage/).
 
 Confidence intervals are like betting on the inferences drawn from your sample. The sample you drew is like one pull of a slot machine that will pay off (i.e., have the confidence interval contain the true parameter) 95% of the time. Put more concisely: 95% of 95% confidence intervals contain the true value of the population parameter.
 
-```{r inference-condition-cis, fig.margin=TRUE, fig.cap = "Confidence intervals on each of the two condition estimates, as well as on the difference between conditions."}
+```{r inference-condition-cis, fig.cap = "Confidence intervals on each of the two condition estimates, as well as on the difference between conditions."}
 knitr::include_graphics("images/inference/cis.png")
 ```
 
@@ -566,7 +581,7 @@ kable(ci, table.envir = "table*",
 ```
 
 
-The problem with all of these statements is that, in the frequentist framework,  there is only one true value of the parameter, and the variability captured in confidence intervals is about the *samples*, not the parameter itself.[^inference-9] For this reason, we can't make any statements about the probability of the value of the parameter or of our confidence in specific numbers. To reiterate, what we *can* say is: if we were to repeat the procedure of conducting the experiment and calculating a confidence interval many times, in the long run, 95% of those confidence intervals would contain the true parameter. 
+The problem with all of these statements is that, in the frequentist framework,  there is only one true value of the population parameter, and the variability captured in confidence intervals is about the *samples*, not the parameter itself.[^inference-9] For this reason, we can't make any statements about the probability of the value of the parameter or of our confidence in specific numbers. To reiterate, what we *can* say is: if we were to repeat the procedure of conducting the experiment and calculating a confidence interval many times, in the long run, 95% of those confidence intervals would contain the true parameter. 
 
 
 [^inference-9]: In contrast, Bayesians think of parameters themselves as variable rather than fixed.
@@ -577,21 +592,12 @@ Credible intervals are nice because they don't give rise to many of the inferenc
 
 ## Chapter summary: Inference
 
-Inference tools help you move from characteristics of the sample to characteristics of the population. This move is a critical part of generalization from research data. But we hope we've convinced you that inference doesn't have to mean making a binary decision about the presence or absence of a causal effect on the basis of your data. Instead a strategy that seeks to estimate causal effects and then make inferences about precision and uncertainty is often much more helpful as a building block for theory.
-
-The problem with binary inferences is that they enable behaviours that can introduce bias into the scientific ecosystem. By the logic of statistical significance, either an experiment "worked" or it didn't. Because everyone would usually rather have an experiment that worked than one that didn't, inference criteria like $p$-values often become a target for selection, as we discussed in Chapter \@ref(replication).^[More generally, this is probably an example of Goodhart's law, which states that when a measure becomes a target, it ceases to be a good measure [@strathern1997]. Once the outcomes of statistical inference procedures become targets for publication, they are subject to selection biases that make them less meaningful.]
-
-If you want to quantify evidence for or against a hypothesis, it's worth considering whether Bayes Factors address your question better than $p$-values. In practice, $p$-values are hard to understand and many people misuse them -- though to be fair, BFs are misused plenty too. These issues may be rooted in basic facts about how human beings reason about probability.
-
-Despite the reasons to be worried about $p$-values, for many practicing scientists (at least at time of writing) there is no one right answer as to whether to use $p$-values. Even if we'd like to be Bayesian, there are a number of obstacles. First, though new computational tools make fitting Bayesian models and extracting Bayes Factors much easier than before (more about this in the next chapter), it's still on average quite a bit harder to fit a Bayesian model than it is a frequentist one. Second, because Bayesian analyses are less familiar, it may be an uphill battle to convince advisors, reviewers, and funders to use them. 
-
-As a group, some of us are more Bayesian than frequentist, while others are more frequentist than Bayesian -- but all of us recognize the need to move flexibly between statistical paradigms. Furthermore, a lot of the time we're not so worried about which paradigm we're using. The paradigms are at their most divergent when making binary inferences, whether they are at $p < .05$ or $BF > 3$. 
-In sum, the practicing experimentalist should see binary inference tools as only one part of a bigger toolkit for data analysis. This toolkit should also include estimation approaches from the previous chapter as well as the methods for quantifying precision and uncertainty that we introduced above. Further, for more complex situations, the toolkit needs to include some tools for building models. Towards this goal, the next chapter provides some initial tools for how to use models for estimation and inference about experimental effects.
+Inference tools help you move from characteristics of the sample to characteristics of the population. This move is a critical part of generalization from research data. But we hope we've convinced you that inference doesn't have to mean making a binary decision about the presence or absence of an effect. A strategy that seeks to estimate the size of a particular effects and then make inferences about the precision of that estimate is often much more helpful as a building block for theory. As we move towards estimating causal effects in more complex experimental designs, this estimation process will require more sophisticated models. Towards that goal, the next chapter provides some guidance for how to build such models.
 
 ::: {.box data-box="discussion_questions"}
-1. Step away from the computer. Can you write the definition of a $p$-value and a Bayes Factor? 
+1. Can you write the definition of a $p$-value and a Bayes Factor without looking them up? Try this out -- what parts of the definitions did you get wrong?
 
-2. Take three of Goodman's (2008) "dirty dozen" in Table \@ref(tab:dirty-dozen) and write a description of why each is a misconception. (These can be checked against the original article, which gives a nice discussion). 
+2. Take three of Goodman's (2008) "dirty dozen" in Table \@ref(tab:dirty-dozen) and write a description of why each is a misconception. (These can be checked against the original article, which gives a nice discussion of each). 
 :::
 
 ::: {.box data-box="readings"}
