@@ -1,24 +1,71 @@
 --- 
 title: "Experimentology"
-subtitle: "An Open Science Approach to Experimental Psychology Methods"
-author: "Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke, Robert Hawkins, Maya Mathur, and Rondeline Williams"
-
-site: bookdown::bookdown_site
+author: Michael C. Frank, Mika Braginsky, Julie Cachia, Nicholas Coles, Tom Hardwicke,
+  Robert Hawkins, Maya Mathur, and Rondeline Williams
+subtitle: An Open Science Approach to Experimental Psychology Methods
+output: pdf_document
 documentclass: tufte-book
 classoption:
-  - twoside   # headers different on even/odd pages
-  # - symmetric # puts sidenotes on outside of page -- TBD
-  - justified # text alignment
-  - notoc     # suppress tufte toc (it's buggy)
+- twoside
+- justified
+- notoc
 mainfont: ETbb
 sansfont: Source Sans Pro
 always_allow_html: yes
-
 bibliography: experimentology.bib
 section-bibs-bibliography: experimentology.bib
 csl-refs: yes
 link-citations: yes
+site: bookdown::bookdown_site
 ---
+
+```{r}
+# hooks to reformat latex output
+if (knitr::is_latex_output()) {
+  
+  # default_chunk_hook <- knitr::knit_hooks$get("chunk")
+  knitr::knit_hooks$set(
+    # tables
+    chunk = function(x, options) {
+      if (stringr::str_detect(x, "\\\\begin\\{table\\*?\\}")) {
+        message(x)
+        # put label after caption (instead of label nested within caption)
+        x <- x |>
+          # variant for \caption{(\#tab:LABEL)CAPTION}
+          str_replace(regex("(\\\\begin\\{table\\*?\\}.*\\\\caption)\\{(\\(\\\\#tab.*?\\))(.*)\\}",
+                            dotall = TRUE),
+                      "\\1\\{\\3\\}\\2") |>
+          # variant for \caption{\label{tab:LABEL}CAPTION}
+          str_replace(regex("(\\\\begin\\{table\\*?\\}.*\\\\caption)\\{(\\\\label\\{.*?\\})(.*)\\}",
+                            dotall = TRUE),
+                      "\\1\\{\\3\\}\\2")
+        message(x)
+      }
+      return(x)
+    })
+  
+  default_plot_hook <- knitr::knit_hooks$get("plot")
+  knitr::knit_hooks$set(
+    # boxfigures
+    plot = function(x, options) {
+      # first apply default hook
+      x <- default_plot_hook(x, options)
+      # message(x)
+      if (!is.null(options$boxfigure)) {
+        message(x)
+        # replace \caption[text]{text} -> \captionof{figure}{text}
+        x <- x |>
+          str_replace("\\\\caption\\[.*\\]\\{(.*)\\}",
+                               "\\\\captionof\\{figure\\}\\{\\1\\}") |>
+          # override figure or marginfigure environment with boxfigure environment
+          str_replace("\\\\begin\\{.*\\}", "\\\\begin\\{boxfigure\\}") |>
+          str_replace("\\\\end\\{.*\\}", "\\\\end\\{boxfigure\\}")
+      }
+      return(x)
+    })
+
+}
+```
 
 
 # Preface {.unnumbered}
@@ -27,32 +74,29 @@ link-citations: yes
 \chaptermark{Preface} % unnumbered chapter titles don't get set as chaptermarks
 ```
 
-How do we create generalizable theories of human behavior? Experiments provide us a tool for measuring causal effects, which provide the basis for building theories. If we design our experiments appropriately, we can even begin to estimate generalizable relationships between different psychological constructs. But how do you do an experiment?
+As scientists and practitioners, we often want to create generalizable, causal theories of human behavior. As it turns out, experiments -- in which we use random assignment to measure a causal effect -- are an unreasonably effective tool to help with this task. But how should we go about doing good experiments?
 
-This book provides an introduction to the workflow of the experimental researcher in the psychological sciences. The organization is sequential, from the planning stages of the research process through design, data collection, analysis, and reporting. We introduce these concepts via narrative examples from a range of sub-disciplines, including cognitive, developmental, and social psychology. Throughout, we also illustrate the pitfalls that led to the “replication crisis” in psychology. 
-<!-- Across chapters, the book will emphasize four themes of successful experimental research: transparency, precision, bias reduction, and generalizability.  -->
-To help researchers avoid these pitfalls, we advocate for an open-science based approach, providing readers with guidance for preregistration, project management, data sharing, and reproducible writing. 
+This book provides an introduction to the workflow of the experimental researcher working in psychology or the behavioral sciences more broadly. The organization of the book is sequential, from the planning stages of the research process through design, data gathering, analysis, and reporting. We introduce these concepts via narrative examples from a range of sub-disciplines, including cognitive, developmental, and social psychology. Throughout, we also illustrate the pitfalls that led to the “replication crisis” in psychology. 
 
-
-<!-- For relevant chapters, we present examples using code from R (the free statistical programming language), Git (a version control system), and the Open Science Framework (a data sharing/preregistration site). The appendices provide tutorials on using these tools.  -->
+To help researchers avoid these pitfalls, we advocate for an open-science based approach in which transparency is integral to the entire experimental workflow. We provide readers with guidance for preregistration, project management, data sharing, and reproducible report writing. 
 
 ## The story of this book {-}
 
-Experimental Methods (Psych 251) is the foundational course for incoming graduate students in the Stanford psychology department. For the last ten years, one of us (Frank) has taught this course and most of us (Hawkins, Cachia, Hardwicke, Mathur, Williams) have TA’d, taken, or otherwise contributed to the course. The goal is to orient students to the nuts and bolts of doing behavioral experiments, including how to plan and design a solid experiment and how to avoid common pitfalls regarding design, measurement, and sampling. 
+Experimental Methods (Psych 251) is the foundational course for incoming graduate students in the Stanford psychology department. For the last twelve years, one of us (Frank) has taught this course and most of us (Cachia, Coles, Hardwicke, Hawkins, Mathur, Williams) have TA’d, taken, or otherwise contributed to the course. The course goal is to orient students to the nuts and bolts of doing behavioral experiments, including how to plan and design a solid experiment and how to avoid common pitfalls regarding design, measurement, and sampling. 
 
-Almost all of students’ coursework both before and in graduate school deals with the content of their research, including theories and results in their areas of focus. In contrast, the course is sometimes the only one that deals with the *process* of research, from big questions about why we do experiments and what it means to make a causal inference all the way to the tiny details of organization, like what to name your directories and how to make sure you don’t lose your data in a computer crash. 
+Almost all student coursework both before and in graduate school deals with the content of their research, including theories and results in their areas of focus. In contrast, the Experimental Methods course is sometimes the only one that deals with the *process* of research, from big questions about why we do experiments and what it means to make a causal inference, all the way to the tiny details of project organization, like what to name your directories and how to make sure you don’t lose your data in a computer crash. 
 
-This observation leads to our book's title. **Experimentology** is not psychology, cognitive science, or any other body of content knowledge – but rather the set of practices, findings, and approaches that help to enable the construction of robust, precise, and generalizable experiments. 
+This observation leads to our book's title. **Experimentology** is the set of practices, findings, and approaches that enable the construction of robust, precise, and generalizable experiments. 
 
-The centerpiece of our course is a replication project, reflecting a teaching model first described in @frank2012 and later expanded on in @hawkins2018. Each student chooses a published experiment in the literature and collects new data on a pre-registered version of the same experimental paradigm, comparing their result to the original publication. Over the course of the quarter, we walk through how to set up a replication experiment, how to pre-register confirmatory analyses, and how to write a reproducible report on the findings. The project provides numerous object lessons for teaching concepts like reliability and validity, which allow students to analyze choices that the original experimenters made -- often choices that could have been made differently in hindsight!
+The centerpiece of the Experimental Methods course is a replication project, reflecting a teaching model first described in @frank2012 and later expanded on in @hawkins2018. Each student chooses a published experiment in the literature and collects new data on a pre-registered version of the same experimental paradigm, comparing their result to the original publication. Over the course of the quarter, we walk through how to set up a replication experiment, how to pre-register confirmatory analyses, and how to write a reproducible report on the findings. The project teaches concepts like reliability and validity, which allow students to analyze choices that the original experimenters made -- often choices that could have been made differently in hindsight!
 
-At the end of the course, we reap the harvest of projects. The project presentations are a wonderful demonstration of both how much the students can accomplish in a quarter and also how tricky it can be to reproduce (redo calculations in the original data) and replicate (recover similar results in new data) the published literature. Often our replication rate for the course hovers just above 50%, an outcome that can be disturbing or distressing for students who assume that the published literature reports the absolute truth.
+At the end of the course, we reap the harvest of these projects. The project presentations are a wonderful demonstration of both how much the students can accomplish in a quarter and also how tricky it can be to reproduce (redo calculations in the original data) and replicate (recover similar results in new data) the published literature. Often our replication success rate for the course hovers just above 50%, an outcome that can be disturbing or distressing for students who assume that the published literature reports the absolute truth.
 
 ```{r fig.margin = TRUE, fig.cap = "This book has fun stuff going on in the margins!"}
 knitr::include_graphics("images/dog.jpeg")
 ```
 
-This book is an attempt to distill some of the lessons of the course (and the last ten years of course projects) into a textbook. We'll tell the story of the major shifts in psychology that have come about in the last ten years, including both the "replication crisis" [@osc2015 et seq.] and the positive methodological reforms that have resulted from it. Using this story as motivation, we will highlight the importance of transparency during all aspects of the experimental process from planning to dissemination of materials, data, and code. 
+This book is an attempt to distill some of the lessons of the course (and students' course projects) into a textbook. We'll tell the story of the major shifts in psychology that have come about in the last ten years, including both the "replication crisis" [@osc2015 et seq.] and the positive methodological reforms that have resulted from it. Using this story as motivation, we will highlight the importance of transparency during all aspects of the experimental process from planning to dissemination of materials, data, and code. 
 
 ## What this book is and isn't about {-}
 
@@ -62,21 +106,21 @@ The central thesis of the book is that:
 
 > Experiments are intended to make maximally unbiased, generalizable, and precise estimates of specific causal effects. 
 
-We'll follow the implications of this thesis for a host of topics, including causal inference, experimental design, measurement, sampling, preregistration, data analysis, and many others. 
+\noindent We'll follow the implications of this thesis for a host of topics, including causal inference, experimental design, measurement, sampling, preregistration, data analysis, and many others. 
 
-Because our focus is on experiments, we won't be talking much about observational designs, survey methods, or qualitative research; these are important tools and appropriate for a whole host of questions, but they aren't our topic here. We also won't go into depth about the many fascinating methodological and statistical issues brought up by single-participant case studies, longitudinal research, field studies, or other methodological variants. Many of the concerns we raise are still important for these types of studies, but some of our advice won't transfer to these critical but more unusual cases.
-<!-- ^[For example, it's hard to do a full pilot study on a two year longitudinal intervention!]  -->
+Because our focus is on experiments, we won't be talking much about observational designs, survey methods, or qualitative research; these are important tools and appropriate for a whole host of questions, but they aren't our focus here. We also won't go into depth about the many fascinating methodological and statistical issues brought up by single-participant case studies, longitudinal research, field studies, or other methodological variants. Many of the concerns we raise are still important for these types of studies, but some of our advice won't transfer to these less common designs. 
 
-In our writing, we presuppose that readers have some background in psychology, at least at an introductory level. In addition, although we give a treatment of some statistical topics, readers might enjoy statistical chapters more with an undergraduate statistics course under their belt. Finally, our examples are written in the R statistical programming language, and for chapters on statistics and visualization especially (Chapters \@ref(estimation) -- \@ref(models), \@ref(viz), and \@ref(meta)), some familiarity with R will be helpful for understanding the code.
-<!-- ^[In the online version of this book, code examples are hidden by default.]  -->
+Even for students who are working on non-experimental research, we expect that a substantial part of the book content will still be useful, including chapters on replication (Chapter \@ref(replication)), ethics (Chapter \@ref(ethics)), sampling (Chapter \@ref(sampling)), project management (Chapter \@ref(management)), and all of the material on reporting (Chapters \@ref(writing) - \@ref(meta)).
+
+In our writing, we presuppose that readers have some background in psychology, at least at an introductory level. In addition, although we discuss some statistical topics, readers might find these sections more accessible with an undergraduate statistics course under their belt. Finally, our examples are written in the R statistical programming language, and for chapters on statistics and visualization especially (Chapters \@ref(estimation) -- \@ref(models), \@ref(viz), and \@ref(meta)), some familiarity with R will be helpful for understanding the code.
 
 ## How to use this book {-}
 
-The book is organized into five main sections, mirroring the timeline of an experiment: 1) Preliminaries, 2) Statistics, 3) Design, 4) Execution, and 5) Reporting. We hope that this organization makes it well-suited for teaching or for use as a reference book for self-study, and we provide a number of resources for instructors in Appendix \@ref(instructors). 
+The book is organized into five main sections, mirroring the timeline of an experiment: 1) Foundations, 2) Statistics, 3) Design, 4) Execution, and 5) Reporting. We hope that this organization makes it well-suited for teaching or for use as a reference book.^[If you are an instructor who is planning to adopt the book for a course, you might be interested in our resources for instructors, including sample course schedules, in Appendix \@ref(instructors).]
 
-The intended audience for the book is graduate students, advanced undergraduates, or self-learners with some domain knowledge in psychology. We also hope that some readers will come to particular chapters of the book because of an interest in specific topics like measurement (Chapter \@ref(measurement)) or sampling (Chapter \@ref(sampling)) and will be able to use those chapters as standalone references. And finally, for those interested in the “replication crisis” and reforms that have taken place in the behavioral sciences in the wake of it, Chapters \@ref(theories), \@ref(replication), \@ref(prereg) and \@ref(management) will be especially interesting. 
+The book is designed for a course for graduate students or advanced undergraduates, but the material is also suitable for self-study by anyone interested in experimental methods, whether in academic psychology or any other context -- in our out of academia -- in which behavioral experimentation is relevant. We also hope that some readers will come to particular chapters of the book because of an interest in specific topics like measurement (Chapter \@ref(measurement)) or sampling (Chapter \@ref(sampling)) and will be able to use those chapters as standalone references. And finally, for those interested in the “replication crisis” and subsequent reforms, Chapters \@ref(theories), \@ref(replication), \@ref(prereg) and \@ref(management) will be especially interesting. 
 
-We want to give you what you need to plan and execute your own study! Instead of enumerating different approaches, we try to provide a single coherent – and often quite opinionated – perspective, using marginal notes and references to give pointers to more advanced materials or alternative approaches. Throughout, we offer: 
+Ultimately, we want to give you what you need to plan and execute your own study! Instead of enumerating different approaches, we try to provide a single coherent – and often quite opinionated – perspective, using marginal notes and references to give pointers to more advanced materials or alternative approaches. Throughout, we offer: 
 
 * **Case studies** that illustrate the central concepts of a chapter,
 * **Accident reports** describing examples where poor research practices led to issues in the literature, 
@@ -90,32 +134,30 @@ While case studies are often integral to the chapters, the other boxes can typic
 We highlight four major cross-cutting themes for the book: **transparency**, **precision**, **bias reduction**, and **generalizability**. 
 
 * **Transparency**: For experiments to be reproducible, other researchers need to be able to determine exactly what you did. Thus, every stage of the research process should be guided by a primary concern for transparency. For example, preregistration creates transparency into the researcher’s evolving expectations and thought processes; releasing open materials and analysis scripts creates transparency into the details of the procedure. 
-* **Precision**: We want researchers to start planning an experiment by thinking “what causal effect do I want to measure” and to make their planning, sampling, design, and analytic choices to maximize the precision of this measurement. A downstream consequence of this mindset is that we move away from a focus on dichotomized inferences about statistical significance and towards analytic and meta-analytic models that focus on continuous effect sizes and confidence intervals [@cumming2014].
-* **Bias reduction**: Precision is not enough if the estimate is biased. In our samples, analyses, experimental designs, and in the literature, we need to think carefully about sources of bias in the quantity being estimated. 
+* **Precision**: We want researchers to start planning an experiment by thinking “what causal effect do I want to measure” and to make planning, sampling, design, and analytic choices that maximize the precision of this measurement. A downstream consequence of this mindset is that we move away from a focus on dichotomized inferences about statistical significance and towards analytic and meta-analytic models that focus on continuous effect sizes and confidence intervals [@cumming2014].
+* **Bias reduction**: While precision refers to random error in a measurement, measurements also have systematic sources of error that bias them away from the true quantity. In our samples, analyses, experimental designs, and in the literature, we need to think carefully about sources of bias in the quantity being estimated. 
 * **Generalizability**: Complex behaviors are rarely universal across all settings and populations, and any given experiment can only hope to cover a small slice of the possible conditions where a behavior of interest takes place [@yarkoni2020]. Psychologists must therefore consider the generalizability of their findings at every stage of the process, from stimulus selection and sampling procedures, to analytic methods and reporting.
 
-Throughout the book, we will return to the important relationships between these four concepts, and how the decisions made by the experimenter at every stage of design, data collection, and analysis bear on the inferences that can be made about the results. 
+Throughout the book, we will return to the important relationships between these four concepts, and how the decisions made by the experimenter at every stage of design, data gathering, and analysis bear on the inferences that can be made about the results. 
 
-<!-- Importantly, discussions of reproducibility and replicability have often proceeded without consideration of issues like precision, bias reduction, and generalizability, leading to a number of deep critiques of the methodological reform movement that we will cover in some detail.  -->
+## The software toolkit for this book {-}
 
-## The software toolkit of the behavioral researcher (and of this book) {-}
-
-We introduce and advocate for an approach to reproducible study planning, analysis, and writing. This approach depends on an ecosystem of open-source software tools, which we introduce in the book's appendices. 
+We introduce and advocate for an approach to reproducible study planning, analysis, and writing. This approach depends on an ecosystem of open-source software tools, which we introduce in the book's appendices. Note that these appendices are available online at <http://experimentology.io> but not in the print version of the book, since their content is best viewed in the web format.
 
 * The R statistical programming language and the [RStudio](https://posit.co/downloads/) integrated development environment,
 * Version control using `git` and [GitHub](https://github.com/), allowing collaboration on text documents like code, prose, and data, storing and integrating contributions over time (Appendix \@ref(git)),
-* The `RMarkdown` format for creating reproducible reports that can be rendered to a variety of formats (Appendix \@ref(rmarkdown)),
+* The `RMarkdown` and `Quarto` tools for creating reproducible reports that can be rendered to a variety of formats (Appendix \@ref(rmarkdown)),
 * The `tidyverse` family of R packages, which extend the basic functionality of R with simple tools for data wrangling, analysis, and visualization (Appendix \@ref(tidyverse)), and
 * The `ggplot2` plotting package, which makes it easy to create flexible data visualizations for both confirmatory and exploratory data analyses  (Appendix \@ref(ggplot)).
 
 
 <!-- * While GitHub is an excellent real-time collaboration platform, it does not provide archival guarantees or the ability to provide time-stamped registrations of projects. For these functions, we use the [Open Science Framework](https://osf.io), a project management platform designed for scientific projects.  -->
 
-Where appropriate, we provide **code boxes** that show the specific `R` code to be used to recreate our examples. 
+\noindent Where appropriate, we provide **code boxes** that show the specific `R` code used to create our examples. 
 
 ## Onward! {-}
 
-Thanks for joining us for Experimentology! Whether you are casually browsing, doing readings for a course, or using the book as a reference in your own experimental work, we hope you find it useful. Throughout, we have tried to practice what we preach in terms of reproducibility, and so the full source code for the book is available at <https://github.com/langcog/experimentology>. We encourage you to browse, comment, and log issues or suggestions. 
+Thanks for joining us for Experimentology! Whether you are casually browsing, doing readings for a course, or using the book as a reference in your own experimental work, we hope you find it useful. Throughout, we have tried to practice what we preach in terms of reproducibility, and so the full source code for the book is available at <https://github.com/langcog/experimentology>. We encourage you to browse, comment, and log issues or suggestions.^[If you want to log a specific issue, please feel free to create an issue on our github page at <https://github.com/langcog/experimentology/issues>.
 
 <!-- ## Integrating this book into an experimental methods course {-} -->
 
