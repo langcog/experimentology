@@ -1,10 +1,10 @@
 import TOC                       from './components/toc'
 import Box                       from './components/box'
-import library                   from 'preact'
+import * as library              from 'preact'
 import renderToString            from 'preact-render-to-string'
-import parse, { domToReact }     from 'html-react-parser'
+import parse, { domToReact, attributesToProps }     from 'html-react-parser'
 import { JSDOM }                 from 'jsdom'
-import { dangerouslySkipEscape } from 'vite-plugin-ssr'
+import { dangerouslySkipEscape } from 'vite-plugin-ssr/server'
 
 const files = import.meta.glob('/r/*.html', { as: 'raw', eager: true });
 
@@ -22,7 +22,9 @@ const items = [ ... document.querySelectorAll('#TOC li') ]
 		items.push({ name, items: [] });
 	} else {
 		href = href.replace(/\.html.*$/, '');
-		items.at(-1).items.push({ name, href });
+		if (href.match(/^[0-9A-z]+-/)) { // only numbered chapters
+			items.at(-1).items.push({ name, href });
+		}
 	}
 
 	return items;
@@ -43,8 +45,8 @@ export const passToClient = [ 'islands' ];
 
 export const prerender = () => routes
 
-export const onBeforeRender = ({ url }) => {
-	const route = url.replace(/(index)?(\.html.*)?$/, '');
+export const onBeforeRender = ({ urlOriginal }) => {
+	const route = urlOriginal.replace(/(index)?(\.html.*)?$/, '');
 	const page  = pages[route];
 
 	return { pageContext: { route, page } };
@@ -68,18 +70,21 @@ export const render = ({ route, page }) => {
 	const textContent = node => node.children?.[0]?.data
 
 	const replace = node => {
-		const wrap = node => domToReact(node.children, { library, replace })
+		const wrap = node => {
+			const props    = attributesToProps(node.attribs);
+			const children = domToReact(node.children, { library, replace });
 
-		const [ isTitle, title ] = textContent(node)?.match?.(/\(TITLE\) (.+)/) ?? [];
-		const [ isBox, type ]    = className(node)?.match(/box (.+)/) ?? [];
-		const isTOC              = id(node) == 'TOC'
-		const isLastRefs         = id(node) == 'refs' && route == routes.at(-1)
+			return { children, ... props };
+		}
+
+		const isBox      = /\bbox\b/.test(className(node))
+		const isTOC      = id(node) == 'TOC'
+		const isLastRefs = id(node) == 'refs' && route == routes.at(-1)
 
 		return (
-			isTOC      ? island(<TOC name={ name } items={ items }/>)    :
-			isBox      ? island(<Box type={ type }>{ wrap(node) }</Box>) :
-			isTitle    ? <h3>{ title }</h3>                              :
-			isLastRefs ? <></>                                           :
+			isTOC      ? island(<TOC name={ name } items={ items }/>) :
+			isBox      ? island(<Box { ... wrap(node) }/>)            :
+			isLastRefs ? <></>                                        :
 			null
 		);
 	}

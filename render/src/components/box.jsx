@@ -27,7 +27,7 @@ const boxes = {
 	readings               : { color: 'magenta', icon: faBook,                open: false, preview: false },
 };
 
-const Box = ({ type, children }) => {
+const Box = ({ 'data-box': type, 'data-title': title, children }) => {
 	const { [ type ]: { color, icon, open, preview } } = boxes;
 
 	const trigger = (
@@ -43,7 +43,7 @@ const Box = ({ type, children }) => {
 			<Collapsible
 				className={ preview && style.preview }
 				trigger={ trigger }
-				children={ children }
+				children={ <>{title && <h3>{ title }</h3>}{children}</> }
 				open={ open }
 				overflowWhenOpen='visible'
 				easing='ease'
