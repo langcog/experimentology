@@ -57,7 +57,7 @@ The term $\beta_0 + \beta_1 X_i$ is called the **linear predictor**, and it desc
 
 The term $\epsilon_i$ is the **error term**, referring to random variation of participants' ratings around the group mean.^[Formally, we'd write $\epsilon_i \sim \mathcal{N}(0, \sigma^2)$. The tilde means "is distributed as", and what follows is a normal distribution with mean 0 and variance $\sigma^2$.] Note that this is a very specific kind of "error"; it does not include "error" due to bias, for example. Instead, you can think of the error terms as capturing the "error" that would be associated with predicting any given participant's rating based on just the linear predictor. If you predicted a control group participant's rating as $\beta_0$, that would be a good guess -- but you still expect the participant's rating to deviate somewhat from $\beta_0$ (i.e., due to variability across participants beyond what is captured by their treatment groups). In our regression model, the linear predictor and error terms together say that participants' ratings scatter randomly (in fact, normally) around their group means with standard deviation $\sigma$. And that is exactly the same model we posited in Chapter \@ref(estimation).^[You may be wondering why so much effort was put into building boutique solutions for these special cases when a unified framework was available the whole time. A partial answer is that the classical infrastructure of statistics was developed before computers were widespread, and these special cases were chosen because they were easy to work with "analytically" (meaning to work out all the math with pen-and-paper, using values from big numerical tables). Now that we have computers with more flexible algorithms, the model-based perspective is more practical and accessible than it used to be.]
 
-[MM: In this figure, the LHS ggtitle and beta labels are cut off in the web version of book. Also maybe use subscripts on betas for consistency.]
+<!-- [MM: In this figure, the LHS ggtitle and beta labels are cut off in the web version of book. Also maybe use subscripts on betas for consistency.] -->
 
 ```{r models-ols-plot, fig.cap= "(left) Best-fitting regression coefficients for the tea-tasting experiment. (right) Much worse coefficients for the same data. Dotted lines: residuals. Circles: data points for individual participants.", fig.width=8.5}
 
@@ -230,7 +230,7 @@ $$g(w) = \log \left( \frac{w}{1 - w} \right)$$
 The term $w / (1 - w)$ is called the **odds** and represents the probability of an event occurring divided by the probability of its not occurring. The resulting model is called **logistic regression** and looks like:
 
 $$
-\text{logit}( E[Y_{it}] ) = \log \left( \frac{ E[Y_i] }{1 - E[Y_i] } \right) &= \beta_0 + \sum_{j=1}^p \beta_j X_{ij} 
+\text{logit}( E[Y_{it}] ) = \log \left( \frac{ E[Y_i] }{1 - E[Y_i] } \right) = \beta_0 + \sum_{j=1}^p \beta_j X_{ij} 
 $$
 
 Exponentiating the coefficients (i.e., $e^{\beta}$) would yield **odds ratios**, which are the *multiplicative* increase in the odds of $Y_i=1$ that is associated with a one-unit increase in the relevant predictor variable.
@@ -276,7 +276,8 @@ Experimental data often contain multiple measurements for each participant (so-c
 tea_mod <- lm(rating ~ condition, data = tea_data)
 ```
 
-Non-independence of datapoints may seem at first glance like a small issue, but it can present a deep problem for making inferences. Take the tea-tasting data we looked at above, where we had 24 observations in each condition. If we fit an OLS model, we observe a highly significant tea-first effect. Here is the estimate and confidence interval for that coefficient: `r papaja::apa_print(tea_mod)$estimate$conditiontea_first`. [MM: Not sure how to change this, but should use $\widehat{\beta}_{1}$ for consistency] Based on what we talked about in the previous chapter, it seems like we'd be licensed in rejecting the null hypothesis that this effect is due to sampling variation and interpret this instead as evidence for a generalizable difference in tea preference in our sampled population.
+<!-- [MM: Not sure how to change this, but should use $\widehat{\beta}_{1}$ for consistency] -->
+Non-independence of datapoints may seem at first glance like a small issue, but it can present a deep problem for making inferences. Take the tea-tasting data we looked at above, where we had 24 observations in each condition. If we fit an OLS model, we observe a highly significant tea-first effect. Here is the estimate and confidence interval for that coefficient: `r papaja::apa_print(tea_mod)$estimate$conditiontea_first`. Based on what we talked about in the previous chapter, it seems like we'd be licensed in rejecting the null hypothesis that this effect is due to sampling variation and interpret this instead as evidence for a generalizable difference in tea preference in our sampled population.
 
 But suppose we told you that all of those 48 total observations (24 in each condition) were from one individual named George. That would change the picture considerably. Now we'd have no idea whether the big effect we observed reflected a difference in the population, but we would have a very good sense of what George's preference is!^[We discuss the strengths and weaknesses of repeated-measures designs like this in Chapter \@ref(design) and the statistical tradeoffs of having many people with a small number of observations per person vs. a small number of people with many observations per person in Chapter \@ref(sampling).] The confidence intervals and p-values from our OLS model would be wrong now because all of the error terms would be highly correlated -- they would all reflect George's preferences.
 
@@ -316,11 +317,9 @@ In this model, the syntax `(1 | id)` specifies that we want a random intercept f
 Linear mixed effects models can be further extended to model clustering of the independent variables' *effects* within subjects, not just clustering of average *outcomes* within subjects.  To do so, we can introduce **random slopes** ($\delta_i$) to the model, which are multiplied by the condition variable $X$ and represent differences across participants in the effect of tea-tasting:
 
 $$
-\begin{align}
-Y_i & = \beta_0 + \beta_1 X_{it} + \gamma_i + \delta_{i} X_{it} + \epsilon_{it} \\
-    & = [\beta_0 + \gamma_i] + [\beta_1 + \delta_i] X_{it} + \epsilon_
-\end{align}
+Y_i = \beta_0 + \beta_1 X_{it} + \gamma_i + \delta_{i} X_{it} + \epsilon_{it} 
 $$
+
 Just like the random intercepts, these random slopes will be assumed to vary across participants, following a normal distribution.^[These random slopes and intercepts can be assumed to be independent or correlated with one another, depending on the modeler's preference.] 
 
 This model now describes random variation in both overall how much someone likes tea *and* how strong their ordering preference is. Both of these likely do vary in the population and so it seems like a good thing to put these in your model. Indeed under some circumstances, adding random slopes is argued to be very important for making appropriate inferences.^[There's lots of debate in the literature about the best random effect structure for mixed effects models. This is a very tricky and technical subject. In brief, some folks argue for so-called **maximal** models, in which you include every random effect that is justified by the design [@barr2013]. Here that would mean including random slopes for each participant. The problem is that these models can get very complex, and can be very hard to fit using standard software. We won't weigh in on this topic, but as you start to use these models on more complex experimental designs, it might be worth reading up.] 
@@ -504,8 +503,6 @@ You can see a summary of the fitted model using `summary(mod)` as before. The on
 
 Let's estimate this model and see how it looks. We'll focus here on interpretation of the so-called **fixed effects** (the main predictors), as opposed to the participant and item random effects.^[Participant means are estimated to have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[1],2)` (in log-odds) while items have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[2],2)`. These indicate that both of our random effects capture meaningful variation.] Table \@ref(tab:models-sgf-model-print) shows the coefficients. Again, let's walk through each.
 
-<!-- [MM: Generally I think it makes sense to transform GLM coefficients to get, e.g., ORs rather than log-ORs, and then interpret accordingly.] MCF: I am on the fence about this - I'm not sure if ORs here are that easy to interpret. I guess I like the transformation to probabilities in expectation a bit better? MM: Me too, but in that case why fit logistic regression instead of OLS? -->
-
 <!-- [MM: The calls to apa_mod$full_result below all render as just "beta"; should add appropriate subscripts for consistency.]-->
 * The **intercept** (control condition estimate) is `r apa_mod$full_result$Intercept`. This estimate reflects that the log-odds of a correct response for an average-age participant in the control condition is `r round(lme4::fixef(mod)[1],2)`, which corresponds to a probability of `r round(boot::inv.logit(lme4::fixef(mod)[1]), 2)`. If we look at Figure \@ref(fig:models-sgf-plot), that estimate makes sense: `r round(boot::inv.logit(lme4::fixef(mod)[1]), 2)` seems close to the average for the control condition. 
 
@@ -606,7 +603,7 @@ The details of this kind of analysis will vary depending on what you are worried
 In the last three chapters, we have spelled out a framework for data analysis that focuses on our key experimental goal: a measurement of a particular causal effect. We began with basic techniques for estimating effects and making inferences about how these effects estimated from a sample can be generalized to a population. This chapter showed how these ideas naturally give rise to the idea of making models of data, which allow estimation of effects in more complex designs. Simple regression models, which are formally identical to other inference methods in the most basic case, can be extended with the generalized linear model as well as with mixed effects models. Finally, we ended with some guidance on how to build a "default model" -- an (often pre-registered) regression model that maps onto your experimental design and provides the primary estimate of your key causal effect. 
 
 ::: {.box data-box="discussion_questions"}
-1. Choose a paper that you have read for your research and take a look at the statistical analysis. oes the reporting focus more on hypothesis testing or on estimating effect sizes?
+1. Choose a paper that you have read for your research and take a look at the statistical analysis. Does the reporting focus more on hypothesis testing or on estimating effect sizes?
 
 2. We focused here on the linear model as a tool for building models, contrasting this perspective with the common "statistical testing" mindset. But -- here's the mind-blowing thing -- most of those statistical tests are special cases of the linear model anyway. Take a look at this extended meditation on the equivalences between tests and models: <https://lindeloev.github.io/tests-as-linear/#9_teaching_materials_and_a_course_outline>. If the paper you chose for question 1 used tests, could their tests be easily translated to models? How would the use of a model-based perspective change the results section of the paper? 
 
