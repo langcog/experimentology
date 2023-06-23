@@ -17,7 +17,7 @@ As psychology moves into an era of bigger data and more complex behaviors, we be
 
 ::: {.box data-box="case_study" data-title="Mapping a pandemic"}
 
-```{r viz-cholera, fig.margin=TRUE, fig.cap="Mapping out a cholera epidemic (1854). Line shows region for which Broad Street pump is nearest."}
+```{r viz-cholera, fig.cap="Mapping out a cholera epidemic (1854). Line shows region for which Broad Street pump is nearest.", boxfigure=TRUE}
 knitr::include_graphics("images/viz/snow_cholera_voronoi.jpeg")
 ```
 
@@ -28,11 +28,12 @@ To make a public case for this idea, he started counting cholera deaths.
 He marked each case on a map of the area, and indicated the locations of the water pumps for reference.
 Furthermore, a line could be drawn representing the region that was closest to each water pump, a technique which is now known as a [Voronoi diagram](https://en.wikipedia.org/wiki/Voronoi_diagram).
 The resulting illustration clearly reveals that cases clustered around an area called Golden Square, which received water from a pump on Broad Street (\@ref(fig:viz-cholera)).
-Although the precise causal role of these maps in Snow's own thinking is disputed, and it is likely that he produced them well after the incident [@brody2000map], they have nonetheless played a significant role in the history of data visualization [@friendly2021history].^[Actually, the use of disease maps goes back even further! @seaman1798inquiry mapped an outbreak of yellow fever in New York City to argue that deaths clustered around a handful of waste sites. He turned out to be right, but for the wrong reasons! These waste sites were breeding grounds for mosquitoes, which were the real culprits. Coincidentally, Seaman is also known as the first to introduce vaccines to the United States. He vaccinated his children against smallpox and later organized a program to provide free vaccines to the public.]
+Although the precise causal role of these maps in Snow's own thinking is disputed, and it is likely that he produced them well after the incident [@brody2000map], they have nonetheless played a significant role in the history of data visualization [@friendly2021history].
+<!-- ^[Actually, the use of disease maps goes back even further! @seaman1798inquiry mapped an outbreak of yellow fever in New York City to argue that deaths clustered around a handful of waste sites. He turned out to be right, but for the wrong reasons! These waste sites were breeding grounds for mosquitoes, which were the real culprits. Coincidentally, Seaman is also known as the first to introduce vaccines to the United States. He vaccinated his children against smallpox and later organized a program to provide free vaccines to the public.] -->
 
 Nearly two centuries later, as the COVID-19 pandemic swept through the world, governmental agencies like the [CDC](https://covid.cdc.gov/covid-data-tracker) produced maps of the outbreak that became much more familiar (Figure \@ref(fig:viz-covid)). 
 
-```{r viz-covid, fig.cap="Map showing the known locations of cumulative coronavirus cases by share of the population in each county (reproduced from the New York Times)"}
+```{r viz-covid, fig.cap="Map showing the known locations of cumulative coronavirus cases by share of the population in each county (reproduced from the New York Times)", boxfigure=TRUE}
 knitr::include_graphics("images/viz/covid-hot-spots.png")
 ```
 
@@ -42,7 +43,7 @@ We're now also used to seeing the horizontal axis correspond to *time* and the v
 Curves like the following, showing the 7-day average of new cases, allow us to see other patterns, like the *rate of change*.
 Even though more and more cases accumulate every day, we can see at a glance the different "waves" of cases, and when they peaked (Figure \@ref(fig:viz-cases)). 
 
-```{r viz-cases, fig.cap="7-day average of new reported COVID cases (reproduced from the New York Times)"}
+```{r viz-cases, fig.cap="7-day average of new reported COVID cases (reproduced from the New York Times)", boxfigure=TRUE}
 knitr::include_graphics("images/viz/covid-cases.png")
 ```
 
@@ -52,7 +53,7 @@ In this case, we may talk about "breaking out" a curve by some other variable, l
 
 (ref:cases2-cap) Rates of COVID cases by vaccination status (reproduced from [`covid.cdc.gov`](https://covid.cdc.gov/covid-data-tracker/#rates-by-vaccine-status)).
 
-```{r viz-cases2, fig.cap="(ref:cases2-cap)"}
+```{r viz-cases2, fig.cap="(ref:cases2-cap)", boxfigure=TRUE}
 knitr::include_graphics("images/viz/vaccination.png")
 ```
 
@@ -162,7 +163,7 @@ In these cases, bar plots and line plots tend to get extremely cluttered, making
 Heat maps help these relationships to pop out as clear "hot" and "cold" regions.
 For example, in @barnett2022, a heatmap was used to show a specific range of parameters where an effect of interest emerged (see Figure \@ref(fig:viz-heatmap)).
 
-```{r viz-heatmap, fig.cap = "Heatmap showing a specific range of continuous parameters where an effect emerged [reproduced from @barnett2022]."}
+```{r viz-heatmap, fig.cap = "Heatmap showing a specific range of continuous parameters where an effect emerged [reproduced from @barnett2022].", boxfigure=TRUE}
 knitr::include_graphics("images/viz/viz_heatmap_example.png")
 ```
 :::
@@ -363,7 +364,7 @@ ms <- mss |>
 
 With these two dataframes in hand, we can now make our `ggplot`. 
 
-```
+```{r eval=FALSE, echo=TRUE}
 ggplot(ms, 
        aes(x = age_group, y = empirical_stat, color = condition, group = condition)) +
     geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
@@ -397,8 +398,8 @@ ggplot(ms,
 Perhaps the format that takes this principle the furthest is the so-called "raincloud plot" [@allen2019raincloud] shown in Figure \@ref(fig:viz-raincloud).
 A raincloud plot combines the raw data (the "rain") with a smoothed density (the "cloud") and a boxplot giving the median and quartiles of the distribution. 
 
-```{r viz-raincloud, fig.cap="Example of a raincloud plot, reproduced from @allen2019raincloud"}
-# knitr::include_graphics("images/viz/raincloud.png")
+```{r viz-raincloud, fig.cap="Example of a raincloud plot, reproduced from @allen2019raincloud."}
+knitr::include_graphics("images/viz/raincloud.png")
 # TODO: latex errors on this image for no apparent reason!
 ```
 
@@ -421,7 +422,7 @@ Or suppose you want to estimate proportions from categorical data, or a more *ad
 Analytic estimators of confidence intervals can in principle be derived for these statistics, subject to different assumptions, but it is often more transparent and reliable in practice to use the bootstrap. 
 As long as you can write a code snippet to compute a value from a dataset, you can use the bootstrap. 
 
-```{r viz-boot, fig.cap="Three different error bars for the Stiller data: bootstrapped 95\\% confidence intervals (left), standard error of the mean (middle), and analytically computed confidence intervals (right)."}
+```{r viz-boot, fig.cap="Three different error bars for the Stiller data: bootstrapped 95\\% confidence intervals (left), standard error of the mean (middle), and analytically computed confidence intervals (right).", boxfigure=TRUE}
 boot <- d |> 
   group_by(condition, age_group, subid) |>
   summarize(rating = mean(correct)) |>
@@ -601,7 +602,7 @@ Fourteen of these students failed to notice a gorilla, suggesting that they eval
 Another group of 14 students were simply asked what, if anything, they could conclude (without being given explicit hypotheses).
 More of these students apparently made the visualization, but five of them still failed to notice the gorilla (Figure \@ref(fig:viz-gorilla))!
 
-```{r viz-gorilla, fig.cap="A dataset was constructed by @yanai2020 which revealed a picture of a gorilla when the raw data were plotted."}
+```{r viz-gorilla, fig.cap="A dataset was constructed by @yanai2020 which revealed a picture of a gorilla when the raw data were plotted.", boxfigure=TRUE}
 knitr::include_graphics("images/viz/gorilla.png")
 ```
 
@@ -613,7 +614,7 @@ So it is highly surprising to find exactly the same number of drivers in every m
 While further specialized analyses revealed further evidence of fraud (e.g. based on patterns of rounding and pairs of duplicated data points), this humble histogram was already enough to set off alarm bells.
 A recurring regret raised by the co-authors of this paper is that they never thought to make this visualization before reporting their statistical tests.
 
-```{r viz-uniform, fig.cap="A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!"}
+```{r viz-uniform, fig.cap="A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!", boxfigure=TRUE}
 knitr::include_graphics("images/viz/data_colada_uniform.png")
 ```
 :::
