@@ -16,7 +16,7 @@ What does it mean to measure something? Intuitively, we know that a ruler measur
 
 First, not every measure is equally precise. This point is obvious when you think about physical measurement instruments: a caliper will give you a much more precise estimate of the thickness of a small object than a ruler will. One way to see that the measurement is more precise is by repeating it a bunch of times. The measurements from the caliper will likely be more similar to one another, reflecting the fact that the amount of error in each individual measurement is smaller. We can do the same thing with a psychological measurement -- repeat and assess variation -- though as we'll see below it's a little trickier. Measurement instruments that have less error are called more **reliable** instruments.^[Is reliability the same as **precision**? Yes, more or less. Confusingly, different fields call these concepts different things [there's a helpful table of these names in @brandmaier2018]. Here we'll talk about reliability as a property of instruments specifically while using the term precision to talk about the measurements themselves.]
 
-Second, as we discussed in Chapter \@ref(theory), psychological measurements do not directly reflect the theoretical constructs of interest, quantities like happiness, intelligence, or language processing ability. We have to measure an observable behavior -- our operationalization of the construct -- and then make an argument about how the measure relates to the construct of interest. This is an argument for the **validity** of measurements from the instrument.^[We are also going to talk in Chapter \@ref(design) about the validity of manipulations. The way you identify a causal effect on some measure is by operationalizing some construct as well. To identify causal effects, we must link a particular construct of interest to something we can concretely manipulate in an experiment, like the stimuli or instructions.]  
+Second, as we discussed in Chapter \@ref(theories), psychological measurements do not directly reflect the theoretical constructs of interest, quantities like happiness, intelligence, or language processing ability. We have to measure an observable behavior -- our operationalization of the construct -- and then make an argument about how the measure relates to the construct of interest. This is an argument for the **validity** of measurements from the instrument.^[We are also going to talk in Chapter \@ref(design) about the validity of manipulations. The way you identify a causal effect on some measure is by operationalizing some construct as well. To identify causal effects, we must link a particular construct of interest to something we can concretely manipulate in an experiment, like the stimuli or instructions.]  
 
 These two concepts, reliability and validity, provide a conceptual toolkit for assessing a psychological measurement and how well it serves the researcher's goal. 
 
@@ -27,7 +27,7 @@ Anyone who has worked with little children, or had children of their own, can at
 Because bringing children into a lab can be expensive, one popular alternative option for measuring child language is the MacArthur Bates Communicative Development Inventory (CDI for short), a form which asks parents to mark words that their child says or understands. CDI forms are basically long checklists of words. But is parent report a reliable or valid measure of children's early language?
 
 
-```{r measurement-psycho-cors, fig.cap="Longitudinal correlations between a child's score on one administration of the CDI and another one several months later. From Frank et al. (2021). ", boxfigure=TRUE}
+```{r measurement-psycho-cors, fig.cap="Longitudinal correlations between a child's score on one administration of the CDI and another one several months later. From Frank et al. (2021).", boxfigure=TRUE}
 knitr::include_graphics("images/measurement/psycho-cors2.png")
 ```
 
@@ -85,7 +85,7 @@ kable(stevens, escape = FALSE,
 
 Thinking about this question takes us on a detour through the different kinds of measurement scales used in psychological research [@stevens1946]. The height measurements in our example are on what is known as a **ratio** scale: a scale in which numerical measurements are equally spaced and on which there is a true zero point. These scales are common for physical quantities but somewhat less frequent in psychology (with reaction times as a notable exception). More common are **interval** scales, in which there is no true zero point. For example, IQ (and other standardized scores) are intended to capture interval variation on some dimension but 0 is meaningless -- an IQ of 0 does not correspond to any particular interpretation.^[It can actually be shown in a suitably rigorous sense that ratio and interval scales (and another lying in between) are the *only* scales possible for the real numbers [@narens1986measurement].] 
 
-**Ordinal** scales are also commonly used. These are scales that are ordered but are not necessarily spaced equally. For example, levels of educational achievement ("Elementary","High school","Some college","College","Graduate school") are ordered, but there is no sense in which "High school" is as far from "Elementary" as "Graduate school" is from "College." The last type in Stevens' hierarchy is **nominal** scales, in which no ordering is possible either. For example, race is an unordered scale in which multiple categories are present but there is no inherent ordering of these categories. The full hierarchy is presented in Table \@ref(tab:measurement-stevens-table).
+**Ordinal** scales are also commonly used. These are scales that are ordered but are not necessarily spaced equally. For example, levels of educational achievement ("Elementary", "High school", "Some college", "College", "Graduate school") are ordered, but there is no sense in which "High school" is as far from "Elementary" as "Graduate school" is from "College." The last type in Stevens' hierarchy is **nominal** scales, in which no ordering is possible either. For example, race is an unordered scale in which multiple categories are present but there is no inherent ordering of these categories. The full hierarchy is presented in Table \@ref(tab:measurement-stevens-table).
 
 Critically, different summary measures work for each scale type. If you have an unordered list like a list of options for a question about race on a survey, you can present the modal response (the most likely one). It doesn't even make sense to think about what the median was -- there's no ordering! For ordered levels of education, a median is possible but you can't compute a mean. And for interval variables like "number of correct answers on a math test" you can compute a mean and a standard deviation.^[You might be tempted to think that "number of correct answers" is a ratio variable -- but is zero really meaningful? Does it truly correspond to "no math knowledge" or is it just a stand-in for "less math knowledge than this test requires"?] 
 
@@ -143,44 +143,7 @@ One of the key breakthroughs was to shift the burden from measuring (additive) c
 This modern viewpoint broadly informs the view we describe here. 
 :::
 
-### Measurement scales
 
-
-```{r measurement-cv, fig.margin=TRUE, fig.cap="Computing the coefficient of variation (CV). Yellow lines represent individual measurements."}
-knitr::include_graphics("images/measurement/cv.png")
-```
-
-In the physical sciences, it's common to measure the precision of an instrument by quantifying its coefficient of variation [@brandmaier2018]: 
-
-$$CV = \frac{\sigma_w}{\mu_w}$$
-\noindent where $\sigma_w$ is the standard deviation of the measurements within an individual and $\mu_w$ is the mean of those measurements (Figure \@ref(fig:measurement-cv)). 
-
-
-Imagine we measure the height of a person five times, resulting in measurements of 171cm, 172cm, 171cm, 173cm, and 172cm. These are the combination of the person's true height (we assume they have one!) and some **measurement error**. Now we can use these measurements to compute the coefficient of variation, which is `r round(sd(c(171,172,171,173,172))/mean(c(171,172,171,173,172)),digits =3)`. Why can't we just do that with psychological measurements? 
-
-
-```{r measurement-stevens-table}
-stevens <- tribble(~Scale, ~Definition, ~Operations, ~Statistics, 
-        "Nominal", "Unordered list","Equality","Mode",
-        "Ordinal","Ordered list","Greater than or less than", "Median",
-        "Interval", "Numerical","Equality of intervals", "Mean, SD",
-        "Ratio", "Numerical with zero", "Equality of ratios","Coefficient of variation")
-
-kable(stevens, caption = "Stevens (1946) table of scale types and their associated operations and statistics.")
-```
-
-
-Thinking about this question takes us on a detour through the different kinds of measurement scales used in psychological research [@stevens1946]. The height measurements in our example are on what is known as a **ratio** scale: a scale in which numerical measurements are equally spaced and on which there is a true zero point. These scales are common for physical quantities but actually quite infrequent in psychology. More common are **interval** scales, in which there is no true zero point. For example, IQ (and other standardized scores) are intended to capture interval variation on some dimension but 0 is meaningless -- an IQ of 0 does not correspond to any particular interpretation.^[It can actually be shown in a suitably rigorous sense that ratio and interval scales (and another lying in between) are the *only* scales possible for the real numbers [@narens1986measurement].] 
-
-**Ordinal** scales are also commonly used. These are scales that are ordered but are not necessarily spaced equally. For example, levels of educational achievement ("Elementary","High school","Some college","College","Graduate school") are ordered, but there is no sense in which "High school" is as far from "Elementary" as "Graduate school" is from "College." The last type in Stevens' hierarchy is **nominal** scales, in which no ordering is possible either. For example, race is an unordered scale in which multiple categories are present but there is no inherent ordering of these categories. The full hierarchy is presented in Table \@ref(tab:measurement-stevens-table).
-
-Critically, different summary measures work for each scale type. If you have an unordered list like a list of options for a question about race on a survey, you can present the modal response (the most likely one). It doesn't even make sense to think about what the median was -- there's no ordering! For ordered levels of education, a median is possible but you can't compute a mean. And for interval variables like "number of correct answers on a math test" you can compute a mean and a standard deviation.^[You might be tempted to think that "number of correct answers" is a ratio variable -- but is zero really meaningful? Does it truly correspond to "no math knowledge" or is it just a stand-in for "less math knowledge than this test requires"?] 
-
-Now we're ready to answer our initial question about why we can't quantify reliability using the coefficient of variation. Unless you have a ratio scale with a true zero, you can't compute a coefficient of variation. Think about it for IQ scores: currently, by convention, standardized IQ scores are set to have a mean of 100. If we tested someone multiple times and found the standard deviation of their test scores was 4 points, then we could estimate the precision of their measurements as "CV" of 4/100 = .04. But since IQ of 0 isn't meaningful, we could just set the mean IQ for the population to 200. Our test would be the same, and so the CV would be 4/200 = .02. On that logic we just doubled the precision of our measurements by rescaling the test! That doesn't make any sense. 
-
-<!-- This digression helps us understand why CV is not a viable measure of the precision of measurements (and hence the reliability of instruments) in psychology: it's because *most psychological measurements are not on ratio scales where CV makes sense*.   -->
-
->>>>>>> 6e5fd74217bc7c7f36ddeb5e73ea22d795c84420
 ### Measuring reliability
 
 So then how do we measure signal and noise when we don't have a true zero? We can still look at the variation between repeated measurement, but rather than comparing that variation between measurements to the mean, we can compare it to some other kind of variation, for example, variation between people. In what follows, we'll discuss reliability on interval scales, but many of the same tools have been developed for ordinal and nominal scales.
@@ -251,11 +214,11 @@ A valid instrument measures the construct of interest. In Figure \@ref(fig:measu
 
 How do you establish that a measure fits into the broader theory? Measurement validity is typically established via an argument that calls on different sources of support [@kane1992]. Here are some of the ways that you might support the relationship between a measure and a construct:
 
-* **Face validity**: The measure looks like the construct, such that intuitively it is reasonable that it measures the construct. Face validity is a relatively weak source of evidence for validity, since it relies primarily on pre-theoretic intuitions rather than any quantitative assessment. For example, reaction time is typically correlated with intelligence test results [e.g., @jenson1979], but does not appear to be a face-valid measure of intelligence in that simply being fast doesn't accord with our intuition about what it means to be intelligent!
+* **Face validity**: The measure looks like the construct, such that intuitively it is reasonable that it measures the construct. Face validity is a relatively weak source of evidence for validity, since it relies primarily on pre-theoretic intuitions rather than any quantitative assessment. For example, reaction time is typically correlated with intelligence test results [e.g., @jensen1979], but does not appear to be a face-valid measure of intelligence in that simply being fast doesn't accord with our intuition about what it means to be intelligent!
 * **Ecological validity**: The measure relates to the context of people's lives. For example, a rating of a child's behavioral self-control in the classroom is a more ecologically valid measure of executive function than a reaction-time task administered in a lab context. Ecological validity arguments can be made on the basis of the experimental task, the stimuli, and the general setting of the experiment [@schmuckler2001]. Researchers differ in how much weight they assign to ecological validity based on their goals and their theoretical orientation. 
 * **Internal validity**: Usually used negatively. A "challenge to internal validity" is a description of a case where the measure is administered in such a way as to weaken the relationship between measure and construct. For example, if later items on a math test showed lower performance due to test-taker's fatigue rather than lower knowledge of the concepts, the test might have an internal validity issue.^[Often this concept is described as being relevant to the validity of a manipulation, e.g. when the manipulation of the construct is confounded and some other psychological variable is manipulated as well. We discuss internal validity further in Chapter \@ref(design).] 
-* **Convergent validity**: The classic strategy for showing validity is to show that a measure relates (usually, correlates) with other putative measures of the same construct. When these relationships are measured concurrently, this is sometimes called **concurrent validity**. As we mentioned in Chapter \@ref(theory), self-reports of happiness relate to independent ratings by friends and family, suggesting that both measure the same underlying construct [@sandvik1993].^[This idea of convergent validity relates to the idea of holism we described in Chapter \@ref(theory). A measure is valid if it relates to other valid measures, which themselves are only valid if the first one is! The measures are valid because the theory works, and the theory works because the measures are valid. This circularity is a difficult but perhaps unavoidable part of constructing psychological theories (see the above Depth Box on the history of measurement). We don't ever have an objective starting point for the study of the human mind.] 
-* **Predictive validity**. If the measure predicts other later measures of the construct, or related outcomes that might be of broader significance. Predictive validity is often used in lifespan and developmental studies where it is particularly prized for a measure to be able to predict meaningful life outcomes such as educational success in the future. For example, classroom self-control ratings (among other measures) appear strongly predictive of later life health and wealth outcomes [@moffit2011].
+* **Convergent validity**: The classic strategy for showing validity is to show that a measure relates (usually, correlates) with other putative measures of the same construct. When these relationships are measured concurrently, this is sometimes called **concurrent validity**. As we mentioned in Chapter \@ref(theory), self-reports of happiness relate to independent ratings by friends and family, suggesting that both measure the same underlying construct [@sandvik1993].^[This idea of convergent validity relates to the idea of holism we described in Chapter \@ref(theories). A measure is valid if it relates to other valid measures, which themselves are only valid if the first one is! The measures are valid because the theory works, and the theory works because the measures are valid. This circularity is a difficult but perhaps unavoidable part of constructing psychological theories (see the above Depth Box on the history of measurement). We don't ever have an objective starting point for the study of the human mind.] 
+* **Predictive validity**. If the measure predicts other later measures of the construct, or related outcomes that might be of broader significance. Predictive validity is often used in lifespan and developmental studies where it is particularly prized for a measure to be able to predict meaningful life outcomes such as educational success in the future. For example, classroom self-control ratings (among other measures) appear strongly predictive of later life health and wealth outcomes [@moffitt2011].
 * **Divergent validity**. If the measure can be shown to be distinct from measure(s) of a different construct, this evidence can help establish that the measure is specifically linked to the target construct. For example, measures of happiness (specifically, life satisfaction) can be distinguished from measures of optimism as well as both positive and negative affect, suggesting that these are distinct constructs [@lucas1996].
 
 ### Validity arguments in practice
@@ -281,7 +244,8 @@ flake <- tribble(~Question, ~`Information to Report`,
 
 kable(flake, escape = FALSE,
       table.envir = "table*",
-      caption = "Questions about measurement that every reseacher should answer in their paper. Adapted from Flake \\& Fried (2020).")
+      caption = "Questions about measurement that every reseacher should answer in their paper. Adapted from Flake \\& Fried (2020).") |>
+  kable_styling(full_width = TRUE)
 ```
 
 
@@ -292,9 +256,9 @@ One big issue to be careful about is that researchers have been known to modify 
 
 The Competitive Reaction Time Task (CRTT) is a lab-based measure of aggression. Participants are told that they are playing a reaction-time game against another player and are asked to set the parameters of a noise blast that will be played to their opponent. Unfortunately, in an analysis of the literature using CRTT, @elson2014 found that different papers using the CRTT use dramatically different methods for scoring the task. Sometimes the analysis focused on the volume of the noise blast and sometimes it focused on the duration. Sometimes these scores were transformed (via logarithms) or thresholded. Sometimes they were combined into a single score. Elson was so worried by this flexibility, he created a website, <https://flexiblemeasures.com>, to document the variation he observed. 
 
-```{r crtt, fig.cap="Data on the number of publications using CRTT and the number of different quantifications of CRTT, plotted cumulatively until 2016. Image from https://flexiblemeasures.com.", boxfigure=TRUE}
-knitr::include_graphics("images/measurement/CRTT.png")
-```
+<!-- ```{r crtt, fig.cap="Data on the number of publications using CRTT and the number of different quantifications of CRTT, plotted cumulatively until 2016. Image from https://flexiblemeasures.com.", boxfigure=TRUE} -->
+<!-- knitr::include_graphics("images/measurement/CRTT.png") -->
+<!-- ``` -->
 
 As of 2016, Elson had found 130 papers using the CRTT. And across these papers, he documented an astonishing 157 quantification strategies. One paper reported ten different strategies for extracting numbers from this measure! More worrisome still, Elson and colleagues found that when they tried out some of these strategies on their own data, different strategies led to very different effect sizes and levels of statistical significance. They could effectively make a finding appear bigger or smaller depending on which scoring they chose. 
 
@@ -360,7 +324,7 @@ Treat survey questions as a conversation. The easier your items are to understan
 Open-ended survey questions can be quite rich and informative, especially when an appropriate coding (classification) scheme is developed in advance and responses are categorized into a relatively small number of types. On the other hand, they present practical obstacles because they require coding (often by multiple coders to ensure reliability of the coding). Further, they tend to yield nominal data, which are often less useful for quantitative theorizing. Open-ended questions are a useful tool to add nuance and color to the interpretation of an experiment.
 
 
-```{r measurement-likert, fig.margin=TRUE, fig.cap="Likert scales based on survey best practices: a bipolar opinion scale with seven points and a unipolar frequency scale with five points. Both have all points labeled.", boxfigure=TRUE}
+```{r measurement-likert, fig.cap="Likert scales based on survey best practices: a bipolar opinion scale with seven points and a unipolar frequency scale with five points. Both have all points labeled.", boxfigure=TRUE}
 knitr::include_graphics("images/measurement/likert.png")
 ```
 
