@@ -1,3 +1,7 @@
+%%%
+% begin preamble.tex
+%%%
+
 % page layout
 \geometry{
   dvips=false, pdftex=false, vtex=false, % drivers can have unexpected behaviors
@@ -135,7 +139,37 @@
 % define box for figures within boxes
 \usepackage{caption}
 \newtcolorbox[blend into=figures]{boxfigure}[1][]{%
-  boxrule=0pt,colframe=white,colback=white,#1} %title={#2},
+  boxrule=0pt,colframe=white,colback=white,#1}
 
-% for testing/debugging
-\usepackage{lipsum}
+% color links
+\hypersetup{colorlinks}
+
+% define a custom footnote for URLs
+\usepackage{manyfoot}
+%\usepackage[perpage]{manyfoot}
+\DeclareNewFootnote{URL}[alph]
+
+% for textual links, put URL into a footnote
+\let\oldhref\href % save normal href
+\renewcommand{\href}[2]{%
+  \oldhref{#1}{#2}%keep link as is
+  \footnoteURL{\url{#1}}%and add footnote for URL
+}
+
+% links within footnotes need footnotetext to be outside of footnote
+\let\oldfootnote\footnote
+\renewcommand\footnote[1]{{%
+  \renewcommand\href[2]{%
+    \global\def\cururl{##1}%
+    \oldhref{##1}{##2}\footnotemarkURL\ }%
+  \oldfootnote{#1}%
+  \ifdefined\cururl%
+    \footnotetextURL{\url{\cururl}}%
+  \fi}}
+
+
+\usepackage{lipsum} % for testing/debugging
+
+%%%
+% end preamble.tex
+%%%
