@@ -2,7 +2,7 @@
 
 # Visualization {#sec-viz}
 
-::: {.box data-box="learning_goals"}
+::: {.callout-note title="learning goals"}
 - Analyze the principles behind informative visualizations
 - Incorporate visualization into an analysis workflow
 - Learn to make "the design plot"
@@ -17,7 +17,9 @@ Good visualizations aim to deliberately harness this power and put it to work at
 Yet our powerful pattern detectors can also be a liability; if we're not careful, we can easily be fooled into seeing patterns that are unreliable or even misleading.
 As psychology moves into an era of bigger data and more complex behaviors, we become increasingly reliant on **data visualization literacy** [@borner2019data] to make sense of what is going on.
 
-::: {.box data-box="case_study" data-title="Mapping a pandemic"}
+::: {.callout-note title="case study"}
+## Mapping a pandemic
+
 
 ```{r viz-cholera, boxfigure=TRUE}
 #| label: fig-viz-cholera
@@ -113,7 +115,7 @@ Start with the variables you manipulate, and make sure they are clearly visible.
 Conventionally, the primary manipulation of interest (e.g. condition) goes on the x-axis, and the primary measurement of interest (e.g. responses) goes on the y-axis.
 Other critical variables of interest (e.g. secondary manipulations, demographics) are then assigned to "visual variables" (e.g. color, shape, or size).
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 The visualization library `ggplot` (see @sec-ggplot) makes the mapping of variables in the data to visual data. The first part of a ggplot call is an `aesthetics` layer:
 
 ```{r, eval=FALSE, echo=TRUE}
@@ -164,7 +166,7 @@ d <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/da
 
 For example, we *could* start by plotting the accuracy of each age group as colors (@fig-viz-prepost2).
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 To make this (bad) visualization, we used a `ggplot` function called `geom_tile()`.
 
 ```{r eval=FALSE, echo=TRUE}
@@ -202,7 +204,7 @@ d |>
 
 Or as sizes/areas (@fig-viz-prepost3).
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 To make this (bad) visualization, we mapped the rating DV to the `size` element in our `aes()` call.
 
 ```{r eval=FALSE, echo=TRUE}
@@ -230,7 +232,7 @@ Additionally, this way of plotting the data places equal emphasis on age and con
 An alternative is to show six bars: three on the left showing the 'experimental' phase and three on the right showing the 'control' phase.
 Maybe the age groups then are represented as different colors, as in @fig-viz-prepost4.
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 We make bar plots using the `ggplot` function `geom_bar()`.
 By default, it creates 'stacked' bar plots, where all values associated with the same x value (here, condition) get stacked up on top of one another.
 Stacked bar plots can be useful if, for example, you're plotting proportions that sum up to 1, or want to show how some big count is broken down into subcategories.
@@ -312,7 +314,7 @@ They represent a minimal form of uncertainty about the possible statistics that 
 @fig-viz-show-data1 shows the Stiller data with error bars. 
 <!-- As such, they allow the viewer to interpret the means as *estimates*.  -->
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 A common problem arises when we want to add error bars to a dodged bar plot.
 Naively, we'd expect we could just dodge the error bars in the same way we dodged the bars themselves:
 
@@ -359,7 +361,7 @@ There are many ways of showing the resulting distribution of participant-level d
 For example, a **boxplot** shows the median (a horizontal line) in the center of a box extending from the lower quartile (25%) to the upper quartile (75%).
 Lines then extend out to the biggest and smallest values (excluding outliers, which are shown as dots). @fig-viz-show-data2 gives the boxplots for the Stiller data, which don't look that informative -- perhaps because of the coarseness of individual participant averages due to the small number of trials. 
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 In `ggplot`, we can make box plots using the `geom_boxplot` command:
 
 ```{r eval=FALSE, echo=TRUE}
@@ -386,7 +388,7 @@ It is also common to show the raw data as jittered values with low transparency.
 In @fig-viz-show-data3), we jitter the points because many participants have the same numbers (e.g. 50% and if they overlap it is hard to see how many points there are.
 
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 Adding the jittered points is simple using `geom_jitter`, but we are starting to have a fairly complex plot so maybe it's worth taking stock of how we get there. 
 
 To plot both *condition* means and *participant* means, we need to create two different data frames. Here `mss` is a data frame of means for each participant; `ms` is a data frame with means and confidence intervals *across* participants. For this purpose, we use the `tidyboot` package and the `tidyboot_mean` function, which gives us bootstrapped 95% confidence intervals for the means. 
@@ -449,7 +451,9 @@ knitr::include_graphics("images/viz/raincloud.png")
 ```
 
 
-::: {.box data-box="depth" data-title="Visualizing uncertainty with error bars"}
+::: {.callout-note title="depth"}
+## Visualizing uncertainty with error bars
+
 
 One common misconception is that error bars are a measure of variance *in the data*, like the standard deviation of the response variable.
 Instead, they typically represent a measure of precision extracted from the statistical model.
@@ -561,7 +565,7 @@ ggplot(ms, aes(x = age_group, y = empirical_stat,
 @fig-viz-themes shows a slightly more "styled" version of the same plot with labels directly on the plot and a lighter-weight theme. 
 
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 To produce the plot below, we've added a few styling elements including:
 
 * The nice and minimal `theme_few` from the `ggthemes` package.
@@ -661,7 +665,9 @@ knitr::include_graphics("images/viz/datasaurus.png")
 
 ### Data diagnostics
 
-::: {.box data-box="accident_report" data-title="[Distributional] gorillas in our midst."}
+::: {.callout-note title="accident report"}
+## [Distributional] gorillas in our midst.
+
 
 Many data scientists don’t bother checking what their data looks like before proceeding to test specific hypotheses.
 @yanai2020 cleverly designed an artificial dataset for their students to test for such oversight.
@@ -701,7 +707,7 @@ Maybe our design wasn't perfectly balanced, or something went wrong with a parti
 
 So which visualizations should we start with? The best practice is to always start by making histograms of the raw data. As an example, let's consider the rich and interesting dataset shared by Blake, McAuliffe, and colleagues [-@blake2015ontogeny] in their article "Ontogeny of fairness in seven societies." This article studies the emergence of children's reasoning about fairness -- both when it benefits them and when it harms them -- across cultures.
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 If you want to follow along with this example at home, you can load the data from our repository!
 
 ```{r eval=FALSE, echo=TRUE}
@@ -750,7 +756,7 @@ How might we go about the process of exploratory visualization for this dataset?
 Let's start by getting a handle on some of the basic sample characteristics.
 For example, how many participants were in each age bin (@fig-viz-blake3)?
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 Exploratory histograms are often a combination of an aggregation step and a plotting step. In the aggregation step, we make use of the convenience `count` function, which gives the number (`n`) of rows in a particular grouping. Here we `count` twice in order to get first one row per participant and then count the number of participants within each age group. 
 
 ```{r eval=FALSE, echo=TRUE}
@@ -802,7 +808,7 @@ ggplot(ps_by_age, aes(x = age, y = n)) +
 
 How many participants were included from each country (@fig-viz-blake5)?
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 Here we are going to make things even terser and use a pipe chain that *includes* the ggplot, just so we are writing only a single call to produce our plot. It's up to you whether you think this enhances the readability of your code or decreases it. We find that it's sometimes useful when you don't plan on keeping the intermediate data frame for any other use than plotting.
 
 ```{r eval=FALSE, echo=TRUE}
@@ -834,7 +840,7 @@ d |>
 
 Are ages roughly similar across each country (@fig-viz-blake5)?
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 This next plot simply combines the grouping factors of each of the last two plots, and uses `facet_wrap` to show a separate histogram by country: 
 
 ```{r eval=FALSE, echo=TRUE}
@@ -882,7 +888,7 @@ Now that we have a handle on the sample, let's get a sense of the dependent vari
 Before we start taking means, let's look at how the "rejection rate" variable is distributed.
 We'll aggregate at the participant level, and check the frequency of different rejection rates, overall (@fig-viz-blake7).
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 Rejection rate is a continuous variable, so we switch to using a histogram in this case, choosing .05 as a reasonable bin width to see the distribution.
 
 ```{r eval=FALSE, echo=TRUE}
@@ -919,7 +925,7 @@ This kind of "zero-inflated" distribution is not uncommon in psychology, and may
 We also notice that there is clumping around certain values.
 This clumping leads us to check how many trials each participant is completing (@fig-viz-blake8).
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 This histogram is very similar to the ones above; however, we now `count` twice, first getting the trial counts for each participant and then counting how many times each count occurs overall!
 
 ```{r eval=FALSE, echo=TRUE}
@@ -965,7 +971,7 @@ More generally, seeing this kind of signal in a visualization of our own data ty
 Finally, we can make a few versions of the design plot that are broken out by different variables.
 Let's start by just looking at the data from the largest site (@fig-viz-blake9).
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 Here, we are using `geom_smooth()` to overlay regression trends over the raw data.
 `geom_smooth()` takes a number of different options corresponding to different smoothing techniques.
 Non-parametric smoothing can be a good choice for exploratory visualizations if you have a lot of data and want to make minimal assumptions about the form of the trend.
@@ -1030,7 +1036,7 @@ There appears to be an age trend that's specific to the Unequal trials, with rej
 Meanwhile, rejection rates for the Disadvantageous group also seem slightly higher than those in the Advantageous group.
 Now let's re-bin the data into two-year age groups so that individual point estimates are a bit more reliable, and add the other countries back in.^[Binning data is a trick that we often use for reducing complexity in a plot when data are noisy. It should be used with care, however, since different binning decisions can sometimes lead to different conclusions. Here we tried several binning intervals and decided that two-year age bins showed the underlying trends pretty well.]
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 Despite the difference between the plot above and this one, the code to produce them is actually very similar. The only difference is the creation of the binned variable and a slight shift of aesthetic and faceting variables. 
 
 ```{r eval=FALSE, echo=TRUE}
@@ -1099,14 +1105,14 @@ We particularly focused on the need to make visualization part of the experiment
 Picking up the idea of a "default model" from @sec-models, we discussed a default "design plot" that reflects the key choices made in the experimental design.
 Within this framework, we then discussed different visualizations of distribution and variability that better align our graphics with the principles of measurement and attention to raw data that we have been advocating throughout.
 
-::: {.box data-box="discussion_questions"}
+::: {.callout-note title="discussion questions"}
 1. Choose a recent piece of research that you've heard about and try to sketch the "design plot" with pencil and paper. What does and doesn't work? How does your sketch differ from the visualizations in the paper?
 
 2. The "design plot" idea that we've discussed here can run into problems when an experimental design is too complex to show on a single plot. Imagine you had data from a trial of attention deficit hyperactivity disorder (ADHD) treatment that manipulated both whether a medication was given and whether patients received therapy in a crossed design. The researchers measured two different outcomes: parent report symptom severity and teacher report symptom severity in four different time-points (baseline, 3 months, 6 months, and 9 months). How could you show the data from such an experiment in a transparent way? 
 :::
 
 
-::: {.box data-box="readings"}
+::: {.callout-note title="readings"}
 There are many good introductions to data visualization. Here are two social-science focused books whose advice we agree with and that also contain a lot of practical information and helpful R code for the same packages we use here.  
 
 * Healy, K. (2019). *Data Visualization: A Practical Introduction*. Princeton University Press. Princeton University Press. Available free online at <https://socviz.co>.

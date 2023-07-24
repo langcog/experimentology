@@ -2,7 +2,7 @@
 
 # Inference {#sec-inference}
 
-::: {.box data-box="learning_goals"}
+::: {.callout-note title="learning goals"}
 -   Discuss the purpose of statistical inference
 -   Define *p*-values and Bayes Factors
 -   Consider common fallacies about inference (especially for *p*-values)
@@ -62,7 +62,7 @@ To characterize the uncertainty in an estimate, it helps to picture what is call
 source("helper/tea_helper.R")
 ```
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 In this chapter and the subsequent statistics and visualization chapters of the book, we'll try to facilitate understanding and illustrate how to use these concepts in practice by giving the R code we use in constructing our examples in these code boxes. We'll assume that you have some knowledge of base R and the Tidyverse -- to get started with these, go ahead and take a look at @sec-tidyverse if you haven't already. Although our figures are often drawn by hand, even the hand-drawn ones are based on actual simulation results!
 
 Since we're going to be working with lots of data from the tea tasting example, we wrote a function called `make_tea_data` that creates a `tibble` with some (made up) data from our modern tea-tasting experiment. You can find the function at [this link](https://raw.githubusercontent.com/langcog/experimentology/main/helper/tea_helper.R) if you want to follow along.
@@ -91,7 +91,7 @@ knitr::include_graphics("images/inference/sampling-big.png")
 ```
 
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 To do simulations where we repeat the tea-tasting experiment over and over again, we're using a special tidyverse function from the `purrr` library: `map`. `map` is an extremely powerful function that allows us to run another function (in this case, the `make_tea_data` function that we introduced last chapter) many times with different inputs. Here we create a tibble made up of a set of 1000 runs of the `make_tea_data` function.
 
 ```{r eval=FALSE, echo=TRUE}
@@ -128,7 +128,7 @@ For example, say we are flipping a coin and we want to estimate the probability 
 knitr::include_graphics("images/inference/cl-2.png")
 ```
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 For our central limit theorem simulations, we again use the `map` function. We set up a tibble with the different values we want to to try (which we call `n_flips`). Then we make use of the `map` function to run `rbinom` (random binomial samples) for each value of `n_flips`.
 
 One trick we make use of here is that `rbinom` takes an extra argument that says how many of these random values you want to generate. Here we generate `nsamps = 1000` samples, giving us 1000 independent replicates at each `n`. But returning an array of 1000 values for a single value of `n_flips` results in something odd: the value for each element of `flips` is an array. To deal with that, we use the `unnest` function, which expands the array back into a normal tibble.
@@ -180,7 +180,7 @@ Let's apply Fisher's standard. If our observation has less than a 5% probability
 knitr::include_graphics("images/inference/p-region.png")
 ```
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 To simulate our null model, we can do the same kind of thing we did before, just specifying to our `make_tea_data` function that the true difference in effects is zero!
 
 ```{r eval=FALSE, echo=TRUE}
@@ -213,7 +213,7 @@ As we saw before, the larger the sample size, the smaller the standard error. Th
 knitr::include_graphics("images/inference/p-region-bigger.png")
 ```
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 
 We can do a more systematic simulation of the null regions for different sample sizes by simply adding a parameter to our simulation. 
 
@@ -332,7 +332,7 @@ In practice, the thing that is both tricky and good about Bayes Factors is that 
 <!--                                paired = FALSE) -->
 <!-- ``` -->
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 Bayes Factors are delightfully easy to compute using the `BayesFactor` R package. All we do is feed in the two sets of ratings to the `ttestBF` function!
 
 ```{r eval=FALSE, echo=TRUE}
@@ -359,7 +359,7 @@ tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
 
 ```
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 The standard `t.test` function is built into R via the default `stats` package. Here we simply make sure to specify the variety of test we want by using the flags `paired = FALSE` and `var.equal = TRUE` (denoting the assumption of equal variances). 
 
 ```{r eval=FALSE, echo=TRUE}
@@ -424,7 +424,9 @@ Setting these rates is a decision problem: If you are too conservative in your c
 
 As we saw in @fig-inference-null-model, the larger the sample, the better your chance of rejecting the null for any given non-null effect. But these chances will depend also on the effect size you are estimating. This formulation gives rise to the idea of classical power analysis, which we cover in @sec-sampling. Most folks who defend binary inference using $p$-values are interested in using the Neyman-Pearson approach. In our view, this approach has its place (it's especially useful for power analysis but it still suffers from the substantial issues that plague all binary inference techniques, especially those that use $p$-values. 
 
-::: {.box data-box="depth" data-title="Nonparametric resampling under the null"}
+::: {.callout-note title="depth"}
+## Nonparametric resampling under the null
+
 
 Hypothesis testing requires knowing the null distribution. In the examples above, it was easy to use statistical theory to work out the null distribution using knowledge of the binomial or normal distribution. But sometimes we don't know what the null distribution would look like. What if the ratings data from our tea-tasting experiment was very skewed, such that there were many low ratings and a few very high ratings (as in @fig-inference-permutation-1)?  
 
@@ -502,7 +504,9 @@ It would obviously be a major mistake to run 20 experiments and then report only
 
 <!-- P goes to 0 as data goes to infinity. -->
 
-::: {.box data-box="accident_report" data-title="Do extraordinary claims require extraordinary evidence?"}
+::: {.callout-note title="accident report"}
+## Do extraordinary claims require extraordinary evidence?
+
 
 In a blockbuster paper that may have inadvertently kicked off the replication crisis, @bem2011 presented nine experiments he claimed provided evidence for precognition --  that participants somehow had foreknowledge of the future. In the first of these experiments, Bem showed each of a group of 100 undergraduates 36 two-alternative forced choice trials in which they had to guess which of two locations on a screen would reveal a picture immediately before the picture was revealed. By chance, participants should choose the correct side 50% of the time of course. Bem found that, specifically for erotic pictures, participants' guesses were 53.1% correct. This rate of guessing was unexpected under the null hypothesis of chance guessing ($p = .01$). Eight other studies with a total of more than 1,000 participants yielded apparently supportive evidence, with participants appearing to show a variety of psychological effects even before the stimuli were shown! 
 
@@ -584,7 +588,7 @@ knitr::include_graphics("images/inference/cis.png")
 ```
 
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 Computing confidence intervals analytically is pretty easy. Here we first compute the standard error for the difference between conditions. The only tricky bit here is that we need to compute a pooled standard deviation.
 
 ```{r eval=FALSE, echo=TRUE}
@@ -648,13 +652,13 @@ Credible intervals are nice because they don't give rise to many of the inferenc
 
 Inference tools help you move from characteristics of the sample to characteristics of the population. This move is a critical part of generalization from research data. But we hope we've convinced you that inference doesn't have to mean making a binary decision about the presence or absence of an effect. A strategy that seeks to estimate the size of a particular effects and then make inferences about the precision of that estimate is often much more helpful as a building block for theory. As we move towards estimating causal effects in more complex experimental designs, this estimation process will require more sophisticated models. Towards that goal, the next chapter provides some guidance for how to build such models.
 
-::: {.box data-box="discussion_questions"}
+::: {.callout-note title="discussion questions"}
 1. Can you write the definition of a $p$-value and a Bayes Factor without looking them up? Try this out -- what parts of the definitions did you get wrong?
 
 2. Take three of Goodman's (2008) "dirty dozen" in @tbl-dirty-dozen) and write a description of why each is a misconception. (These can be checked against the original article, which gives a nice discussion of each. 
 :::
 
-::: {.box data-box="readings"}
+::: {.callout-note title="readings"}
 * A fun, polemical critique of NHST: Cohen, J. (1994). The earth is round (p < .05). American Psychologist, 49, 997–1003. <https://doi.org/10.1037/0003-066X.49.12.997>.
 
 * A nice introduction to Bayesian data analysis: Kruschke, J. K., & Liddell, T. M. (2018). Bayesian data analysis for newcomers. Psychonomic bulletin & review, 25(1), 155-177. <https://doi.org/10.3758/s13423-017-1272-1>.

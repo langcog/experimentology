@@ -2,7 +2,7 @@
 
 # Models {#sec-models} 
 
-::: {.box data-box="learning_goals"}
+::: {.callout-note title="learning goals"}
 * Articulate a strategy for estimating experimental effects using statistical models
 * Build intuitions about how classical statistical tests relate to linear regression models
 * Explore variations of the linear model, including generalized linear models and mixed effects models
@@ -129,7 +129,7 @@ Now we have the model. But how do we estimate the regression coefficients $\beta
 
 @fig-models-ols-plot) illustrates the tea tasting data for each condition (the dots) along with the model predictions for each condition $\beta_0$ and $\beta_0 + \beta_1$ (blue lines). The gap between each data point and the corresponding predictions (the thing that OLS wants to minimize) is shown by the dotted lines. These distances are sample estimates, called **residuals**, of the true errors ($\epsilon_i$. The left-hand plot shows the OLS coefficient values -- the ones that move the model's predictions as close as possible to the data points, in the sense of minimizing the total squared length of the dashed lines. The right-hand plot shows a substantially worse set of coefficient values. 
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 As it turns out, fitting an OLS regression model in R is extremely easy. The underlying call is `lm`, which stands for linear model. You can fit the model with a single call to this function with a "formula" as its argument. Here's the call:
 
 ```{r eval=FALSE, echo=TRUE}
@@ -266,7 +266,7 @@ ggplot(d_ex, aes(x = x, y = y)) +
 
 @fig-models-logistic-ex shows the way that a logistic regression model transforms a predictor ($X$) into an outcome probability that is bounded at 0 and 1. Critically, although the predictor is still linear, the logit link means that the same change in $X$ can result in a different change in the absolute probability of $Y$ depending on where you are on the $X$ scale. In this example, if you are in the middle of the predictor range, a one-unit change in $X$ results in a `r round(y[x == .5] - y[x == -.5], 2)` change in probability (blue). At a higher value, the change is much smaller (`r round(y[x == 4.5] - y[x == 3.5], 2)`. Notice how this is different from the linear regression model above, where the same change in age always resulted in the same change in preference! 
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 GLMs are as easy to fit in R as standard LMs. You simply need to call the `glm` function -- and to specify the link function. For our example above of a binary "liking" judgment, the call would be:
 
 ```{r eval=FALSE, echo=TRUE}
@@ -310,7 +310,7 @@ The random intercept means that we have assumed that each participant has their 
 
 Following the same logic, we could fit random intercepts for different stimulus items (for example, if we used different types of tea for different trials). We modeled participants as having  normally distributed variation, and we can model stimulus variation the same way. Each stimulus item is assumed to produce a particular average outcome (i.e. some teas are tastier than others), with these average outcomes sampled from a normally distributed population. 
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 Remarkably, GLMMs are not much harder to specify in R than standard LMs. One very popular package is `lme4` [@bates2014], which provides the `lmer` and `glmer` functions (the latter for generalized linear mixed effect models). For our example here, we'd write:
 
 ```{r eval=FALSE, echo=TRUE}
@@ -340,7 +340,7 @@ This complexity can lead to problems in fitting the models, especially with very
 More generally, linear mixed effects models are very flexible, and they have become quite common in psychology. But they do have significant limitations. As we discussed, they can be tricky to fit in standard software packages. Further, the accuracy of these models relies on our ability to specify the structure of the random effects correctly.^[One particularly problematic situation is when the correlation structure of the errors is mis-specified, for example if observations within a participant are more correlated for participants in the treatment group than in the control group; in such cases, mixed model estimates can be substantially biased [@bie2021fitting].] If we specify an incorrect model, our inferences will be wrong! But it is sometimes difficult to know how to check whether your model is reasonable, especially with a small number of clusters or observations. 
 
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 Specifying random slopes in the `lme4` package is also relatively straightforward:
 
 ```{r eval=FALSE, echo=TRUE}
@@ -352,7 +352,9 @@ Here, `(condition | id)` means "a separate random slope for `condition` should b
 :::
 
 
-::: {.box data-box="depth" data-title="An alternative approach: Generalized estimating equations"}
+::: {.callout-note title="depth"}
+## An alternative approach: Generalized estimating equations
+
 
 A second class of methods that helps resolve issues of clustering is **generalized estimating equations** (GEE). In this approach, we leave the linear predictor alone. We do not add random intercepts or slopes, nor do we assume anything about the distribution of the errors (i.e., we no longer assume that they are normal, independent, and homoskedastic). 
 
@@ -418,7 +420,7 @@ All this advice may seem abstract, so let's put it into practice on a simple exa
 
 To estimate the effect, participants were randomly assigned to either the experimental condition or to a control condition in which the puppet had eaten too much peanut butter and couldn't talk, but they still had to guess which face was his friend. There were also three other types of experimental stimuli (houses, beds, and plates of pasta). Data from this experiment consisted of `r nrow(sgf)` total observations from `r length(unique(sgf$subid))` children, with all four stimuli presented to each child. The primary hypothesis of this experiment was that that preschool children could make pragmatic inferences by correctly inferring which of the three faces (for example) the puppet was describing.
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 If you want to follow along with this example, you'll have to load the example data and do a little bit of preprocessing (also covered in @sec-tidyverse):
 
 ```{r eval=FALSE, echo=TRUE}
@@ -506,7 +508,7 @@ apa_tab$term[4] <- "Age (years) * Expt condition"
 apa_table(apa_tab)
 ```
 
-::: {.box data-box="code"}
+::: {.callout-note title="code"}
 To fit the model described above, the first step is to prepare your predictors. In this case, we center the `age` predictor. 
 
 ```{r eval=FALSE, echo=TRUE}
@@ -539,7 +541,9 @@ In sum, this model suggests that there was a substantial difference in performan
 
 This example illustrates the "default saturated model" framework that we recommend -- the idea that a single regression model corresponding to the design of the experiment can yield an interpretable estimate of the causal effect of interest, even in the presence of other sources of variation.
 
-::: {.box data-box="depth" data-title="When does it makes sense to include covariates in a model?"}
+::: {.callout-note title="depth"}
+## When does it makes sense to include covariates in a model?
+
 
 Let's come back to one piece of advice that we gave above about making a "default" model of an experiment: not including covariates. This advice can seem surprising. Many demographic factors are of interest to psychologists and other behavioral scientists, and in observational studies these factors will almost always be related to important life outcomes. So why not put them into our experimental models? After all, we did include age in our worked example above!
 
@@ -627,7 +631,7 @@ The details of this kind of analysis will vary depending on what you are worried
 
 In the last three chapters, we have spelled out a framework for data analysis that focuses on our key experimental goal: a measurement of a particular causal effect. We began with basic techniques for estimating effects and making inferences about how these effects estimated from a sample can be generalized to a population. This chapter showed how these ideas naturally give rise to the idea of making models of data, which allow estimation of effects in more complex designs. Simple regression models, which are formally identical to other inference methods in the most basic case, can be extended with the generalized linear model as well as with mixed effects models. Finally, we ended with some guidance on how to build a "default model" -- an (often pre-registered) regression model that maps onto your experimental design and provides the primary estimate of your key causal effect. 
 
-::: {.box data-box="discussion_questions"}
+::: {.callout-note title="discussion questions"}
 1. Choose a paper that you have read for your research and take a look at the statistical analysis. Does the reporting focus more on hypothesis testing or on estimating effect sizes?
 
 2. We focused here on the linear model as a tool for building models, contrasting this perspective with the common "statistical testing" mindset. But -- here's the mind-blowing thing -- most of those statistical tests are special cases of the linear model anyway. Take a look at this extended meditation on the equivalences between tests and models: <https://lindeloev.github.io/tests-as-linear/#9_teaching_materials_and_a_course_outline>. If the paper you chose for question 1 used tests, could their tests be easily translated to models? How would the use of a model-based perspective change the results section of the paper? 
@@ -635,7 +639,7 @@ In the last three chapters, we have spelled out a framework for data analysis th
 3. Take a look at this cool visualization of hierarchical (mixed effect) models: <http://mfviz.com/hierarchical-models/>. In your own research, what are the most common units that group together your observations?
 :::
 
-::: {.box data-box="readings"}
+::: {.callout-note title="readings"}
 * An opinionated practical guide to regression modeling and data description: Gelman, A., Hill, J., & Vehtari, A. (2020). *Regression and other stories*. Cambridge University Press. Free online at <https://avehtari.github.io/ROS-Examples/>.
 
 * A more in-depth introduction to the process of developing Bayesian models of data that allow for estimation and inference in complex datasets: McElreath, R. (2020). *Statistical rethinking: A Bayesian course with examples in R and Stan*. Chapman and Hall/CRC. Free materials available at <https://xcelab.net/rm/statistical-rethinking/>.
