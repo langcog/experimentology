@@ -1,5 +1,9 @@
 /*-- scss:uses --*/
 @use 'tufte-fonts';
+@use 'solarized';
+
+@import 'fontawesome/scss/fontawesome';
+@import 'fontawesome/scss/solid';
 
 /*-- scss:defaults --*/
 $grid-body-width: 900px !default;
@@ -15,6 +19,62 @@ $h3-font-size: $font-size-base * calc(1.75 * 0.75) !default; /* 1.75 */
 ul { list-style-type: '—'; }
 h1, h2, h3, h4 { font-style: italic; }
 h1.title {
-  font-style: normal;
-  font-size: $font-size-base * 2.5;
+	font-style: normal;
+	font-size: $font-size-base * 2.5;
+}
+
+$boxes: (
+	'learning goals'       var(--red)     $fa-var-apple-whole,
+	'case study'           var(--blue)    $fa-var-microscope,
+	'accident report'      var(--orange)  $fa-var-person-falling-burst,
+	'code'                 var(--lime)    $fa-var-code,
+	'depth'                var(--violet)  $fa-var-magnifying-glass-plus,
+	'exercises'            var(--yellow)  $fa-var-pen-ruler,
+	'discussion questions' var(--cyan)    $fa-var-comments,
+	'readings'             var(--magenta) $fa-var-book,
+);
+
+@each $name, $color, $icon in $boxes {
+	div.callout[title="#{$name}"] {
+		border: 4px solid $color;
+		border-radius: 8px;
+
+		.callout-toggle {
+			@include fa-icon-solid($fa-var-angles-down);
+			font-size: larger;
+		}
+
+		.callout-icon {
+			@include fa-icon-solid($icon);
+			font-size: larger;
+
+			&::before {
+				background-image: none;
+				transition: transform .2s linear;
+			}
+		}
+
+		.callout-header {
+			background-color: $color;
+			color: white;
+			opacity: 100%;
+
+			.callout-icon::before   { transform: rotate(0deg); }
+			.callout-toggle::before { transform: rotate(0deg); }
+
+			&[aria-expanded=true] {
+				.callout-icon::before   { transform: rotate(360deg); }
+				.callout-toggle::before { transform: rotate(180deg); }
+			}
+		}
+
+		.callout-title-container {
+			margin-left: 0.2em;
+			font-family: Source Sans Pro;
+			font-weight: normal;
+			font-size: 1.2em;
+			font-variant-caps: small-caps;
+			&::first-letter { text-transform: uppercase; }
+		}
+	}
 }
