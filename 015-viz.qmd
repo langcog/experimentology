@@ -20,12 +20,7 @@ As psychology moves into an era of bigger data and more complex behaviors, we be
 ::: {.callout-note title="case study"}
 ## Mapping a pandemic {-}
 
-```{r viz-cholera, boxfigure=TRUE}
-#| label: fig-viz-cholera
-#| fig-cap: "Mapping out a cholera epidemic (1854). Line shows region for which Broad Street pump is nearest."
-
-knitr::include_graphics("images/viz/snow_cholera_voronoi.jpeg")
-```
+![Mapping out a cholera epidemic (1854). Line shows region for which Broad Street pump is nearest.](images/viz/snow_cholera_voronoi.jpeg){#fig-viz-cholera}
 
 In 1854, a deadly outbreak of cholera was sweeping through London.
 The scientific consensus at the time was that diseases like cholera spread through breathing poisonous and foul-smelling vapors, an idea known as the "miasma theory" [@halliday2001death].
@@ -39,12 +34,7 @@ Although the precise causal role of these maps in Snow's own thinking is dispute
 
 Nearly two centuries later, as the COVID-19 pandemic swept through the world, governmental agencies like the [CDC](https://covid.cdc.gov/covid-data-tracker) produced maps of the outbreak that became much more familiar (@fig-viz-covid). 
 
-```{r viz-covid, boxfigure=TRUE}
-#| label: fig-viz-covid
-#| fig-cap: "Map showing the known locations of cumulative coronavirus cases by share of the population in each county (reproduced from the New York Times)."
-
-knitr::include_graphics("images/viz/covid-hot-spots.png")
-```
+![Map showing the known locations of cumulative coronavirus cases by share of the population in each county (reproduced from the New York Times).](images/viz/covid-hot-spots.png){#fig-viz-covid}
 
 These maps make abstract statistics visible: By assigning higher cumulative case rates to darker colors, we can see at a glance which areas have been most affected.
 And we're not limited by the spatial layout of a map.
@@ -52,23 +42,13 @@ We're now also used to seeing the horizontal axis correspond to *time* and the v
 Curves like the following, showing the 7-day average of new cases, allow us to see other patterns, like the *rate of change*.
 Even though more and more cases accumulate every day, we can see at a glance the different "waves" of cases, and when they peaked (@fig-viz-cases). 
 
-```{r viz-cases, boxfigure=TRUE}
-#| label: fig-viz-cases
-#| fig-cap: "7-day average of new reported COVID cases (reproduced from the New York Times)."
-
-knitr::include_graphics("images/viz/covid-cases.png")
-```
+![7-day average of new reported COVID cases (reproduced from the New York Times).](images/viz/covid-cases.png){#fig-viz-cases}
 
 While these visualizations capture purely descriptive statistics, we often want our visualizations to answer more specific questions.
 For example, we may ask about the effectiveness of vaccinations: how do case rates differ across vaccinated and unvaccinated populations?
 In this case, we may talk about "breaking out" a curve by some other variable, like vaccination status (@fig-viz-cases2). 
 
-```{r viz-cases2, boxfigure=TRUE}
-#| label: fig-viz-cases2
-#| fig-cap: "Rates of COVID cases by vaccination status (reproduced from [`covid.cdc.gov`](https://covid.cdc.gov/covid-data-tracker/#rates-by-vaccine-status))."
-
-knitr::include_graphics("images/viz/vaccination.png")
-```
+![Rates of COVID cases by vaccination status (reproduced from [`covid.cdc.gov`](https://covid.cdc.gov/covid-data-tracker/#rates-by-vaccine-status)).](images/viz/vaccination.png){#fig-viz-cases2}
 
 From this visualization, we can see that unvaccinated individuals are about 6x more likely to test positive. At the same time, these visualizations were produced using *observational* data, which makes it challenging to draw causal inferences.
 For example, people were not randomly assigned to vaccination conditions, and those who have avoided vaccinations may differ in other ways than those who sought out vaccinations.
@@ -182,12 +162,7 @@ In these cases, bar plots and line plots tend to get extremely cluttered, making
 Heat maps help these relationships to pop out as clear "hot" and "cold" regions.
 For example, in @barnett2022, a heatmap was used to show a specific range of parameters where an effect of interest emerged (see @fig-viz-heatmap).
 
-```{r viz-heatmap, boxfigure=TRUE}
-#| label: fig-viz-heatmap
-#| fig-cap: "Heatmap showing a specific range of continuous parameters where an effect emerged [reproduced from @barnett2022]."
-
-knitr::include_graphics("images/viz/viz_heatmap_example.png")
-```
+![Heatmap showing a specific range of continuous parameters where an effect emerged (reproduced from @barnett2022).](images/viz/viz_heatmap_example.png){#fig-viz-heatmap}
 :::
 
 ```{r viz-prepost2}
@@ -470,9 +445,8 @@ Or suppose you want to estimate proportions from categorical data, or a more *ad
 Analytic estimators of confidence intervals can in principle be derived for these statistics, subject to different assumptions, but it is often more transparent and reliable in practice to use the bootstrap. 
 As long as you can write a code snippet to compute a value from a dataset, you can use the bootstrap. 
 
-```{r viz-boot, boxfigure=TRUE}
-#| label: fig-viz-boot
-#| fig-cap: "Three different error bars for the Stiller data: bootstrapped 95\\% confidence intervals (left), standard error of the mean (middle), and analytically computed confidence intervals (right)."
+```{r viz-boot}
+#| output: false
 
 boot <- d |> 
   group_by(condition, age_group, subid) |>
@@ -508,6 +482,8 @@ bind_rows(boot, ci_sem, ci_ci) |>
     theme_few() +
     theme(aspect.ratio = 1)
 ```
+
+![Three different error bars for the Stiller data: bootstrapped 95\\% confidence intervals (left), standard error of the mean (middle), and analytically computed confidence intervals (right).](015-viz_files/figure-html/fig-viz-boot-1.png){#fig-viz-boot}
 
 As we can see, the bootstrapped 95% CI looks similar to the analytic 95% CI derived from the standard error, except the upper and lower limits are slightly asymmetric (reflecting outliers in one direction or another). 
 Of course, the bootstrap is not a silver bullet and can be abused in particularly small samples. 
@@ -675,12 +651,7 @@ Fourteen of these students failed to notice a gorilla, suggesting that they eval
 Another group of 14 students were simply asked what, if anything, they could conclude (without being given explicit hypotheses).
 More of these students apparently made the visualization, but five of them still failed to notice the gorilla (@fig-viz-gorilla)!
 
-```{r viz-gorilla, boxfigure=TRUE}
-#| label: fig-viz-gorilla
-#| fig-cap: "A dataset was constructed by @yanai2020 which revealed a picture of a gorilla when the raw data were plotted."
-
-knitr::include_graphics("images/viz/gorilla.png")
-```
+![A dataset was constructed by @yanai2020 which revealed a picture of a gorilla when the raw data were plotted.](images/viz/gorilla.png){#fig-viz-gorilla}
 
 While it may not be surprising that a group of students would take the shortest path to completing their assignment, similar concerns have been raised in much more serious cases concerning how experienced researchers could fail to notice obviously fraudulent data.
 For example, when @datacolada made a simple histogram of the car mileage data reported in @shu2012signing [released publicly by @kristal2020signing], they were immediately able to observe that it followed a perfectly uniform distribution, truncated at exactly 50,000 miles (@fig-viz-uniform).
@@ -690,13 +661,7 @@ So it is highly surprising to find exactly the same number of drivers in every m
 While further specialized analyses revealed additional evidence of fraud (e.g. based on patterns of rounding and pairs of duplicated data points), this humble histogram was already enough to set off alarm bells.
 A recurring regret raised by the co-authors of this paper is that they never thought to make this visualization before reporting their statistical tests.
 
-```{r viz-uniform, boxfigure=TRUE}
-#| label: fig-viz-uniform
-#| fig-cap: "A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!"
-
-knitr::include_graphics("images/viz/data_colada_uniform.png")
-```
-:::
+![A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!](images/viz/data_colada_uniform.png){#fig-viz-uniform}
 
 Our data are always messier than we expect.
 There might be a bug in our coding scheme, a column might be mislabeled, or might contain a range of values that we didn't expect. 
