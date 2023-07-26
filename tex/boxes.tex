@@ -26,51 +26,81 @@
 \def\faComments{{\fa \symbol{"F086}}}
 \def\faBook{{\fa \symbol{"F02D}}}
 
-% boxes
-\usepackage{tcolorbox}
-\tcbuselibrary{skins} % allow changing skin
-\tcbuselibrary{breakable} % allow breaking across pages
-
 % set options for all boxes
-\tcbset{enhanced jigsaw, % skin
-        breakable, % break across pages
-        width=\textwidth,
-        grow to right by=\marginparwidth+\marginparsep, %show bounding box,
-        boxrule=2pt, % border width
-        colback=white, % background color
-        fonttitle=\sffamily\scshape\LARGE, % title sans serif and small caps
-        left=2mm, right=2mm, bottom=1mm, top=1mm, % padding inside box
-        toptitle=1mm, bottomtitle=1mm} % spacing above/below title
-        % before upper={\justifying\parindent1.0pc}} % font changes inside
+\def\pagewidth{\marginparsep+\marginparsep+1pt}
+\tcbset{enhanced jigsaw,                          % skin
+        breakable,                                % break across pages
+        boxrule=2pt,                              % border width
+        colback=white,                            % background color
+        fonttitle=\sffamily\scshape\LARGE,        % title sans and small caps
+        left=2mm, right=2mm, %bottom=2mm, top=2mm, % padding inside box
+        toptitle=1mm, bottomtitle=1mm,            % spacing above/below title
+        grow to right by=\pagewidth,              % fullwidth
+        % show bounding box,
+        before upper={\parskip6pt                 % format settings within box
+                      \setlist[itemize]{leftmargin=*,label={--}}
+                      \setlist[enumerate]{leftmargin=*}}}
+                      % \titlespacing{\subsection}{0pt}{\parskip}{-\parskip}}}
 
 % define box for each type (color, icon, title)
 \newtcolorbox{learning_goals}{%
   grow to right by=-\marginparwidth-\marginparsep, % non-fullwidth
-  colframe=.red, title=\faAppleWhole \enspace Learning goals}
+  colframe=.red,
+  title=\faAppleWhole \enspace Learning goals}
 \newtcolorbox{case_study}{%
-  colframe=.blue, title=\faMicroscope \enspace Case study}
+  colframe=.blue,
+  title=\faMicroscope \enspace Case study}
 \newtcolorbox{ethical_considerations}{%
-  colframe=.green, title=\faLeaf \enspace Ethical considerations}
+  colframe=.green,
+  title=\faLeaf \enspace Ethical considerations}
 \newtcolorbox{accident_report}{%
-  colframe=.orange, title=\faPersonFallingBurst \enspace Accident report}
+  colframe=.orange,
+  title=\faPersonFallingBurst \enspace Accident report}
 \newtcolorbox{code}{%
-  colframe=.base0, title=\faCode \enspace Code}
+  colframe=.base0,
+  title=\faCode \enspace Code}
 \newtcolorbox{depth}{%
-  colframe=.violet, title=\faMagnifyingGlassPlus \enspace Depth}
+  colframe=.violet,
+  title=\faMagnifyingGlassPlus \enspace Depth}
 \newtcolorbox{exercises}{%
-  colframe=.yellow, title=\faPenRuler \enspace Exercises}
+  colframe=.yellow,
+  title=\faPenRuler \enspace Exercises}
 \newtcolorbox{discussion_questions}{%
-  colframe=.cyan, title=\faComments \enspace Discussion questions}
+  colframe=.cyan,
+  title=\faComments \enspace Discussion questions}
 \newtcolorbox{readings}{%
-  colframe=.magenta, title=\faBook \enspace Readings}
+  colframe=.magenta,
+  title=\faBook \enspace Readings}
 
 % define within-box title as subsection
-\newcommand{\boxtitle}[1]{\subsection*{#1}}
-
-\newtcolorbox{refsbox}{%
-  size=minimal}
+% \newcommand{\boxtitle}[1]{\subsection*{#1}\vspace{-12pt}}
+% \titlespacing{\boxtitle}{0pt}{\parskip}{-\parskip}
 
 % define box for figures within boxes
 \usepackage{caption}
 \newtcolorbox[blend into=figures]{boxfigure}[1][]{%
-  boxrule=0pt,colframe=white,colback=white,#1}
+  size=minimal,
+  colback=white,
+  % boxrule=0pt,
+  #1}
+
+% define box for references
+\newtcolorbox{refsbox}{%
+  size=minimal,                 % no padding space, no box rules
+  before upper={\footnotesize}} % smaller font inside
+
+% redefine CSLReferences to wrap in refsbox
+\renewenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+ \begin{refsbox}
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {\end{refsbox}}
+ 
