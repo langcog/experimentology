@@ -1,51 +1,54 @@
 local log = quarto.log.output
+
+-- options for each box type (color, icon, collapse)
 local boxes = {
-	[ 'learning goals'       ] = false,
-	[ 'case study'           ] = false,
-	[ 'accident report'      ] = true,
-	[ 'code'                 ] = true,
-	[ 'depth'                ] = true,
-	[ 'exercises'            ] = true,
-	[ 'discussion questions' ] = true,
-	[ 'readings'             ] = true,
+	[ 'learning goals'         ] = {color = '.red',     icon = '\\faAppleWhole',          collapse = false},
+	[ 'case study'             ] = {color = '.blue',    icon = '\\faMicroscope',          collapse = false},
+	[ 'ethical considerations' ] = {color = '.green',   icon = '\\faLeaf',                collapse = false},
+	[ 'accident report'        ] = {color = '.orange',  icon = '\\faPersonFallingBurst',  collapse = true},
+	[ 'code'                   ] = {color = '.base0',   icon = '\\faCode',                collapse = true},
+	[ 'depth'                  ] = {color = '.violet',  icon = '\\faMagnifyingGlassPlus', collapse = true},
+	[ 'exercises'              ] = {color = '.yellow',  icon = '\\faPenRuler',            collapse = true},
+	[ 'discussion questions'   ] = {color = '.cyan',    icon = '\\faComments',            collapse = true},
+	[ 'readings'               ] = {color = '.magenta', icon = '\\faBook',                collapse = true},
 }
-  
-local function beginEnv(env)
-  return pandoc.RawInline('latex', '\\begin{' .. env .. '}\n')
+
+-- TODO: shrink learning goals boxes
+-- local bonus = {
+--   [ 'learning goals' ] = 
+-- }
+
+-- generate tcolorbox options for a given box title
+local function boxOpts(title)
+  local color = boxes[title]['color']
+  local icon = boxes[title]['icon']
+  local Title = title:gsub("^%l", string.upper)
+  local opts = 'colframe=' .. color .. ', title=' .. icon .. ' \\enspace ' .. Title
+  return opts
 end
 
-local function endEnv(env)
-  return pandoc.RawInline('latex', '\\end{' .. env .. '}\n')
-end
-
-local function boxfigure(fig)
-  local output = fig.content
-  local caption = pandoc.RawInline('latex', '\\captionof{figure}{' .. pandoc.utils.stringify(fig.caption) ..'}')
-  local label = pandoc.RawInline('latex', '\\label{' .. fig.attr.identifier ..'}')
-  table.insert(output, 1, beginEnv('boxfigure'))
-  table.insert(output, caption)
-  table.insert(output, label)
-  table.insert(output, endEnv('boxfigure'))
-  return output
+-- wrap element in \begin{env}[opts] and \end{env}
+local function wrapEnv(el, env, opts)
+  local beginEnv = pandoc.RawInline('latex', '\\begin{' .. env .. '}[' .. opts .. ']\n')
+  local endEnv = pandoc.RawInline('latex', '\\end{' .. env .. '}\n')
+  table.insert(el, 1, beginEnv)
+  table.insert(el, endEnv)
+  return el
 end
 
 function Callout(callout)
 
   if quarto.doc.is_format('pdf') then
+    -- generate tcolorbox options for this box title
+    local opts = boxOpts(pandoc.utils.stringify(callout.title))
+    -- wrap content in tcolorbox environment with these options
+    return wrapEnv(callout.content, "tcolorbox", opts)
 
-    local type = pandoc.utils.stringify(callout.title):gsub(' ', '_')
-    
-    local result = callout.content:walk{Figure = boxfigure}
-    -- local result = callout.content
-
-    table.insert(result, 1, beginEnv(type))
-    table.insert(result, endEnv(type))
-    return result
-
-    
   elseif quarto.doc.is_format('html') then
+    -- if box doesn't already have a value for collapse
   	if callout.collapse == nil then
-  		callout.collapse = boxes[pandoc.utils.stringify(callout.title)]
+  	  -- apply collapse value corresponding to the box type
+  		callout.collapse = boxes[pandoc.utils.stringify(callout.title)]['collapse']
   	end
   end
 end

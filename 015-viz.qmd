@@ -560,14 +560,11 @@ geom_text_repel(data = ms |> filter(age_group == "(3,4]"),
 ```{r viz-themes}
 #| label: fig-viz-themes
 #| fig-cap: "Custom themed Stiller figure with direct labels."
-
-library(ggrepel)
-
 ggplot(ms, aes(x = age_group, y = empirical_stat, 
              color = condition, group = condition)) +
     geom_point() +
     geom_line() +
-    geom_text_repel(aes(label = condition, colour = condition), 
+    ggrepel::geom_text_repel(aes(label = condition, colour = condition), 
                     data = ms |> filter(age_group == "(3,4]"), 
                     nudge_y = .1, nudge_x = .5, segment.color = NA) +
     geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
@@ -765,7 +762,7 @@ ps_by_age <- d |>
 ggplot(ps_by_age, aes(x = age, y = n)) +
     geom_bar(stat = "identity") +
     xlim(0, 18) +
-    ggthemes::theme_few()
+    theme_few()
 ```
 
 How many participants were included from each country (@fig-viz-blake5)?
@@ -797,7 +794,7 @@ d |>
   mutate(country = fct_reorder(country, -n)) |>
   ggplot(aes(x = country, y = n)) +
     geom_bar(stat = "identity") +
-    ggthemes::theme_few()
+    theme_few()
 ```
 
 Are ages roughly similar across each country (@fig-viz-blake5)?
@@ -832,7 +829,7 @@ d |>
     geom_bar(stat = "identity") +
     facet_wrap(~ country) +
     xlim(0, 18) +
-    ggthemes::theme_few() +
+    theme_few() +
     theme(aspect.ratio = 1)
 ```
 
@@ -879,7 +876,7 @@ d |>
   summarise(reject = mean(reject, na.rm=TRUE)) |>
   ggplot(aes(x = reject)) +
     geom_histogram(binwidth = .05) +
-    ggthemes::theme_few()
+    theme_few()
 ```
 
 We notice that many participants (`r round(mean(d.indiv.rates$reject == 0),2)*100`%) never reject in the entire experiment.
@@ -913,7 +910,7 @@ d |>
   ggplot(aes(x = n, y = nn)) +
     geom_bar(stat = "identity") +
     labs(x = "# trials", y = "proportion of participants") +
-    ggthemes::theme_few()
+    theme_few()
 ```
 
 There's some variation here: most participants completed 17 trials, but some participants completed 8 trials, and a small number of participants have 14 or 15.
@@ -989,8 +986,8 @@ ggplot(filter(ms, country == "US"),
     ylab("Proportion offers rejected") +
     xlab("Age (years)") +
     ylim(c(0,1)) +
-    ggthemes::theme_few() +
-    ggthemes::scale_color_solarized()
+    theme_few() +
+    scale_color_solarized()
 ```
 
 @fig-viz-blake9 is not a figure we'd put in a paper, but it helps us get a sense of the pattern in the data.
@@ -1039,7 +1036,7 @@ ggplot(ms, aes(x = age_binned, y = reject, col = condition)) +
     ylab("Proportion offers rejected") +
     xlab("Age (years)") +
     ylim(c(0,1)) +
-    ggthemes::theme_few() +
+    theme_few() +
     theme(aspect.ratio = 1) + 
     theme(legend.position = "bottom")
 ```

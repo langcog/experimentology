@@ -496,15 +496,17 @@ mod <- lme4::glmer(correct ~ age_centered * condition + (1|subid) + (1|item),
 
 ```{r models-sgf-model2}
 #| label: tbl-models-sgf-model-print
-#| tbl-cap: "Estimated effects for our generalized linear mixed effects model on data from Stiller et al. (2015)."
+#| tbl-cap: "Estimated effects for our generalized linear mixed effects model on data from Stiller (2015)."
 
-apa_mod <- apa_print(mod)
+apa_mod <- papaja::apa_print(mod)
 apa_tab <- apa_mod$table
 apa_tab$term[1] <- "Control condition"
 apa_tab$term[2] <- "Age (years)"
 apa_tab$term[3] <- "Expt condition"
 apa_tab$term[4] <- "Age (years) * Expt condition"
-apa_table(apa_tab)
+# papaja::apa_table(apa_tab)
+
+apa_tab
 ```
 
 ::: {.callout-note title="code"}
@@ -604,7 +606,7 @@ ggplot(d, aes(x = half_n, y = rmse,
   theme(legend.position = "bottom")
 ```
 
-![Decreases in estimation error due to adjusting for covariates, plotted by the N participants in each group and the correlation between the covariate and the outcome.](007-models_files/figure-html/fig-models-precision-1.png){#fig-models-precision}
+![Decreases in estimation error due to adjusting for covariates, plotted by the N participants in each group and the correlation between the covariate and the outcome.](007-models_files/figure-html/models-precision-1.png){#fig-models-precision}
 
 That said, there are quite a few reasons not to include covariates -- motivating our recommendation to skip them in your default model unless you have very strong theory-based expectations for either (A) a correlation with the outcome or (B) a strong moderation relationship.
 
