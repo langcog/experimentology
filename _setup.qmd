@@ -45,3 +45,12 @@ colorize <- function(x, color) {
   } else x
 }
 ```
+
+```{r}
+appendix <- function(name) {
+  suffix <- if (is_html_output()) "html" else if (is_latex_output()) "latex"
+  qmd <- glue("{name}-{suffix}.qmd")
+  out <- knit_child(qmd, quiet = TRUE)
+  cat(out, sep = "\n")
+}
+```
