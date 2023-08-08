@@ -13,13 +13,7 @@
 >
 > `r tufte::quote_footer('--- Karl Broman (2016)')`
 
-```{r versions}
-#| label: fig-versions
-#| fig-cap: "Poor file management creates chaos! By xkcd (https://xkcd.com/1459)."
-#| column: margin
-
-knitr::include_graphics("images/management/versions_xkcd.png")
-```
+![Poor file management creates chaos! By xkcd (https://xkcd.com/1459).](images/management/versions_xkcd.png){#fig-versions .column-margin width="80%"}
 
 Have you ever returned to an old project folder to find a chaotic mess of files with names like `analysis-FINAL`, `analysis-FINAL-COPY`, and `analysis-FINAL-COPY-v2`? Which file is actually the final version!? Or perhaps you've spent hours searching for a data file to send to your advisor, only to realize with horror that it was *only* stored on your old laptop -- the one that experienced a catastrophic hard drive failure when you spilled coffee all over it one sleepy Sunday morning. These experiences may make you sympathetic to Karl Broman's quip above. Good project management practices not only make it easier to share your research with others, they also make for a more efficient and less error prone workflow that will avoid giving your future self a headache. This chapter is about the process of managing all of the products of your research workflow -- methodological protocols, materials^[We use the term "materials" here to cover a range of things another researcher might need in order to repeat your study, for example, stimuli, survey instruments, and code for computer-based experiments.], data, and analysis scripts -- in ways that maximize their value to you and to the broader research community.
 
@@ -27,21 +21,11 @@ When we talk about research products, we typically think of articles in academic
 
 Data sharing, in particular, has been the focus of intense interest. Sharing data is associated with benefits in terms of error detection [@hardwicke2021d], creative re-use that generates new discoveries [@voytek2016], increased citations [@piwowar2013], and detection of fraud [@simonsohn2013]. According to surveys, researchers are usually willing to share data in principle [@houtkoop2018], but unfortunately, in practice, they often do not, even if you directly ask them [@hardwicke2018c]! Often authors simply do not respond, but when they do, they frequently report that data have been lost because they were stored on a misplaced or damaged computer or drive, or team members with access to the data are no longer contactable [@tenopir2020]. 
 
-As we have discussed in @sec-replication, even when data are shared, they are not always formatted in a way that they can be easily understood and re-used by other researchers, or even the original authors! This issue highlights the critical role of **meta-data**: information that documents the data (and other products) that you share, including README files, **codebooks** that document datasets themselves, licenses that provide legal restrictions on reuse, etc. We will discuss best-practices for meta-data throughout the chapter. 
+As we have discussed in @sec-replication, even when data are shared, they are not always formatted in a way that they can be easily understood and re-used by other researchers, or even the original authors! This issue highlights the critical role of **metadata**: information that documents the data (and other products) that you share, including README files, **codebooks** that document datasets themselves, licenses that provide legal restrictions on reuse, etc. We will discuss best-practices for metadata throughout the chapter. 
+
+![Illustration of the analytic chain from raw data through to research report.](images/management/chain.png){#fig-management-chain .column-margin}
 
 Sound project management practices and sharing of research projects are mutually reinforcing goals that bring benefits for both yourself, the broader research community, and scientific progress. One particularly important benefit of good project management practices is that they enable reproducibility. As we discussed in @sec-replication, computational reproducibility involves being able to trace the provenance of any reported analytic result in a research report back to its original source. That means being able to recreate the entire analytic chain from data collection to data files, though analytic specifications to the research results reported in text, tables, and figures. If data collection is documented appropriately, and if data are stored, organized, and shared, then the provenance of a particular result is relatively easy to verify. But once this chain is broken it can be hard to reconstruct [@hardwicke2018b; @fig-management-chain]. That's why it's critical to build good project management practices into your research workflow right from the start.
-
-<!-- ```{r fleetwood, fig.cap="Fleetwood Mac fans can easily remind themsevles that the key principle of computational reproducibility is to *never break the chain* between the data and the reported results.", fig.margin=TRUE} -->
-<!-- knitr::include_graphics("images/management/fleetwood_mac.jpg") -->
-<!-- ``` -->
-
-```{r management-chain}
-#| label: fig-management-chain
-#| fig-cap: "Illustration of the analytic chain from raw data through to research report."
-#| column: margin
-
-knitr::include_graphics("images/management/chain.png")
-```
 
 In this chapter, you will learn how to manage your research project both efficiently and transparently. Working towards these goals can create a virtuous cycle: if you organize your research products well, they are easier to share later, and if you assume that you will be sharing, you will be motivated to organize your work better! We begin by discussing some important principles of project management, including folder structure, file naming, organization, and version control. Then we zoom in specifically on data and discuss best practices for data sharing. We end by discussing the question of what research products to share and some of the potential ethical issues that might limit your ability to share in certain circumstances.^[This chapter -- especially the last section -- draws heavily on @klein2018, an article on research transparency that several of us contributed to.]
 
@@ -73,14 +57,9 @@ Keeping these principles in mind, we discuss best practices for project organiza
 
 To the greatest extent possible, all files related to a project should be stored in the same project folder (with appropriate sub-folders), and on the same storage provider.^[There are cases where this is impractical due to the limitations of different software packages. For example, in many cases a team will manage its data and analysis code via github but decide to write collaboratively using google docs, overleaf, or another collaborative platform. (It can also be hard to ask all collaborators to use a version control system they are unfamiliar with.) In that case, the final paper should still be linked in some way to the project repository. The biggest issue that comes up in using a split workflow like this is the need to ensure reproducible written products, a process we cover in @sec-writing.] 
 
-@fig-management-organization-ex shows an example project stored on the Open Science Framework. The top level folder contains sub-folders for analyses, materials, raw and processed data (kept separately). It also contains the paper manuscript, and, critically, a README file in a text format that describes the project. A README is a great way to document any other meta-data that the authors would like to be associated with the research products, for example a license, explained below.
+@fig-management-organization-ex shows an example project stored on the Open Science Framework. The top level folder contains sub-folders for analyses, materials, raw and processed data (kept separately). It also contains the paper manuscript, and, critically, a README file in a text format that describes the project. A README is a great way to document any other metadata that the authors would like to be associated with the research products, for example a license, explained below.
 
-```{r management-organization-ex}
-#| label: fig-management-organization-ex
-#| fig-cap: "Sample top level folder structure for a project. From Klein et al., 2018. Original visible on the [Open Science Framework](https://osf.io/xf6ug/)."
-
-knitr::include_graphics("images/management/org-ex.png")
-```
+![Sample top level folder structure for a project. From @klein2018. Original visible on the [Open Science Framework](https://osf.io/xf6ug/).](images/management/org-ex.png){#fig-management-organization-ex .margin-caption}
 
 There are many reasonable ways to organize the sub-folders of a research project, but the broad categories of materials, data, analysis, and writing are typically present.^[We like the scheme followed by [Project TIER](https://www.projecttier.org/), which provides very clear guidance about file structure and naming conventions. TIER is primarily designed for a copy-and-paste workflow, which is slightly different from the "dynamic documents" workflow that we primarily advocate for (e.g., using R Markdown as in @sec-rmarkdown).] In some projects -- such as those involving multiple experiments or complex data types -- you may have to adopt a more complex structure. In many of our projects, it's not uncommon to find paths like `/data/raw_data/exp1/demographics`. The key principle is to create a hierarchical structure in which subfolders uniquely identify the part of the broader space of research products that are found inside them -- that is, `/data/raw_data/exp1` contains all the raw data from Experiment 1, and `/data/raw_data/exp1/demographics` contains all the raw *demographics* data from that particular experiment.
 
@@ -90,14 +69,7 @@ Probably everyone who has ever collaborated electronically has experienced the f
 
 These two problems are solved by modern version control systems. Here we focus on the use of **git**, which is the most widely used version control system. Git is a great general solution for version control, but many people -- including several of us -- don't love it for collaborative manuscript writing. We'll introduce git and its principles here, while noting that online collaboration tools like Google Docs and Overleaf^[Overleaf is actually supported by git on the back-end!] can be easier for writing prose (as opposed to code); we cover this topic in a bit more depth in @sec-writing.
 
-```{r management-git}
-#| label: fig-management-git
-#| fig-cap: "Visualisation of Git version control showing a series of commits (circles) on three different branches: the main branch (green) and two others (blue and red). Branches can be created and then merged back into the main branch."
-#| column: margin
-
-knitr::include_graphics("images/management/git2.png")
-```
-
+![isualisation of Git version control showing a series of commits (circles) on three different branches: the main branch (green) and two others (blue and red). Branches can be created and then merged back into the main branch.](images/management/git2.png){#fig-management-git .column-margin}
 
 Git is a tool for creating and managing projects, which are called **repositories**. A Git repository is a directory whose revision history is tracked via a series of **commits** -- snapshots of the state of the project. These commits can form a tree with different **branches**, as when two contributors to the project are working on two different parts simultaneously (@fig-management-git). These branches can later be **merged** either automatically or via manual intervention in the case of conflicting changes. 
 
@@ -119,7 +91,7 @@ As [Phil Karlton reportedly said](https://www.karlton.org/2017/12/naming-things-
 
 On the other hand, if you are naming a file in a hierarchically organized version control repository, the naming problem gets dramatically easier. All of a sudden, you have a context in which names make sense. `data.csv` is a terrible name for a data file on its own. But the name is actually perfectly informative -- in the context of a project repository with a README that states that there is only a single experiment, a repository structure such that the file lives in a folder called `raw_data`, and a commit history that indicates the file's commit date and author. 
 
-As this example shows, naming is hard *out of context*. So here's our rule: name a file with what it contains. Don't use the name to convey the context of who edited it, when, or where it should go in a project. That is meta-data that the platform should take care of.^[The platform won't take care of it if you email it to a collaborator -- precisely why you should share access to the full *platform*, not just the out-of-context file!]
+As this example shows, naming is hard *out of context*. So here's our rule: name a file with what it contains. Don't use the name to convey the context of who edited it, when, or where it should go in a project. That is metadata that the platform should take care of.^[The platform won't take care of it if you email it to a collaborator -- precisely why you should share access to the full *platform*, not just the out-of-context file!]
 
 ## Data Management
 
@@ -142,18 +114,7 @@ Raw data are often not anonymized -- or even anonymizable. Anonymizing them some
 
 You can use your repository's README to describe what is and is not shared. For example, a README might state that "We provide anonymized versions of the files originally downloaded from Qualtrics" or "Participants did not provide permission for public distribution of raw video recordings, which are retained on a secure university server." Critically, if you share the derived tabular data, it should still be possible to reproduce the analytic results in your paper, even if checking the provenance of those numbers from the raw data is not possible for every reader.^[One way we organize the raw data in some of our paper is to have three different subfolders in the `data/` directory: `raw/`, for the original data; `processed/`, for the anonymized or otherwise pre-processed data; and `/scripts`, for the code that does the preprocessing. Since these folders are in a git repository, we can then add `raw/*` to the `.gitignore` file, ensuring that they are never added to the public version of the repository even though they sit within our local file hierarchy in the appropriate place.] 
 
-```{r management-mb-datafiles}
-#| label: fig-management-mb-datafiles
-#| fig-cap: "Example participant (top) and trial (bottom) level data from the ManyBabies (2020) case study."
-
-# https://stackoverflow.com/questions/62516742/create-multi-panel-figure-using-png-jpeg-images
-knitr::include_graphics("images/management/mb-combined.png")
-
-# img1 <- magick::image_read("images/management/mb1-subjects.png")
-# img2 <- magick::image_read("images/management/mb1-trials.png")
-# magick::image_montage(c(img1,img2), geometry = 'x100+10+10', tile = '1x2', bg = 'white', 
-                      # shadow = FALSE)
-```
+![Example participant (top) and trial (bottom) level data from the ManyBabies (2020) case study.](images/management/mb-combined.png){#fig-management-mb-datafiles .margin-caption}
 
 One common practice is the use of participant identifiers to link specific experimental data -- which, if they are responses on standardized measures, rarely pose a significant identifiability risk -- to demographic data sheets that might include more sensitive and potentially identifiable data.^[A word about subject identifiers. These should be anonymous identifiers, like randomly generated numbers, that cannot be linked to participant identities (like data of birth) and are unique. You laugh, but one of us was in a lab where all the subject IDs were the date of test and the initials of the participant. These were neither unique nor anonymous. One common convention is to give your study a code-name and to number participants sequentially, so your first participant in a sequence of experiments on information processing might be `INFO-1-01`.] Depending on the nature of the analyses being reported, the experimental data can then be shared with limited risk. Then a selected set of demographic variables -- for example, those that do not increase privacy risks but are necessary for particular analyses -- can be distributed as a separate file and joined back into the data later.
 
@@ -169,28 +130,19 @@ Regardless of what specific documentation you keep, it's critical to create some
 
 Data come in many forms, but chances are that at some point during your project you will end up with a spreadsheet full of information. Well-organized spreadsheets cam mean the difference between project success and failure! A wonderful article by @broman2018 lays out principles of good spreadsheet design. We highlight some of their principles here (with our own, opinionated ordering):
 
-```{r management-broman-nonrect}
-#| label: fig-management-broman-nonrect
-#| fig-cap: "Examples of non-rectangular spreadsheet formats that are likely to cause problems in analysis. From @broman2018."
-
-knitr::include_graphics("images/management/broman2018.png")
-```
+![Examples of non-rectangular spreadsheet formats that are likely to cause problems in analysis. From @broman2018.](images/management/broman2018.png){#fig-management-broman-nonrect .margin-caption}
 
 1. *Make it a rectangle*.^[Think of your data like a well-ordered plate of sushi, neatly packed together without any gaps.] Nearly all data analysis software, like SPSS, Stata, Jamovi and JASP (and many R packages), require data to be in a tabular format.^[Tabular data is a precursor to "tidy" data, which we describe in more detail in Appendix @sec-tidyverse.] If you are used to analyzing data exclusively in a spreadsheet, this kind of tabular data isn't quite as readable, but readable formatting gets in the way of almost any analysis you want to do. @fig-management-broman-nonrect gives some examples of non-rectangular spreadsheets. All of these will cause any analytic package to choke because of inconsistencies in how rows and columns are used!
 
-2. *Choose good names for your variables*. No one convention for name formatting is best, but it's important to be consistent. We tend to follow the [tidyverse style guide](https://style.tidyverse.org) and use lowercase words separated by underscores (`_`). It's also helpful to give units where these are available, e.g., are reaction times in seconds or milliseconds. @tbl-management-broman-ex gives some examples of good and bad variable names. 
+2. *Choose good names for your variables*. No one convention for name formatting is best, but it's important to be consistent. We tend to follow the [tidyverse style guide](https://style.tidyverse.org) and use lowercase words separated by underscores (`_`). It's also helpful to give units where these are available, e.g., are reaction times in seconds or milliseconds. @tbl-broman-ex gives some examples of good and bad variable names. 
 
-```{r management-broman-ex}
-#| label: tbl-management-broman-ex
-#| tbl-cap: "Examples of good and bad variable names. Adapted from @broman2018."
+| Good name  | Good alternative | Avoid                     |
+|------------|------------------|---------------------------|
+| subject_id | SubID            | subject #                 |
+| sex        | female           | M/F                       |
+| rt_msec    | reaction_time_ms | reaction time (millisec.) |
 
-names <- tribble(~`Good name`, ~`Good alternative`, ~`Avoid`,
-                 "subject_id", "SubID", "subject #",
-                 "sex", "female", "M/F",
-                 "rt_msec","reaction_time_ms", "reaction time (millisec.)")
-
-kable(names)
-```
+: Examples of good and bad variable names. Adapted from @broman2018. {#tbl-broman-ex}
 
 3. *Be consistent with your cell formatting*. Each column should have one *kind* of thing in it. For example, if you have a column of numerical values, don't all of a sudden introduce text data like "missing" into one of the cells. This kind of mixing of data types can cause havoc down the road. Mixed or multiple entries also don't work, so don't write "0 (missing)" as the value of a cell. Leaving cells blank is also risky because it is ambiguous. Most software packages have a standard value for missing data (e.g. `NA` is what R uses). If you are writing dates, please be sure to use the "global standard" (ISO 8601), which is YYYY-MM-DD. Anything else can be misinterpreted easily.^[Dates in Excel deserve special mention as a source of terribleness. Excel has an unfortunate habit of interpreting information that has nothing to do with dates as dates, destroying the original content in the process. Excel's issue with dates has caused unending horror in the genetics literature, where gene names are automatically converted to dates, sometimes without the researchers noticing [@ziemann2016]. In fact, some gene names have had to be changed in order to avoid this issue!]
 
@@ -231,13 +183,7 @@ The moral of the story: Obscure variable names can hide existing errors and crea
 
 Even the best-organized tabular data are not always easy to understand by other researchers, or even yourself, especially after some time has passed. For that reason, you should make a **codebook** (also known as a **data dictionary**) that explicitly documents what each variable is. @fig-management-mb-codebook shows an example codebook for the trial-level data in the bottom of @fig-management-mb-datafiles. Each row represents one variable in the associated dataset. Codebooks often describe what type of variable a column is (e.g., numeric, string), and what values can appear in that column. A human-readable explanation is often given as well, providing providing units (e.g., "seconds") and a translation of numeric codes (e.g., "test condition is coded as 1") where relevant.
 
-```{r management-mb-codebook}
-#| label: fig-management-mb-codebook
-#| fig-cap: "Codebook for trial-level data (see above) from the ManyBabies (2020) case study."
-
-# https://stackoverflow.com/questions/62516742/create-multi-panel-figure-using-png-jpeg-images
-knitr::include_graphics("images/management/mb1-codebook.png")
-```
+![Codebook for trial-level data (see above) from the ManyBabies (2020) case study.](images/management/mb1-codebook.png){#fig-management-mb-codebook .margin-caption}
 
 Creating a codebook need not require a lot of work. Almost any documentation is better than nothing! There are also several R packages that can automatically generate a codebook for you, for example `codebook`, `dataspice`, and `dataMaid` [@arslan2019]. Adding a codebook can substantially increase the reuse value of the data and prevent hours of frustration as future you and others try to decode your variable names and assumptions.
 
@@ -260,6 +206,8 @@ The EU's GDPR also allows fully anonymized data sharing, with one big complicati
 
 De-identification is not always enough. As datasets get richer, **statistical reidentification risks** go up substantially such that, with a little bit of outside information, data can be matched with a unique individual. These risks are especially high with linguistic, physiological, and geospatial data, but they can be present even for simple behavioral experiments. In one influential demonstration, knowing a person's location on two occasions was often enough to identify their data uniquely in a huge database of credit card transactions [@de-montjoye2015].^[For an example closer to home, many of the contributing labs in the ManyBabies project logged the date of test for each participant. This useful and seemingly innocuous piece of information is unlikely to identify any particular participant -- but alongside a social media post about a lab visit or a dataset about travel records, it could easily reveal a particular participant's identity.] Thus, simply removing fields from the data is a good starting point -- but if you are collecting richer data about participants' behavior you may need to consult an expert. 
 
+Privacy issues are ubiquitous in data sharing, and almost every experimental research project will need to solve them before sharing data. For simple projects, often these are the only issues that preclude data sharing. However, in more complex projects, other concerns can arise. Funders may have specific mandates regarding where your data should be shared. Data use agreements or collaborator preferences may restrict where and when you can share. And certain data types require much more sensitivity since they are more consequential than, say, the reaction times on a Stroop task. We include here a set of questions to walk through to plan your sharing (@fig-management-sharing-chart). When in doubt, it's often a good idea to consult with the relevant local authority, e.g. your IRB for ethical issues or your research management office for regulatory issues.
+
 ::: {.callout-note title="ethical considerations"}
 ## Really anonymous? {-}
 
@@ -270,14 +218,7 @@ First, we discovered that MTurk IDs were in some cases linked to study participa
 Then, a little later we received an irate email from an MTurk participant who had discovered their data on github via a search for their MTurk ID. Although they were not identified in this dataset, it convinced us that at least some participants would not like this ID shared. After another consultation with the IRB, we apologized to this individual and removed their and others' IDs from our github commit histories across that and other repositories. Prior to posting data, we now take care to anonymize IDs by creating a secret mapping between the IDs we post and the actual MTurk IDs. 
 :::
 
-```{r management-sharing-chart}
-#| label: fig-management-sharing-chart
-#| fig-cap: "A decision chart for thinking about sharing research products. Adapted from @klein2018."
-
-knitr::include_graphics("images/management/kline2.png")
-```
-
-Privacy issues are ubiquitous in data sharing, and almost every experimental research project will need to solve them before sharing data. For simple projects, often these are the only issues that preclude data sharing. However, in more complex projects, other concerns can arise. Funders may have specific mandates regarding where your data should be shared. Data use agreements or collaborator preferences may restrict where and when you can share. And certain data types require much more sensitivity since they are more consequential than, say, the reaction times on a Stroop task. We include here a set of questions to walk through to plan your sharing (@fig-management-sharing-chart). When in doubt, it's often a good idea to consult with the relevant local authority, e.g. your IRB for ethical issues or your research management office for regulatory issues.
+![A decision chart for thinking about sharing research products. Adapted from @klein2018.](images/management/kline2.png){#fig-management-sharing-chart .margin-caption}
 
 ### Where and how to share: the FAIR principles
 
@@ -288,7 +229,7 @@ Privacy issues are ubiquitous in data sharing, and almost every experimental res
 
 For shared research products^[Most of this discussion is about data, because that's where the community has focused its efforts. That said, almost everything here applies to other research products as well!] to be usable by others, they should meet the FAIR standard by being Findable, Accessible, Interoperable, and Reusable [@wilkinson2016]. 
 
-* **Findable** products are easily discoverable to both humans and machines. That means linking to them in research reports using unique persistent identifiers (e.g. a digital object identifier [DOI]).^[DOIs are those long URL-like things that are often used to link to papers. Turns out they can also be associated with datasets and other research products. Critically, they are guaranteed to work to find stuff, whereas standard web URLs often go stale after several years when people refactor their website. Most online repositories, like the Open Science Framework, will issue DOIs for the research products you store there.] and attaching them with meta-data describing what they are so they can be indexed by search engines. 
+* **Findable** products are easily discoverable to both humans and machines. That means linking to them in research reports using unique persistent identifiers (e.g. a digital object identifier [DOI]).^[DOIs are those long URL-like things that are often used to link to papers. Turns out they can also be associated with datasets and other research products. Critically, they are guaranteed to work to find stuff, whereas standard web URLs often go stale after several years when people refactor their website. Most online repositories, like the Open Science Framework, will issue DOIs for the research products you store there.] and attaching them with metadata describing what they are so they can be indexed by search engines. 
 * **Accessibility** means that research products need to be preserved across the long-term and are retrievable via their standardized identifier. 
 * **Interoperability** means that the research products needs to be in a format that people and machines (e.g., search engines and analysis software) can understand. 
 * **Reusable** means that the research products need to be well organized, documented, and licensed so that others know how to use them.
@@ -313,7 +254,7 @@ All of the hard work you put into your experiments -- not to mention the contrib
 <!-- TODO: Barriers to adoption of transparent practices. -->
 
 <!-- ::: {.callout-note title="accident report"} -->
-## Security practices for databases (how not to get hit by a ransomware attack)
+<!-- ## Security practices for databases (how not to get hit by a ransomware attack) -->
 
 <!-- ::: -->
 
@@ -327,4 +268,4 @@ All of the hard work you put into your experiments -- not to mention the contrib
 * A more in-depth tutorial on various aspects of scientific openness: Klein, O., Hardwicke, T. E., Aust, F., Breuer, J., Danielsson, H., Hofelich Mohr, A., Ijzerman, H., Nilsonne, G., Vanpaemel, W., & Frank, M. C. (2018). A practical guide for transparency in psychological science. *Collabra: Psychology*, *4*, 20. <https://doi.org/10.1525/collabra.158>.
 :::
 
-\refs
+<!-- \refs -->
