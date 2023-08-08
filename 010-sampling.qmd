@@ -25,7 +25,7 @@ Since Darwin, scientists have assumed that smell is a vestigial sense in humans 
 
 So, would it be a good generalization about human beings -- all people -- that olfaction as a sense is de-emphasized relative to, say, vision? This inference has a classic sample-to-population structure. Within several samples of participants using widely-spoken languages, we observe limited and inconsistent vocabulary for smells, as well as poor discrimination. We use these samples to license an inference to the population -- in this case, the entire human population. 
 
-![Data from @majid2014 on the consistency of color and odor naming in English and Jahai speakers. Higher values indicate more consistent descriptions. Pie charts indicate the type of language being used.](images/sampling/majid2014.png){#fig-sampling-majid2014}
+![Data from @majid2014 on the consistency of color and odor naming in English and Jahai speakers. Higher values indicate more consistent descriptions. Pie charts indicate the type of language being used.](images/sampling/majid2014.png){#fig-sampling-majid2014 width="40%"}
 
 But these inferences about the universal lack of olfactory vocabulary are likely based on choosing non-representative samples! Multiple hunter-gatherer groups appear to have large vocabularies for consistent smell description. For example, the Jahai, a hunter-gatherer group on the Malay Peninsula, have a vocabulary that includes at least twelve words for distinct odors, for example /cŋεs/, which names odors with a "stinging smell" like gasoline, smoke, or bat droppings. When Jahai speakers are asked to name odors, they produce shorter and much more consistent descriptions than English speakers -- in fact, their smell descriptions were as consistent as their color descriptions (@fig-sampling-majid2014). Further studies implicate the hunter-gatherer lifestyle as a factor: while several hunter-gatherer groups show good odor naming, nearby horticulturalist groups don't [@majid2018].
 
@@ -63,19 +63,16 @@ A simple random sample from this heterogeneous population *will* yield statistic
 <!-- [MM: Fine-grained edit, but we usually talk about estimates' asymptotic behavior, not samples' asymptotic behavior.].  -->
 But it will do so more slowly than ideal because any given sample may over- or under-sample non-drinkers just by chance. In a small sample, if you happen to get too many non-coffee drinkers, your estimate of attitudes will be biased downward; if you happen to get too few, you will be biased upwards. All of this will come out in the wash eventually, but any individual sample (especially a small one) will be noisier than ideal. 
 
-```{r sampling-stratified}
-#| label: fig-sampling-stratified
-#| fig-cap: "Illustration of stratified sampling. The left panel shows the sampling frame. The upper frames show the sampling frame stratified by a participant characteristic and a stratified sample. The lower frame shows a simple random sample, which happens to omit one group completely by chance."
-
-knitr::include_graphics("images/sampling/stratified-sample2.png")
-```
-
 **Stratified sampling** is a very useful trick that makes your effect estimates more precise in cases like this one [@neyman1992]. If you know the proportion of frequent, infrequent, or non-coffee drinkers in the population, you can sample within those subpopulations to ensure that your sample is representative along this dimension. This situation is pictured in @fig-sampling-stratified), which shows how a particular sampling frame can be broken up into groups for stratified sampling (top). The result is a sample that matches the population proportions on a particular characteristic. In contrast, a simple random sample (bottom can over- or under-sample the subgroups by chance.
+
+![Illustration of stratified sampling. The left panel shows the sampling frame. The upper frames show the sampling frame stratified by a participant characteristic and a stratified sample. The lower frame shows a simple random sample, which happens to omit one group completely by chance.](images/sampling/stratified-sample2.png){#fig-sampling-stratified .margin-caption}
+
+Stratified sampling can lead to substantial gains in the precision of your estimate. These gains are most prominent when either the groups differ a lot in their mean or when they differ a lot in their variance.^[There are several important refinements of stratified sampling in case you think these methods are important for your problem. In particular, **optimal sampling** can help you figure out how to over-sample groups with higher variance.] On the other hand, if the characteristic on which you stratify participants doesn't relate to your outcome at all, then estimates from stratified sampling converge just as fast as random sampling (though it's a bit more of a pain to implement). @fig-sampling-stratified-sim shows a simulation of the scenario in @fig-sampling-stratified, in which each coffee preference group has a different tea attitude mean, and the smallest group has the biggest variance. Although the numbers here are invented, it's clear that estimation error is much smaller in the stratified group and estimation error declines much more quickly as samples get larger. 
 
 ```{r sampling-stratified-sim}
 #| label: fig-sampling-stratified-sim
 #| fig-cap: "Simulation showing the potential benefits of stratification. Each dot is an estimated mean for a sample of a particular size, sampled randomly or with stratification. Red points show the mean and standard deviation of sample estimates."
-#| column: margin
+#| fig-cap-location: margin
 
 # rare_prop1 = .3
 # rare_prop2 = .1
@@ -84,25 +81,27 @@ common_mean = -1
 rare_mean1 = 0
 rare_mean2 = 2.5
 pop = 10000
-population <- tibble(measure = c(rnorm(mean = common_mean , n = pop * .5, sd= .25),
-                                 rnorm(mean = rare_mean1, n = pop * .3, sd= .25),
-                                 rnorm(mean = rare_mean2, n = pop * .2, sd= 2)),
-                     group = c(rep("common", pop * .5), 
-                               rep("rare1", pop * .3),
-                               rep("rare2", pop * .2)))
+population <- tibble(
+  measure = c(rnorm(mean = common_mean , n = pop * .5, sd= .25),
+              rnorm(mean = rare_mean1, n = pop * .3, sd= .25),
+              rnorm(mean = rare_mean2, n = pop * .2, sd= 2)),
+  group = c(rep("common", pop * .5), 
+            rep("rare1", pop * .3),
+            rep("rare2", pop * .2)))
 
 sims <- expand_grid(n_total = c(10, 25, 50, 100, 250), 
             sim = 1:100, 
             sample = c("Stratified","Random")) |>
   rowwise() |>
-  mutate(data = ifelse(sample == "Random", 
-                       list(sample_n(population, n_total)),
-                       list(bind_rows(sample_n(filter(population, group == "common"), 
-                                               n_total * .5),
-                                      sample_n(filter(population, group == "rare1"),
-                                               n_total * .3),
-                                      sample_n(filter(population, group == "rare2"),
-                                               n_total * .2))))) |>
+  mutate(data = ifelse(
+    sample == "Random", 
+    list(sample_n(population, n_total)),
+    list(bind_rows(sample_n(filter(population, group == "common"), 
+                            n_total * .5),
+                   sample_n(filter(population, group == "rare1"),
+                            n_total * .3),
+                   sample_n(filter(population, group == "rare2"),
+                            n_total * .2))))) |>
   unnest(cols = c(data)) |>
   group_by(n_total, sim, sample) |>
   summarise(mean = mean(measure)) 
@@ -119,8 +118,6 @@ ggplot(sims, aes(x = n_total, y = mean)) +
   ylab("Mean") +
   xlab("Total sample size (N)")
 ```
-
-Stratified sampling can lead to substantial gains in the precision of your estimate. These gains are most prominent when either the groups differ a lot in their mean or when they differ a lot in their variance.^[There are several important refinements of stratified sampling in case you think these methods are important for your problem. In particular, **optimal sampling** can help you figure out how to over-sample groups with higher variance.] On the other hand, if the characteristic on which you stratify participants doesn't relate to your outcome at all, then estimates from stratified sampling converge just as fast as random sampling (though it's a bit more of a pain to implement). @fig-sampling-stratified-sim) shows a simulation of the scenario in @fig-sampling-stratified, in which each coffee preference group has a different tea attitude mean, and the smallest group has the biggest variance. Although the numbers here are invented, it's clear that estimation error is much smaller in the stratified group and estimation error declines much more quickly as samples get larger. 
 
 Stratification is everywhere, and it's useful even in convenience samples. For example, researchers who are interested in development typically stratify their samples across ages (e.g., recruiting equal numbers of two- and three-year-olds for a study of preschoolers). You can estimate developmental change in a pure random sample, but you are guaranteed good coverage of the range of interest when you stratify. 
 
@@ -152,12 +149,7 @@ Let's think through a very simple version of this argument. Say we have an exper
 
 <!-- [MM: Until here, "measure" seemed to mean "outcome", but in this figure I guess it means "effect size"? I guess this figure is about population moments rather than effects, but the labels "homogeneous effect" and "heterogeneous effect" confused me a little.] -->
 
-```{r sampling-heterogeneity}
-#| label: fig-sampling-heterogeneity
-#| fig-cap: "Illustration of the interaction of heterogeneity and convenience samples. Left hand panels show sample composition. Individual plots show the weighted [MM; Why weighted? Aren't these just distributions conditional on each level of the effect modifier?] distribution of responses on some measure."
-
-knitr::include_graphics("images/sampling/heterogeneity.png")
-```
+![Illustration of the interaction of heterogeneity and convenience samples. Left hand panels show sample composition. Individual plots show the weighted [MM; Why weighted? Aren't these just distributions conditional on each level of the effect modifier?] distribution of responses on some measure.](images/sampling/heterogeneity.png){#fig-sampling-heterogeneity .margin-caption}
 
 @fig-sampling-heterogeneity) illustrates this argument more broadly. If you have a random sample (top), then your sample mean and your population mean will converge to the same value, regardless of whether the effect is homogeneous (right) or heterogeneous (right). That's the beauty of sampling theory.^[You do get faster convergence if you stratify the sample, though -- that's precisely what our simulation above showed.] If you have a convenience sample (bottom, one part of the population is over-represented in the sample. The convenience sample doesn't cause problems if the effect is homogeneous in the population -- as with the case of smoodling or Stroop. The trouble comes when you have a heterogeneous effect. 
 <!-- [MM: Here too, not sure if "effect" is the right term since this is just a population moment] -->
@@ -181,13 +173,7 @@ In fields like econometrics or epidemiology that use observational methods to es
 
 Imagine you want to measure the association between money and happiness through a (non-experimental) survey. As we discussed in @sec-experiments, there are plenty of causal processes that could lead to this association. @fig-sampling-money) shows several of these scenarios. Money could truly cause happiness (1); happiness could cause you to make more money (2); or some third factor -- say having lots of friends -- could cause people to be happier *and* richer (3.  
 
-```{r sampling-money}
-#| label: fig-sampling-money
-#| fig-cap: "Four reasons why money and happiness can be correlated in a particular sample: 1. causal relationship, 2. reverse causality, 3. confounding with friendship, and 4. collider bias. For this last scenario, we have to assume that our measurement is *conditioned* on being in this sample, meaning we only look at the association of money and happiness within the social services sample."
-#| column: margin
-
-knitr::include_graphics("images/sampling/money3-drawing.png")
-```
+![Four reasons why money and happiness can be correlated in a particular sample: 1. causal relationship, 2. reverse causality, 3. confounding with friendship, and 4. collider bias. For this last scenario, we have to assume that our measurement is *conditioned* on being in this sample, meaning we only look at the association of money and happiness within the social services sample.](images/sampling/money3-drawing.png){#fig-sampling-money .column-margin}
 
 But we can also create spurious associations if we are careless in our sampling. One prominent problem that we can induce is called **collider bias**. Suppose we recruited our sample from the clients of a social services agency. Unfortunately, both of our variables might affect presence in a social service agency (@fig-sampling-money), 4): people might be interacting with the agency for financial or benefits assistance, or else for psychological services (perhaps due to depression). Being in a social services sample is called a **collider** variable because the two causal arrows *collide* into it (they both point to it. 
 
@@ -205,13 +191,8 @@ But doing your study in this sample raises a number of issues. First, the sample
 Attrition on its own can be a threat to the generalizability of an experimental estimate. Imagine you do an experiment comparing a new very intense after-school math curriculum to a control curriculum in a sample of elementary school children over the course of a year. By the end of the year, suppose many of your participants have dropped out. The families who have stayed in the study are likely those who care most about math. Even if you see an effect of the curriculum intervention, this effect may generalize only to children in families who love math. 
 
 <!-- [MM: I don't understand this figure. Given the story above, which sounds like it is just about generalizability problems due to effect modification by a pre-intervention baseline characteristic, I didn't expect an arrow from intervention to math interest. Can you remove it?] -->
-```{r sampling-attrition}
-#| label: fig-sampling-attrition
-#| fig-cap: "Selective attrition can lead to a bias even in the presence of random assignment."
-#| column: margin
 
-knitr::include_graphics("images/sampling/attrition-drawing.png")
-```
+![Selective attrition can lead to a bias even in the presence of random assignment.](images/sampling/attrition-drawing.png){#fig-sampling-attrition .column-margin}
 
 But there is a further problem with attrition. If one of your conditions leads to more attrition than the other, you can have a bias that confounds your conclusions, even in the presence of random assignment [@nunan2018]! 
 <!-- MM: Pet peeve, but "confound" should not be used interchangeably for "confounding" (a precise structural concept) and "any arbitrary bias". What's described here is not confounding. -->
@@ -233,30 +214,19 @@ The simplest stopping rule is "I'll collect data until I get to a target $N$" --
 
 A common justification for power analyses relies on knowing what size effect you are expecting, which is often an unrealistic assumption. If we knew what size effect we expected, wouldn't we already have the information that we are conducting the experiment to get?
 
-```{r sampling-stopping-rules}
-#| label: tbl-sampling-stopping-rules
-#| tbl-cap: "Types of data collection stopping rules."
 
-tribble(~` `, ~Method, ~`Stopping Rule`, ~Example,
-        1, "Power analysis", "Stop at N for known probability of rejecting the null given known effect size", "Randomized trial with strong expectations about effect size", 
-        2, "Resource constraint", "Stop collecting data after a certain amount of time or after a certain amount of resources are used", "Time-limited field work",
-        3, "Smallest effect size of interest", "Stop at N for known probability of rejecting the null for effects greater than some minimum", "Measurement of a theoretically important effect with unknown magnitude",
-        4, "Precision analysis", "Stop at N that provides some known degree of precision in measure", "Experimental measurement to compare with predictions of cognitive models",
-        5, "Sequential analysis", "Stop when a known inferential criterion is reached", "Intervention trial designed to accept or reject null with maximal efficiency") |>
-        kable(table.envir = "table*")
-```
 
-In fact, there are many different stopping rules that can be used to justify a sample size (@tbl-sampling-stopping-rules). Each of these can provide a valid justification for a particular sample size, but they are most useful in different situations. We'll first introduce classic power analysis both because it is a common standard and because it illustrates some of the concepts used in others. 
+In fact, there are many different stopping rules that can be used to justify a sample size (@tbl-stopping-rules). Each of these can provide a valid justification for a particular sample size, but they are most useful in different situations. We'll first introduce classic power analysis both because it is a common standard and because it illustrates some of the concepts used in others. 
+
+\footnotesize
+\renewcommand{\arraystretch}{2}
+{{< include md/010-sampling/stopping-rules.md >}}
+\renewcommand{\arraystretch}{1}
+\normalsize
 
 ### Classic power analysis
 
-```{r sampling-neyman-pearson}
-#| label: fig-sampling-neyman-pearson
-#| fig-cap: "Standard decision matrix for NHST. The lower-left hand quadrant shows power to reject the null."
-#| column: margin
-
-knitr::include_graphics("images/sampling/power-alpha.png")
-```
+![Standard decision matrix for NHST. The lower-left hand quadrant shows power to reject the null.](images/sampling/power-alpha.png){#fig-sampling-neyman-pearson .column-margin}
 
 Let's start by reviewing the null-hypothesis significance testing paradigm that we introduced in @sec-inference. Recall that we introduced a decision-theoretic view of testing in @sec-neyman-pearson, shown again in @fig-sampling-neyman-pearson. The idea was that we've got some null hypothesis $H_0$ and some alternative $H_1$ -- something like "no effect" and "yes, there is some effect with known size"-- and we want to use data to decide which state we're in. $\alpha$ is our criterion for rejecting the null, conventionally set to $\alpha=.05$. 
 
@@ -266,13 +236,7 @@ Let's try to quantify our willingness to *miss* the effect -- the false negative
 
 We can only compute power if we know the effect size for the alternative hypothesis. If the alternative hypothesis is a small effect, then the probability of rejecting the null will typically be low (unless the sample size is very large). In contrast, if the alternative hypothesis is a large effect, then the probability of rejecting the null will be higher. 
 
-
-```{r sampling-power}
-#| label: fig-sampling-power
-#| fig-cap: "Illustration of how larger sample sizes lead to greater power."
-
-knitr::include_graphics("images/sampling/power.png")
-```
+![Illustration of how larger sample sizes lead to greater power.](images/sampling/power.png){#fig-sampling-power .margin-caption}
 
 The same dynamic holds with sample size: the same effect size will be easier to detect with a larger sample size than with a small one. @fig-sampling-power) shows how this relationship works. A large sample size creates a tighter null distribution (right side by reducing sampling error. A tighter null distribution means you can reject the null more of the time based on the variation in a true effect. If your sample size is too small to detect your effect much of the time, we call this being **under-powered**.^[You can also refer to a design as **over-powered**, though we object slightly to this characterization, since the value of large datasets is typically not just to reject the null but also to measure an effect with high precision and to investigate how it is moderated by other characteristics of the sample.]
  
@@ -328,17 +292,11 @@ Let's now consider some alternatives to classic power analysis that can still yi
 
 In sum, there are many different ways of justifying your sample size or your stopping rule. The most important things are 1) to pre-specify your strategy and 2) to give a clear justification for your choice. @tbl-sampling-justification gives an example sample size justification that draws on several different concepts discussed here, using classical power computations as one part of the justification. A reviewer could easily follow the logic of this discussion and form their own conclusion about whether this study had an adequate sample size and whether it should have been conducted given the researchers' constraints. 
 
-```{r sampling-justification}
-#| label: tbl-sampling-justification
-#| tbl-cap: "Example sample size justification, referencing elements of SESOI, resource-limitation, and power-based reasoning."
-
-tribble(~`Element`,~`Justification Text`,
-        "Background", "We did not have strong prior information about the likely effect size, so we could not compute a classical power analysis.", 
-        "Smallest effect of interest", "Because of our interest in meaningful factors affecting word learning, we were interested in effect sizes as small as d=.5.",
-        "Resource limitation", "We were also limited by our ability to collect data only at our on-campus preschool.",
-        "Power computation", "We calculated that based on our maximal possible sample size of N=120 (60 per group), we would achieve at least 80% power to reject the null for effects as small as d = .52.") |>
-  kable(table.envir = "table*")
-```
+\footnotesize
+\renewcommand{\arraystretch}{2}
+{{< include md/010-sampling/sampling-justification.md >}}
+\renewcommand{\arraystretch}{1}
+\normalsize
 
 ::: {.callout-note title="depth"}
 ## Sample sizes for replication studies {-}
@@ -384,4 +342,4 @@ Questions about generalizability and sampling depend on the precise construct yo
 * A very accessible introduction to power analysis from its originator: Cohen, J. (1992) A power primer. *Psychological Bulletin,* 112, 155-9. 
 :::
 
-\refs
+<!-- \refs -->

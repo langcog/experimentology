@@ -27,7 +27,7 @@ Anyone who has worked with little children, or had children of their own, can at
 
 Because bringing children into a lab can be expensive, one popular alternative option for measuring child language is the MacArthur Bates Communicative Development Inventory (CDI for short), a form which asks parents to mark words that their child says or understands. CDI forms are basically long checklists of words. But is parent report a reliable or valid measure of children's early language?
 
-![Longitudinal correlations between a child's score on one administration of the CDI and another one several months later. From @frank2021.](images/measurement/psycho-cors2.png){#fig-measurement-psycho-cors}
+![Longitudinal correlations between a child's score on one administration of the CDI and another one several months later. From @frank2021.](images/measurement/psycho-cors2.png){#fig-measurement-psycho-cors width="50%"}
 
 As we'll see below, one way to measure the reliability of the CDI to compute the correlation between two different administrations of the form for the same child. Unfortunately, this analysis has one issue: the longer you wait between observations the more the child has changed! @fig-measurement-psycho-cors displays these correlations for two CDIs, showing how correlations start off high and drop off as the gap between observations increases [@frank2021]. 
 
@@ -43,26 +43,13 @@ The combination of reliability and validity evidence suggests that CDIs are a us
 
 ## Reliability
 
-```{r measurement-brandmaier}
-#| label: fig-measurement-brandmaier
-#| fig-cap: "Reliability and validity visualized. The reliability of an instrument is its expected precision. The bias of measurements from an instrument also provide a metaphor for its validity."
-#| column: margin
-
-knitr::include_graphics("images/measurement/reliability-validity.png")
-```
+![Reliability and validity visualized. The reliability of an instrument is its expected precision. The bias of measurements from an instrument also provide a metaphor for its validity.](images/measurement/reliability-validity.png){#fig-measurement-brandmaier .column-margin}
 
 Reliability is a way of describing the extent to which a measure yields signal relative to noise. Intuitively, if there's less noise, then there will be more similarity between different measurements of the same quantity, illustrated in @fig-measurement-brandmaier as a tighter grouping of points on the bulls-eye. But how do we measure signal and noise? 
 
 ### Measurement scales
 
-
-```{r measurement-cv}
-#| label: fig-measurement-cv
-#| fig-cap: "Computing the coefficient of variation (CV)."
-#| column: margin
-
-knitr::include_graphics("images/measurement/cv.png")
-```
+![Computing the coefficient of variation (CV).](images/measurement/cv.png){#fig-measurement-cv .column-margin}
 
 In the physical sciences, it's common to measure the precision of an instrument by quantifying its coefficient of variation [@brandmaier2018]: 
 
@@ -72,26 +59,13 @@ $$CV = \frac{\sigma_w}{\mu_w}$$
 
 Imagine we measure the height of a person five times, resulting in measurements of 171cm, 172cm, 171cm, 173cm, and 172cm. These are the combination of the person's true height (we assume they have one!) and some **measurement error**. Now we can use these measurements to compute the coefficient of variation, which is `r round(sd(c(171,172,171,173,172))/mean(c(171,172,171,173,172)),digits =3)`, suggesting very limited variability relative to the overall quantity being measured. Why can't we just do this same thing with psychological measurements? 
 
-
-```{r measurement-stevens-table}
-#| label: tbl-measurement-stevens-table
-#| tbl-cap: "@stevens1946 table of scale types and their associated operations and statistics."
-
-# stevens <- tribble(~Scale, ~Definition, ~Operations, ~Statistics, 
-tribble(~Scale, ~Definition, ~Operations, ~Statistics, 
-        "Nominal", "Unordered list","Equality","Mode",
-        "Ordinal","Ordered list","Greater than or less than", "Median",
-        "Interval", "Numerical","Equality of intervals", "Mean, SD",
-        "Ratio", "Numerical with zero", "Equality of ratios","Coefficient of variation")
-
-# kable(stevens, escape = FALSE,
-#       table.envir = "table*")
-```
-
+\footnotesize
+{{< include md/008-measurement/stevens.md >}}
+\normalsize
 
 Thinking about this question takes us on a detour through the different kinds of measurement scales used in psychological research [@stevens1946]. The height measurements in our example are on what is known as a **ratio** scale: a scale in which numerical measurements are equally spaced and on which there is a true zero point. These scales are common for physical quantities but somewhat less frequent in psychology (with reaction times as a notable exception). More common are **interval** scales, in which there is no true zero point. For example, IQ (and other standardized scores) are intended to capture interval variation on some dimension but 0 is meaningless -- an IQ of 0 does not correspond to any particular interpretation.^[It can actually be shown in a suitably rigorous sense that ratio and interval scales (and another lying in between) are the *only* scales possible for the real numbers [@narens1986measurement].] 
 
-**Ordinal** scales are also commonly used. These are scales that are ordered but are not necessarily spaced equally. For example, levels of educational achievement ("Elementary", "High school", "Some college", "College", "Graduate school") are ordered, but there is no sense in which "High school" is as far from "Elementary" as "Graduate school" is from "College." The last type in Stevens' hierarchy is **nominal** scales, in which no ordering is possible either. For example, race is an unordered scale in which multiple categories are present but there is no inherent ordering of these categories. The full hierarchy is presented in @tbl-measurement-stevens-table.
+**Ordinal** scales are also commonly used. These are scales that are ordered but are not necessarily spaced equally. For example, levels of educational achievement ("Elementary", "High school", "Some college", "College", "Graduate school") are ordered, but there is no sense in which "High school" is as far from "Elementary" as "Graduate school" is from "College." The last type in Stevens' hierarchy is **nominal** scales, in which no ordering is possible either. For example, race is an unordered scale in which multiple categories are present but there is no inherent ordering of these categories. The full hierarchy is presented in @tbl-stevens.
 
 Critically, different summary measures work for each scale type. If you have an unordered list like a list of options for a question about race on a survey, you can present the modal response (the most likely one). It doesn't even make sense to think about what the median was -- there's no ordering! For ordered levels of education, a median is possible but you can't compute a mean. And for interval variables like "number of correct answers on a math test" you can compute a mean and a standard deviation.^[You might be tempted to think that "number of correct answers" is a ratio variable -- but is zero really meaningful? Does it truly correspond to "no math knowledge" or is it just a stand-in for "less math knowledge than this test requires"?] 
 
@@ -128,7 +102,7 @@ It just didn't make sense to break up people's sensations into parts the way we 
 Even the intuitive additive logic of @donders1969's "method of subtraction" for measuring the speed of mental processes was viewed skeptically on the same grounds by the time of the committee (e.g., in an early textbook, @woodworth1938 claimed "we cannot break up the reaction into successive acts and obtain the time for each act.")
 
 The primary target of the Ferguson Committee's investigation was the psychologist S. S. Stevens, who had claimed to measure the sensation of loudness using psychophysical instruments.
-Exiled from classical frameworks of measurement, he went about developing an alternative "operational" framework [@stevens1946], where the classical ratio scale recognized by physicists was only one of several ways of assigning numbers to things (see @tbl-measurement-stevens-table below).
+Exiled from classical frameworks of measurement, he went about developing an alternative "operational" framework [@stevens1946], where the classical ratio scale recognized by physicists was only one of several ways of assigning numbers to things (see @@tbl-stevens below).
 Stevens' framework quickly spread, leading to an explosion of proposed measures. 
 However, operationalism remains controversial outside psychology [@michell1999measurement].
 The most extreme version of Steven's stance ("measurement is the assignment of numerals to objects or events according to rule") permits researchers to *define* constructs operationally in terms of a measure [@hardcastle1995ss]. 
@@ -168,13 +142,7 @@ This all sounds great, except for one problem: we can't compute reliability usin
 
 There are two main approaches to computing reliability from data. Each of them makes an assumption that lets you circumvent the fundamental issue, which is that you only have access to observed scores and not true scores. Let's think these through in the context of a math test. 
 
-```{r measurement-trt}
-#| label: fig-measurement-trt
-#| fig-cap: "Computing test-retest reliability."
-#| column: margin
-
-knitr::include_graphics("images/measurement/trt.png")
-```
+![Computing test-retest reliability.](images/measurement/trt.png){#fig-measurement-trt .column-margin}
 
 **Test-retest reliability**. Imagine you have two parallel versions of your math test that are the same difficulty. Hence, you think a student's score on either one will reflect the same true score, modulo some noise. In that case, you can use these two sets of observed scores ($o_1$ and $o_2$) to compute the reliability of the instrument by simply computing the correlation between them ($\rho_{o_1, o_2}$). The logic is that, if both variants reflect the same true score, then the shared variance (**covariance**) between them is just $\sigma^2_t$, the true score variance, which is the variable that we wanted but didn't have. Test-retest reliability is thus a very convenient way to measure reliability (@fig-measurement-trt).
 
@@ -245,24 +213,11 @@ On the other hand, users of the CDI must avoid challenges to the internal validi
 
 Experimentalists sometimes have a tendency to make up ad hoc measures on the fly. It's fine to invent new measures, but the next step is to think about what evidence there is that it's valid! @tbl-flake-questions gives a set of questions to guide thoughtful reporting of measurement practices [adapted from @flake2020].
 
-```{r flake-questions}
-#| label: tbl-flake-questions
-#| tbl-cap: "Questions about measurement that every reseacher should answer in their paper. Adapted from @flake2020."
-
-# Questions about validity. From @flake2020.
-# flake <- tribble(~Question, ~`Information to Report`,
-tribble(~Question, ~`Information to Report`,
-                 "What is your construct?", "Define construct, describe theory and research.",
-                 "What measure did you use to operationalize your construct?", "Describe measure and justify operationalization.",
-                 "Did you select your measure from the literature or create it from scratch?","Justify measure selection and review evidence on reliability and validity  (or disclose the lack of such evidence).",
-                 "Did you modify your measure during the process?", "Describe and justify any modifications; note whether they occurred before or after data collection.",
-                 "How did you quantify your measure?", "Describe decisions underlying the calculation of scores on the measure; note whether these were established before or after data collection and whether they are based on standards from previous literature.")
-
-# kable(flake, escape = FALSE,
-#       table.envir = "table*") |>
-#   kable_styling(full_width = TRUE)
-```
-
+\footnotesize
+\renewcommand{\arraystretch}{2}
+{{< include md/008-measurement/flake-questions.md >}}
+\renewcommand{\arraystretch}{1}
+\normalsize
 
 One big issue to be careful about is that researchers have been known to modify their scales and their scale scoring practices (say, omitting items from a survey or rescaling responses) after data collection. This kind of post-hoc alteration of the measurement instrument can sometimes be justified by features of the data, but it can also look a lot like $p$-hacking! If researchers modify their measurement strategy after seeing their data, this decision needs to be disclosed, and it may undermine their statistical inferences. 
 
@@ -293,12 +248,7 @@ There's no hard and fast rule about what aspect of behavior to measure, but here
 
 ### Simple vs. complex behaviors
 
-```{r measurement-considerations}
-#| label: fig-measurement-considerations
-#| fig-cap: "Often choosing a measure can be consolidated into a choice along a continuum from simple measures that provide a small amount of information but are quick and easy to repeat and those that provide much richer information but require more time."
-
-knitr::include_graphics("images/measurement/measure-considerations.png")
-```
+![Often choosing a measure can be consolidated into a choice along a continuum from simple measures that provide a small amount of information but are quick and easy to repeat and those that provide much richer information but require more time.](images/measurement/measure-considerations.png){#fig-measurement-considerations .margin-caption}
 
 @fig-measurement-considerations shows a continuum between simple and complex behaviors. The simplest measurable behaviors tend to be button presses, for example:
 
@@ -337,11 +287,12 @@ Simple, explicit behaviors are often a good starting point. Work using these mea
 
 Sometimes the easiest way to elicit information from participants is simply to ask. Survey questions are an important part of experimental measurement, so we'll share a few best practices, primarily derived from @krosnick2010. 
 
-Treat survey questions as a conversation. The easier your items are to understand, the better. Don't repeat variations on the same question unless you want different answers! Try to make the order reasonable, for example by grouping together questions about the same topic and moving from more general to more specific questions. The more you include "tricky" items the more you invite tricky answers to straightforward questions. One speific kind of tricky questions are "check" questions that We'll talk in @sec-collection about manipulation checks and their strengths and weaknesses.] -->
+Treat survey questions as a conversation. The easier your items are to understand, the better. Don't repeat variations on the same question unless you want different answers! Try to make the order reasonable, for example by grouping together questions about the same topic and moving from more general to more specific questions. The more you include "tricky" items the more you invite tricky answers to straightforward questions. One specific kind of tricky questions are "check" questions that
+<!-- We'll talk in @sec-collection about manipulation checks and their strengths and weaknesses.] -->
 
 Open-ended survey questions can be quite rich and informative, especially when an appropriate coding (classification) scheme is developed in advance and responses are categorized into a relatively small number of types. On the other hand, they present practical obstacles because they require coding (often by multiple coders to ensure reliability of the coding). Further, they tend to yield nominal data, which are often less useful for quantitative theorizing. Open-ended questions are a useful tool to add nuance and color to the interpretation of an experiment.
 
-![Likert scales based on survey best practices: a bipolar opinion scale with seven points and a unipolar frequency scale with five points. Both have all points labeled.](images/measurement/likert.png){#fig-measurement-likert}
+![Likert scales based on survey best practices: a bipolar opinion scale with seven points and a unipolar frequency scale with five points. Both have all points labeled.](images/measurement/likert.png){#fig-measurement-likert width="80%"}
 
 Especially given their ubiquity in commercial survey research, **Likert scales** -- scales with a fixed number of ordered, numerical response options -- are a simple and conventional way of gathering data on attitude and judgment questions (@fig-measurement-likert). Bipolar scales are those in which the endpoints represent opposites, for example the continuum between "strongly dislike" and "strongly like." Unipolar scales have one neutral endpoint, like the continuum between "no pain" and "very intense pain." Survey best practices suggest that reliability is maximized when bipolar scales have seven points and unipolar scales have five. Labeling every point on the scale with verbal labels is preferable to labeling only the endpoints.
 
@@ -400,4 +351,4 @@ These sociological differences between fields has led to an unfortunate divergen
 * Introduction to general issues in measurement and why they shouldn't be ignored: Flake, J. K., & Fried, E. I. (2020). Measurement schmeasurement: Questionable measurement practices and how to avoid them. Advances in Methods and Practices in Psychological Science, 3(4), 456-465. <https://doi.org/10.1177/2515245920952393>.
 :::
 
-\refs
+<!-- \refs -->

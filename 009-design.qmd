@@ -23,7 +23,7 @@ To preview our general take-home points from this chapter: we think that your de
 
 In an early version of our course, student Desmond Ong set out to replicate a thought-provoking finding: both infants and adults seemed to show evidence of tracking other agents' belief state, even when it was irrelevant to the task at hand [@kovacs2010]. In the paradigm, an animated character would watch as a self-propelled ball came in and out from behind a screen. At the end of the video, the screen would swing down and the participant had to respond whether the ball was present or absent, with their reaction time as the key dependent variable. The experimental design fully crossed two factors: whether the participant believed the ball was present or absent (P+/P-) and whether the animated agent *would have believed* the ball was present or absent (A+/A-) based on what it saw. 
 
-![Original data from @kovacs2010. Error bars show 95\\% confidence intervals.](images/design/kovacs-original.png){#fig-design-kovacs-original}
+![Original data from @kovacs2010. Error bars show 95% confidence intervals.](images/design/kovacs-original.png){#fig-design-kovacs-original width="40%"}
 
 Both the original experiments and the replication that Desmond ran showed a significant effect of the agent's beliefs on participants' reaction times, suggesting that what the -- totally irrelevant -- agent thought about the ball was leading them to react more or less quickly to the presence of the ball. @fig-design-kovacs-original) shows the original data (N=24). But although both studies showed an effect of agent belief, the replication and several variations also showed a crossover **interaction** of participant and agent belief. The participants were slower when the agents *and* the participants believed that the ball was behind the screen (@fig-design-kovacs-replication). That finding wasn't consistent with the theory that tracking inconsistent beliefs slowed down reaction times. If participants were tracking their own beliefs about the ball *and* the agent's, they should have been fastest in the P+/A+ condition, not slower.
 
@@ -52,24 +52,13 @@ The classical "design of experiments" framework has as its goal to separate obse
 
 Different experimental designs will allow us to estimate condition effects more and less effectively. Recall in @sec-estimation, we estimated the effect of our manipulation by a simple subtraction: $\beta = \theta_{T} - \theta_{C}$ (where $\beta$ is the effect estimate, and $\theta$s indicate the estimates for each condition, treatment $T$ and control $C$). This logic works just fine also if there are two distinct treatments in  a three condition experiment: each treatment can be compared to control separately.  For treatment 1, $\beta_{T_1} = \theta_{T_2} - \theta_{C}$ and $\beta_{T_2} = \theta_{T_2} - \theta_{C}$. That logic is going to get more complicated if we have more than one distinct factor of interest, though. Let's look at a simple example. 
 
+![The 2x2 crossed design used in @young2007](images/design/young2007-design2.png){#fig-design-young-design .column-margin}
+
 @young2007 were interested in how moral judgments depend on both the beliefs of actors and the outcomes of their actions. They presented participants with vignettes in which they learned, for example, that Grace visits a chemical factory with her friend and goes to the coffee break room where she sees a white powder that she puts in her friend's coffee. They then manipulated both Grace's beliefs and the outcomes of her actions following the schema in @fig-design-young-design). Participants (N=10) used a four-point Likert scale to rate whether the actions were morally forbidden (1) or permissible (4. 
 
-```{r design-young-design}
-#| label: fig-design-young-design
-#| fig-cap: "The 2x2 crossed design used in Young et al. (2007)."
-#| column: margin
-
-knitr::include_graphics("images/design/young2007-design2.png")
-```
 Young et al.'s design has two factors -- belief and outcome -- each with two levels (negative and neutral).^[Note that neither of these is necessarily a "control" condition: the goal is simply to compare these two levels of the factor -- negative and neutral -- to estimate the effect due to the factor.] These factors are **fully crossed**: each level of each factor is combined with each level of each other. That means that we can estimate a number of effects of interest. The experimental data are shown in @fig-design-young-data. 
 
-
-```{r design-young-data}
-#| label: fig-design-young-data
-#| fig-cap: "Moral permissability as a function of belief and outcome. Results from Young et al. (2007), annotated with the estimated effects. Simple effects measure differences between the individual conditions and the neutral belief, neutral outcome condition. The interaction measures the difference between the predicted sum of the two simple effects and the actual observed data for the negative belief, negative outcome condition."
-
-knitr::include_graphics("images/design/young2007-data2.png")
-```
+![Moral permissability as a function of belief and outcome. Results from @young2007, annotated with the estimated effects. Simple effects measure differences between the individual conditions and the neutral belief, neutral outcome condition. The interaction measures the difference between the predicted sum of the two simple effects and the actual observed data for the negative belief, negative outcome condition.](images/design/young2007-data2.png){#fig-design-young-data .margin-caption}
 
 This fully-crossed design makes it easy for us to estimate quantities of interest. Let's say that our **reference** group (equivalent to the control group for now) is neutral belief, neutral outcome, which we'll notate $B,O$. Now it's easy to use the same kind of subtraction we did before to estimate a variety of effects. For example, we can look at the effect of negative belief in the case of a neutral outcome: $\beta_{-B,O} = \theta_{-B,O} - \theta_{B,O}$. The effect of a negative outcome is computed similarly as $\beta_{B,-O} = \theta_{B,-O} - \theta_{B,O}$. 
 
@@ -85,20 +74,10 @@ Say we added a third factor to Young et al.'s design such that Grace either feel
 $(A, B, O)$, $(A, B, -O)$, $(A, -B, O)$, $(A, -B, -O)$, $(-A, B, O)$, $(-A, B, -O)$, $(-A, -B, O)$, $(-A, -B, -O)$. 
 These conditions would in turn allow us to estimate both two-way and three-way interactions, enumerated in @tbl-design-three-way.
 
-```{r design-three-way}
-#| label: tbl-design-three-way
-#| tbl-cap: "Possible effects in a hypothetical 2x2x2 experimental design with affect, belief, and outcome as factors."
+\footnotesize
+{{< include md/009-design/three-way.md >}}
+\normalsize
 
-tribble(~Effect, ~`Term Type`,
-        "Affect", "Main effect",
-        "Belief", "Main effect",
-        "Outcome", "Main effect",
-        "Affect X Belief", "2-way interaction",
-        "Affect X Outcome", "2-way interaction",
-        "Belief X Outcome", "2-way interaction",
-        "Affect X Belief X Outcome", "3-way interaction") |>
-  kable()
-```
 Three-way interactions are hard to think about! The affect X belief X outcome interaction tells you about the difference in moral permissibility that's due to all three factors being present as opposed to what you'd predict on the basis of your estimates of the two-way interactions. In addition to being hard to think about, higher order interactions tend to be hard to estimate, because estimating them accurately requires you to have a stable estimate of all of the lower-order interactions [@mcclelland1993]. For this reason, we recommend against experimental designs that rely on higher-order interactions unless you are in a situation where you both have strong predictions about these interactions and are confident in your ability to estimate them appropriately.
 
 Three-way interactions are just the beginning, though. If you have three factors with two levels each, you can estimate 7 total effects of interest, as in @tbl-design-three-way. If you have four factors with two levels each, you get 15. Four factors with three levels each gets you a horrifying 80 different effects!^[The general formula for $N$ factors with $M$ levels each is $M^N-1$.] This way lies madness, at least from the perspective of estimating and interpreting individual effects in a reasonable sample. 
@@ -126,98 +105,11 @@ There are also fancier methods available. For example, the literature on optimal
 
 ### Between- vs. within-participant designs
 
+![A between-participants design.](images/design/between2.png){#fig-design-between .column-margin}
+
 Once you have a sense of the factor or factors you would like to manipulate in your experiment, the next step is to consider how these will be presented to participants, and how that presentation will interact with your measurements. The biggest decision to be made is whether each participant will experience only one level of a factor -- a **between-participants** design -- or whether they will experience multiple levels -- a **within-participants** design. @fig-design-between) shows a very simple example of between-participants design with four participants (two assigned to each condition), while @fig-design-within shows a within-participants version of the same design.^[The within-participants design is counterbalanced for the order of the conditions; we cover the issue of counterbalancing below.]
 
-```{r design-between}
-#| label: fig-design-between
-#| fig-cap: "A between-participants design."
-#| column: margin
-
-# g <- DiagrammeR::grViz("digraph {
-#   graph [layout = dot, rankdir = LR]
-#   
-#   node [shape = rectangle, style = filled, fillcolor = white]        
-#   a [label = 'Participant 1']
-#   b [label = 'Participant 2']
-#   c [label = 'Participant 3']
-#   d [label = 'Participant 4']
-#   
-#   node [fillcolor = pink]
-#   c1a [label = 'Experimental Manipulation']
-#   c1b [label = 'Experimental Manipulation']
-#   
-#   node [fillcolor = lightblue]
-#   c2a [label = 'Control Manipulation']
-#   c2b [label = 'Control Manipulation']
-#   
-#   node [fillcolor = white]
-#   m1 [label =  'Measure']
-#   m2 [label =  'Measure']
-#   m3 [label =  'Measure']
-#   m4 [label =  'Measure']
-#   
-#   # edge definitions with the node IDs
-#   a -> c1a -> m1
-#   b -> c1b -> m2
-#   c -> c2b -> m4
-#   d -> c2a -> m3
-#   }")
-# 
-# g$width <- "50%"
-# g$height <- "100%"
-# # g
-knitr::include_graphics("images/design/between2.png")
-```
-
-
-```{r design-within, out.width = "75%"}
-#| label: fig-design-within
-#| fig-cap: "A within-participants design, counterbalanced for order."
-
-# g2 <- DiagrammeR::grViz("digraph {
-#   graph [layout = dot, rankdir = LR]
-#   
-#   node [shape = rectangle, style = filled, fillcolor = white]        
-#   a [label = 'Participant 1']
-#   b [label = 'Participant 2']
-#   c [label = 'Participant 3']
-#   d [label = 'Participant 4']
-#   
-#   node [fillcolor = pink]
-#   c1a [label = 'Experimental Manipulation']
-#   c2a [label = 'Experimental Manipulation']
-#   c3a [label = 'Experimental Manipulation']
-#   c4a [label = 'Experimental Manipulation']
-#   
-#   node [fillcolor = lightblue]
-#   c1b [label = 'Control Manipulation']
-#   c2b [label = 'Control Manipulation']
-#   c3b [label = 'Control Manipulation']
-#   c4b [label = 'Control Manipulation']
-#   
-#   node [fillcolor = white]
-#   m1a [label =  'Measure']
-#   m2a [label =  'Measure']
-#   m3a [label =  'Measure']
-#   m4a [label =  'Measure']
-#   m1b [label =  'Measure']
-#   m2b [label =  'Measure']
-#   m3b [label =  'Measure']
-#   m4b [label =  'Measure']
-#   
-#   # edge definitions with the node IDs
-#   a -> c1a -> m1a -> c1b -> m1b
-#   b -> c2a -> m2a -> c2b -> m2b
-#   c -> c3b -> m3a -> c3a -> m3b
-#   d -> c4b -> m4a -> c4a -> m4b
-#   }")
-# 
-# g2$width <- "100%"
-# g2$height <- "100%"
-# # g2
-knitr::include_graphics("images/design/within2.png")
-```
-
+![A within-participants design, counterbalanced for order.](images/design/within2.png){#fig-design-within .margin-caption}
 
 The decision whether to measure a particular factor between- or within-participants is consequential because people vary. Imagine we're estimating our treatment effect as before, simply by computing $\widehat{\beta} = \widehat{\theta}_{T} - \widehat{\theta}_{C}$ with each of these estimates from different populations of participants. In this scenario, our estimate $\widehat{\beta}$ contains three components: 1) the true differences between $\theta_{T}$ and $\theta_{C}$, 2) sampling-related variation in which participants from the population ended up in the samples for the two conditions, and 3) measurement error. Component #2 is present because any two samples of participants from a population will differ in their average on a measure -- this is precisely the kind of sampling variation we saw in the null distributions in @sec-inference. 
 
@@ -236,12 +128,7 @@ All of these issues can lead to real concerns with respect to within-participant
 
 We summarize the state of affairs from our perspective in @fig-design-between-within. We think that within-participant designs should be preferred whenever possible.
 
-```{r design-between-within}
-#| label: fig-design-between-within
-#| fig-cap: "Pros and cons of between- vs. within-participant designs. We recommend within-participant designs when possible."
-
-knitr::include_graphics("images/design/between-within.png")
-```
+![Pros and cons of between- vs. within-participant designs. We recommend within-participant designs when possible.](images/design/between-within.png){#fig-design-between-within .margin-caption}
 
 ### Repeated measurements and experimental items
 
@@ -251,53 +138,7 @@ In the last subsection, we described how variability in our estimates in a betwe
 
 The simplest way you can do a repeated measures design is by administering your treatment and then administering your measure multiple times. This scenario is pictured in a between-participants design in @fig-design-rm-between). Sometimes this works quite well. For example, imagine a transcranial magnetic stimulation (TMS) experiment: participants receive neural stimulation for a period of time, targeted at a particular region. Then they perform some measurement task repeatedly until it wears off. The more times they perform it, the better the estimate of whatever effect (when compared to a control of TMS to another region, say.
 
-```{r design-rm-between, out.width = "75%"}
-#| label: fig-design-rm-between
-#| fig-cap: "A between-participants, repeated-measures design."
-
-# g3 <- DiagrammeR::grViz("digraph {
-#   graph [layout = dot, rankdir = LR]
-#   
-#   node [shape = rectangle, style = filled, fillcolor = white]        
-#   a [label = 'Participant 1']
-#   b [label = 'Participant 2']
-#   c [label = 'Participant 3']
-#   d [label = 'Participant 4']
-#   
-#   node [fillcolor = pink]
-#   c1a [label = 'Experimental Manipulation']
-#   c1b [label = 'Experimental Manipulation']
-#   
-#   node [fillcolor = lightblue]
-#   c2a [label = 'Control Manipulation']
-#   c2b [label = 'Control Manipulation']
-#   
-#   node [fillcolor = white]
-#   m1a [label =  'Measure']
-#   m2a [label =  'Measure']
-#   m3a [label =  'Measure']
-#   m4a [label =  'Measure']
-#   m1b [label =  'Measure']
-#   m2b [label =  'Measure']
-#   m3b [label =  'Measure']
-#   m4b [label =  'Measure']
-#   m1c [label =  'Measure']
-#   m2c [label =  'Measure']
-#   m3c [label =  'Measure']
-#   m4c [label =  'Measure']
-#   
-#   # edge definitions with the node IDs
-#   a -> c1a -> m1b -> m1a -> m1c
-#   b -> c1b -> m2b -> m2a -> m2c
-#   c -> c2b -> m3b -> m3a -> m3c
-#   d -> c2a -> m4b -> m4a -> m4c
-#   }")
-# 
-# g$width <- "50%"
-# g3$height <- "80%"
-# g3
-knitr::include_graphics("images/design/rm-between2.png")
-```
+![A between-participants, repeated-measures design.](images/design/rm-between2.png){#fig-design-rm-between .margin-caption}
 
 The catch is exactly analogous to the between-participants design: some measures can't be repeated without altering the response. To take an obvious example, we can't give the exact same math problem twice and get two useful measurements of mathematical ability! The general solution to this problem that is typically used is the **experimental item**. In the case of a math assessment, you create multiple problems that you believe test the same concept but have different numbers or other superficial characteristics. This practice is widespread because the use of multiple experimental items can license generalizations across a population of items in the same way that the use of multiple participants can ideally license generalizations across a population of people [@clark1973]. 
 
@@ -324,49 +165,7 @@ The implication of these examples is clear: experimenters need to take care in b
 
 One variation on the repeated measures, between-participants design is a specific version where the measure is administered both before (pre-) and after (post-) intervention, as in @fig-design-pre-post). This design is sometimes known as a **pre-post** design. It is extremely common in cases where the intervention is larger-scale and harder to give within-participants, such as in a field experiment where a policy or curriculum is given to one sample and not to another. The pre measurements can be used to subtract participant-level variability out and recover a more precise estimate of the treatment effect. Recall that our treatment effect in a pure between participants design is $\beta = \theta_{T} - \theta_{C}$. In a pre-post design, we can do better by computing $\beta = (\theta_{T_{post}} - \theta_{T_{pre}}) - (\theta_{C_{post}} - \theta_{C_{pre}}$. This equation says "how much more did the treatment group go up than the control group?^[This estimate is sometimes called a "difference in differences" and is very widely used in the field of econometrics, both in experimental and quasi-experimental cases [@cunningham2021].]
 
-```{r design-pre-post, out.width = "60%"}
-#| label: fig-design-pre-post
-#| fig-cap: "A between-participants, pre-post design."
-
-# g4 <- DiagrammeR::grViz("digraph {
-#   graph [layout = dot, rankdir = LR]
-#   
-#   node [shape = rectangle, style = filled, fillcolor = white]        
-#   a [label = 'Participant 1']
-#   b [label = 'Participant 2']
-#   c [label = 'Participant 3']
-#   d [label = 'Participant 4']
-#   
-#   node [fillcolor = pink]
-#   c1a [label = 'Experimental Manipulation']
-#   c1b [label = 'Experimental Manipulation']
-#   
-#   node [fillcolor = lightblue]
-#   c2a [label = 'Control Manipulation']
-#   c2b [label = 'Control Manipulation']
-#   
-#   node [fillcolor = white]
-#   m1a [label =  'Measure']
-#   m2a [label =  'Measure']
-#   m3a [label =  'Measure']
-#   m4a [label =  'Measure']
-#   m1b [label =  'Measure']
-#   m2b [label =  'Measure']
-#   m3b [label =  'Measure']
-#   m4b [label =  'Measure']
-#   
-#   # edge definitions with the node IDs
-#   a -> m1a -> c1a -> m1b
-#   b -> m2a -> c1b -> m2b
-#   c -> m3a -> c2b -> m3b
-#   d -> m4a -> c2a -> m4b
-#   }")
-# 
-# g4$width <- "70%"
-# g4$height <- "100%"
-# # g4
-knitr::include_graphics("images/design/pre-post2.png")
-```
+![A between-participants, pre-post design.](images/design/pre-post2.png){#fig-design-pre-post .margin-caption}
 
 Of course, repeated measurements are not limited to between-participants designs! All within-participants designs are repeated measures designs, which are the bread and butter of most research in perception, psychophysics, and cognitive psychology. When both manipulations and measures can be repeated, these designs afford high measurement precision even with small sample sizes; they are recommended whenever they are possible. 
 
@@ -376,14 +175,9 @@ Most experimental designs in psychology use discrete condition manipulations: tr
 
 Many manipulations can be **titrated** -- that is, their strength can be varied continuously -- with a little creativity on the part of an experimenter. A curriculum intervention can be applied at different levels of intensity, perhaps by changing the number of sessions in which it is taught. For a priming manipulation, the frequency or duration of prime stimuli can be varied. Two stimuli can be morphed continuously so that categorization boundaries can be examined.^[These methods are extremely common in perception and psychophysics research, in part because the dimensions being studied are often continuous in nature. For example, imagine trying to estimate a participant's visual contrast sensitivity *without* continuously manipulating the contrast of the stimulus, eliciting judgments at many different levels.] 
 
+![Three schematic designs. (left) Control and treatment are two levels of a nominal variable. (middle) Control is compared to ordered levels of a treatment. (right) Treatment level is an interval or ratio variable such that points can be connected and a parametric curve can be extrapolated.](images/design/dose-response2.png){#fig-design-dose-schema .margin-caption}
+
 Dose-response designs are useful because they provide insight into the shape of the function mapping your manipulation to your measure. Knowing this shape can inform your theoretical understanding! Consider the examples given in @fig-design-dose-schema). If you only have two conditions in your experiment, then the most you can say about the relationship between your manipulation and your measure is that it produces an effect of a particular magnitude; in essence, you are assuming that condition is a nominal variable. If you have multiple ordered levels of treatment, you can start to speculate about the nature of the relationship between treatment and effect magnitude. But if you can measure the strength of your treatment, then you can start to describe the nature of the relationship between the strength of treatment and strength of effect via a parametric function (e.g., a linear regression, a sigmoid, or other function.^[These assumptions are theory-laden, of course -- the choice of a linear function or a sigmoid is not necessary: nothing guarantees that simple, smooth, or monotonic functions are the right ones. The important point from our perspective is that choosing a function makes explicit your assumptions about the nature of the treatment-effect relationship.] These parametric functions can in turn allow you to generalize from your experiment, making predictions about what would happen under intervention conditions that you didn't measure directly!
-
-```{r design-dose-schema}
-#| label: fig-design-dose-schema
-#| fig-cap: "Three schematic designs. (left) Control and treatment are two levels of a nominal variable. (middle) Control is compared to ordered levels of a treatment. (right) Treatment level is an interval or ratio variable such that points can be connected and a parametric curve can be extrapolated."
-
-knitr::include_graphics("images/design/dose-response2.png")
-```
 
 <!-- This all can feel a bit abstract, so let's consider an example. @brennan1966 were interested in the relationship between visual complexity and infants' looking preferences. Do infants uniformly prefer complex stimuli, or do they search for stimuli at an appropriate level of complexity for their processing abilities. To test this hypothesis, they exposed infants in three different age groups (3, 8, and 14 weeks, N=30) to black and white checkerboard stimuli with three different levels of complexity (2x2, 8x8, and 24x24). Their findings are plotted in @fig-design-dose-ex): the youngest infants preferred the simplest stimuli, while infants at an intermediate age preferred stimuli of intermediate complexity, and the oldest infants preferred the most complex stimuli. These findings help to motivate the theory that infants attend preferentially to stimuli that provide appropriate learning input for their processing ability [@kidd2012].^[@brennan1966's experiment uses a quantitative manipulation of complexity (checkerboard density. But they treat this manipulation as an ordinal -- rather than an interval -- variable, presumably because they do not know precisely how checkerboard density translates into changes in the psychological construct they care about, namely complexity. Does doubling the number of squares on the board double complexity, or do you have to double the number of squares on each side? Does complexity saturate, such that a 128x128 checkerboard is not much more complex? These are just a few of the questions that the dose-response approach raises.] -->
 
@@ -459,24 +253,11 @@ Suppose you were designing an experiment of this sort and you wanted to follow o
 
 When we designed a within-participants experiment, we introduced an order confound: if Dylan was always played first, then we didn't know whether a change in our measure was caused by Dylan directly (the path straight from $X$ to $Y$) or by some order-related factor, say unfamiliarity with the task (the "indirect" path from $X$ to the confound $X'$ and then to $Y$). If the confound remains, as with the timing confound in the @kovacs2010 case study discussed above, then any experimental effect could be attributed to the confound only and not to the causal factor of interest. 
 
-```{r design-money1}
-#| label: fig-design-money1
-#| fig-cap: "Confounding order and condition leads to "
-#| column: margin
-
-knitr::include_graphics("images/design/money1.png")
-```
-
+![Confounding order and condition leads to ](images/design/money1.png){#fig-design-money1 .column-margin}
 
 If you think your experimental design might have a confound, you should think about ways to remove it. For example, **counterbalancing** order across participants is a very safe choice. Some participants get \$100 first and others get \$1000 first. That way, you are guaranteed that the order of conditions will have no effect of the confound on your average effect. The effect of this counterbalancing is that it "snips" the causal dependency between condition assignment and later time. We notate this on our causal diagram with a scissors icon (@fig-design-money2). ^[In practice, counterbalancing is like adding an additional factor to your factorial design! But because the factor is a **nuisance factor** -- basically, one we don't care about -- we don't discuss it as a true condition manipulation. Despite that, it's a good practice to check for effects of these sorts of nuisance factors in your preliminary analysis. Even though your average effect won't be biased by it, it introduces variation that you might want to understand to interpret other effects and plan news studies.] Time can still have an effect on happiness, but the effect is independent from the effect of condition and hence your experiment can still yield an unbiased estimate of the condition effect. 
 
-```{r design-money2}
-#| label: fig-design-money2
-#| fig-cap: "Confounding between order and condition can be removed by counterbalancing or randomization."
-#| column: margin
-
-knitr::include_graphics("images/design/money2.png")
-```
+![Confounding between order and condition can be removed by counterbalancing or randomization.](images/design/money2.png){#fig-design-money2 .column-margin}
 
 Counterbalancing gets trickier when you have too many levels on a variable or multiple confounding variables. In that case, it may not be possible to do a fully-crossed counterbalance so that all combinations of these factors are seen by equal numbers of participants. You may have to rely on partial counterbalancing schemes or Latin square designs (see Depth box above; in this case, the Latin squares are used to create orderings of stimuli such that the position of each treatment in the order is controlled across two other confounding variables). 
 
@@ -498,11 +279,11 @@ A **placebo** effect is a positive effect on the measure that comes as a result 
 
 Can doing challenging cognitive tasks make you smarter? In the late 2000s and early 2010s, a large industry for "brain training" emerged. Companies like Lumos Labs, CogMed, BrainHQ, and CogniFit offered games -- often modeled on cognitive psychology tasks -- that claimed to lead to broad gains in memory, attention, and problem solving. 
 
-![The primary outcome graph for @jaeggi2008.](images/design/jaeggi.png){#fig-design-jaeggi}
+![The primary outcome graph for @jaeggi2008.](images/design/jaeggi.png){#fig-design-jaeggi width="40%"}
 
 These companies were basing their claims in part on a scientific literature reporting that concerted training on difficult cognitive tasks could lead to benefits that **transferred** to other cognitive domains. Among the most influential of these was a study by @jaeggi2008. They conducted four experiments in which participants (N=70 across the studies) were assigned to either working memory training via a difficult dual N-back task or a no-training control, with training varying from 8 days all the way to 19 days. Their finding excited a tremendous amount of interest because they reported not only gains in performance on the specific training task but also on a matrix reasoning task (which is considered to be a good measure of general intelligence) the participants had not received training on. While the control group's scores on these tasks improved, presumably just from being tested twice, there was a condition by time (pre- vs. post) interaction such that the scores of the trained groups (consolidated across all four training experiments) grew significantly more over the training period (@fig-design-jaeggi). These findings were interpreted as supporting transfer -- whereby training on one task leads to broader gains -- a key goal for "brain training."
 
-![The four sub-experiments of @jaeggi2008, now disaggregated. Panels show 8- (A), 12- (B), 17- (C), and 19-session (D) studies. Note the different scales and measures. RAPM = Raven's Advanced Progressive Matrices; BOMAT = Bochumer Matrizentest. From @redick2013.](images/design/jaeggi-disaggregated.png){#fig-design-jaeggi-disagg}
+![The four sub-experiments of @jaeggi2008, now disaggregated. Panels show 8- (A), 12- (B), 17- (C), and 19-session (D) studies. Note the different scales and measures. RAPM = Raven's Advanced Progressive Matrices; BOMAT = Bochumer Matrizentest. From @redick2013.](images/design/jaeggi-disaggregated.png){#fig-design-jaeggi-disagg width="80%"}
 
 This finding spurred immense interest in the scientific community, but the consensus did not support these early findings. Careful readers of the original paper noticed a number of the signs of analytic flexibility that we mentioned in Chapters [-@sec-replication] and [-@sec-inference] in the original paper, including the post-hoc consolidation of experiments to yield $p = .025$ on the key interaction [@redick2013]. When data were disaggregated, it was clear that the measures and effects had differed in each of the different sub-experiments (@fig-design-jaeggi-disagg). 
 
@@ -519,12 +300,7 @@ The final entry into this list of internal validity threats comes from what are 
 
 In any experiment delivered by human experimenters who know what condition they are delivering, condition differences can result from experimenters imparting their expectations. @fig-design-rosenthal shows the results of a meta-analysis estimating the size of expectancy effects across a range of domains. These magnitudes are shocking. There is no question that experimenter expectancy is sufficient to "create" many interesting phenomena artifactually if we are not on guard against it. The mechanisms of expectancy are an interesting research topic in their own right, but in many cases expectancies appear to be communicated non-verbally in much the same way that Clever Hans learned [@rosnow1997]. 
 
-```{r design-rosenthal}
-#| label: fig-design-rosenthal
-#| fig-cap: "Magnitudes of expectancy effects. From @rosenthal1994."
-
-knitr::include_graphics("images/design/rosenthal2004.png")
-```
+![Magnitudes of expectancy effects. From @rosenthal1994.](images/design/rosenthal2004.png){#fig-design-rosenthal .margin-caption}
 
 In medical research, designs where neither patients nor experimenters know which condition the patients are in are the gold standard, and results from other designs are treated with suspicion because of their vulnerability to demand and expectancy effects^[These are commonly referred to as **double blind** designs (though the term *masked* is preferred by some).]. In psychology, the most common modern protection against expectancy is the delivery of interventions by a computer platform that can give instructions in a coherent and uniform way across conditions. 
 
@@ -560,4 +336,5 @@ How do you ensure that your manipulation is valid? A careful experimenter needs 
 ::: {.callout-note title="readings"}
 * Much of this material is covered in more depth in the classic text on research methods: Rosenthal, R. & Rosnow, R. L. 2008. *Essentials of Behavioral Research: Methods and Data Analysis*. Third Edition. New York: McGraw-Hill. <http://dx.doi.org/10.34944/dspace/66>.
 :::
-\refs
+
+<!-- \refs -->
