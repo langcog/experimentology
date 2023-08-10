@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Experimentology - 7&nbsp; Models</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./008-measurement.html" rel="next">
+<link href="./006-inference.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./005-estimation.html">Statistics</a></li><li class="breadcrumb-item"><a href="./007-models.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Models</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Experimentology</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <a href="https://github.com/langcog/experimentology" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="./Experimentology.pdf" rel="" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-experiments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Experiments</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-theories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Theories</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-replication.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Replication</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-ethics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ethics</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Statistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-estimation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Inference</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-models.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Planning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-measurement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Measurement</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Design</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-sampling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Sampling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text">Execution</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-prereg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Preregistration</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-collection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Data collection</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./013-management.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Project management</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">Reporting</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./014-writing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Writing</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./015-viz.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Visualization</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./016-meta.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Meta-analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./017-conclusions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Conclusions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./100-instructors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Instructor’s guide</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./101-github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">GitHub</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./102-rmarkdown.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">R Markdown</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./103-tidyverse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Tidyverse</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./104-ggplot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">ggplot</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#regression-models" id="toc-regression-models" class="nav-link active" data-scroll-target="#regression-models"><span class="header-section-number">7.1</span> Regression models</a>
+  <ul class="collapse">
+  <li><a href="#regression-for-estimating-a-simple-treatment-effect" id="toc-regression-for-estimating-a-simple-treatment-effect" class="nav-link" data-scroll-target="#regression-for-estimating-a-simple-treatment-effect"><span class="header-section-number">7.1.1</span> Regression for estimating a simple treatment effect</a></li>
+  <li><a href="#adding-predictors" id="toc-adding-predictors" class="nav-link" data-scroll-target="#adding-predictors"><span class="header-section-number">7.1.2</span> Adding predictors</a></li>
+  <li><a href="#interactions" id="toc-interactions" class="nav-link" data-scroll-target="#interactions"><span class="header-section-number">7.1.3</span> Interactions</a></li>
+  <li><a href="#when-does-linear-regression-work" id="toc-when-does-linear-regression-work" class="nav-link" data-scroll-target="#when-does-linear-regression-work"><span class="header-section-number">7.1.4</span> When does linear regression work?</a></li>
+  </ul></li>
+  <li><a href="#generalized-linear-models" id="toc-generalized-linear-models" class="nav-link" data-scroll-target="#generalized-linear-models"><span class="header-section-number">7.2</span> Generalized linear models</a></li>
+  <li><a href="#linear-mixed-effects-models" id="toc-linear-mixed-effects-models" class="nav-link" data-scroll-target="#linear-mixed-effects-models"><span class="header-section-number">7.3</span> Linear mixed effects models</a>
+  <ul class="collapse">
+  <li><a href="#modeling-random-variation-in-clusters" id="toc-modeling-random-variation-in-clusters" class="nav-link" data-scroll-target="#modeling-random-variation-in-clusters"><span class="header-section-number">7.3.1</span> Modeling random variation in clusters</a></li>
+  <li><a href="#random-slopes-and-the-challenges-of-mixed-effects-models" id="toc-random-slopes-and-the-challenges-of-mixed-effects-models" class="nav-link" data-scroll-target="#random-slopes-and-the-challenges-of-mixed-effects-models"><span class="header-section-number">7.3.2</span> Random slopes and the challenges of mixed effects models</a></li>
+  </ul></li>
+  <li><a href="#how-do-you-use-models-to-analyze-data" id="toc-how-do-you-use-models-to-analyze-data" class="nav-link" data-scroll-target="#how-do-you-use-models-to-analyze-data"><span class="header-section-number">7.4</span> How do you use models to analyze data?</a>
+  <ul class="collapse">
+  <li><a href="#modeling-rules-of-thumb" id="toc-modeling-rules-of-thumb" class="nav-link" data-scroll-target="#modeling-rules-of-thumb"><span class="header-section-number">7.4.1</span> Modeling rules of thumb</a></li>
+  <li><a href="#a-worked-example" id="toc-a-worked-example" class="nav-link" data-scroll-target="#a-worked-example"><span class="header-section-number">7.4.2</span> A worked example</a></li>
+  <li><a href="#robustness-checks-and-the-multiverse" id="toc-robustness-checks-and-the-multiverse" class="nav-link" data-scroll-target="#robustness-checks-and-the-multiverse"><span class="header-section-number">7.4.3</span> Robustness checks and the multiverse</a></li>
+  </ul></li>
+  <li><a href="#chapter-summary-models" id="toc-chapter-summary-models" class="nav-link" data-scroll-target="#chapter-summary-models"><span class="header-section-number">7.5</span> Chapter summary: Models</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">References</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/langcog/experimentology/blob/main/007-models.qmd" class="toc-action">View source</a></p><p><a href="https://github.com/langcog/experimentology/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-models" class="quarto-section-identifier"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Models</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="callout callout-style-default callout-note callout-titled" title="learning goals">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+learning goals
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Articulate a strategy for estimating experimental effects using statistical models</li>
+<li>Build intuitions about how classical statistical tests relate to linear regression models</li>
+<li>Explore variations of the linear model, including generalized linear models and mixed effects models</li>
+<li>Reason about tradeoffs and strategies for model specification, including the use of control variables</li>
+</ul>
+</div>
+</div>
+</div>
+<p>In the previous two chapters, we introduced concepts surrounding estimation of an experimental effect and inference about its relationship to the effect in the population. The tools we introduced there are for fairly specific research questions, and so are limited in their applicability. Once you get beyond the world of two-condition experiments in which each participant contributes one data point from a continuous measure, the simple <span class="math inline">\(t\)</span>-test is not sufficient.</p>
+<p>In some statistics textbooks, the next step would be to present a whole host of other statistical tests that are designed for other special cases. We could even show a decision-tree: you have repeated measures? Use Test X! Or categorical data? Use Text Y! Or three conditions? Use Test Z! But this isn’t a statistics book, and even if it were, we don’t advocate that approach. The idea of finding a specific narrowly-tailored test for your situation is part and parcel of the dichotomous NHST approach that we tried to talk you out of in the last chapter. If all you want is your <span class="math inline">\(p&lt;.05\)</span>, then it makes sense to look up the test that can allow you to compute a <span class="math inline">\(p\)</span> value in your specific case. But we prefer an approach that is more focused on getting a good estimate of the magnitude of the causal effect.</p>
+<p>In this chapter, we begin to explore how to select an appropriate <strong>statistical model</strong> to clearly and flexibly reason about these effects. A statistical model is a way of writing down a set of assumptions about how particular data are generated, the <strong>data generating process</strong>. Statistical models are the bread and butter tools for estimating particular <strong>parameters</strong> of interest from empirical data – like the magnitude of a causal effect associated with an experimental manipulation.</p>
+<p>For example, suppose you watch someone tossing a coin and observe a sequence of heads and tails. A simple statistical model might assume that the observed data are generated via the flip of a weighted coin. From the perspective of the last two chapters, we could estimate a standard error for the estimated proportion of flips that are heads (e.g., for 6 heads out of 8 flips, we have <span class="math inline">\(\hat{p}= 0.75 \pm 0.17\)</span>), or we could compare the observed proportion against a null hypothesis. From a model-based perspective, however, we instead begin by thinking about where the data came from: we might assume the coin being flipped has some weight (a <strong>latent</strong>, or unobservable, parameter of the data generating process), and our goal is to determine the most likely value of that weight given the observed data. This single unified model can then also be used to make inferences about whether the coin’s weight differs from some null model (a fair coin, perhaps), or to predict future flips.</p>
+<div class="page-columns page-full"><p>This example sounds a lot like the kinds of simple inferential tests we talked about in the previous chapter; not very “model-y.” But things get more interesting when there are multiple parameters to be estimated, as in many real-world experiments. In the tea-tasting scenario we’ve belabored over the past two chapters, a real experiment might involve multiple people tasting different types of tea in different orders, all with some cups randomly assigned to be milk-first or tea-first. What we’ll learn to do in this chapter is to make a model of this situation that allows us to reason about the magnitude of the milk-order effect while also estimating variation due to different people, orders, and tea types. This is the advantage of using models: once you are able to reason about estimation and inference in model-based terms, you will be set free from long decision trees and will be able to flexibly make the assumptions that make sense for your data.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn1"><p><sup>1</sup>&nbsp;We won’t explore the connection to DAGs and Bayesian models here, but one way to think of this model building is as creating a causal theory of the experiment. This approach, which is advocated by <span class="citation" data-cites="mcelreath2018">McElreath (<a href="#ref-mcelreath2018" role="doc-biblioref">2018</a>)</span>, creates powerful connections between the ideas about theory we presented in Chapters <a href="#sec-experiments"><span class="quarto-unresolved-ref ref-noprefix">sec-experiments</span></a> and <a href="#sec-models"><span class="quarto-unresolved-ref ref-noprefix">sec-models</span></a> and the ideas about models here. If this sounds intriguing, we encourage you to go down the rabbit hole!</p></li></div></div>
+<div class="page-columns page-full"><p>We’ll begin by discussing the ubiquitous framework for building statistical models, <strong>linear regression</strong>.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> We will then build connections between regression and the <span class="math inline">\(t\)</span>-test. This section will discuss how to add covariates to regression models, and when linear regression does and doesn’t work. In the following section, we’ll discuss the <strong>generalized linear model</strong>, an innovation that allows us to make models of a broader range of data types, including <strong>logistic regression</strong>. We’ll then briefly introduce <strong>mixed models</strong>, which allow us to model clustering in our datasets (such as clusters of observations from a single individual or single stimulus item). We’ll end with some opinionated practical advice on model building.</p><div class="no-row-height column-margin column-container"><li id="fn2"><p><sup>2</sup>&nbsp;The name regression originally comes from <span class="citation" data-cites="galton1877">Galton (<a href="#ref-galton1877" role="doc-biblioref">1877</a>)</span>’s work on heredity. He was looking at the relationship between the heights of parents and children. He found that children’s heights <em>regressed</em>, and he did so by creating a <em>regression model</em>. Now we use the term “regression” to mean any model of this form.</p></li></div></div>
+<p>If you’re interested in building up intuitions about statistical model building, then we recommend reading this chapter all the way through. On the other hand, if you are already engaged in data analysis and want to see an example, we suggest that you skip to the last section, where we give some opinionated practical advice on model building and provide a worked example of fitting a mixed effects model and interpreting it in context.</p>
+<section id="regression-models" class="level2 page-columns page-full" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="regression-models"><span class="header-section-number">7.1</span> Regression models</h2>
+<div class="page-columns page-full"><p>There are many types of statistical models, but this chapter will focus primarily on regression, a broad and extremely flexible class of models. A regression model relates a dependent variable to one or more independent variables. Dependent variables are sometimes called <strong>outcome variables</strong>, and independent variables are sometimes called <strong>predictor variables</strong>, <strong>covariates</strong>, or <strong>features</strong>.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> We will see that many common statistical estimators (like the sample mean) and methods of inference (like the <span class="math inline">\(t\)</span>-test) are actually simple regression models. Understanding this point will help you see many statistical methods as special cases of the same underlying framework, rather than as unrelated, <em>ad hoc</em> tests.</p><div class="no-row-height column-margin column-container"><li id="fn3"><p><sup>3</sup>&nbsp;The reverse is not true – not every predictor or covariate is an independent variable! One of the tricky things about relating regression models to causal hypotheses is that, just because something is on the right side of a regression equation, that doesn’t mean it’s a causal manipulation. And of course, just because you’ve got an estimate of some predictor in a regression, that doesn’t mean the estimate tells you about the magnitude of the <em>causal</em> effect. It could, but it also might not!</p></li></div></div>
+<section id="regression-for-estimating-a-simple-treatment-effect" class="level3 page-columns page-full" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="regression-for-estimating-a-simple-treatment-effect"><span class="header-section-number">7.1.1</span> Regression for estimating a simple treatment effect</h3>
+<div class="page-columns page-full"><p>Let’s start with one of these special cases, namely estimating a treatment effect, <span class="math inline">\(\beta\)</span>, in a two-group design. In <a href="#sec-estimation"><span class="quarto-unresolved-ref">sec-estimation</span></a>, we solved this exact challenge for the tea-tasting experiment. We applied a classical model in which the milk-first ratings are assumed to be normally distributed with mean <span class="math inline">\(\theta_{\text{&lt;}} = \theta_{\text{T}} + \beta\)</span> and standard deviation <span class="math inline">\(\sigma\)</span>.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn4"><p><sup>4</sup>&nbsp;Here’s a quick reminder that “model” here is a way of saying “set of assumptions about the data generating procedure.” So saying that some equation is a “model” is the same as saying that we think this is where the data came from. We can “turn the crank” – generate data through the process that’s specified in those equations, e.g., pulling numbers from a normal distribution with mean <span class="math inline">\(\theta_{\text{M}}\)</span> and standard deviation <span class="math inline">\(\sigma\)</span>. In essence, we’re committing to the idea that this process will give us data that are substantively similar to the ones we have already.</p></li></div></div>
+<div class="page-columns page-full"><p>Let’s now write that model as a regression model, that is, as a model that predicts each participant’s tea rating, <span class="math inline">\(Y_i\)</span>, given that participant’s treatment assignment, <span class="math inline">\(X_i\)</span>. <span class="math inline">\(X_i=0\)</span> represents the control (milk-first) group and <span class="math inline">\(X_i=1\)</span> represents the treatment (tea-first) group.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> Here, <span class="math inline">\(Y_i\)</span> is the dependent variable, and <span class="math inline">\(X_i\)</span> is the independent variable. The subscripts <span class="math inline">\(i\)</span> index the participants. To make this concrete, you can see some sample tea-tasting data (the first six observations from each condition) below (<a href="#tbl-models-datatable">Table&nbsp;<span class="quarto-unresolved-ref">tbl-models-datatable</span></a>), with the index <span class="math inline">\(i\)</span>, the condition and its predictor <span class="math inline">\(X_i\)</span>, and the rating <span class="math inline">\(Y\)</span>.</p><div class="no-row-height column-margin column-container"><li id="fn5"><p><sup>5</sup>&nbsp;Using 0 and 1 is known as <strong>dummy coding</strong>, and allows us to interpret the parameter as the difference of the treatment group (tea-first) from the baseline (milk-first). There are many other ways to code categorical variables, with other interpretations. As a practical tip, be careful to check how your variables are coded before reporting anything!</p></li></div></div>
+<div class="cell page-columns page-full" data-hash="007-models_cache/html/tbl-models-datatable_c502310965890dcb3d9b330ef5ace496">
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
+<div id="tbl-models-datatable" class="anchored">
+<table class="table table-sm table-striped small">
+<caption>Table&nbsp;7.1: Example tea tasting data.</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">id</th>
+<th style="text-align: left;">condition</th>
+<th style="text-align: right;">X</th>
+<th style="text-align: right;">rating (Y)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">milk first</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">milk first</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">milk first</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">milk first</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">milk first</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">milk first</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">tea first</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">tea first</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">tea first</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">tea first</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">tea first</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">tea first</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div></div>
+<div class="page-columns page-full"><p>Let’s write this model more formally as a <strong>linear regression of Y on X</strong>. Conventionally, regression models are written with “<span class="math inline">\(\beta\)</span>’’ symbols for all parameters, so we’ll now use <span class="math inline">\(\beta_0 = \theta_M\)</span> for the mean in the milk-first group and <span class="math inline">\(\beta_1 = \theta_T - \theta_M\)</span> as the average difference between the tea-first and milk-first groups.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn6"><p><sup>6</sup>&nbsp;This <span class="math inline">\(\beta\)</span> is a generalization of the one were using to denote the causal effect above and in the previous two chapters.</p></li></div></div>
+<p><span class="math display">\[
+Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
+\]</span></p>
+<p>The term <span class="math inline">\(\beta_0 + \beta_1 X_i\)</span> is called the <strong>linear predictor</strong>, and it describes the expected value of an individual’s tea rating, <span class="math inline">\(Y_i\)</span>, given that participant’s treatment group <span class="math inline">\(X_i\)</span> (the single independent variable in this model). That is, for a participant in the control group (<span class="math inline">\(X_i=0\)</span>), the linear predictor is just equal to <span class="math inline">\(\beta_0\)</span>, which is indeed the mean for the control group that we specified above. On the other hand, for a participant in the treatment group, the linear predictor is equal to <span class="math inline">\(\beta_0 + \beta_1\)</span>, which is the mean for the treatment group that we specified. In regression jargon, <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> are <strong>regression coefficients</strong>, where <span class="math inline">\(\beta_1\)</span> represents the association of the independent variable <span class="math inline">\(X\)</span> with the outcome <span class="math inline">\(Y\)</span>.</p>
+<div class="page-columns page-full"><p>The term <span class="math inline">\(\epsilon_i\)</span> is the <strong>error term</strong>, referring to random variation of participants’ ratings around the group mean.<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a> Note that this is a very specific kind of “error”; it does not include “error” due to bias, for example. Instead, you can think of the error terms as capturing the “error” that would be associated with predicting any given participant’s rating based on just the linear predictor. If you predicted a control group participant’s rating as <span class="math inline">\(\beta_0\)</span>, that would be a good guess – but you still expect the participant’s rating to deviate somewhat from <span class="math inline">\(\beta_0\)</span> (i.e., due to variability across participants beyond what is captured by their treatment groups). In our regression model, the linear predictor and error terms together say that participants’ ratings scatter randomly (in fact, normally) around their group means with standard deviation <span class="math inline">\(\sigma\)</span>. And that is exactly the same model we posited in <a href="#sec-estimation"><span class="quarto-unresolved-ref">sec-estimation</span></a>.<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn7"><p><sup>7</sup>&nbsp;Formally, we’d write <span class="math inline">\(\epsilon_i \sim \mathcal{N}(0, \sigma^2)\)</span>. The tilde means “is distributed as”, and what follows is a normal distribution with mean 0 and variance <span class="math inline">\(\sigma^2\)</span>.</p></li><li id="fn8"><p><sup>8</sup>&nbsp;You may be wondering why so much effort was put into building boutique solutions for these special cases when a unified framework was available the whole time. A partial answer is that the classical infrastructure of statistics was developed before computers were widespread, and these special cases were chosen because they were easy to work with “analytically” (meaning to work out all the math with pen-and-paper, using values from big numerical tables). Now that we have computers with more flexible algorithms, the model-based perspective is more practical and accessible than it used to be.</p></li></div></div>
+<div class="page-columns page-full"><p>Now we have the model. But how do we estimate the regression coefficients <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>? The usual method is called <strong>ordinary least squares (OLS)</strong>. Here’s the basic idea. For any given regression coefficient estimates <span class="math inline">\(\widehat{\beta}_0\)</span> and <span class="math inline">\(\widehat{\beta}_1\)</span>, we would obtain different <strong>predicted values</strong>, <span class="math inline">\(\widehat{Y}_i = \widehat{\beta}_0 + \widehat{\beta}_1 X_i\)</span> for each participant. Some regression coefficient estimates will yield better predictions than others. OLS estimation is designed to find the values of the regression coefficients that optimize these predictions, meaning that the predictions are as close as possible to participants’ true outcomes, <span class="math inline">\(Y_i\)</span>.<a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn9"><p><sup>9</sup>&nbsp;Specifically, OLS minimizes squared error loss, in the sense that it will choose the regression coefficient estimates whose predictions minimize <span class="math inline">\(\sum_{i=1}^n \left( Y_i - \widehat{Y}_i\right)^2\)</span>, where <span class="math inline">\(n\)</span> is the sample size. A wonderful thing about OLS is that those optimal regression coefficients (generically termed <span class="math inline">\(\widehat{\mathbf{\beta}}\)</span>) turn out to have a very simple closed form solution: <span class="math inline">\(\widehat{\mathbf{\beta}} = \left( \mathbf{X}'\mathbf{X} \right)^{-1} \mathbf{X}'\mathbf{y}\)</span>. We are using more general notation here that supports multiple independent variables: <span class="math inline">\(\widehat{\mathbf{\beta}}\)</span> is a vector, <span class="math inline">\(\mathbf{X}\)</span> is a matrix of independent variables for each subject, and <span class="math inline">\(\mathbf{y}\)</span> is a vector of participants’ outcomes. As more good news, the standard error for <span class="math inline">\(\widehat{\mathbf{\beta}}\)</span> has a similarly simple closed form!</p></li></div></div>
+<!-- [MM: In this figure, the LHS ggtitle and beta labels are cut off in the web version of book. Also maybe use subscripts on betas for consistency.] -->
+<div class="cell page-columns page-full" data-hash="007-models_cache/html/fig-models-ols-plot_f21cdd59d2d24c213a841222c2e1d494">
+<div class="cell-output-display page-columns page-full">
+<div id="fig-models-ols-plot" class="quarto-figure quarto-figure-center anchored page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="007-models_files/figure-html/fig-models-ols-plot-1.png" class="img-fluid figure-img" width="2550"></p>
+<figcaption class="figure-caption margin-caption">Figure&nbsp;7.1: (left) Best-fitting regression coefficients for the tea-tasting experiment. (right) Much worse coefficients for the same data. Dotted lines: residuals. Circles: data points for individual participants.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-models-ols-plot">Figure&nbsp;<span class="quarto-unresolved-ref">fig-models-ols-plot</span></a> illustrates the tea tasting data for each condition (the dots) along with the model predictions for each condition <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_0 + \beta_1\)</span> (blue lines). The gap between each data point and the corresponding predictions (the thing that OLS wants to minimize) is shown by the dotted lines. These distances are sample estimates, called <strong>residuals</strong>, of the true errors (<span class="math inline">\(\epsilon_i\)</span>. The left-hand plot shows the OLS coefficient values – the ones that move the model’s predictions as close as possible to the data points, in the sense of minimizing the total squared length of the dashed lines. The right-hand plot shows a substantially worse set of coefficient values.</p>
+<p>You’ll notice that we aren’t talking much about <span class="math inline">\(p\)</span>-values in this chapter. Regression models can be used to produce <span class="math inline">\(p\)</span>-values for specific coefficients, representing inferences about the likelihood of the observed data under some null hypothesis regarding the coefficients. You can also compute Bayes Factors for specific regression coefficients, or use Bayesian inference to fit these coefficients under some prior expectation about their distribution. We won’t talk much about this, or more generally how to fit the models we describe. As we said, we’re not going to give a full treatment of all the relevant statistical topics. Instead we want to help you begin thinking about making models of your data.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="code">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+code
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>As it turns out, fitting an OLS regression model in R is extremely easy. The underlying call is <code>lm</code>, which stands for linear model. You can fit the model with a single call to this function with a “formula” as its argument. Here’s the call:</p>
+<div class="cell" data-hash="007-models_cache/html/unnamed-chunk-3_c84cbaf9c135cc93e0e9f458a4d30e95">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(rating <span class="sc">~</span> condition, <span class="at">data =</span> tea_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Formulas in R are a special kind of terse notation for regression equations where you write the outcome, <code>~</code> (distributed as), and the predictors. R assumes that you want an intercept by default, and there are also a number of other handy defaults that make R formulas a nice easy way to specify relatively complex regression models, as we’ll see below.</p>
+<p>Once you’ve fit the model and assigned it to a variable, you can call <code>summary</code> to see a summary of the parameters of the model:</p>
+<div class="cell" data-hash="007-models_cache/html/unnamed-chunk-4_9df459f19b0b61155cc38589254bed99">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You can also extract the coefficient values using <code>coef(mod)</code>, and put them in a handy dataframe using <code>tidy(mod)</code> from the <code>broom</code> package.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="adding-predictors" class="level3 page-columns page-full" data-number="7.1.2">
+<h3 data-number="7.1.2" class="anchored" data-anchor-id="adding-predictors"><span class="header-section-number">7.1.2</span> Adding predictors</h3>
+<div class="page-columns page-full"><p>The regression model we just wrote down is the same model that underlies the <span class="math inline">\(t\)</span>-test from <a href="#sec-inference"><span class="quarto-unresolved-ref">sec-inference</span></a>. But the beauty of regression modeling is that much more complex estimation problems can also be written as regression models that extend the model we made above. For example, we might want to add another predictor variable, such as the age of the participant.<a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn10"><p><sup>10</sup>&nbsp;The ability to estimate multiple coefficients at once is a huge strength of regression modeling, so much so that sometimes people use the label <strong>multiple regression</strong> to denote that there is more than one predictor + coefficient pair.</p></li></div></div>
+<p>Let’s add this new independent variable and a corresponding regression coefficient to our model:</p>
+<p><span class="math display">\[
+Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2}  + \epsilon_i
+\]</span></p>
+<p>Now that we have multiple independent variables, we’ve labeled them <span class="math inline">\(X_{1}\)</span> (treatment group) and <span class="math inline">\(X_{2}\)</span> (age) for clarity.</p>
+<p>To illustrate how to interpret the regression coefficients in this model, let’s use the linear predictor to compare the model’s predicted tea ratings for two hypothetical participants who are both in the treatment group: 20-year-old Alice and 21-year old Bob. Alice’s linear predictor tells us that her expected rating is <span class="math inline">\(\beta_0 + \beta_1 + \beta_2 \cdot 20\)</span>. In contrast, Bob’s linear predictor is <span class="math inline">\(\beta_0 + \beta_1 + \beta_2 \cdot 21\)</span>. We could therefore calculate the expected difference in ratings for 21-year-olds versus 20-year olds by subtracting Alice’s linear predictor from Bob’s, yielding just <span class="math inline">\(\beta_2\)</span>.</p>
+<p>We would get the same result if Alice and Bob were instead 50 and 51 years old, respectively. This equivalence illustrates a key point about linear regression models in general:</p>
+<blockquote class="blockquote">
+<p>The regression coefficient represents the expected difference in outcome when comparing any two participants who differ by 1 unit of the relevant independent variable, and who do not differ on any other independent variables in the model.</p>
+</blockquote>
+<p>Here, the coefficient compares participants who differ by 1 year of age. In “Practical modeling considerations” below, we discuss whether and when to “control for” additional variables (i.e., when to add them to your model).</p>
+</section>
+<section id="interactions" class="level3 page-columns page-full" data-number="7.1.3">
+<h3 data-number="7.1.3" class="anchored" data-anchor-id="interactions"><span class="header-section-number">7.1.3</span> Interactions</h3>
+<p>In our running example, we now have two predictors: condition and age. But what if the effect of condition varies depending on the age of the participant? This situation would correspond to a case where (say) older people were more sensitive to tea ordering, perhaps because of their greater tea experience. We call this an <strong>interaction</strong> effect: the effect of one predictor depends on the state of another.</p>
+<p>Interaction effects are easily accommodated in our modeling framework. We simply add a term to our model that is the product of condition (<span class="math inline">\(X_1\)</span>) and age (<span class="math inline">\(X_2\)</span>), and weight this product by another beta, which represents the strength of this interaction:</p>
+<div class="page-columns page-full"><p><span class="math display">\[
+Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2}  + \beta_3 X_{i1} X_{i2}  + \epsilon_i
+\]</span> Statistical interactions are a very powerful modeling tool that can help us understand the relationship between different experimental manipulations or between manipulations and covariates (such as age). We discuss their role in experimental design – as well as some of the interpretive challenges that they pose – in much more detail in <a href="#sec-design"><span class="quarto-unresolved-ref">sec-design</span></a>.<a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn11"><p><sup>11</sup>&nbsp;We won’t go into this topic here, but we do want to provide a pointer to one of the most persistent challenges that come up when you specify regression models with categorical predictors – and especially their interactions: how you “code” these categorical predictors. Above we created a variable <span class="math inline">\(X\)</span> that encoded milk-first tea as 0 and tea-first tea as 1. This coding system is known as <strong>dummy coding</strong>, because <span class="math inline">\(X\)</span> is a “dummy” variable that stands in for milk-first tea. Dummy variables are very easy to think about, but in models with interactions, they can cause some problems. Because the interaction in our example model is a product of the dummy-coded condition variable and age, the interaction term <span class="math inline">\(\beta_3\)</span> is interpreted as the effect of age <em>for the tea-first condition</em> (<span class="math inline">\(X=1\)</span>) and hence the effect of age <span class="math inline">\(\beta_2\)</span> is actually the effect of age <em>for the milk-first condition</em>. The way to deal with this issue is to use a different coding system, such as <strong>contrast coding</strong>. <span class="citation" data-cites="davis2010">Davis (<a href="#ref-davis2010" role="doc-biblioref">2010</a>)</span> gives a good tutorial on this tricky topic.</p></li></div></div>
+</section>
+<section id="when-does-linear-regression-work" class="level3 page-columns page-full" data-number="7.1.4">
+<h3 data-number="7.1.4" class="anchored" data-anchor-id="when-does-linear-regression-work"><span class="header-section-number">7.1.4</span> When does linear regression work?</h3>
+<div class="page-columns page-full"><p>Linear regression modeling with OLS is an incredibly powerful technique for creating models to estimate the influence of multiple predictors on a single dependent variable. In fact, OLS is in a mathematical sense the <em>best</em> way to fit a linear model!<a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a> But OLS only “works” – in the sense of yielding good estimates – if three big conditions are met.</p><div class="no-row-height column-margin column-container"><li id="fn12"><p><sup>12</sup>&nbsp;There is a precise sense in which OLS gives the <em>very best</em> predictions we could ever get from any model that posits linear relationships between the independent variables and the outcome. That is, you can come up with any other linear, unbiased model you want, and yet if the assumptions of OLS are fulfilled, predictions from OLS will always be less noisy than those of your model. This is because of an elegant mathematical result called the Gauss-Markov Theorem.</p></li></div></div>
+<ol type="1">
+<li><strong>The predictor relationships being modeled must be linear.</strong> In our comparison of Alice’s and Bob’s expected outcomes based on their 1-year age difference, we were able to interpret the coefficient <span class="math inline">\(\beta_2\)</span> as the average difference in <span class="math inline">\(Y_i\)</span> when comparing participants who differ by 1 year of age, <em>regardless</em> of whether those ages are 20 vs.&nbsp;21 or 50 vs.&nbsp;51. But that’s not always true: plenty of things vary <strong>non-linearly</strong> with age – for example, imagine growth in height over age! Linear regression will give bad answers in such cases.<a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a></li>
+</ol>
+<!-- [Suggested Figure. Panel A: Scatter plot showing a nice linear relationship with OLS fit superimposed. Panel B: Scatter plot showing a nonlinear relationship with OLS fit, OLS fit with x^2 term, and LOESS superimposed.] -->
+<div class="no-row-height column-margin column-container"><li id="fn13"><p><sup>13</sup>&nbsp;One way to accommodate <strong>non-linearities</strong> is to modify the linear predictor to include polynomial terms, such as <span class="math inline">\(X_2^2\)</span>, which then allow us to fit a curve rather than just a straight line. It is always a good idea to use visualizations like scatter plots to look for possible problems with linearity.</p></li></div><ol start="2" type="1">
+<li><strong>Errors must be independent.</strong> In our example, observations in the regression model (i.e., rows in the dataset) were sampled independently: each participant was recruited independently to the study and each performed a single trial. On the other hand, suppose we have repeated-measures data in which we sample participants, and then obtained multiple measurements for each participant. Within each participant, measurements would likely be correlated (perhaps because participants differ on their general level of tea enjoyment). This correlation can invalidate inferences from a model that does not accommodate the correlation. We’ll discuss this problem in detail below.</li>
+</ol>
+<!-- Usually, outcome measurements within a participant will be correlated: if we measure 10 participants' blood pressures every day for a week, some participants will typically have high values whereas others will typically have low values, even though any given participant will also have some variation in their own measurements over time.[^models-3] To help identify such situations, it can be helpful to plot the distribution of **residuals** for each participant (or a random sample thereof) to see whether this distribution seems to differ across participants.  -->
+<!-- [^models-3] To be specific, it is not the blood pressure values ($Y_i$) themselves that must be independent, but rather the error terms ($\epsilon$). The error terms are what is "left over" after accounting for systematic variation that is predicted by the independent variables. If, in principle, we managed to include in the linear predictor all variables that might explain individual differences in typical blood pressure (e.g., genetic factors, sex, age, etc.), then the errors would be independent even though the outcomes themselves are not. However, as a heuristic, considering possible sources of correlation in the outcomes themselves is often a reasonable proxy for thinking about the error terms. -->
+<!-- [Suggested Figure. Violin plots, or similar, showing residuals for different subjects. The residuals exhibit non-independence.] -->
+<ol start="3" type="1">
+<li><strong>Errors must be normally distributed and unrelated to the predictor.</strong> Imagine older people have very consistent tea-ordering preferences while younger people do not. In that case, the models’ error term would be less variable for older participants than younger ones. This issue is called <strong>heteroskedasticity</strong>. It is a good idea to plot each independent variable versus the residuals to see if the residuals are more variable for certain values of the independent variable than for others.</li>
+</ol>
+<p><!-- This is often the case for highly skewed outcome variables. For example, if we regressed participants' incomes on their years of education, we will find that higher education is associated with higher income. However, because income is highly right-skewed in many samples (some people have extremely high incomes), income will typically be more variable for individuals with more education than for those with less education. For this reason, if we predicted incomes for individuals with 16 years of education (i.e., they completed 4-year college and then stopped) and also for individuals with 8 years (i.e., they completed middle school and then stopped), the errors in the former predictions will probably be more variable than the errors in the latter predictions.  --></p>
+<!-- [Suggested Figure. X vs. residuals, showing heteroskedasticity.] -->
+<p>If any of these three conditions are violated, it can undermine the estimates and inferences you draw from your model.</p>
+</section>
+</section>
+<section id="generalized-linear-models" class="level2 page-columns page-full" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="generalized-linear-models"><span class="header-section-number">7.2</span> Generalized linear models</h2>
+<p>So far we have considered continuous outcome measures, like tea ratings. What if we instead had a binary outcome, such as whether a participant liked or didn’t like the tea, or a count outcome, such as the number of cups a participant chose to drink? These and other non-continuous outcomes often violate the assumptions of OLS, in particular because they often induce heteroskedastic errors.</p>
+<div class="page-columns page-full"><p>Binary outcomes inherently produce heteroskedastic errors because the variance of a binary variable depends directly on the outcome probability. Errors will be more variable when the outcome probability is closer to 0.50, and much less variable for when the probability is closer to 0 or 1.<a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a> This heteroskedasticity in turn means that inferences from the model (e.g., <span class="math inline">\(p\)</span>-values) can be incorrect; sometimes just a little bit off but sometimes dramatically incorrect.<a href="#fn15" class="footnote-ref" id="fnref15" role="doc-noteref"><sup>15</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn14"><p><sup>14</sup>&nbsp;Specifically, the variance of a binary variable with probability <span class="math inline">\(p\)</span> is simply <span class="math inline">\(p(1-p)\)</span>, which is largest when <span class="math inline">\(p=0.50\)</span>.</p></li><li id="fn15"><p><sup>15</sup>&nbsp;OLS can also be used with binary outcomes, in which case the coefficients represent differences in probabilities. However, the usual model-based standard errors will be incorrect.</p></li></div></div>
+<p>Happily, <strong>generalized linear models</strong> (GLMs) are regression models closely related to OLS that can handle non-continuous outcomes. These models are called “generalized” because OLS is one of many members of this large class of models. To see the connection, let’s first write an OLS model more generally in terms of what it says about the expected value of the outcome, which we notate as <span class="math inline">\(E[Y_i]\)</span>:</p>
+<p><span class="math display">\[
+E[Y_i] = \beta_0 + \sum_{j=1}^p \beta_j X_{ij}
+\]</span></p>
+<p>where <span class="math inline">\(p\)</span> is the number of independent variables, <span class="math inline">\(\beta_0\)</span> is the intercept, and <span class="math inline">\(\beta_j\)</span> is the regression coefficient for the <span class="math inline">\(j^{th}\)</span> independent variable. This equation is just a math-y way of saying that you predict from a regression model by adding up each of the predictors’ contributions to the expected outcome (<span class="math inline">\(\beta_j X_{ij}\)</span>).</p>
+<p>The linear predictor of a GLM (i.e., <span class="math inline">\(\beta_0 + \sum_{j=1}^p \beta_j X_{ij}\)</span>) looks exactly the same as for OLS, but instead of modeling <span class="math inline">\(E[Y_i]\)</span>, a GLM models some <strong>transformation</strong>, <span class="math inline">\(g(.)\)</span>, of the expectation:</p>
+<p><span class="math display">\[
+g( E[Y_i] ) = \beta_0 + \sum_{j=1}^p \beta_j X_{ij}
+\]</span></p>
+<p>GLMs involve transforming the <em>expectation</em> of the outcome, not the outcome itself! That is, in GLMs, we are not just taking the outcome variable in our dataset and transforming it before fitting an OLS model, but rather we are fitting a different model entirely, one that posits a fundamentally different relationship between the predictors and the expected outcomes. This transformation is called the <strong>link function</strong>. In other words, to fit different kinds of outcomes, all we need to do is construct a standard linear model and then just transform its output via the appropriate link function.</p>
+<p>Perhaps the most common link function is the <strong>logit</strong> link, which is suitable for binary data. This link function looks like this, where <span class="math inline">\(w\)</span> is any probability that is strictly between 0 and 1:</p>
+<p><span class="math display">\[g(w) = \log \left( \frac{w}{1 - w} \right)\]</span></p>
+<p>The term <span class="math inline">\(w / (1 - w)\)</span> is called the <strong>odds</strong> and represents the probability of an event occurring divided by the probability of its not occurring. The resulting model is called <strong>logistic regression</strong> and looks like:</p>
+<p><span class="math display">\[
+\text{logit}( E[Y_{it}] ) = \log \left( \frac{ E[Y_i] }{1 - E[Y_i] } \right) = \beta_0 + \sum_{j=1}^p \beta_j X_{ij}
+\]</span></p>
+<p>Exponentiating the coefficients (i.e., <span class="math inline">\(e^{\beta}\)</span>) would yield <strong>odds ratios</strong>, which are the <em>multiplicative</em> increase in the odds of <span class="math inline">\(Y_i=1\)</span> that is associated with a one-unit increase in the relevant predictor variable.</p>
+<div class="cell page-columns page-full" data-hash="007-models_cache/html/fig-models-logistic-ex_39f77e3cd8bd85da6f91730e002db086">
+<div class="cell-output-display page-columns page-full">
+<div id="fig-models-logistic-ex" class="quarto-figure quarto-figure-center anchored page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="007-models_files/figure-html/fig-models-logistic-ex-1.png" class="img-fluid figure-img" width="1950"></p>
+<figcaption class="figure-caption margin-caption">Figure&nbsp;7.2: An example of how logistic regression transforms a change in the mean-centered predictor X into a change in the expected outcome Y. The same absolute change in X is associated in a large difference in the probability of the outcome when X is near its mean (blue) vs.&nbsp;a small change in the outcome when X is large (red) or small.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-models-logistic-ex">Figure&nbsp;<span class="quarto-unresolved-ref">fig-models-logistic-ex</span></a> shows the way that a logistic regression model transforms a predictor (<span class="math inline">\(X\)</span>) into an outcome probability that is bounded at 0 and 1. Critically, although the predictor is still linear, the logit link means that the same change in <span class="math inline">\(X\)</span> can result in a different change in the absolute probability of <span class="math inline">\(Y\)</span> depending on where you are on the <span class="math inline">\(X\)</span> scale. In this example, if you are in the middle of the predictor range, a one-unit change in <span class="math inline">\(X\)</span> results in a 0.24 change in probability (blue). At a higher value, the change is much smaller (0.02. Notice how this is different from the linear regression model above, where the same change in age always resulted in the same change in preference!</p>
+<div class="callout callout-style-default callout-note callout-titled" title="code">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+code
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>GLMs are as easy to fit in R as standard LMs. You simply need to call the <code>glm</code> function – and to specify the link function. For our example above of a binary “liking” judgment, the call would be:</p>
+<div class="cell" data-hash="007-models_cache/html/unnamed-chunk-5_02ce00294a2f9104454e60cd86eebae7">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glm</span>(liked_tea <span class="sc">~</span> condition, <span class="at">data =</span> tea_data, <span class="at">family =</span> <span class="st">"binomial"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The <code>family</code> argument specifies the type of distribution being used, where “binomial” is the logistic link function.</p>
+</div>
+</div>
+</div>
+<div class="page-columns page-full"><p>We have only scratched the surface of GLMs here. First, there are many different link functions that are suitable for different outcome types. And second, GLMs differ from OLS not only in their link functions, but also in how they handle the error terms. Our broader goal in this chapter is to show you how regression models are <em>models of data</em>. In that context, GLMs use link functions as a way to make models that generate many different times types of outcome data.<a href="#fn16" class="footnote-ref" id="fnref16" role="doc-noteref"><sup>16</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn16"><p><sup>16</sup>&nbsp;We sometimes think of linear models as a set of tinker toys you can snap together to stack up a set of predictors. In that context, link functions are an extra “attachment” that you can snap onto your linear model to make it generate a different response type.</p></li></div></div>
+</section>
+<section id="linear-mixed-effects-models" class="level2 page-columns page-full" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="linear-mixed-effects-models"><span class="header-section-number">7.3</span> Linear mixed effects models</h2>
+<p>Experimental data often contain multiple measurements for each participant (so-called <strong>repeated measures</strong>). In addition, these measurements are often based on a sample of stimulus items (which then each have multiple measures as well). This clustering is problematic for OLS models, because the error terms for each datapoint are not independent.</p>
+<!-- [MM: Not sure how to change this, but should use $\widehat{\beta}_{1}$ for consistency] -->
+<p>Non-independence of datapoints may seem at first glance like a small issue, but it can present a deep problem for making inferences. Take the tea-tasting data we looked at above, where we had 24 observations in each condition. If we fit an OLS model, we observe a highly significant tea-first effect. Here is the estimate and confidence interval for that coefficient: <span class="math inline">\(b = -2.42\)</span>, 95% CI <span class="math inline">\([-3.50, -1.33]\)</span>. Based on what we talked about in the previous chapter, it seems like we’d be licensed in rejecting the null hypothesis that this effect is due to sampling variation and interpret this instead as evidence for a generalizable difference in tea preference in our sampled population.</p>
+<div class="page-columns page-full"><p>But suppose we told you that all of those 48 total observations (24 in each condition) were from one individual named George. That would change the picture considerably. Now we’d have no idea whether the big effect we observed reflected a difference in the population, but we would have a very good sense of what George’s preference is!<a href="#fn17" class="footnote-ref" id="fnref17" role="doc-noteref"><sup>17</sup></a> The confidence intervals and p-values from our OLS model would be wrong now because all of the error terms would be highly correlated – they would all reflect George’s preferences.</p><div class="no-row-height column-margin column-container"><li id="fn17"><p><sup>17</sup>&nbsp;We discuss the strengths and weaknesses of repeated-measures designs like this in <a href="#sec-design"><span class="quarto-unresolved-ref">sec-design</span></a> and the statistical tradeoffs of having many people with a small number of observations per person vs.&nbsp;a small number of people with many observations per person in <a href="#sec-sampling"><span class="quarto-unresolved-ref">sec-sampling</span></a>.</p></li></div></div>
+<p>How can we make models that deal with clustered data? There are a number of widely-used approaches for solving this problem including <strong>linear mixed effects models</strong>, <strong>generalized estimating equations</strong>, and <strong>clustered standard errors</strong> (often used in economics). Here we will illustrate how the problem gets solved in linear mixed models, which are an extension of OLS models that are fast becoming a standard in many areas of psychology <span class="citation" data-cites="bates2014">(<a href="#ref-bates2014" role="doc-biblioref">Bates et al. 2014</a>)</span>.</p>
+<section id="modeling-random-variation-in-clusters" class="level3 page-columns page-full" data-number="7.3.1">
+<h3 data-number="7.3.1" class="anchored" data-anchor-id="modeling-random-variation-in-clusters"><span class="header-section-number">7.3.1</span> Modeling random variation in clusters</h3>
+<p>In linear mixed effects models, we modify the linear predictor itself to model differences across clusters. Instead of just measuring George’s preferences, suppose we modified the original tea-tasting experiment (without the age covariate) to collect ten ratings from each participant: five milk-first and five tea-first. We define the model the same way as we did before, with some minor differences:</p>
+<p><span class="math display">\[
+Y_{it} = \beta_0 + \beta_1 X_{it} + \gamma_i + \epsilon_{it}
+\]</span></p>
+<p>where <span class="math inline">\(Y_{it}\)</span> is participant <span class="math inline">\(i\)</span>’s rating in trial <span class="math inline">\(t\)</span> and <span class="math inline">\(X_{it}\)</span> is the participant’s assigned treatment in trial <span class="math inline">\(t\)</span> (i.e., milk-first or tea-first).</p>
+<div class="page-columns page-full"><p>If you compare this equation to the OLS equation above, you will notice that we added two things. First, we’ve added subscripts that distinguish trials from participants. But the big one is that we added <span class="math inline">\(\gamma_i\)</span>, a separate intercept value for each participant. We call this a <strong>random intercept</strong> because it varies across participants (who are randomly selected from the population).<a href="#fn18" class="footnote-ref" id="fnref18" role="doc-noteref"><sup>18</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn18"><p><sup>18</sup>&nbsp;Formally, we’d notate this random variation by saying that <span class="math inline">\(\gamma_i \sim N(0, \tau^2)\)</span> – in other words, that participants’ random intercepts are sampled from a normal distribution around the shared intercept <span class="math inline">\(\beta_0\)</span> with standard deviation <span class="math inline">\(\tau\)</span>.</p></li></div></div>
+<div class="page-columns page-full"><p>The random intercept means that we have assumed that each participant has their own typical “baseline” tea rating – some participants overall just like tea more than others – and these baseline ratings are normally distributed across participants. Thus, ratings are correlated within participants because ratings cluster around each participant’s <em>distinct</em> baseline tea rating. This model is better able to block misleading inferences. For example, suppose we only had one participant in each condition (say, George provided 24 milk-first ratings and Alice provided 24 tea-first ratings). If we found higher ratings in one condition, we would be able to attribute this difference to participant-level variation rather than to the treatment.<a href="#fn19" class="footnote-ref" id="fnref19" role="doc-noteref"><sup>19</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn19"><p><sup>19</sup>&nbsp;Of course, this would be a terrible experiment! Ideally, we would address this problem upstream in our experiment design; see <a href="#sec-design"><span class="quarto-unresolved-ref">sec-design</span></a>.</p></li></div></div>
+<p>Following the same logic, we could fit random intercepts for different stimulus items (for example, if we used different types of tea for different trials). We modeled participants as having normally distributed variation, and we can model stimulus variation the same way. Each stimulus item is assumed to produce a particular average outcome (i.e.&nbsp;some teas are tastier than others), with these average outcomes sampled from a normally distributed population.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="code">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+code
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Remarkably, GLMMs are not much harder to specify in R than standard LMs. One very popular package is <code>lme4</code> <span class="citation" data-cites="bates2014">(<a href="#ref-bates2014" role="doc-biblioref">Bates et al. 2014</a>)</span>, which provides the <code>lmer</code> and <code>glmer</code> functions (the latter for generalized linear mixed effect models). For our example here, we’d write:</p>
+<div class="cell" data-hash="007-models_cache/html/unnamed-chunk-6_6ea8f52e5895db4d07e0b55c3ce9f539">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lmer</span>(rating <span class="sc">~</span> condition <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> tea_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In this model, the syntax <code>(1 | id)</code> specifies that we want a random intercept for each level of <code>id</code>.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="random-slopes-and-the-challenges-of-mixed-effects-models" class="level3 page-columns page-full" data-number="7.3.2">
+<h3 data-number="7.3.2" class="anchored"><span class="header-section-number">7.3.2</span> Random slopes and the challenges of mixed effects models</h3>
+<p>Linear mixed effects models can be further extended to model clustering of the independent variables’ <em>effects</em> within subjects, not just clustering of average <em>outcomes</em> within subjects. To do so, we can introduce <strong>random slopes</strong> (<span class="math inline">\(\delta_i\)</span>) to the model, which are multiplied by the condition variable <span class="math inline">\(X\)</span> and represent differences across participants in the effect of tea-tasting:</p>
+<p><span class="math display">\[
+Y_i = \beta_0 + \beta_1 X_{it} + \gamma_i + \delta_{i} X_{it} + \epsilon_{it}
+\]</span></p>
+<div class="page-columns page-full"><p>Just like the random intercepts, these random slopes will be assumed to vary across participants, following a normal distribution.<a href="#fn20" class="footnote-ref" id="fnref20" role="doc-noteref"><sup>20</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn20"><p><sup>20</sup>&nbsp;These random slopes and intercepts can be assumed to be independent or correlated with one another, depending on the modeler’s preference.</p></li></div></div>
+<div class="page-columns page-full"><p>This model now describes random variation in both overall how much someone likes tea <em>and</em> how strong their ordering preference is. Both of these likely do vary in the population and so it seems like a good thing to put these in your model. Indeed under some circumstances, adding random slopes is argued to be very important for making appropriate inferences.<a href="#fn21" class="footnote-ref" id="fnref21" role="doc-noteref"><sup>21</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn21"><p><sup>21</sup>&nbsp;There’s lots of debate in the literature about the best random effect structure for mixed effects models. This is a very tricky and technical subject. In brief, some folks argue for so-called <strong>maximal</strong> models, in which you include every random effect that is justified by the design <span class="citation" data-cites="barr2013">(<a href="#ref-barr2013" role="doc-biblioref">Barr et al. 2013</a>)</span>. Here that would mean including random slopes for each participant. The problem is that these models can get very complex, and can be very hard to fit using standard software. We won’t weigh in on this topic, but as you start to use these models on more complex experimental designs, it might be worth reading up.</p></li></div></div>
+<div class="page-columns page-full"><p>On the other hand, the model is much more complicated. When we had a simple OLS model above, we had only two parameters to fit (<span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>) but now we have those two plus two more, representing the standard deviations of the individual participant intercepts and slopes, plus parameters for each participant and for the condition effect for each participant. So we went from two parameters to 24!<a href="#fn22" class="footnote-ref" id="fnref22" role="doc-noteref"><sup>22</sup></a> This complexity can lead to problems in fitting the models, especially with very small datasets (where these parameters are not very well-constrained by the data) or very large datasets (where computing all these parameters can be tricky).<a href="#fn23" class="footnote-ref" id="fnref23" role="doc-noteref"><sup>23</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn22"><p><sup>22</sup>&nbsp;Though we should note that these parameters aren’t technically all independent from one another due to the structure of the mixed effect model.</p></li><li id="fn23"><p><sup>23</sup>&nbsp;Many R users may be familiar with the widely-used <code>lme4</code> package for fitting mixed effects models using frequentist tools related to maximum likelihood. Such models can also be fit using Bayesian inference with the <code>brms</code> package, which provides many powerful methods for specifying complex models.</p></li></div></div>
+<div class="page-columns page-full"><p>More generally, linear mixed effects models are very flexible, and they have become quite common in psychology. But they do have significant limitations. As we discussed, they can be tricky to fit in standard software packages. Further, the accuracy of these models relies on our ability to specify the structure of the random effects correctly.<a href="#fn24" class="footnote-ref" id="fnref24" role="doc-noteref"><sup>24</sup></a> If we specify an incorrect model, our inferences will be wrong! But it is sometimes difficult to know how to check whether your model is reasonable, especially with a small number of clusters or observations.</p><div class="no-row-height column-margin column-container"><li id="fn24"><p><sup>24</sup>&nbsp;One particularly problematic situation is when the correlation structure of the errors is mis-specified, for example if observations within a participant are more correlated for participants in the treatment group than in the control group; in such cases, mixed model estimates can be substantially biased <span class="citation" data-cites="bie2021fitting">(<a href="#ref-bie2021fitting" role="doc-biblioref">Bie et al. 2021</a>)</span>.</p></li></div></div>
+<div class="callout callout-style-default callout-note callout-titled" title="code">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+code
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Specifying random slopes in the <code>lme4</code> package is also relatively straightforward:</p>
+<div class="cell" data-hash="007-models_cache/html/unnamed-chunk-7_4895a1074eedecdf489b310f3d977866">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lmer</span>(rating <span class="sc">~</span> condition <span class="sc">+</span> (condition <span class="sc">|</span> id), <span class="at">data =</span> tea_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here, <code>(condition | id)</code> means “a separate random slope for <code>condition</code> should be fit for each level of <code>id</code>.” Of course, specifying such a model is easier than fitting it correctly.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="depth">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+depth
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<section id="an-alternative-approach-generalized-estimating-equations" class="level2 unnumbered callout-body-container callout-body">
+<h2 class="unnumbered anchored" data-anchor-id="an-alternative-approach-generalized-estimating-equations">An alternative approach: Generalized estimating equations</h2>
+<p>A second class of methods that helps resolve issues of clustering is <strong>generalized estimating equations</strong> (GEE). In this approach, we leave the linear predictor alone. We do not add random intercepts or slopes, nor do we assume anything about the distribution of the errors (i.e., we no longer assume that they are normal, independent, and homoskedastic).</p>
+<p>In GEE, we instead provide the model with an initial “guess” about how we think the errors might be related to one another; for example, in a repeated-measures experiment, we might guess that the errors are exchangeable, meaning that they are correlated to the same degree within each participant but are uncorrelated across participants. Instead of <em>assuming</em> that our guess is correct, as do linear mixed models (LMM), GEE estimates the correlation structure of the errors empirically, using our guess as a starting point, and it uses this correlation structure to arrive at point estimates and inference for the regression coefficients. Remarkably, as the number of clusters and observations become very large, GEE will <em>always</em> provide unbiased point estimates and valid inference, <em>even if</em> our guess about the correlation structure was bad. Additionally, with simple finite-sample corrections <span class="citation" data-cites="mancl2001covariance">(<a href="#ref-mancl2001covariance" role="doc-biblioref">Mancl and DeRouen 2001</a>)</span>, GEE seems to provide valid inference at smaller numbers of clusters than does LMM.</p>
+<p>The price paid for these nice safeguards against model misspecification is that, in principle, GEE will typically have less statistical power than LMM <em>if</em> the LMM is in fact correctly specified, but the difference may be surprisingly slight in practice <span class="citation" data-cites="bie2021fitting">(<a href="#ref-bie2021fitting" role="doc-biblioref">Bie et al. 2021</a>)</span>. For these reasons, some of this book’s authors actually favor GEE with finite-sample corrections over LMM as the default model for clustered data, though they are much less common in psychology. <!-- In general, we tend to favor LMM over GEE only when the number of observations and clusters are quite large, and when careful diagnostics also indicate that distributional assumptions are fulfilled. --></p>
+</section>
+</div>
+</div>
+</section>
+</section>
+<section id="how-do-you-use-models-to-analyze-data" class="level2 page-columns page-full" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="how-do-you-use-models-to-analyze-data"><span class="header-section-number">7.4</span> How do you use models to analyze data?</h2>
+<p>In the prior parts of this chapter, we’ve described a suite of regression-based techniques – standard OLS, the generalized linear model, and linear mixed effects models – that can be used to model the data resulting from randomized experiments (as well as many other kinds of data). The advantage of regression models over the simpler estimation and inference methods we described in the prior two chapters is that these models can more effectively take into account a range of different kinds of variation including covariates, multiple manipulations, and clustered structure. Further, when used appropriately to analyze a well-designed randomized experiment, regression models can give an unbiased estimate of a causal effect of interest, our main goal in doing experiments.</p>
+<p>But – practically speaking – how should go you about building a model for your experiment? What covariates should you include and what should you leave out? There are many ways to use models to explore datasets, but in this section we will try to sketch a default approach for the use of models to estimate causal effects in experiments in the most straightforward way. Think of this as a starting point. We’ll begin this section by giving a set of rules of thumb, then discuss a worked example. Our final subsections will deal with the issues of when you should include covariates in your model and how to check if your result is robust across multiple different model specifications.</p>
+<section id="modeling-rules-of-thumb" class="level3 page-columns page-full" data-number="7.4.1">
+<h3 data-number="7.4.1" class="anchored" data-anchor-id="modeling-rules-of-thumb"><span class="header-section-number">7.4.1</span> Modeling rules of thumb</h3>
+<div class="page-columns page-full"><p>Our approach to statistical modeling is to start with a “default model” that is known in the literature as a <strong>saturated model</strong>. The saturated model of an experiment includes the full design of the experiment – all main effects and interactions – and nothing else. If you are manipulating a variable, include it in your model. If you are manipulating two, include them both and their interaction. If your design includes repeated measurements for participants, include a random effect of participant; if it includes experimental items for which repeated measurements are made, include random effect of stimulus.<a href="#fn25" class="footnote-ref" id="fnref25" role="doc-noteref"><sup>25</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn25"><p><sup>25</sup>&nbsp;As discussed above, you can also include the “maximal” random effect structure <span class="citation" data-cites="barr2013">(<a href="#ref-barr2013" role="doc-biblioref">Barr et al. 2013</a>)</span>, which involves random slopes as well as intercepts – but recognize that you cannot always fit such models.</p></li></div></div>
+<div class="page-columns page-full"><p>Don’t include lots of other stuff in your default model. You are doing a randomized experiment, and the strength of randomized experiments is that you don’t have to worry about confounding based on the population (see <a href="#sec-experiments"><span class="quarto-unresolved-ref">sec-experiments</span></a>). So don’t put a lot of covariates in your default model – usually don’t put in any!<a href="#fn26" class="footnote-ref" id="fnref26" role="doc-noteref"><sup>26</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn26"><p><sup>26</sup>&nbsp;One corollary to having this kind of default perspective on data analysis: When you see an analysis that deviates substantially from the default, these deviations should provoke some questions. If someone drops a manipulation from their analysis, adds a covariate or two, or fails to control for some clustering in the data, did they deviate because of different norms in their sub-field, or was there some other rationale? This line of reasoning sometimes leads to questions about the extent to which particular analytic decisions are post-hoc and driven by the data (in other words, <span class="math inline">\(p\)</span>-hacked). For an example, see the case study in <a href="#sec-prereg"><span class="quarto-unresolved-ref">sec-prereg</span></a>.</p></li></div></div>
+<p>This default saturated model then represents a simple summary of your experimental results. Its coefficients can be interpreted as estimates of the effects of interest, and it can be used as the basis for inferences about the relation of the experimental effect to the population using either frequentist or Bayesian tools.</p>
+<p>Here’s a bit more guidance about this modeling strategy.</p>
+<ol type="1">
+<li><p><strong>Preregister your model</strong>. If you change your analysis approach after you see your data, you risk <span class="math inline">\(p\)</span>-hacking – choosing an analysis that biases the estimate of your effect of interest. As we discussed in <a href="#sec-replication"><span class="quarto-unresolved-ref">sec-replication</span></a> and as we will discuss in more detail in <a href="#sec-prereg"><span class="quarto-unresolved-ref">sec-prereg</span></a>, one important strategy for minimizing this problem is to <strong>preregister</strong> your analysis.<a href="#fn27" class="footnote-ref" id="fnref27" role="doc-noteref"><sup>27</sup></a></p></li>
+<li><p><strong>Visualize the model predictions against the observed data</strong>. As we’ll discuss in <a href="#sec-viz"><span class="quarto-unresolved-ref">sec-viz</span></a>, the “default model” for an experiment should go alongside a “default visualization” known as the <strong>design plot</strong> that similarly reflects the full design structure of the experiment and any primary clusters. In visualizing data like those from our tea-tasting experiment, show individual participants’ average ratings (as in <a href="#fig-models-ex-viz">Figure&nbsp;<span class="quarto-unresolved-ref">fig-models-ex-viz</span></a>). One way to check whether a model fits your data is then to plot it on top of those data. Sometimes this combination of model and data can be as simple as a scatter plot with a regression line. But seeing the model plotted alongside the data can often reveal a mismatch between the two. A model that does not describe the data very well is not a good source of generalizable inferences!</p></li>
+</ol>
+<div class="no-row-height column-margin column-container"><li id="fn27"><p><sup>27</sup>&nbsp;A side benefit of preregistration is it makes you think through whether your experimental design is appropriate – that is, is there actually an analysis capable of estimating the effect you want from the data you intend to collect?</p></li></div><div class="cell page-columns page-full" data-hash="007-models_cache/html/fig-models-ex-viz_e171a42d8eae3f8d4d7e4aec0fb3500f">
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
+<div id="fig-models-ex-viz" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="007-models_files/figure-html/fig-models-ex-viz-1.png" class="img-fluid figure-img" width="900"></p>
+<figcaption class="figure-caption">Figure&nbsp;7.3: Raw data, means, and confidence intervals for the tea-tasting experiment.</figcaption>
+</figure>
+</div>
+</div></div></div>
+<ol start="3" type="1">
+<li><strong>Interpret the model predictions</strong>. Once you have a model, don’t just read off the <span class="math inline">\(p\)</span>-values for your coefficients of interest. Walk through the each coefficient, considering how it relates to your outcome variable. For a simple two group design like we’ve been considering, the condition coefficient is the estimate of the causal effect that you intended to measure! Consider its sign, its magnitude, and its precision (standard error or confidence interval).</li>
+</ol>
+<p>That said, there are some contexts in which it does make sense to depart from the default saturated model. For example, there may be insufficient statistical power to estimate multiple interaction terms, or covariates might be included in the model to help handle certain forms of missing data. The default model simply represents a very good starting point.</p>
+</section>
+<section id="a-worked-example" class="level3 page-columns page-full" data-number="7.4.2">
+<h3 data-number="7.4.2" class="anchored"><span class="header-section-number">7.4.2</span> A worked example</h3>
+
+<div class="no-row-height column-margin column-container"><div id="fig-models-sgf-stim" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/models/sgf.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;7.4: Example stimulus materials from <span class="citation" data-cites="stiller2015">Stiller, Goodman, and Frank (<a href="#ref-stiller2015" role="doc-biblioref">2015</a>)</span>.</figcaption>
+</figure>
+</div></div><p>All this advice may seem abstract, so let’s put it into practice on a simple example. For a change, let’s look at an experiment that’s not about tea tasting. Here we’ll consider data from an experiment testing preschool children’s language comprehension <span class="citation" data-cites="stiller2015">(<a href="#ref-stiller2015" role="doc-biblioref">Stiller, Goodman, and Frank 2015</a>)</span>. In this experiment, 2–5 year old children saw displays like the one in <a href="#fig-models-sgf-stim">Figure&nbsp;<span class="quarto-unresolved-ref">fig-models-sgf-stim</span></a>. In the experimental condition, a puppet might say, for example, “My friend has glasses! Which one is my friend?” The goal was to measure how many children made the “pragmatic inference” that the puppet’s friend was the face with glasses and <em>no</em> hat.</p>
+<p>To estimate the effect, participants were randomly assigned to either the experimental condition or to a control condition in which the puppet had eaten too much peanut butter and couldn’t talk, but they still had to guess which face was his friend. There were also three other types of experimental stimuli (houses, beds, and plates of pasta). Data from this experiment consisted of 588 total observations from 147 children, with all four stimuli presented to each child. The primary hypothesis of this experiment was that that preschool children could make pragmatic inferences by correctly inferring which of the three faces (for example) the puppet was describing.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="code">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+code
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>If you want to follow along with this example, you’ll have to load the example data and do a little bit of preprocessing (also covered in <a href="#sec-tidyverse"><span class="quarto-unresolved-ref">sec-tidyverse</span></a>):</p>
+<div class="cell" data-hash="007-models_cache/html/unnamed-chunk-8_efd5b9240bf874f51ec199eefdf4c44a">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>repo <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/langcog/experimentology/main/"</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>sgf <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">paste0</span>(repo, <span class="st">"data/tidyverse/stiller_scales_data.csv"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age_group =</span> <span class="fu">cut</span>(age, <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">include.lowest =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">condition =</span> <span class="fu">fct_recode</span>(condition,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Experimental"</span> <span class="ot">=</span> <span class="st">"Label"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Control"</span> <span class="ot">=</span> <span class="st">"No Label"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<p>All this advice may seem abstract, so let’s put it into practice on a simple example. For a change, let’s look at an experiment that’s not about tea tasting. Here we’ll consider data from an experiment testing preschool children’s language comprehension , <a href="#sec-tidyverse">we also use these data in&nbsp;<span class="quarto-unresolved-ref ref-noprefix">sec-tidyverse</span></a>. In this experiment, 2–5 year old children saw displays like the one in <a href="#fig-models-sgf-stim">Figure&nbsp;<span class="quarto-unresolved-ref">fig-models-sgf-stim</span></a>. In the experimental condition, a puppet might say, for example, “My friend has glasses! Which one is my friend?” The goal was to measure how many children made the “pragmatic inference” that the puppet’s friend was the face with glasses and <em>no</em> hat.</p>
+<p>To estimate the effect, participants were randomly assigned to either the experimental condition or to a control condition in which the puppet had eaten too much peanut butter and couldn’t talk, but they still had to guess which face was his friend. There were also three other types of experimental stimuli (houses, beds, and plates of pasta). Data from this experiment consisted of 588 total observations from 147 children, with all four stimuli presented to each child. The primary hypothesis of this experiment was that that preschool children could make pragmatic inferences by correctly inferring which of the three faces (for example) the puppet was describing.</p>
+<div class="cell page-columns page-full" data-hash="007-models_cache/html/fig-models-sgf-plot_40baeb7b9dc4e70eb5344451cc3421ca">
+<div class="cell-output-display page-columns page-full">
+<div id="fig-models-sgf-plot" class="quarto-figure quarto-figure-center anchored page-columns page-full">
+<figure class="figure page-columns page-full">
+<p><img src="007-models_files/figure-html/fig-models-sgf-plot-1.png" class="img-fluid figure-img" width="1950"></p>
+<figcaption class="figure-caption margin-caption">Figure&nbsp;7.5: Data for <span class="citation" data-cites="stiller2015">Stiller, Goodman, and Frank (<a href="#ref-stiller2015" role="doc-biblioref">2015</a>)</span>. Each point shows a single participant’s proportion correct trials (out of 4 experimental stimuli) plotted by age group, jittered slightly to avoid overplotting. Larger points and associated confidence intervals show mean and 95% confidence intervals for each condition.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="page-columns page-full"><p>This experimental design looks a lot like some versions of our tea-tasting experiment. We have one primary condition manipulation (the puppet provides information versus does not), presented between-participants so that some participants are in the experimental condition and others are in the control condition. Our measurements are repeated within participants across different experimental stimuli. Finally, we have one important, pre-planned covariate: children’s age. Experimental data are plotted in <a href="#fig-models-sgf-plot">Figure&nbsp;<span class="quarto-unresolved-ref">fig-models-sgf-plot</span></a>.<a href="#fn28" class="footnote-ref" id="fnref28" role="doc-noteref"><sup>28</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn28"><p><sup>28</sup>&nbsp;Our sampling plan for this experiment was actually <strong>stratified</strong> across age, meaning that we intentionally recruited the same number of participants for each one-year age group – because we anticipated that age was highly correlated with children’s ability to succeed in this task. We’ll describe this kind of sampling in more detail in <a href="#sec-sampling"><span class="quarto-unresolved-ref">sec-sampling</span></a>.</p></li></div></div>
+<div class="page-columns page-full"><p>How should we go about making our default model for this dataset?<a href="#fn29" class="footnote-ref" id="fnref29" role="doc-noteref"><sup>29</sup></a> We simply include each of these design factors in a mixed effects model; we use a logistic link function for our mixed effects model (a <strong>generalized linear mixed effects model</strong>) because we would like to predict correct performance on each trial, which is a binary variable. So that gives us an effect of condition and age as a covariate. We further add an interaction between condition and age in case the condition effect varies meaningfully across groups. Finally, we add random effects of participant, <span class="math inline">\(\gamma_i\)</span>, and experimental item, <span class="math inline">\(\gamma_t\)</span>.<a href="#fn30" class="footnote-ref" id="fnref30" role="doc-noteref"><sup>30</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn29"><p><sup>29</sup>&nbsp;This experiment was not preregistered, but the paper includes a separate replication dataset with the same analysis.</p></li><li id="fn30"><p><sup>30</sup>&nbsp;As discussed above, this is a tricky decision-point; we could very reasonably have added random slopes as well.</p></li></div></div>
+<p>The resulting model looks like this:</p>
+<p><span class="math display">\[
+\text{logit}( E[Y_{it}] ) = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i1} X_{i2} + \gamma_i + \delta_t
+\]</span></p>
+<p>Let’s break this complex equation down left to right:</p>
+<ul>
+<li><span class="math inline">\(\text{logit}( E[Y_{it}] )\)</span> says that we are predicting a logistic function of <span class="math inline">\(E[Y_{it}]\)</span> (where <span class="math inline">\(Y_{it}\)</span> indicates whether child <span class="math inline">\(i\)</span> was correct on trial <span class="math inline">\(t\)</span>).</li>
+<li><span class="math inline">\(\beta_0\)</span> is the <strong>intercept</strong>, our estimate of the average log-odds (i.e., the log of the odds ratio) of correct responses for participants in the control condition.</li>
+<li><span class="math inline">\(\beta_1 X_{i1}\)</span> is the condition predictor. <span class="math inline">\(\beta_1\)</span> represents the change in log-odds associated with being in the experimental condition (the causal effect of interest!), and <span class="math inline">\(X_{i1}\)</span> is an indicator variable that is 1 if child <span class="math inline">\(i\)</span> is in the experimental condition and 0 for the control condition. Multiplying <span class="math inline">\(\beta_1\)</span> by this indicator means that the predictor has the value 0 for participants in the control condition and <span class="math inline">\(\beta_1\)</span> for those in the experimental condition.</li>
+<li><span class="math inline">\(\beta_2 X_{i2}\)</span> is the age predictor. <span class="math inline">\(\beta_2\)</span> represents the difference in log-odds associated with one additional year of age for participants int he control condition[The age coefficient is a <strong>simple effect</strong>, meaning it is the effect of age in the control condition only. That’s because we have dummy coded the condition predictor. If we wanted the average age effect (the <strong>main effect</strong>) then we would need to use contrast coding, per the note in the Interactions section above.], and <span class="math inline">\(X_{i2}\)</span> is the age for each participant.<a href="#fn31" class="footnote-ref" id="fnref31" role="doc-noteref"><sup>31</sup></a></li>
+<li><span class="math inline">\(\beta_3 X_{i1} * X_{i2}\)</span> is the interaction between experimental condition and age. <span class="math inline">\(\beta_3\)</span> represents the difference in log odds (i.e., the log of the odds ratio) that is associated with being one year older <em>and</em> in the experimental condition versus the control condition. This term is multiplied by both each child’s age <em>and</em> the condition indicator <span class="math inline">\(X_i\)</span>.</li>
+<li><span class="math inline">\(\gamma_i\)</span> is the random intercept for participant <span class="math inline">\(i\)</span>, capturing individual variation in the odds of success across trials.</li>
+<li><span class="math inline">\(\gamma_t\)</span> is the random intercept for stimulus <span class="math inline">\(t\)</span>, capturing variation in the odds of success across the four different stimuli.</li>
+</ul>
+<div class="no-row-height column-margin column-container"><li id="fn31"><p><sup>31</sup>&nbsp;We have <strong>centered</strong> our age predictor in this example so that all estimates from our model are for the average age of our participants. Centering is a good practice for modeling continuous predictors because it increases the interpretability of other parts of the model. For example, because age is centered in this model, the intercept <span class="math inline">\(\beta_0\)</span> can be interpreted as the predicted odds of a correct trial for a participant in the control condition at the average age.</p></li></div><div class="cell page-columns page-full" data-hash="007-models_cache/html/tbl-models-sgf-model-print_52805a537a7767d261e3dbe3dbe26541">
+<div class="cell-output-display page-columns page-full">
+<div class="kable-table page-columns page-full">
+<div id="tbl-models-sgf-model-print" class="anchored page-columns page-full">
+<table class="table table-sm table-striped small">
+
+<colgroup>
+<col style="width: 40%">
+<col style="width: 12%">
+<col style="width: 21%">
+<col style="width: 14%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: left;">estimate</th>
+<th style="text-align: left;">conf.int</th>
+<th style="text-align: left;">statistic</th>
+<th style="text-align: left;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Control condition</td>
+<td style="text-align: left;">0.80</td>
+<td style="text-align: left;">[0.42, 1.18]</td>
+<td style="text-align: left;">4.16</td>
+<td style="text-align: left;">&lt; .001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Age (years)</td>
+<td style="text-align: left;">0.55</td>
+<td style="text-align: left;">[0.21, 0.88]</td>
+<td style="text-align: left;">3.19</td>
+<td style="text-align: left;">.001</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Expt condition</td>
+<td style="text-align: left;">-2.26</td>
+<td style="text-align: left;">[-2.70, -1.82]</td>
+<td style="text-align: left;">-10.07</td>
+<td style="text-align: left;">&lt; .001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Age (years) * Expt condition</td>
+<td style="text-align: left;">-0.92</td>
+<td style="text-align: left;">[-1.43, -0.42]</td>
+<td style="text-align: left;">-3.60</td>
+<td style="text-align: left;">&lt; .001</td>
+</tr>
+</tbody>
+</table>
+<div class="quarto-table-caption margin-caption">Table&nbsp;7.2: Estimated effects for our generalized linear mixed effects model on data from <span class="citation" data-cites="stiller2015">Stiller, Goodman, and Frank (<a href="#ref-stiller2015" role="doc-biblioref">2015</a>)</span>.</div></div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="code">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+code
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To fit the model described above, the first step is to prepare your predictors. In this case, we center the <code>age</code> predictor.</p>
+<div class="cell" data-hash="007-models_cache/html/unnamed-chunk-9_14b9ad3e6980e9777defaa928c76f51a">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sgf<span class="sc">$</span>age_centered <span class="ot">&lt;-</span> <span class="fu">scale</span>(sgf<span class="sc">$</span>age, <span class="at">scale=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Again we use the <code>lme4</code> package, this time with the <code>glmer</code> function. Again we have to specify our link function, just like in a standard GLM, by choosing the distribution family.</p>
+<div class="cell" data-hash="007-models_cache/html/unnamed-chunk-10_9c0135c1bc26a7274d7d22b2eb0fead3">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">glmer</span>(correct <span class="sc">~</span> age_centered <span class="sc">*</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>subid) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>item), </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">family =</span> <span class="st">"binomial"</span>, <span class="at">data =</span> sgf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You can see a summary of the fitted model using <code>summary(mod)</code> as before. The only big difference from <code>lm</code> is that here you can extract both fixed and random effects (with <code>fixef(mod)</code> and <code>ranef(mod)</code> respectively).</p>
+</div>
+</div>
+</div>
+<div class="page-columns page-full"><p>Let’s estimate this model and see how it looks. We’ll focus here on interpretation of the so-called <strong>fixed effects</strong> (the main predictors), as opposed to the participant and item random effects.<a href="#fn32" class="footnote-ref" id="fnref32" role="doc-noteref"><sup>32</sup></a> <a href="#tbl-models-sgf-model-print">Table&nbsp;<span class="quarto-unresolved-ref">tbl-models-sgf-model-print</span></a> shows the coefficients. Again, let’s walk through each.</p><div class="no-row-height column-margin column-container"><li id="fn32"><p><sup>32</sup>&nbsp;Participant means are estimated to have a standard deviation of 0.23 (in log-odds) while items have a standard deviation of 0.27. These indicate that both of our random effects capture meaningful variation.</p></li></div></div>
+<!-- [MM: The calls to apa_mod$full_result below all render as just "beta"; should add appropriate subscripts for consistency.]-->
+<ul>
+<li><p>The <strong>intercept</strong> (control condition estimate) is <span class="math inline">\(\hat{\beta} = 0.80\)</span>, 95% CI <span class="math inline">\([0.42, 1.18]\)</span>, <span class="math inline">\(z = 4.16\)</span>, <span class="math inline">\(p &lt; .001\)</span>. This estimate reflects that the log-odds of a correct response for an average-age participant in the control condition is 0.8, which corresponds to a probability of 0.69. If we look at <a href="#fig-models-sgf-plot">Figure&nbsp;<span class="quarto-unresolved-ref">fig-models-sgf-plot</span></a>), that estimate makes sense: 0.69 seems close to the average for the control condition.</p></li>
+<li><p>The <strong>age effect</strong> estimate is <span class="math inline">\(\hat{\beta} = 0.55\)</span>, 95% CI <span class="math inline">\([0.21, 0.88]\)</span>, <span class="math inline">\(z = 3.19\)</span>, <span class="math inline">\(p = .001\)</span>. This means there is a slight decrease in the log-odds of a correct response for older children in the control condition. Again, looking at <a href="#fig-models-sgf-plot">Figure&nbsp;<span class="quarto-unresolved-ref">fig-models-sgf-plot</span></a>, this estimate is interpretable: we see a small decline in the probability of a correct response for the oldest age group.</p></li>
+<li><p>The key experimental condition estimate then is . This estimate means that the log-odds of a correct response for an average-age participant in the experimental condition is the sum of the estimates for the control (intercept) and the experimental conditions: 0.8 + -2.26, which corresponds to a probability of 0.19. Grounding our interpretation in <a href="#fig-models-sgf-plot">Figure&nbsp;<span class="quarto-unresolved-ref">fig-models-sgf-plot</span></a>, this estimate corresponds to the average value for the experimental condition.</p></li>
+<li><p>Finally, the <strong>interaction</strong> of age and condition is . This positive coefficient reflects that with every year of age, the difference between control and experimental conditions grows.</p></li>
+</ul>
+<p>In sum, this model suggests that there was a substantial difference in performance between experimental and control conditions, in turn supporting the hypothesis that children in the sampled age group can perform pragmatic inferences above chance.</p>
+<p>This example illustrates the “default saturated model” framework that we recommend – the idea that a single regression model corresponding to the design of the experiment can yield an interpretable estimate of the causal effect of interest, even in the presence of other sources of variation.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="depth">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+depth
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<section id="when-does-it-makes-sense-to-include-covariates-in-a-model" class="level2 unnumbered callout-body-container callout-body">
+<h2 class="unnumbered anchored" data-anchor-id="when-does-it-makes-sense-to-include-covariates-in-a-model">When does it makes sense to include covariates in a model?</h2>
+<p>Let’s come back to one piece of advice that we gave above about making a “default” model of an experiment: not including covariates. This advice can seem surprising. Many demographic factors are of interest to psychologists and other behavioral scientists, and in observational studies these factors will almost always be related to important life outcomes. So why not put them into our experimental models? After all, we did include age in our worked example above!</p>
+<p>Well, if you have one or at most a small handful of covariates that you believe are meaningfully related to the outcome, you <em>can</em> plan in advance to put them in your model. If you think that your effect is likely to be <strong>moderated</strong> a specific demographic characteristic – as we did with age in our developmental example above – then this inclusion can be quite useful.</p>
+<p>Further, including covariates can increase the precision of your estimates by reducing “noise” in your outcome, if you hypothesize that they interact. What’s surprising though is how <em>little</em> this adjustment does to increase your overall precision unless the correlation between covariate and outcome is very strong.</p>
+<p><a href="#fig-models-precision">Figure&nbsp;<span class="quarto-unresolved-ref">fig-models-precision</span></a> shows the relationship between estimation error and the inclusion of covariates via a simple simulation. Only when the correlation between covariate and outcome (e.g., age and tea rating is greater than <span class="math inline">\(r=0.6\)</span> to <span class="math inline">\(r=0.8\)</span> does this adjustment really help.</p>
+<div id="fig-models-precision" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="007-models_files/figure-html/models-precision-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;7.6: Decreases in estimation error due to adjusting for covariates, plotted by the N participants in each group and the correlation between the covariate and the outcome.</figcaption>
+</figure>
+</div>
+<p>That said, there are quite a few reasons not to include covariates – motivating our recommendation to skip them in your default model unless you have very strong theory-based expectations for either (A) a correlation with the outcome or (B) a strong moderation relationship.</p>
+<p>The first is simply because we don’t need to. Because randomization cuts causal links, our experimental estimate is an unbiased estimate of the causal effect of interest (at least for large samples). We are guaranteed that, in the limit of many different experiments, even though people with different ages will be in the different tea tasting conditions, this source of variation will be averaged out. Actually, including unnecessary covariates into models (slightly) decreases the probability that the model can detect a true effect (that is, it decreases statistical precision and power). Just by chance covariates can “soak up” variation in the outcome, leaving less to be accounted for by the true effect!</p>
+<p>The second reason is that you can actually compromise your causal inference by including some covariates, particularly those that are collected <em>after</em> randomization. The logic of randomization is that you cut all causal links between features of the sample and the condition manipulation. But you can “uncut” these links by accident by adding variables into your model that are related to group status. This problem is generically called <strong>conditioning on post-treatment variables</strong> and a full discussion of is out of the scope of this book, but it’s something to avoid (and read up on if you’re worried about it; <span class="citation" data-cites="montgomery2018">Montgomery, Nyhan, and Torres (<a href="#ref-montgomery2018" role="doc-biblioref">2018</a>)</span>).</p>
+<p>Finally, one of the standard justifications for adding covariates – because your groups are unbalanced – is actually ill-founded as well. People often talk about “unhappy randomization”: you randomize to the different tea-tasting groups, for example, but then it turns out the mean age is a bit different between groups. Then you do a t-test or some other statistical test and find out that you actually have a significant age difference. This practice makes no sense! Because you randomized, you know that the difference in ages occurred by chance. Further, incidental demographic differences between groups are unlikely to be important unless that characteristic is highly correlated with the outcome (see above). Instead, if the sample size is small enough that meaningfully large incidental differences could arise in important confounders, then it is preferable to stratify randomization on that confounder at the outset (and then also to include that covariate in modeling).</p>
+<p>So these are our options: if a covariate is known to be very strongly related to our outcome, we can include it in our default model. Otherwise, we avoid a lot of trouble by leaving covariates out.</p>
+</section>
+</div>
+</div>
+</section>
+<section id="robustness-checks-and-the-multiverse" class="level3 page-columns page-full" data-number="7.4.3">
+<h3 data-number="7.4.3" class="anchored" data-anchor-id="robustness-checks-and-the-multiverse"><span class="header-section-number">7.4.3</span> Robustness checks and the multiverse</h3>
+<div class="page-columns page-full"><p>Using the NHST statistical testing approach that has been common in the psychology literature, even a simple two factor experimental design affords a host of different <span class="math inline">\(t\)</span>-tests and ANOVAs,<a href="#fn33" class="footnote-ref" id="fnref33" role="doc-noteref"><sup>33</sup></a> offering many opportunities for <span class="math inline">\(p\)</span>-hacking and selective reporting. We’ve been advocating here instead for a “default model” approach in which you pre-plan and pre-register a single regression model that captures the planned features of your experimental design including manipulations and sources of clustering. This approach can help you to navigate some of the complexity of data analysis by having a standard approach that you take in almost every case.</p><div class="no-row-height column-margin column-container"><li id="fn33"><p><sup>33</sup>&nbsp;Although we don’t cover this point here, ANOVAs are also a special case of regression.</p></li></div></div>
+<p>Not every dataset will be amenable to this approach, however. For complex experimental designs or unusual measures, sometimes it can be hard to figure out how to specify or fit the default saturated model. And especially in these cases, the choice of model can make a big difference to the magnitude of the reported effect. To quantify variability in effect size due to model choice, “Many Analysts” projects have asked a set of teams to approach a dataset using different analysis methods. The consistent result from these projects has been that there is substantial variability in outcomes depending on what approach is taken <span class="citation" data-cites="silberzahn2018 botvinik-nezer2020">(<a href="#ref-silberzahn2018" role="doc-biblioref">Silberzahn et al. 2018</a>; <a href="#ref-botvinik-nezer2020" role="doc-biblioref">Botvinik-Nezer et al. 2020</a>)</span>.</p>
+<p><strong>Robustness analysis</strong> (also sometimes called “sensitivity analysis” or “multiverse analysis”, which sounds cooler) is a technique for addressing the possibility that an individual analysis over- or under-estimates a particular effect by chance <span class="citation" data-cites="steegen2016">(<a href="#ref-steegen2016" role="doc-biblioref">Steegen et al. 2016</a>)</span>. The general idea is that analysts explore a space of different possible analyses. In its simplest form, alternative model specifications can be reported in a supplement; more sophisticated versions of the idea call for averaging estimates across a range of possible specifications and reporting this average as the primary effect estimate.</p>
+<p>The details of this kind of analysis will vary depending on what you are worried about your model being sensitive to. One analyst might be concerned about the effects of adding different covariates; another might be using a Bayesian framework and be concerned about sensitivity to particular prior values. If you get similar results across many different specifications, you can sleep better at night. The primary principle to take home is a bit of humility about our models. Any given model is likely wrong in some of its details. Investigating the sensitivity of your estimates to the details of your model specification is a good idea.</p>
+</section>
+</section>
+<section id="chapter-summary-models" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="chapter-summary-models"><span class="header-section-number">7.5</span> Chapter summary: Models</h2>
+<p>In the last three chapters, we have spelled out a framework for data analysis that focuses on our key experimental goal: a measurement of a particular causal effect. We began with basic techniques for estimating effects and making inferences about how these effects estimated from a sample can be generalized to a population. This chapter showed how these ideas naturally give rise to the idea of making models of data, which allow estimation of effects in more complex designs. Simple regression models, which are formally identical to other inference methods in the most basic case, can be extended with the generalized linear model as well as with mixed effects models. Finally, we ended with some guidance on how to build a “default model” – an (often pre-registered) regression model that maps onto your experimental design and provides the primary estimate of your key causal effect.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="discussion questions">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+discussion questions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><p>Choose a paper that you have read for your research and take a look at the statistical analysis. Does the reporting focus more on hypothesis testing or on estimating effect sizes?</p></li>
+<li><p>We focused here on the linear model as a tool for building models, contrasting this perspective with the common “statistical testing” mindset. But – here’s the mind-blowing thing – most of those statistical tests are special cases of the linear model anyway. Take a look at this extended meditation on the equivalences between tests and models: <a href="https://lindeloev.github.io/tests-as-linear/#9_teaching_materials_and_a_course_outline" class="uri">https://lindeloev.github.io/tests-as-linear/#9_teaching_materials_and_a_course_outline</a>. If the paper you chose for question 1 used tests, could their tests be easily translated to models? How would the use of a model-based perspective change the results section of the paper?</p></li>
+<li><p>Take a look at this cool visualization of hierarchical (mixed effect) models: <a href="http://mfviz.com/hierarchical-models/" class="uri">http://mfviz.com/hierarchical-models/</a>. In your own research, what are the most common units that group together your observations?</p></li>
+</ol>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="readings">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+readings
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li><p>An opinionated practical guide to regression modeling and data description: Gelman, A., Hill, J., &amp; Vehtari, A. (2020). <em>Regression and other stories</em>. Cambridge University Press. Free online at <a href="https://avehtari.github.io/ROS-Examples/" class="uri">https://avehtari.github.io/ROS-Examples/</a>.</p></li>
+<li><p>A more in-depth introduction to the process of developing Bayesian models of data that allow for estimation and inference in complex datasets: McElreath, R. (2020). <em>Statistical rethinking: A Bayesian course with examples in R and Stan</em>. Chapman and Hall/CRC. Free materials available at <a href="https://xcelab.net/rm/statistical-rethinking/" class="uri">https://xcelab.net/rm/statistical-rethinking/</a>.</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-barr2013" class="csl-entry" role="listitem">
+Barr, Dale J, Roger Levy, Christoph Scheepers, and Harry J Tily. 2013. <span>“Random Effects Structure for Confirmatory Hypothesis Testing: Keep It Maximal.”</span> <em>Journal of Memory and Language</em> 68 (3): 255–78.
+</div>
+<div id="ref-bates2014" class="csl-entry" role="listitem">
+Bates, Douglas, Martin Mächler, Ben Bolker, and Steve Walker. 2014. <span>“Fitting Linear Mixed-Effects Models Using Lme4.”</span> <em>arXiv Preprint arXiv:1406.5823</em>.
+</div>
+<div id="ref-bie2021fitting" class="csl-entry" role="listitem">
+Bie, Ruofan, Sebastien Haneuse, Nathan Huey, Jonathan Schildcrout, and Glen McGee. 2021. <span>“Fitting Marginal Models in Small Samples: A Simulation Study of Marginalized Multilevel Models and Generalized Estimating Equations.”</span> <em>Statistics in Medicine</em> 40 (24): 5298–5312.
+</div>
+<div id="ref-botvinik-nezer2020" class="csl-entry" role="listitem">
+Botvinik-Nezer, Rotem, Felix Holzmeister, Colin F Camerer, Anna Dreber, Juergen Huber, Magnus Johannesson, Michael Kirchler, et al. 2020. <span>“Variability in the Analysis of a Single Neuroimaging Dataset by Many Teams.”</span> <em>Nature</em> 582 (7810): 84–88.
+</div>
+<div id="ref-davis2010" class="csl-entry" role="listitem">
+Davis, Matthew J. 2010. <span>“Contrast Coding in Multiple Regression Analysis: Strengths, Weaknesses, and Utility of Popular Coding Structures.”</span> <em>Journal of Data Science</em> 8 (1): 61–73.
+</div>
+<div id="ref-galton1877" class="csl-entry" role="listitem">
+Galton, Francis. 1877. <span>“Typical Laws of Heredity.”</span> In. Royal Institution of Great Britain.
+</div>
+<div id="ref-mancl2001covariance" class="csl-entry" role="listitem">
+Mancl, Lloyd A, and Timothy A DeRouen. 2001. <span>“A Covariance Estimator for GEE with Improved Small-Sample Properties.”</span> <em>Biometrics</em> 57 (1): 126–34.
+</div>
+<div id="ref-mcelreath2018" class="csl-entry" role="listitem">
+McElreath, Richard. 2018. <em>Statistical Rethinking: A Bayesian Course with Examples in r and Stan</em>. Chapman; Hall/CRC.
+</div>
+<div id="ref-montgomery2018" class="csl-entry" role="listitem">
+Montgomery, Jacob M, Brendan Nyhan, and Michelle Torres. 2018. <span>“How Conditioning on Posttreatment Variables Can Ruin Your Experiment and What to Do about It.”</span> <em>Am. J. Pol. Sci.</em> 62 (3): 760–75.
+</div>
+<div id="ref-silberzahn2018" class="csl-entry" role="listitem">
+Silberzahn, Raphael, Eric L Uhlmann, Daniel P Martin, Pasquale Anselmi, Frederik Aust, Eli Awtrey, Štěpán Bahnı́k, et al. 2018. <span>“Many Analysts, One Data Set: Making Transparent How Variations in Analytic Choices Affect Results.”</span> <em>Advances in Methods and Practices in Psychological Science</em> 1 (3): 337–56.
+</div>
+<div id="ref-steegen2016" class="csl-entry" role="listitem">
+Steegen, Sara, Francis Tuerlinckx, Andrew Gelman, and Wolf Vanpaemel. 2016. <span>“Increasing Transparency Through a Multiverse Analysis.”</span> <em>Perspectives on Psychological Science</em> 11 (5): 702–12. <a href="https://doi.org/10.1177/1745691616658637">https://doi.org/10.1177/1745691616658637</a>.
+</div>
+<div id="ref-stiller2015" class="csl-entry" role="listitem">
+Stiller, Alex J, Noah D Goodman, and Michael C Frank. 2015. <span>“Ad-Hoc Implicature in Preschool Children.”</span> <em>Language Learning and Development</em> 11 (2): 176–90.
+</div>
+</div>
+</section>
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./006-inference.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Inference</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./008-measurement.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Measurement</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>
