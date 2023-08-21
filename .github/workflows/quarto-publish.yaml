@@ -1,0 +1,38 @@
+on:
+  push:
+    branches: main
+
+name: Render and Publish
+
+jobs:
+  build-deploy:
+    # runs-on: ubuntu-latest
+    runs-on: macOS-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        # with:
+          # To install LaTeX to build PDF book 
+          # tinytex: true 
+          # uncomment below and fill to pin a versionr
+          # version: SPECIFIC-QUARTO-VERSION-HERE
+      
+      - name: Set up renv
+        uses: r-lib/actions/setup-renv@v2
+
+      - name: Render Book project
+        uses: quarto-dev/quarto-actions/render@v2
+        with:
+          to: html
+
+      - name: Publish to GitHub Pages
+        uses: quarto-dev/quarto-actions/publish@v2
+        with:
+          target: gh-pages
+          render: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # this secret is always available for github actions
+      
