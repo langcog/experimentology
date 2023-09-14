@@ -44,19 +44,18 @@ Following best practices for meta-analysis (where there are almost never privacy
 ```{r meta-dataset}
 #| label: tbl-meta-dataset
 #| tbl-cap: "First few lines of extracted effect sizes (d) and their variances (var\\_d) in the @paluck2019contact meta-analysis."
+#| cap-location: margin
 
 head(DF) |>
-  select(name_short, pub_date, target_spelled_out, n_total, d, var_d) |>
-  rename(target = target_spelled_out) |>
-  kable()
+  select(name_short, pub_date, target = target_spelled_out, n_total, d, var_d)
 ```
 
-As we've seen throughout this book, visualizing data before and after analysis helps benchmark and check our intuitions about the formal statistical results. In a meta-analysis, a common way to plot effect sizes is the **forest plot**, which depicts individual studies' estimates and confidence intervals.^[You can ignore for now the column of percentages and the final line, "RE Model"; we will return to these later.] In the forest plot in @fig-meta-forest, the larger squares correspond to more precise studies; notice how much narrower their confidence intervals are than the confidence intervals of less precise studies. 
-
+As we've seen throughout this book, visualizing data before and after analysis helps benchmark and check our intuitions about the formal statistical results. In a meta-analysis, a common way to plot effect sizes is the **forest plot**, which depicts individual studies' estimates and confidence intervals.^[You can ignore for now the column of percentages and the final line, "RE Model"; we will return to these later.] In the forest plot in @fig-meta-forest, the larger squares correspond to more precise studies; notice how much narrower their confidence intervals are than the confidence intervals of less precise studies.
 
 ```{r meta-forest, fig.height=8, fig.width = 6}
 #| label: fig-meta-forest
-#| fig-cap: "Forest plot for Paluck et al. meta-analysis. Studies are ordered from smallest to largest standard error."
+#| fig-cap: "Forest plot for @paluck2019contact meta-analysis. Studies are ordered from smallest to largest standard error."
+#| cap-location: margin
 
 metafor::forest(re.m,
                 showweights = TRUE,
@@ -142,8 +141,6 @@ re.m <- rma(yi = d,
 
 Based on the random effects model, intergroup contact effects appear to differ across studies. Paluck et al. estimated that the standard deviation of effects across studies was $\widehat{\tau}$ = `r tauStats[1]` ; 95% confidence interval [`r tauStats[2]`, `r tauStats[3]`]. This estimate indicates a substantial amount of heterogeneity! To  visualize these results, we can plot the estimated density of the population effects, which is just a normal distribution with mean $\widehat{\mu}$ and standard deviation $\widehat{\tau}$ (@fig-meta-densities).
 
-This meta-analysis highlights an important point:that the overall effect size  estimate $\widehat{\mu}$ represents only the *mean* population effect across studies. It tells us nothing about how much the effects *vary* across studies. Thus, we recommend always reporting the heterogeneity estimate $\widehat{\tau}$, preferably along with other related metrics that help summarize the distribution of effect sizes across studies [@riley2011interpretation; @wang2019simple; @mathur_mam; @npphat]. Reporting the heterogeneity helps readers know how consistent or inconsistent the effects are across studies, which may point to the need to investigate *moderators* of the effect (i.e., factors that are associated with larger or smaller effects, such as whether participants were adults or children).^[One common approach to investigating moderators in meta-analysis is meta-regression, in which moderators are included as covariates in a random-effects meta-analysis model [@thompson2002should]. As in standard regression, coefficients can then be estimated for each moderator, representing the mean difference in population effect between studies with versus without the moderator.] 
-
 ```{r meta-densities}
 #| label: fig-meta-densities
 #| fig-cap: "Estimated distribution of population effects from random-effects meta-analysis of Paluck et. al's dataset (heavy red curve) and estimated density of studies' point estimates (thin black curve)."
@@ -189,6 +186,7 @@ ggplot(data = data.frame(x = c(-2, 2)),
         axis.text.x = element_text(size=16))
 ```
 
+This meta-analysis highlights an important point:that the overall effect size  estimate $\widehat{\mu}$ represents only the *mean* population effect across studies. It tells us nothing about how much the effects *vary* across studies. Thus, we recommend always reporting the heterogeneity estimate $\widehat{\tau}$, preferably along with other related metrics that help summarize the distribution of effect sizes across studies [@riley2011interpretation; @wang2019simple; @mathur_mam; @npphat]. Reporting the heterogeneity helps readers know how consistent or inconsistent the effects are across studies, which may point to the need to investigate *moderators* of the effect (i.e., factors that are associated with larger or smaller effects, such as whether participants were adults or children).^[One common approach to investigating moderators in meta-analysis is meta-regression, in which moderators are included as covariates in a random-effects meta-analysis model [@thompson2002should]. As in standard regression, coefficients can then be estimated for each moderator, representing the mean difference in population effect between studies with versus without the moderator.]
 
 ::: {.callout-note title="depth"}
 ## Single-paper meta-analysis and pooled analysis {-}
@@ -246,11 +244,12 @@ Over 60% of studies with statistically significant results were published, compa
 
 Like within-study biases, meta-analysts often try to mitigate across-study biases by being careful about what studies make it into the meta-analysis. Meta-analysts don't only want to capture high-profile, published studies on their effect of interest, but also studies published in low-profile journals and the so-called "gray literature" [i.e., unpublished dissertations and theses; @lefebvre2019searching].^[Evidence is mixed regarding whether including gray literature actually reduces across-study biases in meta-analysis [@tsuji2020addressing; @sapbe], but it is still common practice to try to include this literature.]
 
-There are also statistical methods to help assess how robust the results may be to across-study biases. Among the most popular tools to assess and correct for publication bias is the **funnel plot** [@duval2000trim; @egger1997bias]. A funnel plot shows the relationship between studies' effect estimates and their precision (usually their standard error). These plots are called "funnel plots" because if there is no publication bias, then as precision increases, the effects "funnel" towards the meta-analytic estimate. As the precision is smaller, they spread out more because of greater measurement error. Figure @fig-meta-funnel-unbiased is an example of one type of funnel plot [@sapb] for a simulated meta-analysis of 100 studies with no publication bias.
+There are also statistical methods to help assess how robust the results may be to across-study biases. Among the most popular tools to assess and correct for publication bias is the **funnel plot** [@duval2000trim; @egger1997bias]. A funnel plot shows the relationship between studies' effect estimates and their precision (usually their standard error). These plots are called "funnel plots" because if there is no publication bias, then as precision increases, the effects "funnel" towards the meta-analytic estimate. As the precision is smaller, they spread out more because of greater measurement error. @fig-meta-funnel-unbiased is an example of one type of funnel plot [@sapb] for a simulated meta-analysis of 100 studies with no publication bias.
 
 ```{r meta-funnel-unbiased}
 #| label: fig-meta-funnel-unbiased
 #| fig-cap: "Significance funnel plot for a meta-analysis simulated to have no publication bias. Orange points: studies with $p < 0.05$ and positive estimates. Grey points: studies with $p$ $\\ge$ $0.05$ or negative estimates. Black diamond: random-effects estimate of $\\widehat{\\mu}$."
+#| cap-location: margin
 
 # simulate meta with publication bias, but keep all studies
 set.seed(451)
@@ -308,7 +307,8 @@ As implied by the "funnel" moniker, our plot looks a little like a funnel. Large
 ```{r meta-classic-funnel}
 #| label: fig-meta-classic-funnel
 #| fig-cap: "Classic funnel plot."
-#| column: margin
+#| fig-height: 5
+#| cap-location: margin
 
 meta.p = rma(yi = yi,
             vi = vi,
@@ -320,14 +320,13 @@ funnel(meta.all,
        xlab = "Standardized mean difference")
 ```
 
-
 Not all funnel plots are symmetric! @fig-meta-funnel-biased is what happens to our hypothetical meta-analysis if all studies with $p<0.05$ and positive estimates are published, but only 10% of studies with $p \ge 0.05$ or with negative estimates are published. The introduction of publication bias dramatically inflates the pooled estimate from `r round(meta.all$b, digits)` to `r round(meta.p$b, digits)`. Also, there appears to be a correlation between studies' estimates and their standard errors, such that smaller studies tend to have larger estimates than do larger studies. This correlation is often called **funnel plot asymmetry** because the funnel plot starts to look like a right triangle rather than a funnel. Funnel plot asymmetry *can* be a diagnostic for publication bias, though it isn't always a perfect indicator, as we'll see in the next subsection.
 
 
 ```{r meta-funnel-biased}
 #| label: fig-meta-funnel-biased
 #| fig-cap: "Significance funnel plot for the same simulated meta-analysis after publication bias has occurred. Orange points: studies with $p < 0.05$ and positive estimates. Grey points: studies with $p$ $\\ge$ $0.05$ or negative estimates. Black diamond: random-effects estimate of $\\widehat{\\mu}$."
-#| column: margin
+#| cap-location: margin
 
 significance_funnel(yi = meta.p$yi,
                     vi = meta.p$vi,
