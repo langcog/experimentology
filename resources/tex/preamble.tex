@@ -1,0 +1,85 @@
+\input{resources/tex/boxes.tex}
+
+% page layout
+\geometry{
+  dvips=false, pdftex=false, vtex=false, % drivers can have unexpected behaviors
+  papersize={8in,10in},                  % size specified by MIT Press
+  centering,                             % split margins equally
+  margin=.6in,                           % margins (must all be at least .5in)
+  includemp, includehead,                % include sidenotes & header in body
+  showframe                              % show page structure (for debugging)
+}
+
+% set font specifications
+\setkomafont{disposition}{\rmfamily\itshape}
+\addtokomafont{part}{\sffamily\scshape}
+\addtokomafont{partnumber}{\sffamily\scshape}
+\addtokomafont{chapter}{\sffamily\scshape}
+\setkomafont{partentry}{\sffamily\scshape}
+\setkomafont{chapterentry}{\sffamily\scshape}
+\addtokomafont{title}{\sffamily\scshape}
+\addtokomafont{subtitle}{\sffamily\scshape}
+\addtokomafont{author}{\sffamily\scshape}
+\addtokomafont{pagehead}{\sffamily\scshape}
+\addtokomafont{pagenumber}{\sffamily\scshape}
+
+% adjust spacing around section headers
+\RedeclareSectionCommand[
+  runin=false,
+  afterskip=0pt % remove extra space after for section
+]{section}
+\RedeclareSectionCommand[
+  runin=false,
+  afterskip=0pt % remove extra space after for subsection
+]{subsection}
+
+% headers/footers
+\usepackage{scrlayer-scrpage}
+\KOMAoptions{headwidth=textwithmarginpar} % make header full width
+\automark{chapter}
+\clearpairofpagestyles
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}} % prevent chaptermark from uppercasing
+\ihead{%
+  \ifnum\value{chapter}>0 \thechapter\hspace{3pt} \fi % include chapter number if not 0
+  \textsc{\leftmark} % then chapter name
+}
+\ohead{\pagemark}
+\pagestyle{scrheadings}
+
+% table of contents
+\usepackage[titles]{tocloft}
+\renewcommand{\cftpartfont}{\sffamily\scshape\Large}     % part title
+\renewcommand{\cftpartpagefont}{\sffamily\scshape\Large} % part page number
+\setlength{\cftbeforepartskip}{1em}                      % part vspace before
+\renewcommand{\cftchapfont}{\sffamily\scshape\Large}     % chapter title
+\renewcommand{\cftchappagefont}{\sffamily\scshape\Large} % chapter page number
+\setlength{\cftbeforechapskip}{.5em}                     % chapter vspace before
+
+% set chapter numbers flushright
+\newcommand{\numlen}{.5em}
+\renewcommand{\cftchappresnum}{\hfill}
+\renewcommand{\cftchapaftersnum}{\hspace*{\numlen}}
+\addtolength{\cftchapnumwidth}{\numlen}
+
+% lists
+\usepackage{enumitem}
+\setlist[itemize]{
+  label={--} % en-dash as bullet symbol
+}
+
+\usepackage{threeparttable} % for papaja apa tables
+\setlength{\tabcolsep}{4pt} % horizontal space between table columns
+
+% styling for captions
+\usepackage[format=plain]{caption}
+\usepackage{marginfix} % load before sidenotes to improve sidenote positioning
+\usepackage{sidenotes}
+\usepackage{marginnote}
+% \setlength{\belowcaptionskip}{0pt} 
+\definecolor{captioncolor}{cmyk}{.20,.10,0,.56} % grey
+\DeclareCaptionFont{caps}{\footnotesize\color{captioncolor}} % smaller and grey
+\captionsetup{labelfont=caps,textfont=caps,belowskip=-12pt}
+\DeclareCaptionStyle{sidecaption}{labelfont=caps,textfont=caps,skip=6pt}
+\DeclareCaptionStyle{marginfigure}{labelfont=caps,textfont=caps,skip=6pt}
+\DeclareCaptionStyle{margintable}{labelfont=caps,textfont=caps,skip=6pt}
+\DeclareCaptionStyle{longtable}{labelfont=caps,textfont=caps,skip=6pt}
