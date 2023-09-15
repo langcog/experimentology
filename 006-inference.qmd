@@ -312,7 +312,7 @@ set.seed(11)
 expand_grid(N = c(12,24,48,96), 
        `Effect size` = c(.5, 1, 1.5)) |>
   rowwise() |>
-  mutate(data = map2(N, `Effect size`, 
+  mutate(data = purrr::map2(N, `Effect size`, 
                      ~make_tea_data(n_total = N, delta = `Effect size`))) |>
   unnest(cols = c(data)) |>
   group_by(N, `Effect size`) |>
