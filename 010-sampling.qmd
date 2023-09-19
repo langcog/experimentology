@@ -58,7 +58,7 @@ A simple random sample from this heterogeneous population *will* yield statistic
 
 But, if you know the proportion of frequent, infrequent, or non-coffee drinkers in the population, you can perform stratified sampling within those subpopulations to ensure that your sample is representative along this dimension [@neyman1992]. This situation is pictured in @fig-sampling-stratified, which shows how a particular sampling frame can be broken up into groups for stratified sampling. The result is a sample that matches the population proportions on a particular characteristic. In contrast, a simple random sample can over- or under-sample the subgroups by chance.
 
-![Illustration of stratified sampling. The left panel shows the sampling frame. The upper frames show the sampling frame stratified by a participant characteristic and a stratified sample. The lower frame shows a simple random sample, which happens to omit one group completely by chance.](images/sampling/stratified-sample2.png){#fig-sampling-stratified .margin-caption}
+![Illustration of stratified sampling. The left panel shows the sampling frame. The upper frames show the sampling frame stratified by a participant characteristic and a stratified sample. The lower frame shows a simple random sample, which happens to omit one group completely by chance.](images/sampling/stratified-sample2.png){#fig-sampling-stratified}
 
 Stratified sampling can lead to substantial gains in the precision of your estimate. These gains are most prominent when either the groups differ a lot in their mean or when they differ a lot in their variance. There are several important refinements of stratified sampling in case you think these methods are important for your problem. In particular, **optimal sampling** can help you figure out how to over-sample groups with higher variance. On the other hand, if the characteristic on which you stratify participants doesn't relate to your outcome at all, then estimates from stratified sampling converge just as fast as random sampling (though it's a bit more of a pain to implement). 
 
@@ -67,7 +67,6 @@ Stratified sampling can lead to substantial gains in the precision of your estim
 ```{r sampling-stratified-sim}
 #| label: fig-sampling-stratified-sim
 #| fig-cap: "Simulation showing the potential benefits of stratification. Each dot is an estimated mean for a sample of a particular size, sampled randomly or with stratification. Red points show the mean and standard deviation of sample estimates."
-#| fig-cap-location: margin
 
 # rare_prop1 = .3
 # rare_prop2 = .1
@@ -159,7 +158,7 @@ In fields like econometrics or epidemiology that use observational methods to es
 
 ### Collider bias
 
-Imagine you want to measure the association between money and happiness through a (non-experimental) survey. As we discussed in @sec-experiments, there are plenty of causal processes that could lead to this association. @fig-sampling-money) shows several of these scenarios. Money could truly cause happiness (1); happiness could cause you to make more money (2); or some third factor -- say having lots of friends -- could cause people to be happier *and* richer (3.  
+Imagine you want to measure the association between money and happiness through a (non-experimental) survey. As we discussed in @sec-experiments, there are plenty of causal processes that could lead to this association. @fig-sampling-money shows several of these scenarios. Money could truly cause happiness (1); happiness could cause you to make more money (2); or some third factor -- say having lots of friends -- could cause people to be happier *and* richer (3.  
 
 ![Four reasons why money and happiness can be correlated in a particular sample: 1. causal relationship, 2. reverse causality, 3. confounding with friendship, and 4. collider bias. For this last scenario, we have to assume that our measurement is *conditioned* on being in this sample, meaning we only look at the association of money and happiness within the social services sample.](images/sampling/money3-drawing.png){#fig-sampling-money .column-margin}
 
@@ -185,7 +184,7 @@ Always try to track and report attrition information. That lets you -- and other
 
 ## Sample size planning 
 
-Now that you have spent some time considering your sample and what population it represents, how many people will your sample contain? Continuing to collect data until you observe a  $p < .05$ in an inferential test is a good way to get a false positive. This practice, known as "optional stopping," is a good example of a practice that invalidates $p$-values, much like the cases of analytic flexibility discussed in @sec-replication and -@sec-inference [@simmons2011].
+Now that you have spent some time considering your sample and what population it represents, how many people will your sample contain? Continuing to collect data until you observe a  $p < .05$ in an inferential test is a good way to get a false positive. This practice, known as "optional stopping," is a good example of a practice that invalidates $p$-values, much like the cases of analytic flexibility discussed in @sec-replication and @sec-inference [@simmons2011].
 
 Decisions about when to stop collecting data should not be data-dependent. Instead you should transparently declaring your data collection **stopping rule** in your study preregistration (see @sec-prereg). This step will reassure readers that there is no risk of bias from optional stopping.
 
@@ -205,7 +204,7 @@ In fact, there are many different stopping rules that can be used to justify a s
 
 ![Standard decision matrix for NHST. The lower-left hand quadrant shows power to reject the null.](images/sampling/power-alpha.png){#fig-sampling-neyman-pearson .column-margin}
 
-Let's start by reviewing the null-hypothesis significance testing paradigm that we introduced in @sec-inference. Recall that we introduced a decision-theoretic view of testing in @sec-neyman-pearson, shown again in @fig-sampling-neyman-pearson. The idea was that we've got some null hypothesis $H_0$ and some alternative $H_1$ -- something like "no effect" and "yes, there is some effect with known size"-- and we want to use data to decide which state we're in. $\alpha$ is our criterion for rejecting the null, conventionally set to $\alpha=.05$. 
+Let's start by reviewing the null-hypothesis significance testing paradigm that we introduced in @sec-inference. Recall that we introduced a decision-theoretic view of testing in @sec-inference, shown again in @fig-sampling-neyman-pearson. The idea was that we've got some null hypothesis $H_0$ and some alternative $H_1$ -- something like "no effect" and "yes, there is some effect with known size"-- and we want to use data to decide which state we're in. $\alpha$ is our criterion for rejecting the null, conventionally set to $\alpha=.05$. 
 
 But what if $H_0$ is actually false and the alternative $H_1$ is true? Not all experiments are equally well set up to reject the null in those cases. Imagine doing an experiment with $N=3$. In that case, we'd almost always fail to reject the null, even if it were false. Our sample would almost certainly be too small to rule out sampling variation as the source of our observed data. 
 
