@@ -57,7 +57,7 @@ As we've seen throughout this book, visualizing data before and after analysis h
 #| cap-location: margin
 
 metafor::forest(re.m,
-                showweights = TRUE,
+                showweights = FALSE,
                 header = TRUE,
                 xlab = "Standardized mean difference")
 ```
@@ -211,7 +211,7 @@ Meta-analysis is a great tool for synthesizing evidence across studies, but the 
 
 ### Within-study biases
 
-Within-study biases -- such as demand characteristics, confounds, and order effects, all discussed in @sec-design -- not only impact the validity of individual studies, but also any attempt to synthesize those studies. In other words: garbage in, garbage out. 
+Within-study biases -- such as demand characteristics, confounds, and order effects, all discussed in @sec-design -- not only impact the validity of individual studies, but also any attempt to synthesize those studies. And of course, if individual study results are affected by analytic flexibility ($p$-hacking), meta-analyzing these will result in inflated effect size estimates. In other words: garbage in, garbage out. 
 
 For example, @paluck2019contact noted that early studies on intergroup contact almost exclusively used non-randomized designs. Imagine a hypothetical study where researchers studied a completely ineffective intergroup contact intervention, and non-randomly assigned low-prejudice people to the intergroup contact condition and high-prejudice people to the control condition. In a scenario like this, the researcher would of course find that the prejudice was lower in the intergroup contact condition. But the effect would not be a true contact intervention effect, but rather a spurious effect of non-random assignment (i.e., confounding). Now imagine meta-analyzing many studies with similarly poor designs. The meta-analyst might find impressive evidence of an intergroup contact effect, even if none existed. 
 
@@ -301,7 +301,7 @@ significance_funnel(yi = re.m$yi,
 As you can see, because meta-analysis is such a well-established method, many of the relevant operations are "plug and play."
 :::
 
-As implied by the "funnel" moniker, our plot looks a little like a funnel. Larger studies (those with smaller standard errors) cluster more closely around the mean of `r round(meta.all$b, digits)` than do smaller studies, but large and small studies alike have point estimates centered around the mean. That is, the funnel plot is symmetric.^[Classic funnel plots look more like @fig-meta-classic-funnel). Our version is different in a couple of ways. Most prominently, we don't have the vertical axis reversed (which we think is confusing), and we don't have the left boundary highlighted (because, in this particular scientific context, we think folks don't typically select for negative studies.]
+As implied by the "funnel" moniker, our plot looks a little like a funnel. Larger studies (those with smaller standard errors) cluster more closely around the mean of `r round(meta.all$b, digits)` than do smaller studies, but large and small studies alike have point estimates centered around the mean. That is, the funnel plot is symmetric.^[Classic funnel plots look more like @fig-meta-classic-funnel). Our version is different in a couple of ways. Most prominently, we don't have the vertical axis reversed (which we think is confusing). We also don't have the left boundary highlighted, because we think folks don't typically select for negative studies.]
 
 ```{r meta-classic-funnel}
 #| label: fig-meta-classic-funnel
