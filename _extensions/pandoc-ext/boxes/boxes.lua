@@ -11,7 +11,7 @@ local boxes = {
 	[ 'exercises'              ] = {color = '.yellow',  icon = '\\faPenRuler',            collapse = true},
 	[ 'discussion questions'   ] = {color = '.cyan',    icon = '\\faComments',            collapse = true},
 	[ 'readings'               ] = {color = '.magenta', icon = '\\faBook',                collapse = true},
-	[ 'advanced topics'        ] = {color = '.teal',    icon = '\\faFastForward',         collapse = true},
+	[ 'advanced topic'         ] = {color = '.base1',   icon = '\\faFastForward',         collapse = true},
 }
 
 -- TODO: shrink learning goals boxes
