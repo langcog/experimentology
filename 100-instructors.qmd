@@ -1,8 +1,5 @@
 {{< include _setup.qmd >}}
 
-<!-- # (APPENDIX) Appendices {-} -->
-<!-- \addcontentsline{toc}{part}{Appendices} -->
-
 # Instructor's guide {#sec-instructors}
 
 ## Introduction 
@@ -116,6 +113,32 @@ The sample syllabi laid out below are categorized along the following decisions:
 
 For undergraduate instructors, we have labelled advanced topics in purple. We expect that these topics are best suited for advanced undergraduate students. As for content around statistics (e.g., Estimation, Inference), instructors should decide how much of this content to teach, depending on how prepared students have been in previous classes. 
 
+```{r}
+adv_color <- "#ebe8fc"
+syllabus_table <- function(syllabus_file) {
+  
+  syllabi <- readr::read_csv(syllabus_file, na = character(),
+                             col_types = "cccccc")
+  adv_rows <- which(syllabi$Difficulty == "adv")
+
+  syllabus <- syllabi |> dplyr::select(-Difficulty)
+  
+  if (knitr::is_latex_output()) {
+    syllabus |>
+      knitr::kable(format = "latex", booktabs = TRUE, longtable = TRUE,
+                   linesep = c("", "", "\\hline")) |>
+      kableExtra::row_spec(adv_rows, background = adv_color)
+  } else if (knitr::is_html_output()) {
+    syllabus |>
+      knitr::kable(table.attr = 'data-quarto-disable-processing="true"') |>
+      kableExtra::kable_styling(bootstrap_options = c("condensed")) |>
+      kableExtra::row_spec(adv_rows, background = adv_color)
+  }
+}
+```
+
+\clearpage
+
 ::: {.panel-tabset}
 
 ### 10 weeks
@@ -123,71 +146,42 @@ For undergraduate instructors, we have labelled advanced topics in purple. We ex
 ```{r}
 #| label: tbl-skills-content-10
 #| tbl-cap: "A sample 10-week syllabus with both skills and content materials."
+#| cache: false
 
-syllabi <- read_csv("data/instructor_guide/Content_Skills_10wk.csv") 
-color.me <- which(syllabi$Difficulty == "adv")
-
-syllabi |>
-  mutate(Chapter = str_replace(Chapter, "Chapter ", ""), 
-         Chapter = ifelse(!is.na(Chapter), Chapter, "")) |>
-  mutate(Appendix = str_replace(Appendix, "Appendix ", ""), 
-         Appendix = ifelse(!is.na(Appendix), Appendix, "")) |>
-  select(-Difficulty) #|>
-  # kable() |> 
-  # row_spec(color.me, bold = F, color = "black", background = "#ebe8fc")
+syllabus_table("data/instructor_guide/Content_Skills_10wk.csv")
 ```
+\clearpage
 
 ### 10 weeks, content only
 
 ```{r}
 #| label: tbl-content-10
 #| tbl-cap: "A sample 10-week syllabus with only content materials."
+#| cache: false
 
-syllabi <- read_csv("data/instructor_guide/Content_10wk.csv") 
-color.me <- which(syllabi$Difficulty == "adv")
-
-syllabi |>
-  mutate(Chapter = str_replace(Chapter, "Chapter ", ""), 
-         Chapter = ifelse(!is.na(Chapter), Chapter, "")) |>
-  select(-Difficulty) #|>
-  # kable() |> 
-  # row_spec(color.me, bold = F, color = "black", background = "#ebe8fc")
+syllabus_table("data/instructor_guide/Content_10wk.csv")
 ```
+\clearpage
 
 ### 16 weeks 
 
 ```{r}
 #| label: tbl-skills-content-16
 #| tbl-cap: "A sample 16-week syllabus with both skills and content materials."
+#| cache: false
 
-syllabi <- read_csv("data/instructor_guide/Content_Skills_16wk.csv") 
-color.me <- which(syllabi$Difficulty == "adv")
-
-syllabi |>
-  mutate(Chapter = str_replace(Chapter, "Chapter ", ""), 
-         Chapter = ifelse(!is.na(Chapter), Chapter, "")) |>
-  mutate(Appendix = str_replace(Appendix, "Appendix ", ""), 
-         Appendix = ifelse(!is.na(Appendix), Appendix, "")) |>
-  select(-Difficulty) #|>
-  # kable() |> 
-  # row_spec(color.me, bold = F, color = "black", background = "#ebe8fc")
+syllabus_table("data/instructor_guide/Content_Skills_16wk.csv")
 ```
+\clearpage
 
 ### 16 weeks, content only 
 
 ```{r}
 #| label: tbl-content-16
 #| tbl-cap: "A sample 16-week syllabus with only content materials."
+#| cache: false
 
-syllabi <- read_csv("data/instructor_guide/Content_16wk.csv") 
-color.me <- which(syllabi$Difficulty == "adv")
-
-syllabi |>
-  mutate(Chapter = str_replace(Chapter, "Chapter ", ""), 
-         Chapter = ifelse(!is.na(Chapter), Chapter, "")) |>
-  select(-Difficulty) #|>
-  # kable() |> 
-  # row_spec(color.me, bold = F, color = "black", background = "#ebe8fc")
+syllabus_table("data/instructor_guide/Content_16wk.csv")
 ```
 
 :::
