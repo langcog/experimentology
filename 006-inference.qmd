@@ -31,7 +31,7 @@ What should replace NHST? @fig-inference-krushke) shows one way of organizing di
 
 Instead of dichotomous frequentist or Bayesian inference, we advocate for **estimation** and **modeling** strategies, which are more suited towards questions (3) and (4) [@cumming2014;@kruschke2018]. The goal of these strategies is to yield an accurate and precise estimate of the relationships underlying observed variation in the data. 
 
-This isn't a statistics book and we won't attempt to teach the full array of important statistical concepts that will allow students to build good models of a broad array of datasets. (Sorry!).^[If you're interested in going deeper, here are two books that have been really influential for us. The first is @gelman2006b and its successor @gelman2020, which teach regression and multi-level modeling from the perspective of data description. The second is @mcelreath2018, a course on building Bayesian models of the causal structure of your data. Honestly, neither is an easy book to sit down and read (unless you are the kind of person who reads statistics books on the subway for fun) but both really reward detailed study. We encourage you to get together a reading group and go through the exercises together. It'll be well worth while in its impact on your statistical and scientific thinking.] But we do want you to be able to reason about inference and modeling. In this chapter, we'll start by making some inferences about our tea-tasting example from the last chapter, using this example to build up intuitions about inference and estimation. Then in @sec-models, we'll start to look at more sophisticated models and how they can be fit to real datasets.
+This isn't a statistics book and we won't attempt to teach the full array of important statistical concepts that will allow students to build good models of a broad array of datasets. (Sorry!).^[You can find a broad overview of statistical methods in @poldrack2023, which is available freely online at [statsthinking21.org](http://statsthinking21.org).  If you're interested in going deeper, here are two books that have been really influential for us. The first is @gelman2006b and its successor @gelman2020, which teach regression and multi-level modeling from the perspective of data description. The second is @mcelreath2018, a course on building Bayesian models of the causal structure of your data. Honestly, neither is an easy book to sit down and read (unless you are the kind of person who reads statistics books on the subway for fun) but both really reward detailed study. We encourage you to get together a reading group and go through the exercises together. It'll be well worth while in its impact on your statistical and scientific thinking.] But we do want you to be able to reason about inference and modeling. In this chapter, we'll start by making some inferences about our tea-tasting example from the last chapter, using this example to build up intuitions about inference and estimation. Then in @sec-models, we'll start to look at more sophisticated models and how they can be fit to real datasets.
 
 ![Sampling distribution for the treatment effect in the tea-tasting experiment, given many different repetitions of the same experiment, each with N=9 per group. Circles represent average treatment effects from different individual experiments, while the thick line represents the form of the underlying distribution.](images/inference/sampling-small.png){#fig-inference-sampling-small .column-margin}
 
@@ -52,13 +52,17 @@ source("helper/tea_helper.R")
 ::: {.callout-note title="code"}
 In this chapter and the subsequent statistics and visualization chapters of the book, we'll try to facilitate understanding and illustrate how to use these concepts in practice by giving the R code we use in constructing our examples in these code boxes. We'll assume that you have some knowledge of base R and the Tidyverse -- to get started with these, go ahead and take a look at @sec-tidyverse if you haven't already. Although our figures are often drawn by hand, even the hand-drawn ones are based on actual simulation results!
 
-Since we're going to be working with lots of data from the tea tasting example, we wrote a function called `make_tea_data` that creates a `tibble` with some (made up) data from our modern tea-tasting experiment. You can find the function at [this link](https://raw.githubusercontent.com/langcog/experimentology/main/helper/tea_helper.R) if you want to follow along.
+Since we're going to be working with lots of data from the tea tasting example, we wrote a function called `make_tea_data()` that creates a `tibble` with some (made up) data from our modern tea-tasting experiment. You can find the function at [this link](https://raw.githubusercontent.com/langcog/experimentology/main/helper/tea_helper.R) if you want to follow along.
 
 ```{r echo=TRUE}
+#| label: tbl-tea-data
+#| tbl-cap: "Part of the tea tasting example data."
+
 tea_data <- make_tea_data(n_total = 18)
 
 head(tea_data)
 ```
+
 :::
 
 ![Comparing sampling distributions for the treatment effect with smaller and larger size samples.](images/inference/sampling-big.png){#fig-inference-sampling-big .column-margin}
@@ -217,7 +221,9 @@ By defining a $p$-value, we got one procedure for giving this answer. If $p < .0
 
 ### Bayes Factors
 
+::: {.column-margin}
 {{< include md/006-inference/jeffreys.md >}}
+:::
 
 Bayes Factors are a method for quantifying the support for one hypothesis over another, based on an observed dataset. They don't tell you the probability that a particular hypothesis is right, but they let you compare two different ones. 
 
@@ -310,7 +316,7 @@ set.seed(11)
 expand_grid(N = c(12,24,48,96), 
        `Effect size` = c(.5, 1, 1.5)) |>
   rowwise() |>
-  mutate(data = purrr::map2(N, `Effect size`, 
+  mutate(data = map2(N, `Effect size`, 
                      ~make_tea_data(n_total = N, delta = `Effect size`))) |>
   unnest(cols = c(data)) |>
   group_by(N, `Effect size`) |>
@@ -415,6 +421,8 @@ Finally, since precognition is not supported by any prior compelling scientific 
 Wagenmakers et al. concluded that, rather than supporting precognition, the conclusion from Bem's paper should be psychologists should revise how they think about analyzing their data!
 :::
 
+:::: {.content-visible unless-profile="undergrad"}
+
 ### Philosophical (and empirical) views of probability
 
 Up until now we've presented Bayesian and frequentist tools as two different sets of computations. But in fact, these different tools derive from fundamentally different philosophical perspectives on what a probability even is. Very roughly, frequentist approaches tend to believe that probabilities quantify the long-run frequencies of certain events. So, if we say that some outcome of an event has probability .5, we're saying that if that event happened thousands of times, the long run frequency of the outcome would be 50% of the total events. In contrast, the Bayesian viewpoint doesn't depend on this sense that events could be exactly repeated. Instead, the **subjective Bayesian** interpretation of probability is that it quantifies a person's degree of belief in a particular outcome.[^inference-22]
@@ -426,6 +434,24 @@ You don't have to take sides in this deep philosophical debate about what probab
 These cognitive science findings help to explain some of the problems that people (scientists included) have in reasoning about $p$-values. If you are an intuitively Bayesian reasoner, the quantity that you're probably tracking is how much you believe in your hypothesis (its posterior probability). So, many people treat the $p$-value as the posterior probability of the null hypothesis.[^inference-23] That's exactly what fallacy \#1 in Table dirty-dozen states -- "If *p* = .05, the null hypothesis has only a 5% chance of being true." But this equivalence is incorrect! Written in math, $p(\text{data} | H_0)$ (the likelihood that lets us compute the p-value) is not the same thing as $p(H_0 | \text{data})$ (the posterior that we want). Pulling from our accident report above, even if the *probability of the observed ESP data given the null hypothesis* is low, that doesn't mean that the *probability of ESP* is high.
 
 [^inference-23]: @cohen1994 is a great treatment of this issue.
+:::
+
+:::: {.content-visible when-profile="undergrad"}
+::: {.callout-note title="advanced topic"}
+### Philosophical (and empirical) views of probability
+
+Up until now we've presented Bayesian and frequentist tools as two different sets of computations. But in fact, these different tools derive from fundamentally different philosophical perspectives on what a probability even is. Very roughly, frequentist approaches tend to believe that probabilities quantify the long-run frequencies of certain events. So, if we say that some outcome of an event has probability .5, we're saying that if that event happened thousands of times, the long run frequency of the outcome would be 50% of the total events. In contrast, the Bayesian viewpoint doesn't depend on this sense that events could be exactly repeated. Instead, the **subjective Bayesian** interpretation of probability is that it quantifies a person's degree of belief in a particular outcome.[^inference-22]
+
+[^inference-22]: This is really a very rough description. If you're interested in learning more about this philosophical background, we recommend the Stanford Encyclopedia of Philosophy entry, "[Interpretations of Probability](<https://plato.stanford.edu/entries/probability-interpret/)".
+
+You don't have to take sides in this deep philosophical debate about what probability is. But it's helpful to know that people actually seem to reason about the world in ways that are well described by the subjective Bayesian view of probability. Recent cognitive science research has made a lot of headway in describing reasoning as a process of Bayesian inference [for review, see @probmods2] where probabilities describe degrees of belief in different hypotheses. These hypotheses in turn are a lot like the theories we described in @sec-theories: they describe the relationships between different abstract entities [@tenenbaum2011]. You might think that scientists are different from lay-people in this regard, but one of the striking findings from research on probabilistic reasoning and judgment is that expertise doesn't matter that much. Statistically-trained scientists -- and even statisticians -- make many of the same reasoning mistakes as their un-trained students [@kahneman1979]. Even children seem to reason intuitively in a way that looks a bit like Bayesian inference [@gopnik2012].
+
+These cognitive science findings help to explain some of the problems that people (scientists included) have in reasoning about $p$-values. If you are an intuitively Bayesian reasoner, the quantity that you're probably tracking is how much you believe in your hypothesis (its posterior probability). So, many people treat the $p$-value as the posterior probability of the null hypothesis.[^inference-23] That's exactly what fallacy \#1 in Table dirty-dozen states -- "If *p* = .05, the null hypothesis has only a 5% chance of being true." But this equivalence is incorrect! Written in math, $p(\text{data} | H_0)$ (the likelihood that lets us compute the p-value) is not the same thing as $p(H_0 | \text{data})$ (the posterior that we want). Pulling from our accident report above, even if the *probability of the observed ESP data given the null hypothesis* is low, that doesn't mean that the *probability of ESP* is high.
+
+[^inference-23]: @cohen1994 is a great treatment of this issue.
+:::
+::::
+
 
 ### What framework to use?
 
