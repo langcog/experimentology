@@ -8,4 +8,4 @@
 | 30 -- 100  | Very strong             |
 | > 100      | Decisive                |
 
-: @jeffreys1998 interpretation guidelines for Bayes Factors. {#tbl-inference-jeffreys .column-margin}
+: @jeffreys1998 interpretation guidelines for Bayes Factors. {#tbl-inference-jeffreys}

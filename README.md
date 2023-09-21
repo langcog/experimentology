@@ -11,8 +11,3 @@ Book manuscript is not final and text is expected to change (mostly in minor way
 To build locally (this is uncommon):
 * Make sure Quarto is up to date (we use HomeBrew)
 * Restore dependencies using `renv::restore()`
-
-## NOTES for undergrad version
-
-- should we remove Bayesian estimateion from ch5?  not sure how important it is for later chapters
-
