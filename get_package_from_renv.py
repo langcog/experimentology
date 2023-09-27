@@ -5,7 +5,7 @@ if __name__ == "__main__":
         data = json.load(f)
 
     extra_packages = ['readr', 'rmarkdown', 'codetools', 'dplyr',
-                      'curl']
+                      'curl', 'devtools']
     for package in extra_packages:
         data["Packages"][package] = {}
 
