@@ -451,7 +451,7 @@ learning goals
 </div>
 <div class="page-columns page-full"><p>This is a short tutorial on using R Markdown to mix prose and code together for creating reproducible scientific documents.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn1"><p><sup>1</sup>&nbsp;This appendix is adapted from a tutorial that Mike Frank and Chris Hartgerink taught together at SIPS 2017.</p></li></div></div>
 <div class="page-columns page-full"><p>In short: R Markdown allows you to create documents that are compiled with code, producing your next scientific paper. This tutorial will help you learn the nuts and bolts of how to do this. This appendix – actually this whole book – is written in R Markdown. It’s a very flexible platform for writing nice looking documents.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn2"><p><sup>2</sup>&nbsp;If you’re interested in the source code for this tutorial, it’s available <a href="https://github.com/langcog/experimentology/blob/master/101-rmarkdown.Rmd">here</a>. We use the amazing <code>bookdown</code> package to format multi-chapter manuscripts, and we use the <code>tufte</code> package (lightly customized) for style.</p></li></div></div>
-<section id="getting-started" class="level2" data-number="0.1">
+<section id="getting-started" class="level2" data-number="C.1">
 <h2 data-number="C.1" class="anchored" data-anchor-id="getting-started"><span class="header-section-number">C.1</span> Getting Started</h2>
 <p>Fire up Rstudio and create a new R Markdown file. Don’t worry about the settings, we’ll get to that later.</p>
 <p>If you click on “Knit” (or hit <code>CTRL+SHIFT+K</code>) the R Markdown file will run and generate all results and present you with a PDF file, HTML file, or a Word file. If RStudio requests you to install packages, click yes and see whether everything works to begin with.</p>
@@ -473,10 +473,10 @@ exercises
 </div>
 </div>
 </section>
-<section id="structure-of-an-r-markdown-file" class="level2 page-columns page-full" data-number="0.2">
+<section id="structure-of-an-r-markdown-file" class="level2 page-columns page-full" data-number="C.2">
 <h2 data-number="C.2" class="anchored" data-anchor-id="structure-of-an-r-markdown-file"><span class="header-section-number">C.2</span> Structure of an R Markdown file</h2>
 <p>An R Markdown file contains several parts. Most essential are the header, the body text, and code chunks. When you knit the resulting document, you will get the output – text combined with the results of running the core – in one of a number of output formats.</p>
-<section id="header" class="level3 page-columns page-full" data-number="0.2.1">
+<section id="header" class="level3 page-columns page-full" data-number="C.2.1">
 <h3 data-number="C.2.1" class="anchored" data-anchor-id="header"><span class="header-section-number">C.2.1</span> Header</h3>
 <div class="page-columns page-full"><p>Headers in R Markdown files contain some metadata about your document, which you can customize to your liking. Below is a simple example that purely states the title, author name(s), date, and output format.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn3"><p><sup>3</sup>&nbsp;The header is written in “YAML”, which means “yet another markup language.” You don’t need to know that, and don’t worry about it. Just make sure you are careful with indenting, as YAML does care about that.</p></li></div></div>
 <div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
@@ -487,27 +487,27 @@ exercises
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <!-- For now, go ahead and set `html_document` to `word_docCument`, except if you have strong preferences for `HTML` or `PDF`. -->
 </section>
-<section id="body-text" class="level3" data-number="0.2.2">
+<section id="body-text" class="level3" data-number="C.2.2">
 <h3 data-number="C.2.2" class="anchored" data-anchor-id="body-text"><span class="header-section-number">C.2.2</span> Body text</h3>
 <p>The body of the document is where you actually write your reports. This is primarily written in the Markdown format, which is explained in the <a href="#markdown-syntax">Markdown syntax</a> section.</p>
 <p>The beauty of R Markdown is, however, that you can evaluate <code>R</code> code right in the text. To do this, you start inline code with `r, type the code you want to run, and close it again with a `. Usually, this key is below the escape (<code>ESC</code>) key or next to the left SHIFT button.</p>
 <p>For example, if you want to have the result of 48 times 35 in your text, you type ` r 48-35`, which returns 13. Please note that if you return a value with many decimals, it will also print these depending on your settings (for example, 3.1415927).</p>
 </section>
-<section id="code-chunks" class="level3" data-number="0.2.3">
+<section id="code-chunks" class="level3" data-number="C.2.3">
 <h3 data-number="C.2.3" class="anchored" data-anchor-id="code-chunks"><span class="header-section-number">C.2.3</span> Code chunks</h3>
 <p>In the section above we introduced you to running code inside text, but often you need to take several steps in order to get to the result you need. And you don’t want to do data cleaning in the text! This is why there are code chunks. A simple example is a code chunk loading packages.</p>
 <p>First, insert a code chunk by going to <code>Code-&gt;Insert code chunk</code> or by pressing <code>CTRL+ALT+I</code>. Inside this code chunk you can then type for example, <code>library(ggplot2)</code> and create an object <code>x</code>.</p>
 <p>If you do not want to have the contents of the code chunk to be put into your document, you include <code>echo=FALSE</code> at the start of the code chunk. We can now use the contents from the above code chunk to print results (e.g., <span class="math inline">\(x=2\)</span>).</p>
 <p>These code chunks can contain whatever you need, including tables, and figures (which we will go into more later). Note that all code chunks regard the location of the R Markdown as the working directory, so when you try to read in data use the relative path in.</p>
 </section>
-<section id="output-formats" class="level3" data-number="0.2.4">
+<section id="output-formats" class="level3" data-number="C.2.4">
 <h3 data-number="C.2.4" class="anchored" data-anchor-id="output-formats"><span class="header-section-number">C.2.4</span> Output formats</h3>
 <p>By default, R Markdown renders to HTML format, the standard format of web pages. These output files are visible in the RStudio viewer and in any web-browser. These files can be shared on the web and are a great way to provide the outputs of your research to collaborators (e.g., sharing intermediate analytic results).</p>
 <p>Through a program called pandoc, R Markdown can also render to Microsoft Word’s DOCX format. This functionality can be very useful for sharing editable writeups with collaborators (see below).</p>
 <p>Finally, rendering to PDF is useful If you want to create PDFs from R Markdown you need a installation on your computer. (Latex, or tex for short, is a powerful typesetting package). Many tex installations are available. One recent possibility is <a href="https://yihui.org/tinytex/">TinyTEX</a>, a minimal tex installaction made for working with R Markdown. Or if you want a full install, try <a href="https://miktex.org/">MikTeX</a> for Windows, <a href="https://tug.org/mactex/">MacTeX</a> for Mac, or <a href="https://www.tug.org/texlive/">TeX Live</a> for Linux.</p>
 </section>
 </section>
-<section id="markdown-syntax" class="level2" data-number="0.3">
+<section id="markdown-syntax" class="level2" data-number="C.3">
 <h2 data-number="C.3" class="anchored" data-anchor-id="markdown-syntax"><span class="header-section-number">C.3</span> Markdown syntax</h2>
 <p>Markdown is one of the simplest document languages around, that is an open standard and can be converted into <code>.tex</code>, <code>.docx</code>, <code>.html</code>, <code>.pdf</code>, etc. This is the main workhorse of R Markdown and is very powerful. You can <a href="https://learnxinyminutes.com/docs/markdown/">learn Markdown in five minutes</a>. Other resources include <a href="https://rmarkdown.rstudio.com/authoring_basics.html">this tutorial</a>, and <a href="https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf">this cheat sheet</a>.</p>
 <p>These are the basics:</p>
@@ -519,9 +519,9 @@ exercises
 </ul>
 <p>The great thing about Markdown is that it works almost everywhere! Github, OSF, slack, many wikis, and even in text documents it looks pretty good.</p>
 </section>
-<section id="headers-graphs-and-tables" class="level2 page-columns page-full" data-number="0.4">
+<section id="headers-graphs-and-tables" class="level2 page-columns page-full" data-number="C.4">
 <h2 data-number="C.4" class="anchored" data-anchor-id="headers-graphs-and-tables"><span class="header-section-number">C.4</span> Headers, graphs, and tables</h2>
-<section id="headers" class="level3" data-number="0.4.1">
+<section id="headers" class="level3" data-number="C.4.1">
 <h3 data-number="C.4.1" class="anchored" data-anchor-id="headers"><span class="header-section-number">C.4.1</span> Headers</h3>
 <p>We’re going to want more libraries loaded (for now we’re loading them inline).</p>
 <div class="cell" data-hash="102-rmarkdown_cache/html/rmarkdown-libraries_5d3099ec7fbd2a9d8cce4e11fb638cd8">
@@ -566,7 +566,7 @@ exercises
 </div>
 </div>
 </section>
-<section id="graphs" class="level3" data-number="0.4.2">
+<section id="graphs" class="level3" data-number="C.4.2">
 <h3 data-number="C.4.2" class="anchored" data-anchor-id="graphs"><span class="header-section-number">C.4.2</span> Graphs</h3>
 <p>It’s really easy to include graphs, like this one. (Using the <code>mtcars</code> dataset that comes with <code>ggplot2</code>).</p>
 <div class="cell" data-hash="102-rmarkdown_cache/html/rmarkdown-ex_befd6ebc8abc084ed1ef321e9e0bfcf3">
@@ -580,7 +580,7 @@ exercises
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"path/to/file"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="tables" class="level3" data-number="0.4.3">
+<section id="tables" class="level3" data-number="C.4.3">
 <h3 data-number="C.4.3" class="anchored" data-anchor-id="tables"><span class="header-section-number">C.4.3</span> Tables</h3>
 <p>There are many ways to make good-looking tables using R Markdown, depending on your display purpose.</p>
 <ul>
@@ -732,7 +732,7 @@ exercises
 </div>
 </div>
 </section>
-<section id="statistics" class="level3 page-columns page-full" data-number="0.4.4">
+<section id="statistics" class="level3 page-columns page-full" data-number="C.4.4">
 <h3 data-number="C.4.4" class="anchored" data-anchor-id="statistics"><span class="header-section-number">C.4.4</span> Statistics</h3>
 <p>It’s also really easy to include statistical tests of various types. One option is to use the <code>broom</code> package, which formats the outputs of various tests really nicely. Paired with knitr’s <code>kable</code> you can make very simple tables in just a few lines of code. This expression:</p>
 <div class="cell" data-hash="102-rmarkdown_cache/html/rmarkdown-broom_8451c261e8b8b2361002d55f886dfc5d">
@@ -791,7 +791,7 @@ exercises
 <p>Rounding <span class="math inline">\(p\)</span> values can occasionally get you in trouble. It’s very easy to have an output of <span class="math inline">\(p = 0\)</span> when in fact <span class="math inline">\(p\)</span> can never be exactly equal to 0. Nonetheless, this can help you prevent the kinds of rounding errors that would get picked up by software like <code>statcheck</code>.</p>
 </section>
 </section>
-<section id="writing-apa-format-papers" class="level2 page-columns page-full" data-number="0.5">
+<section id="writing-apa-format-papers" class="level2 page-columns page-full" data-number="C.5">
 <h2 data-number="C.5" class="anchored" data-anchor-id="writing-apa-format-papers"><span class="header-section-number">C.5</span> Writing APA-format papers</h2>
 <div class="page-columns page-full"><p>The end-game of reproducible research is to knit your entire paper into a submittable APA-style writeup. Managing APA format is a pain in the best of times. The <code>papaja</code> package allows you to circumvent this task by rendering your manuscript directly from R Markdown.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn5"><p><sup>5</sup>&nbsp;Thanks to <a href="https://github.com/crsh">Frederick Aust</a> for contributing much of the code in this section! For a bit more on <code>papaja</code>, check out <a href="https://rpubs.com/YaRrr/papaja_guide">this guide</a>.</p></li></div></div>
 <!-- ### Technical requirements -->
@@ -831,13 +831,13 @@ exercises
 </div>
 </div>
 </section>
-<section id="bibiographic-management" class="level2 page-columns page-full" data-number="0.6">
+<section id="bibiographic-management" class="level2 page-columns page-full" data-number="C.6">
 <h2 data-number="C.6" class="anchored" data-anchor-id="bibiographic-management"><span class="header-section-number">C.6</span> Bibiographic management</h2>
 <p>Managing a bibliography by hand is a lot of work. Letting software do this for you is much easier. In R Markdown it’s possible to include references using <code>bibtex</code>, by using <code>@ref</code> syntax. You can do this in <code>papaja</code> but it’s also possible to o it in other packages that have some kind of bibliographic handling.</p>
 <p>It’s simple. You put together a set of paper citations in a bibtex file – then when you refer to them in text, the citations pop up formatted correctly, and they are also put in your bibliography. As an example, <code>@nuijten2016</code> results in the in text citation “<span class="citation" data-cites="nuijten2016">Nuijten et al. (<a href="#ref-nuijten2016" role="doc-biblioref">2016</a>)</span>”, or cite them parenthetically with <code>[@nuijten2016]</code> <span class="citation" data-cites="nuijten2016">(<a href="#ref-nuijten2016" role="doc-biblioref">Nuijten et al. 2016</a>)</span>. Take a look at the <code>papaja</code> APA example to see how this works.</p>
 <div class="page-columns page-full"><p>How do you make your bibtex file? You can do it by hand but this is a pain. One option for managing references is <a href="https://bibdesk.sourceforge.net/">bibdesk</a>, which integrates with google scholar.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> <code>citr</code> is an R package that provides an easy-to-use <a href="https://rstudio.github.io/rstudioaddins/">RStudio addin</a> that facilitates inserting citations. The addin will automatically look up the Bib(La)TeX-file(s) specified in the YAML front matter. The references for the inserted citations are automatically added to the documents reference section. Once <code>citr</code> is installed (<code>install.packages("citr")</code>) and you have restarted your R session, the addin appears in the menus and you can define a <a href="https://rstudio.github.io/rstudioaddins/#keyboard-shorcuts">keyboard shortcut</a> to call the addin.</p><div class="no-row-height column-margin column-container"><li id="fn6"><p><sup>6</sup>&nbsp;Many other options are possible. For example, some of us use Zotero frequently as well.</p></li></div></div>
 </section>
-<section id="collaboration" class="level2 page-columns page-full" data-number="0.7">
+<section id="collaboration" class="level2 page-columns page-full" data-number="C.7">
 <h2 data-number="C.7" class="anchored" data-anchor-id="collaboration"><span class="header-section-number">C.7</span> Collaboration</h2>
 <p>How do we collaborate using R Markdown? There are lots of different workflows that people use. Here are a few:</p>
 <ul>
@@ -848,7 +848,7 @@ exercises
 </ul>
 <div class="no-row-height column-margin column-container"><li id="fn7"><p><sup>7</sup>&nbsp;Dropbox has good PDF annotation tools for writing comments on specific lines of text.</p></li><li id="fn8"><p><sup>8</sup>&nbsp;We wrote this book using the all-github workflow, and it was pretty good, modulo some merge conflicts.</p></li></div><p>In sum, there are lots of ways to collaborate – the best thing is to talk with your co-authors to select one that works for the group.</p>
 </section>
-<section id="r-markdown-chapter-summary" class="level2" data-number="0.8">
+<section id="r-markdown-chapter-summary" class="level2" data-number="C.8">
 <h2 data-number="C.8" class="anchored" data-anchor-id="r-markdown-chapter-summary"><span class="header-section-number">C.8</span> R Markdown: Chapter summary</h2>
 <p>R Markdown is a great way to write reproducible papers. It is not too tricky to learn, and once you master it you can save time by reformatting quickly and automatically, managing your bibliography automatically, and even creating nice web-compatible documents.</p>
 
