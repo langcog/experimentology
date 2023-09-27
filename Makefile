@@ -40,6 +40,14 @@ render-ug-trace: clean
 	QUARTO_TRACE_FILTERS=output.json quarto render --profile undergrad
 
 
+docker-deploy: docker-login docker-upload
+
+docker-login: guard-DOCKER_USERNAME guard-DOCKER_PASSWORD
+	docker login --username=$(DOCKER_USERNAME) --password=$(DOCKER_PASSWORD)
+
+docker-upload: guard-DOCKER_USERNAME
+	docker push $(DOCKER_USERNAME)/experimentology
+
 docker-build: guard-DOCKER_USERNAME
 	docker build -t $(DOCKER_USERNAME)/experimentology .
 
