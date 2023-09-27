@@ -15,6 +15,9 @@ for (package in packages) {
 		if (installMode) install.packages(package, dependencies=TRUE, repos="http://cran.rstudio.com/")
 	}}
 
+# this needs to be installed from github
+devtools::install_github("crsh/papaja")
+
 if (length(c) > 0) {
 	print("there were missing packages")
 	print(missing_packages)
