@@ -23,6 +23,10 @@ render-pdf:
 	cp _quarto_pdf.yml _quarto.yml
 	quarto render 
 
+render-html:
+	cp _quarto_html.yml _quarto.yml
+	quarto render 
+
 render-ug-pdf: clean
 	-rm -rf _site-undergrad
 	cp _quarto_pdf.yml _quarto.yml
@@ -58,6 +62,9 @@ docker-build: guard-DOCKER_USERNAME
 # add -p 8888:8888 for jupyter
 shell: guard-DOCKER_USERNAME
 	docker run -it --entrypoint=bash -v $(current_dir):/experimentology $(DOCKER_USERNAME)/experimentology
+
+docker-render-html:
+	docker run -it --entrypoint="" -v $(current_dir):/experimentology $(DOCKER_USERNAME)/experimentology make render-html
 
 docker-render-pdf:
 	docker run -it --entrypoint="" -v $(current_dir):/experimentology $(DOCKER_USERNAME)/experimentology make render-pdf
