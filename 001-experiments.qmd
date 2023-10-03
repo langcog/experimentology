@@ -109,15 +109,14 @@ happiness_data <- expand_grid(n_per_group = c(1, 3,10,30,100,300,1000,3000),
   summarise(effect = diff(happiness), 
             friend_asym = friends[1]/friends[2])
 
-ggplot(happiness_data, 
-       aes(x = n_per_group, y = effect, col = log(friend_asym))) + 
-  geom_jitter(width = .05) + 
-  scale_x_log10() + 
-  geom_hline(yintercept = 0, lty = 3) +
-  geom_hline(yintercept = 1, lty = 2) +
-  viridis::scale_color_viridis(name = "Asymmetry in number of friends (log ratio)") + 
-  xlab("N per group") + 
-  ylab("Happiness (experimental - control)") +
+ggplot(happiness_data,
+       aes(x = n_per_group, y = effect, color = log(friend_asym))) +
+  geom_jitter(width = .05) +
+  scale_x_log10() +
+  geom_hline(yintercept = 0, linetype = "dotted", color = pal$grey) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = pal$grey) +
+  labs(x = "N per group", y = "Happiness (experimental - control)",
+       color = "Asymmetry in number of friends (log ratio)") +
   theme(legend.position = "bottom")
 ```
 

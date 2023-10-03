@@ -1,9 +1,8 @@
 {{< include _setup.qmd >}}
 
-# Meta-analysis {#sec-meta}
+{{< include helper/meta_prelims.qmd >}}
 
-```{r meta-helper-child, child="helper/meta_prelims.Rmd"}
-```
+# Meta-analysis {#sec-meta}
 
 ::: {.callout-note title="learning goals"}
 - Discuss the benefits of synthesizing evidence across studies
@@ -45,8 +44,8 @@ Following best practices for meta-analysis (where there are almost never privacy
 #| label: tbl-meta-dataset
 #| tbl-cap: "First few lines of extracted effect sizes (d) and their variances (var\\_d) in the Paluck, Green, and Green (2019) meta-analysis."
 
-head(DF) |>
-  select(name_short, pub_date, target = target_spelled_out, n_total, d, var_d)
+head(df) |>
+  select(name = name_short, pub_date, target = target_spelled_out, n_total, d, var_d)
 ```
 
 As we've seen throughout this book, visualizing data before and after analysis helps benchmark and check our intuitions about the formal statistical results. In a meta-analysis, a common way to plot effect sizes is the **forest plot**, which depicts individual studies' estimates and confidence intervals.^[You can ignore for now the column of percentages and the final line, "RE Model"; we will return to these later.] In the forest plot in @fig-meta-forest, the larger squares correspond to more precise studies; notice how much narrower their confidence intervals are than the confidence intervals of less precise studies.
@@ -56,20 +55,19 @@ As we've seen throughout this book, visualizing data before and after analysis h
 #| fig-cap: "Forest plot for @paluck2019contact meta-analysis. Studies are ordered from smallest to largest standard error."
 #| cap-location: margin
 
-metafor::forest(re.m,
-                showweights = FALSE,
-                header = TRUE,
-                xlab = "Standardized mean difference")
+metafor::forest(re_model, header = TRUE, xlab = "Standardized mean difference",
+                fonts = .font)
 ```
 
 ::: {.callout-note title="code"}
 In this chapter, we use the wonderful `metafor` package [@viechtbauer2010]. With this package, you must first fit your meta-analytic model. But once you've fit your model `mod`, you can simply call `forest(mod)` to create a plot like the one above.
 :::
+
 <!-- Cohen's $d$ -- which, if you recall from @sec-estimation, represents the standardized mean difference -- was used as the effect size index. As we show in the remainder of the chapter, the meta-analytic tools @paluck2019contact used provide several useful insights about this proposed prejudice-reduction intervention. -->
 
 ### How not to synthesize evidence
 
-Many people's first instinct in evidence synthesis is to count how many studies supported versus did not support the hypothesis under investigation. This technique usually amounts to counting the number of studies with "significant" $p$-values, since -- for better or for worse -- "significance" is largely what drives the take-home conclusions researchers report [@mcshane2017statistical; @nelson1986interpretation]. In meta-analysis, we call this practice of counting the number of significant $p$-values **vote-counting** [@borenstein2021introduction]. For example, in the @paluck2019contact meta-analysis, almost all studies had a positive effect size, but only `r sum(DF$sig)` of `r nrow(DF)` were significant. So, based on this vote-count, we would have the impression that most studies do not support the contact hypothesis.
+Many people's first instinct in evidence synthesis is to count how many studies supported versus did not support the hypothesis under investigation. This technique usually amounts to counting the number of studies with "significant" $p$-values, since -- for better or for worse -- "significance" is largely what drives the take-home conclusions researchers report [@mcshane2017statistical; @nelson1986interpretation]. In meta-analysis, we call this practice of counting the number of significant $p$-values **vote-counting** [@borenstein2021introduction]. For example, in the @paluck2019contact meta-analysis, almost all studies had a positive effect size, but only `r sum(df$sig)` of `r nrow(df)` were significant. So, based on this vote-count, we would have the impression that most studies do not support the contact hypothesis.
 
 Many qualitative literature reviews use this vote-counting approach, although often not explicitly. Despite its intuitive appeal, vote-counting can be very misleading because it characterizes evidence solely in terms of dichotomized $p$-values, while entirely ignoring effect sizes. In @sec-replication, we saw how fetishizing statistical significance can mislead us when we consider individual studies. These problems also apply when considering multiple studies. 
 
@@ -77,7 +75,7 @@ For example, small studies may consistently produce non-significant effects due 
 
 ### Fixed-effects meta-analysis
 
-If vote-counting is a bad idea, how should we combine results across studies? Another intuitive approach might be to average effect sizes from each study. For example, in Paluck et al.'s meta-analysis, the mean of the studies' effect size estimates is `r round( mean(DF$d), digits )`. This averaging approach is a step in the right direction, but it has an important limitation: averaging effect size estimates gives equal weight to each study. A small study [e.g., @clunies1989changing with N=`r DF[27, ]$n_total`] contributes as much to the mean effect size as a large study [e.g., @boisjoly2006empathy with N=`r DF[1, ]$n_total`]. Larger studies provide more precise estimates of effect sizes than small studies, so weighting all studies equally is not ideal. Instead, larger studies should carry more weight in the analysis. 
+If vote-counting is a bad idea, how should we combine results across studies? Another intuitive approach might be to average effect sizes from each study. For example, in Paluck et al.'s meta-analysis, the mean of the studies' effect size estimates is `r round( mean(df$d), digits )`. This averaging approach is a step in the right direction, but it has an important limitation: averaging effect size estimates gives equal weight to each study. A small study [e.g., @clunies1989changing with N=`r df[27, ]$n_total`] contributes as much to the mean effect size as a large study [e.g., @boisjoly2006empathy with N=`r df[1, ]$n_total`]. Larger studies provide more precise estimates of effect sizes than small studies, so weighting all studies equally is not ideal. Instead, larger studies should carry more weight in the analysis. 
 
 To address this issue, **fixed-effects meta-analysis** uses a **weighted average** approach. Larger, more precise studies are given more weight in the calculation of the overall effect size. Specifically, each study is weighted by the inverse of its variance (i.e., the inverse of its squared standard error). This makes sense because larger, more precise studies have smaller variances, and thus get more weight in the analysis. 
 
@@ -87,23 +85,20 @@ $$\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}$
 
 <!-- In Paluck et al.'s meta-analysis, we would calculate the fixed-effect estimate, $\widehat{\mu}$, as: -->
 
-<!-- <!-- hard-coded from DF$d[1:2] and DF$se_d[1:2] -->
+<!-- <!-- hard-coded from df$d[1:2] and df$se_d[1:2] -->
 <!-- $$\widehat{\mu} = \frac{ \frac{\widehat{\theta}_{study1}}{\widehat{\sigma}^2_{study1}} + \frac{\widehat{\theta}_{study2}}{\widehat{\sigma}^2_{study2}} + \cdots}{ \frac{1}{\widehat{\sigma}^2_{study1}} + \frac{1}{\widehat{\sigma}^2_{study2}} + \cdots } = -->
 <!-- \frac{ \frac{0.03}{0.08^2} + \frac{0.30}{0.08^2} + \cdots }{ \frac{1}{0.08^2} + \frac{1}{0.08^2} + \cdots }$$ -->
 
-Using the fixed-effects formula, we can estimate that the overall effect size in Paluck et al.'s meta-analysis is a standardized mean difference of $\widehat{\mu}$ = `r round(as.numeric(fe.m$b), 2)`; 95% confidence interval [`r paste0(round(fe.m$ci.lb, 2), ", ", round(fe.m$ci.ub, 2))`]; $p < .001$. Because Cohen's $d$ is our effect size index, this estimate would suggest that intergroup contact decreased prejudice by `r round(as.numeric(fe.m$b), 2)` standard deviations.
+Using the fixed-effects formula, we can estimate that the overall effect size in Paluck et al.'s meta-analysis is a standardized mean difference of $\widehat{\mu}$ = `r round(as.numeric(fe_model$b), 2)`; 95% confidence interval [`r paste0(round(fe_model$ci.lb, 2), ", ", round(fe_model$ci.ub, 2))`]; $p < .001$. Because Cohen's $d$ is our effect size index, this estimate would suggest that intergroup contact decreased prejudice by `r round(as.numeric(fe_model$b), 2)` standard deviations.
 
 ::: {.callout-note title="code"}
-Fitting meta-analytic models in `metafor` is quite simple. For example, for the fixed effects model above, we simply the `rma` function and specified that we wanted a fixed effects analysis. 
+Fitting meta-analytic models in `metafor` is quite simple. For example, for the fixed effects model above, we simply ran the `rma()` function and specified that we wanted a fixed effects analysis. 
 
-```{r eval=FALSE, echo=TRUE}
-fe.m <- rma(yi = d,
-            vi = var_d,
-            data = paluck,
-            method = "FE")
+```{r, opts.label='code'}
+fe_model <- rma(yi = d, vi = var_d, data = paluck, method = "FE")
 ```
 
-Then `summary(fe.m)` gives us the relevant information about the fitted model.
+Then `summary(fe_model)` gives us the relevant information about the fitted model.
 :::
 
 ### Limitations of fixed-effects meta-analysis
@@ -124,65 +119,44 @@ Like fixed-effect meta-analysis, the random-effects estimate of $\widehat{\mu}$ 
 However, in random-effects meta-analysis, the inverse-variance weights now incorporate heterogeneity: $w_i = 1/\left(\widehat{\tau}^2 + \widehat{\sigma}^2_i \right)$. Where before we had one term in our weights, now we have two. That is because these weights represent the inverse of studies' *marginal* variances, taking into account both statistical error due to their finite sample sizes ($\widehat{\sigma}^2_i$ as before) and also genuine effect heterogeneity ($\widehat{\tau}^2$).
 <!--^[The estimate of $\widehat{\tau}^2$ is a bit more complicated, but is essentially a weighted average of studies' squared residuals, $\widehat{\theta_i} - \widehat{\mu}$, while subtracting away variation due to statistical error, $\widehat{\sigma}^2_i$ [@dersimonian1986meta; @brockwell2001comparison].]  -->
 
-Conducting a random-effects meta-analysis of Paluck et al.'s dataset yields $\widehat{\mu}$ = `r round(as.numeric(re.m$b), 2)`; 95% confidence interval [`r paste0(round(re.m$ci.lb, 2), ", ", round(re.m$ci.ub, 2))`]; $p < .001$. That is,  *on average across studies*, intergroup contact was associated with a decrease in prejudice of `r round(as.numeric(re.m$b), 2)` standard deviations, substantially larger than the estimate from the fixed effects model. This meta-analytic estimate is shown as the bottom line of @fig-meta-forest.
+Conducting a random-effects meta-analysis of Paluck et al.'s dataset yields $\widehat{\mu}$ = `r round(as.numeric(re_model$b), 2)`; 95% confidence interval [`r paste0(round(re_model$ci.lb, 2), ", ", round(re_model$ci.ub, 2))`]; $p < .001$. That is,  *on average across studies*, intergroup contact was associated with a decrease in prejudice of `r round(as.numeric(re_model$b), 2)` standard deviations, substantially larger than the estimate from the fixed effects model. This meta-analytic estimate is shown as the bottom line of @fig-meta-forest.
 
 ::: {.callout-note title="code"}
-Fitting a random effects model requires only a small change to the methods argument of `rma`. (We also include the `knha` flag that adds a correction to the computation of standard errors and p-values). 
+Fitting a random effects model requires only a small change to the methods argument of `rma()`. (We also include the `knha` flag that adds a correction to the computation of standard errors and p-values). 
 
-```{r eval=FALSE, echo=TRUE}
-re.m <- rma(yi = d,
-            vi = var_d,
-            data = paluck,
-            method = "REML",
-            knha = TRUE)
+```{r, opts.label='code'}
+re_model <- rma(yi = d, vi = var_d, data = paluck, method = "REML", knha = TRUE)
 ```
 :::
 
-Based on the random effects model, intergroup contact effects appear to differ across studies. Paluck et al. estimated that the standard deviation of effects across studies was $\widehat{\tau}$ = `r tauStats[1]` ; 95% confidence interval [`r tauStats[2]`, `r tauStats[3]`]. This estimate indicates a substantial amount of heterogeneity! To  visualize these results, we can plot the estimated density of the population effects, which is just a normal distribution with mean $\widehat{\mu}$ and standard deviation $\widehat{\tau}$ (@fig-meta-densities).
+Based on the random effects model, intergroup contact effects appear to differ across studies. Paluck et al. estimated that the standard deviation of effects across studies was $\widehat{\tau}$ = `r tau_stats[1]` ; 95% confidence interval [`r tau_stats[2]`, `r tau_stats[3]`]. This estimate indicates a substantial amount of heterogeneity! To  visualize these results, we can plot the estimated density of the population effects, which is just a normal distribution with mean $\widehat{\mu}$ and standard deviation $\widehat{\tau}$ (@fig-meta-densities).
 
 ```{r meta-densities}
 #| label: fig-meta-densities
 #| fig-cap: "Estimated distribution of population effects from random-effects meta-analysis of Paluck et. al's dataset (heavy red curve) and estimated density of studies' point estimates (thin black curve)."
+#| fig-width: 3.5
+#| fig-height: 2.25
 #| column: margin
 
 # red line: fitted density of *population* effects from meta-analysis
 # gray line: just a dumb density estimate from the *point estimates*
-library(ggplot2)
-
-ggplot(data = data.frame(x = c(-2, 2)),
-       aes(x)) +
+ggplot(tibble(x = c(-2, 2)), aes(x = x)) +
   
   # reference lines
-  geom_vline(xintercept = 0,
-             lwd = 1,
-             color = "gray") +
-  
-  geom_vline(xintercept = re.m$b,
-             lty = 2,
-             lwd = 1,
-             color = "red"
-  ) +
+  geom_vline(xintercept = 0, lineweight = 1, color = pal$grey) +
+  geom_vline(xintercept = re_model$b, linetype = "dashed", lineweight = 1,
+             color = pal$red) +
   
   # estimated density of estimates (nonparametric)
-  geom_density( data = DF,
-                aes(x = d),
-                adjust = 1.2 ) +
+  geom_density(aes(x = d), data = df, adjust = 1.2) +
   
   # estimated density from meta-analysis (parametric)
-  stat_function( fun = dnorm,
-                 n = 101,
-                 args = list( mean = re.m$b,
-                              sd = sqrt(re.m$tau2) ),
-                 lwd = 1.2,
-                 color = "red") +
+  stat_function(fun = dnorm, n = 101, lineweight = 1.2, color = pal$red,
+                args = list(mean = re_model$b, sd = sqrt(re_model$tau2) )) +
 
-  ylab("") +
-  scale_x_continuous( breaks = seq(-2, 2, 0.5)) +
-  xlab("Standardized mean difference") +
-  theme_minimal() +
+  scale_x_continuous(breaks = seq(-2, 2, 0.5)) +
   scale_y_continuous(breaks = NULL) +
-  theme(text = element_text(size=16),
-        axis.text.x = element_text(size=16))
+  labs(x = "Standardized mean difference", y = "")
 ```
 
 This meta-analysis highlights an important point:that the overall effect size  estimate $\widehat{\mu}$ represents only the *mean* population effect across studies. It tells us nothing about how much the effects *vary* across studies. Thus, we recommend always reporting the heterogeneity estimate $\widehat{\tau}$, preferably along with other related metrics that help summarize the distribution of effect sizes across studies [@riley2011interpretation; @wang2019simple; @mathur_mam; @npphat]. Reporting the heterogeneity helps readers know how consistent or inconsistent the effects are across studies, which may point to the need to investigate *moderators* of the effect (i.e., factors that are associated with larger or smaller effects, such as whether participants were adults or children).^[One common approach to investigating moderators in meta-analysis is meta-regression, in which moderators are included as covariates in a random-effects meta-analysis model [@thompson2002should]. As in standard regression, coefficients can then be estimated for each moderator, representing the mean difference in population effect between studies with versus without the moderator.]
@@ -252,56 +226,36 @@ There are also statistical methods to help assess how robust the results may be 
 
 # simulate meta with publication bias, but keep all studies
 set.seed(451)
-d.all = sim_data2( data.frame( k = 100,
-                            per.cluster = 1,
-                            mu = .5,
-                            V = 1,
-                            V.gam = 0,  # no clustering
-                            sei.min = 0.05,
-                            sei.max = 3,
-                            true.dist = "norm",
-                            SE.corr = FALSE,
-                            select.SE = FALSE,
-                            eta = 10  # set publication bias
-),
-keep.all.studies = TRUE )  
+d_all <- sim_data2(
+  tibble(k = 100, per.cluster = 1, mu = .5, V = 1, V.gam = 0, # no clustering
+         sei.min = 0.05, sei.max = 3, true.dist = "norm",
+         SE.corr = FALSE, select.SE = FALSE, eta = 10),  # set publication bias
+  keep.all.studies = TRUE)
 
 # published studies only
-dp = d.all %>% filter(publish == TRUE)
+dp <- d_all |> filter(publish == 1)
 
-meta.all = rma(yi = yi,
-            vi = vi,
-            data = d.all,
-            method = "REML",
-            knha = TRUE)
+meta_all <- metafor::rma(yi = yi, vi = vi, data = d_all, method = "REML",
+                         knha = TRUE)
 
-PublicationBias::significance_funnel(yi = meta.all$yi,
-                                     vi = meta.all$vi,
-                                     # favor.positive = TRUE,
-                                     # plot.pooled = TRUE,
-                                     # est.all = meta.all$b,
-                                     xmin = -8, 
-                                     xmax = 8) 
-
-# scale_x_continuous( breaks = seq(-2.5, 3.5, 0.5))
+PublicationBias::significance_funnel(yi = meta_all$yi, vi = meta_all$vi,
+                                     xmin = -8, xmax = 8) +
+  labs(color = "") +
+  theme_get() +
+  theme(legend.position = "top")
 ```
 
 ::: {.callout-note title="code"}
-For this plot, we use the `PublicationBias` package and the `significance_funnel` function. (An alternative function is the `metafor` function `funnel`, which results in the figure in the margins, a more "classic" funnel plot.) We use our fitted model `re.m` and feed the relevant parameters into the fucntion:
+For this plot, we use the `PublicationBias` package and the `significance_funnel()` function. (An alternative function is the `metafor` function `funnel()`, which results in a more "classic" funnel plot.) We use our fitted model `re_model`:
 
-```{r eval=FALSE, echo=TRUE}
-significance_funnel(yi = re.m$yi,
-                    vi = re.m$vi,
-                    favor.positive = TRUE,
-                    plot.pooled = TRUE,
-                    est.all = re.m$b,
-                    est.N = NA) 
+```{r, opts.label='code'}
+significance_funnel(yi = re_model$yi, vi = re_model$vi)
 ```
 
 As you can see, because meta-analysis is such a well-established method, many of the relevant operations are "plug and play."
 :::
 
-As implied by the "funnel" moniker, our plot looks a little like a funnel. Larger studies (those with smaller standard errors) cluster more closely around the mean of `r round(meta.all$b, digits)` than do smaller studies, but large and small studies alike have point estimates centered around the mean. That is, the funnel plot is symmetric.^[Classic funnel plots look more like @fig-meta-classic-funnel). Our version is different in a couple of ways. Most prominently, we don't have the vertical axis reversed (which we think is confusing). We also don't have the left boundary highlighted, because we think folks don't typically select for negative studies.]
+As implied by the "funnel" moniker, our plot looks a little like a funnel. Larger studies (those with smaller standard errors) cluster more closely around the mean of `r round(meta_all$b, digits)` than do smaller studies, but large and small studies alike have point estimates centered around the mean. That is, the funnel plot is symmetric.^[Classic funnel plots look more like @fig-meta-classic-funnel). Our version is different in a couple of ways. Most prominently, we don't have the vertical axis reversed (which we think is confusing). We also don't have the left boundary highlighted, because we think folks don't typically select for negative studies.]
 
 ```{r meta-classic-funnel}
 #| label: fig-meta-classic-funnel
@@ -309,33 +263,23 @@ As implied by the "funnel" moniker, our plot looks a little like a funnel. Large
 #| fig-height: 5
 #| cap-location: margin
 
-meta.p = rma(yi = yi,
-            vi = vi,
-            data = dp,
-            method = "REML",
-            knha = TRUE)
+meta_p <- metafor::rma(yi = yi, vi = vi, data = dp, method = "REML", knha = TRUE)
 
-funnel(meta.all, 
-       xlab = "Standardized mean difference")
+metafor::funnel(meta_all, xlab = "Standardized mean difference", fonts = .font)
 ```
 
-Not all funnel plots are symmetric! @fig-meta-funnel-biased is what happens to our hypothetical meta-analysis if all studies with $p<0.05$ and positive estimates are published, but only 10% of studies with $p \ge 0.05$ or with negative estimates are published. The introduction of publication bias dramatically inflates the pooled estimate from `r round(meta.all$b, digits)` to `r round(meta.p$b, digits)`. Also, there appears to be a correlation between studies' estimates and their standard errors, such that smaller studies tend to have larger estimates than do larger studies. This correlation is often called **funnel plot asymmetry** because the funnel plot starts to look like a right triangle rather than a funnel. Funnel plot asymmetry *can* be a diagnostic for publication bias, though it isn't always a perfect indicator, as we'll see in the next subsection.
-
+Not all funnel plots are symmetric! @fig-meta-funnel-biased is what happens to our hypothetical meta-analysis if all studies with $p<0.05$ and positive estimates are published, but only 10% of studies with $p \ge 0.05$ or with negative estimates are published. The introduction of publication bias dramatically inflates the pooled estimate from `r round(meta_all$b, digits)` to `r round(meta_p$b, digits)`. Also, there appears to be a correlation between studies' estimates and their standard errors, such that smaller studies tend to have larger estimates than do larger studies. This correlation is often called **funnel plot asymmetry** because the funnel plot starts to look like a right triangle rather than a funnel. Funnel plot asymmetry *can* be a diagnostic for publication bias, though it isn't always a perfect indicator, as we'll see in the next subsection.
 
 ```{r meta-funnel-biased}
 #| label: fig-meta-funnel-biased
 #| fig-cap: "Significance funnel plot for the same simulated meta-analysis after publication bias has occurred. Orange points: studies with $p < 0.05$ and positive estimates. Grey points: studies with $p$ $\\ge$ $0.05$ or negative estimates. Black diamond: random-effects estimate of $\\widehat{\\mu}$."
 #| cap-location: margin
 
-significance_funnel(yi = meta.p$yi,
-                    vi = meta.p$vi,
-                    # favor.positive = TRUE,
-                    # plot.pooled = TRUE,
-                    # est.all = meta.p$b,
-                    # est.N = NA,
-                    xmin = -8, xmax = 8) 
-
-#p2 + scale_x_continuous( breaks = seq(-1, 3.5, 0.5) )
+PublicationBias::significance_funnel(yi = meta_p$yi, vi = meta_p$vi,
+                                     xmin = -8, xmax = 8) +
+  labs(color = "") +
+  theme_get() +
+  theme(legend.position = "top")
 ```
 
 ### Across-study bias correction
@@ -366,7 +310,7 @@ Taken together, these two criticisms suggest that, despite the impressive meta-a
 
 ## Chapter summary: Meta-analysis
 
-Taken together, Paluck and colleagues' use of meta-analysis provided several important insights that would have been easy to miss in a non-quantitative review. First, despite a preponderance of non-significant findings, intergroup contact interventions were estimated to decrease prejudice by on average `r round(as.numeric(re.m$b), 2)` standard deviations. On the other hand, there was considerable heterogeneity in intergroup contact effects, suggesting important moderators of the effectiveness of these interventions. And finally, publication bias was a substantial concern, indicating a need for follow-up research using a registered report format that will be published regardless of whether the outcome is positive (@sec-prereg).
+Taken together, Paluck and colleagues' use of meta-analysis provided several important insights that would have been easy to miss in a non-quantitative review. First, despite a preponderance of non-significant findings, intergroup contact interventions were estimated to decrease prejudice by on average `r round(as.numeric(re_model$b), 2)` standard deviations. On the other hand, there was considerable heterogeneity in intergroup contact effects, suggesting important moderators of the effectiveness of these interventions. And finally, publication bias was a substantial concern, indicating a need for follow-up research using a registered report format that will be published regardless of whether the outcome is positive (@sec-prereg).
 
 Overall, meta-analysis is a key technique for aggregating evidence across studies. Meta-analysis allows researchers to move beyond the bias of naive techniques like vote counting and towards a more quantitative summary of an experimental effect. Unfortunately, a meta-analysis is only as good as the literature it's based on, so the aspiring meta-analyst must be aware of both within- and between-study biases! 
 
@@ -383,7 +327,5 @@ Overall, meta-analysis is a key technique for aggregating evidence across studie
 :::
 
 ::: {.callout-note title="readings"}
-* A nice, free textbook with lots of good code examples: Harrer, M., Cuijpers, P., Furukawa, T., & Ebert, D. (2022). Doing Meta-Analysis with R: A Hands-On Guide. Chapman & Hall/CRC Press. Available free online at [https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/]().
+* A nice, free textbook with lots of good code examples: Harrer, M., Cuijpers, P., Furukawa, T., & Ebert, D. (2022). Doing Meta-Analysis with R: A Hands-On Guide. Chapman & Hall/CRC Press. Available free online at <https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/>.
 :::
-
-<!-- \refs -->

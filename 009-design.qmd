@@ -193,26 +193,32 @@ Like adults, babies like to look at more interesting, complex stimuli. But do th
 
 Their findings are plotted in @fig-design-dose-ex: the youngest infants preferred the simplest stimuli, while infants at an intermediate age preferred stimuli of intermediate complexity, and the oldest infants preferred the most complex stimuli. These findings help to motivate the theory that infants attend preferentially to stimuli that provide appropriate learning input for their processing ability [@kidd2012].
 
-```{r design-dose-ex, fig.cap = "Infants' looking time, plotted by stimulus complexity and infant age. Data from Brennan et al., 1966. Standard errors were unavailable."}
+```{r design-dose-ex}
+#| fig-cap: Infants' looking time, plotted by stimulus complexity and infant age. Data from @brennan1966. Standard errors were unavailable.
+
+library(directlabels)
+
 brennan <- tribble(~age, ~complexity, ~looking_time,
-                   3, "2x2", 80.9,
-                   3, "8x8", 52.3,
-                   3, "24x24", 23.5,
-                   8, "2x2", 54.2,
-                   8, "8x8", 112.0,
-                   8, "24x24", 74.9,
-                   14, "2x2", 43.3,
-                   14, "8x8", 69.7,
-                   14, "24x24", 91.0) |>
+                      3,       "2x2",          80.9,
+                      3,       "8x8",          52.3,
+                      3,     "24x24",          23.5,
+                      8,       "2x2",          54.2,
+                      8,       "8x8",         112.0,
+                      8,     "24x24",          74.9,
+                     14,       "2x2",          43.3,
+                     14,       "8x8",          69.7,
+                     14,     "24x24",          91.0) |>
   mutate(complexity = fct_relevel(complexity, "2x2", "8x8"))
 
-ggplot(brennan, aes(x = age, y = looking_time, col = complexity)) +
+ggplot(brennan, aes(x = age, y = looking_time,
+                    color = complexity, label = complexity)) +
   geom_point() +
   geom_line(aes(group = complexity)) +
-  xlim(0,15) +
-  xlab("Age (weeks)") +
-  ylab("Total fixation time (sec)") +
-  scale_color_discrete(name = "Stimulus complexity")
+  geom_dl(method = list("first.qp", dl.trans(x = x - .2), fontfamily = .font)) +
+  geom_dl(method = list("last.qp", dl.trans(x = x + .2), fontfamily = .font)) +
+  xlim(0, 15) +
+  guides(color = "none") +
+  labs(x = "Age (weeks)", y = "Total fixation time (sec)")
 
 # from fig 1 via web-digitizer
 # 0.9157088122605361, 80.92485549132948
@@ -226,8 +232,6 @@ ggplot(brennan, aes(x = age, y = looking_time, col = complexity)) +
 # 0.9540229885057467, 43.294797687861276
 # 1.9425287356321839, 69.65317919075144
 # 2.93103448275862, 90.98265895953757
-
-
 ```
 
 <!-- @brennan1966's experiment uses a quantitative manipulation of complexity (checkerboard density). But they treat this manipulation as an ordinal -- rather than an interval -- variable, presumably because they do not know precisely how checkerboard density translates into changes in the psychological construct they care about, namely complexity. Does doubling the number of squares on the board double complexity, or do you have to double the number of squares on each side? Does complexity saturate, such that a 128x128 checkerboard is not much more complex? These are just a few of the important theoretical questions that the dose-response approach raises. You might be tempted to avoid these questions by using a simpler design -- but they are  present even in a two-condition design. We're just used to ignoring them! -->

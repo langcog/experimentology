@@ -88,9 +88,9 @@ Conventionally, the primary manipulation of interest (e.g. condition) goes on th
 Other critical variables of interest (e.g. secondary manipulations, demographics) are then assigned to "visual variables" (e.g. color, shape, or size).
 
 ::: {.callout-note title="code"}
-The visualization library `ggplot` (see @sec-ggplot) makes the mapping of variables in the data to visual data. The first part of a ggplot call is an `aesthetics` layer:
+The visualization library `ggplot` (see @sec-ggplot) makes the mapping of variables in the data to visual data. Part of a ggplot call is an `aes` (short for aesthetics) mapping:
 
-```{r, eval=FALSE, echo=TRUE}
+```{r, opts.label='code'}
 aes(
   x = ...,
   y = ...,
@@ -99,7 +99,7 @@ aes(
 )
 ```
 
-The aesthetics layer serves as a statement of how data are mapped to "marks" on the plot. This transparent mapping makes it very easy to explore different plot types by changing that `aes` statement, as we'll see below. 
+The aesthetics argument serves as a statement of how data are mapped to "marks" on the plot. This transparent mapping makes it very easy to explore different plot types by changing that `aes()` statement, as we'll see below. 
 :::
 
 As an example, we will consider the data from @stiller2015 that we explored back in @sec-models.
@@ -110,6 +110,22 @@ So accuracy goes on the vertical (y) axis.
 Now, we have two other variables that we might want to show: the condition (experimental vs. control) and the type of stimuli (houses, beds, and plates of pasta).
 When we think about it, though, only condition is central to exposing the design.
 While we might be interested in whether some types of stimuli are systematically easier or harder than others, condition is more central for understanding the *logic* of the study.
+
+::: {.callout-note title="code"}
+As a reminder, here's our code for loading the @stiller2015 data:
+
+```{r viz-prepost1, echo=TRUE}
+repo <- "https://raw.githubusercontent.com/langcog/experimentology/main/"
+sgf <- read_csv(file.path(repo, "data/tidyverse/stiller_scales_data.csv")) |>
+  mutate(age_group = cut(age, 2:5, include.lowest = TRUE), 
+         condition = condition |>
+           fct_recode("Experimental" = "Label", "Control" = "No Label"))
+
+sgf_cond_means <- sgf |>
+  group_by(condition, age_group) |>
+  summarise(rating = mean(correct))
+```
+:::
 
 ### Principle 2: Facilitate comparison
 
@@ -124,36 +140,21 @@ The second principle of statistical visualizations is to *facilitate comparison*
 It is easier for our visual system to accurately compare the location of elements (e.g. noticing that one point is a certain distance away from another) than to compare their areas or colors (e.g. noticing that one point is bigger or brighter than another).
 @fig-viz-hierarchy shows an ordering of visual variables based on how accurate our visual system is in making comparisons.
 
-```{r viz-prepost1}
-d <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/data/tidyverse/stiller_scales_data.csv") |>
-  mutate(age_group = cut(age, 2:5, include.lowest = TRUE),
-         condition = factor(ifelse(condition == "Label", "Experimental", "Control")))
-```
-
 For example, we *could* start by plotting the accuracy of each age group as colors (@fig-viz-prepost2).
 
-```{r viz-prepost2}
-#| label: fig-viz-prepost2
-#| fig-cap: "A first visualization of the Stiller et al. (2015) data."
+```{r fig-viz-prepost2}
+#| fig-cap: A first visualization of the @stiller2015 data.
 #| fig-cap-location: margin
+#| out-width: 80%
 
-d |>
-  group_by(condition, age_group) |>
-  summarise(rating = mean(correct)) |>
-  ggplot(aes(x = age_group, y = condition, fill = rating)) +
-    geom_tile()
+ggplot(sgf_cond_means, aes(x = age_group, y = condition, fill = rating)) +
+  geom_tile()
 ```
 
-\clearpage
 ::: {.callout-note title="code"}
 To make this (bad) visualization, we used a `ggplot` function called `geom_tile()`.
 
-```{r eval=FALSE, echo=TRUE}
-d |>
-  group_by(condition, age_group) |>
-  summarise(rating = mean(correct)) |>
-  ggplot(aes(x = age_group, y = condition, fill = rating)) +
-    geom_tile()
+```{r fig-viz-prepost2, opts.label='code'}
 ```
 
 `geom_tile()` is commonly used to make heat maps (<https://en.wikipedia.org/wiki/Heat_map>): for each value of some pair of variables (x, y), it shows a color representing the magnitude of a third variable (z).
@@ -163,34 +164,23 @@ Heat maps help these relationships to pop out as clear "hot" and "cold" regions.
 For example, in @barnett2022, a heatmap was used to show a specific range of parameters where an effect of interest emerged (see @fig-viz-heatmap).
 
 ![Heatmap showing a specific range of continuous parameters where an effect emerged (reproduced from @barnett2022).](images/viz/viz_heatmap_example.png){#fig-viz-heatmap width="40%"}
-
-\vspace{3pt}
 :::
 
-\clearpage
 Or we could plot the accuracy of each age group as sizes/areas (@fig-viz-prepost3).
 
-```{r viz-prepost3}
-#| label: fig-viz-prepost3
-#| fig-cap: "Iterating on the Stiller data."
+```{r fig-viz-prepost3}
+#| fig-cap: Iterating on the Stiller data using size.
 #| fig-cap-location: margin
+#| out-width: 80%
 
-d |>
-  group_by(condition, age_group) |>
-  summarise(rating = mean(correct)) |>
-  ggplot(aes(x = age_group, y = condition, size = rating)) +
-    geom_point()
+ggplot(sgf_cond_means, aes(x = age_group, y = condition, size = rating)) +
+  geom_point()
 ```
 
 ::: {.callout-note title="code"}
 To make this (bad) visualization, we mapped the rating DV to the `size` element in our `aes()` call.
 
-```{r eval=FALSE, echo=TRUE}
-d |>
-  group_by(condition, age_group) |>
-  summarise(rating = mean(correct)) |>
-  ggplot(aes(x = age_group, y = condition, size = rating)) +
-    geom_point()
+```{r fig-viz-prepost3, opts.label='code'}
 ```
 :::
 
@@ -199,32 +189,24 @@ Additionally, this way of plotting the data places equal emphasis on age and con
 An alternative is to show six bars: three on the left showing the 'experimental' phase and three on the right showing the 'control' phase.
 Maybe the age groups then are represented as different colors, as in @fig-viz-prepost4.
 
-```{r viz-prepost4}
-#| label: fig-viz-prepost4
-#| fig-cap: "A bar graph of the Stiller data."
+```{r fig-viz-prepost4}
+#| fig-cap: A bar graph of the Stiller data.
 #| fig-cap-location: margin
+#| out-width: 80%
 
-d |>
-  group_by(condition, age_group) |>
-  summarise(rating = mean(correct)) |>
-  ggplot(aes(x = condition, y = rating, fill = age_group)) +
-    geom_bar(stat = "identity", position = "dodge")
+ggplot(sgf_cond_means, aes(x = condition, y = rating, fill = age_group)) +
+  geom_col(position = "dodge")
 ```
 
 ::: {.callout-note title="code"}
-We make bar plots using the `ggplot` function `geom_bar()`.
-By default, it creates 'stacked' bar plots, where all values associated with the same x value (here, condition) get stacked up on top of one another.
+We make bar plots using the `ggplot` function `geom_col()`.
+By default, it creates "stacked" bar plots, where all values associated with the same x value (here, `condition`) get stacked up on top of one another.
 Stacked bar plots can be useful if, for example, you're plotting proportions that sum up to 1, or want to show how some big count is broken down into subcategories.
 It's also common to use `geom_area()` for this purpose, which connects adjacent regions.
-But the more common bar plot used in psychology puts the bars next to one another, or 'dodges' them.
-To accomplish this, we use the `position="dodge"` parameter:
+But the more common bar plot used in psychology puts the bars next to one another, or "dodges" them.
+To accomplish this, we use the `position = "dodge"` argument:
 
-```{r eval=FALSE, echo=TRUE}
-d |>
-  group_by(condition, age_group) |>
-  summarise(rating = mean(correct)) |>
-  ggplot(aes(x = condition, y = rating, fill = age_group)) +
-    geom_bar(stat = "identity", position = "dodge")
+```{r fig-viz-prepost4, opts.label='code'}
 ```
 :::
 
@@ -237,19 +219,22 @@ We have to look at the pattern across the bars on the left, and then jump over t
 What could help facilitate this comparison?
 Consider the line plot in @fig-viz-prepost5. 
 
-```{r viz-prepost5}
-#| label: fig-viz-prepost5
-#| fig-cap: "A line graph of the Stiller data promotes comparison."
+```{r fig-viz-prepost5}
+#| fig-cap: A line graph of the Stiller data promotes comparison.
 #| fig-cap-location: margin
+#| out-width: 80%
 
-d |> 
-  group_by(condition, age_group) |>
-  summarise(rating = mean(correct)) |>
-  ggplot(aes(x = age_group, y = rating, color = condition, group = condition)) +
-    geom_point() +
-    geom_line() +
-    ylab("Proportion correct")
+ggplot(sgf_cond_means, aes(x = age_group, y = rating, color = condition, group = condition)) +
+  geom_point() +
+  geom_line()
 ```
+
+::: {.callout-note title="code"}
+Using a combination of `geom_point()` and `geom_line()`:
+
+```{r fig-viz-prepost5, opts.label='code'}
+```
+:::
 
 The interaction contrast we want to interpret is highlighted visually in this plot.
 It is much easier to compare the slopes of two lines than mentally compute a difference of differences between four bars.
@@ -277,42 +262,42 @@ It hides real variation in the data, making a noisy effect based on a few data p
 Additionally, it collapses the *distribution* of the data, making a multi-modal distribution look the same as a unimodal one. 
 The third principle of modern statistical visualization is to *show the data* and visualize variability in some form.
 
-The most minimal form of this principle is to *always include error bars*.^[And be sure to tell the reader what the error bars represent -- a 95% confidence interval? a standard error of the mean? -- without this information, error bars are hard to interpret (see Depth box below).]
+The most minimal form of this principle is to *always include error bars*.^[And be sure to tell the reader what the error bars represent -- a 95% confidence interval? A standard error of the mean? -- without this information, error bars are hard to interpret (see Depth box below).]
 Error bars turn a purely descriptive visualization into an inferential one. 
 They represent a minimal form of uncertainty about the possible statistics that might have been observed, not just the one that was actually observed. 
-@fig-viz-show-data1 shows the Stiller data with error bars. 
+@fig-viz-show-data1 shows the Stiller data with (bootstrapped) error bars. 
 <!-- As such, they allow the viewer to interpret the means as *estimates*.  -->
 
-```{r viz-show-data1}
-#| label: fig-viz-show-data1
-#| fig-cap: "Error bars (95% CIs) added to the Stiller data line graph."
+```{r fig-viz-show-data1}
+#| fig-cap: Error bars (95% CIs) added to the Stiller data line graph.
 #| fig-cap-location: margin
+#| out-width: 80%
 
-d |> 
+sgf_cond_boot <- sgf |>
   group_by(condition, age_group) |>
-  tidyboot::tidyboot_mean(correct) |>
-  ggplot(aes(x = age_group, y = empirical_stat, color = condition, group = condition)) +
-    geom_point() +
-    geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
-    geom_line() +
-    labs(y = "Mean Accuracy")
+  tidyboot::tidyboot_mean(correct)
+
+ggplot(sgf_cond_boot, aes(x = age_group, y = empirical_stat, color = condition, group = condition)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
+  geom_line() +
+  labs(y = "Mean accuracy")
 ```
 
 ::: {.callout-note title="code"}
 A common problem arises when we want to add error bars to a dodged bar plot.
 Naively, we'd expect we could just dodge the error bars in the same way we dodged the bars themselves:
 
-```{r eval=FALSE, echo=TRUE}
-geom_bar(position = "dodge") +
+```{r, opts.label='code'}
+geom_col(position = "dodge") +
 geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), position = "dodge")
 ```
 
 But this doesn't work! The rationale is kind of technical, but the width of the error bars is much narrower than the width of the bars, so we need to manually specify how much to dodge the error bars with the `position_dodge()` function:
 
-```{r eval=FALSE, echo=TRUE}
-geom_bar(position = position_dodge()) +
-geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), 
-              position = position_dodge(width = 0.9))
+```{r, opts.label='code'}
+geom_col(position = position_dodge()) +
+geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), position = position_dodge(width = 0.9))
 ```
 
 This does the trick!
@@ -331,26 +316,27 @@ There are many ways of showing the resulting distribution of participant-level d
 For example, a **boxplot** shows the median (a horizontal line) in the center of a box extending from the lower quartile (25%) to the upper quartile (75%).
 Lines then extend out to the biggest and smallest values (excluding outliers, which are shown as dots). @fig-viz-show-data2 gives the boxplots for the Stiller data, which don't look that informative -- perhaps because of the coarseness of individual participant averages due to the small number of trials. 
 
-```{r viz-show-data2}
-#| label: fig-viz-show-data2
-#| fig-cap: "Boxplot of the Stiller data."
+```{r fig-viz-show-data2}
+#| fig-cap: Boxplot of the Stiller data.
 #| fig-cap-location: margin
+#| out-width: 80%
 
-d |>
-group_by(condition, age_group, subid) |>
-summarize(rating = mean(correct)) |>
-  ggplot(aes(x = age_group, y = rating, color = condition)) +
-    geom_boxplot(alpha = 0.8)
+sgf_subj_means <- sgf |>
+  group_by(condition, age_group, subid) |>
+  summarize(rating = mean(correct))
+
+ggplot(sgf_subj_means, aes(x = age_group, y = rating, color = condition)) +
+  geom_boxplot(alpha = 0.8)
 ```
 
 ::: {.callout-note title="code"}
-In `ggplot`, we can make box plots using the `geom_boxplot` command:
+In `ggplot`, we can make box plots using `geom_boxplot()`:
 
-```{r eval=FALSE, echo=TRUE}
+```{r, opts.label='code'}
 geom_boxplot(alpha = 0.8)
 ```
 
-A common problem to run into is that `geom_boxplot` requires the variable assigned to `x` to discrete.
+A common problem to run into is that `geom_boxplot()` requires the variable assigned to `x` to discrete.
 If you have discrete levels of a numeric variable (e.g. age groups), make sure you've actually converted that variable to a `factor`.
 Otherwise, if it's still coded as `numeric`, `ggplot` will collapse all of the levels together!
 :::
@@ -359,67 +345,63 @@ It is also common to show the raw data as jittered values with low transparency.
 In @fig-viz-show-data3), we jitter the points because many participants have the same numbers (e.g. 50% and if they overlap it is hard to see how many points there are.
 
 ```{r viz-show-data3}
-#| label: fig-viz-show-data3
-#| fig-cap: "Jittered points representing the data distribution of the Stiller data."
-#| fig-cap-location: margin
-
-mss <- d |> 
+sgf_subj_means <- sgf |> 
   group_by(condition, age_group, subid) |>
   summarize(rating = mean(correct)) 
 
-ms <- mss |>
+sgf_subj_ci <- sgf_subj_means |>
   group_by(condition, age_group) |>
-  tidyboot::tidyboot_mean(rating) 
+  tidyboot::tidyboot_mean(rating) |>
+  rename(rating = empirical_stat)
+```
 
-ggplot(ms, 
-       aes(x = age_group, y = empirical_stat, color = condition, group = condition)) +
-    geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
-    geom_line() +
-    geom_jitter(data = mss, aes(x = age_group, y = rating, color = condition),
-                alpha = 0.25, width = 0.1) +
-    ylab("mean response")
+```{r fig-viz-show-data4}
+#| fig-cap: Jittered points representing the data distribution of the Stiller data.
+#| fig-cap-location: margin
+#| out-width: 80%
+
+ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition, group = condition)) +
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
+  geom_line() +
+  geom_jitter(data = sgf_subj_means, alpha = 0.25, width = 0.1) +
+  ylab("Mean accuracy")
 ```
 
 ::: {.callout-note title="code"}
-Adding the jittered points is simple using `geom_jitter`, but we are starting to have a fairly complex plot so maybe it's worth taking stock of how we get there. 
+Adding the jittered points is simple using `geom_jitter()`, but we are starting to have a fairly complex plot so maybe it's worth taking stock of how we get there. 
 
-To plot both *condition* means and *participant* means, we need to create two different data frames. Here `mss` is a data frame of means for each participant; `ms` is a data frame with means and confidence intervals *across* participants. For this purpose, we use the `tidyboot` package and the `tidyboot_mean` function, which gives us bootstrapped 95% confidence intervals for the means. 
+To plot both *condition* means and *participant* means, we need to create two different data frames. Here `sgf_subj_means` is a data frame of means for each participant; `sgf_subj_ci` is a data frame with means and confidence intervals *across* participants. For this purpose, we use the `tidyboot` package and the `tidyboot_mean()` function, which gives us bootstrapped 95% confidence intervals for the means.
 
-```{r eval=FALSE, echo=TRUE}
-mss <- d |> 
-  group_by(condition, age_group, subid) |>
-  summarize(rating = mean(correct)) 
-
-ms <- mss |>
-  group_by(condition, age_group) |>
-  tidyboot::tidyboot_mean(rating) 
+```{r viz-show-data3, opts.label='code'}
 ```
 
-With these two dataframes in hand, we can now make our `ggplot`. 
+With these two dataframes in hand, we can now make our plot.
 
-```{r eval=FALSE, echo=TRUE}
-ggplot(ms, 
-       aes(x = age_group, y = empirical_stat,
-           color = condition, group = condition)) +
-    geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
-    geom_line() +
-    geom_jitter(data = mss, aes(x = age_group, y = rating, color = condition),
-                alpha = 0.25, width = 0.1) +
-    ylab("mean response")
+```{r fig-viz-show-data4, opts.label='code'}
 ```
 
-The most noteworthy aspect of this code is that the `geom_jitter` argument doesn't just take a different aesthetic, it also takes a different dataframe altogether! Mixing dataframes can be an important tool for creating complex plots.
+The most noteworthy aspect of this code is that the `geom_jitter()` function doesn't just take a different aesthetic, it also takes a different dataframe altogether! Mixing dataframes can be an important tool for creating complex plots.
 :::
 
 Perhaps the format that takes this principle the furthest is the so-called "raincloud plot" [@allen2019raincloud] shown in @fig-viz-raincloud.
 A raincloud plot combines the raw data (the "rain") with a smoothed density (the "cloud") and a boxplot giving the median and quartiles of the distribution. 
 
-```{r viz-raincloud}
-#| label: fig-viz-raincloud
-#| fig-cap: "Example of a raincloud plot, reproduced from @allen2019raincloud."
+```{r fig-viz-raincloud}
+#| fig-cap: Raincloud plot of the Stiller data.
 #| fig-cap-location: margin
+#| fig-height: 6
+#| out-width: 80%
 
-knitr::include_graphics("images/viz/raincloud.png")
+ggplot(sgf_subj_means, aes(y = age_group, x = rating, color = condition)) +
+  ggridges::geom_density_ridges(
+    aes(fill = condition), alpha = 0.2, scale = 0.7,
+    jittered_points = TRUE, point_alpha = 0.7,
+    position = ggridges::position_raincloud(width = 0.05, height = 0.15, ygap = 0.1)) +
+  ggstance::geom_boxploth(width = 0.1, alpha = 0.2, outlier.shape = NA, show.legend = FALSE) +
+  scale_y_discrete(expand = expansion(mult = c(0.2, 0.4))) +
+  guides(fill = "none", color = guide_legend(reverse = TRUE)) +
+  labs(x = "Mean accuracy", y = "Age group", color = "Condition") +
+  theme(legend.position = "top")
 ```
 
 ::: {.callout-note title="depth"}
@@ -444,9 +426,10 @@ As long as you can write a code snippet to compute a value from a dataset, you c
 
 ```{r fig-viz-boot}
 #| output: false
-#| fig-height: 2
+#| fig-height: 2.25
+#| fig-width: 7
 
-boot <- d |> 
+boot <- sgf |> 
   group_by(condition, age_group, subid) |>
   summarize(rating = mean(correct)) |>
   group_by(condition, age_group) |>
@@ -454,7 +437,7 @@ boot <- d |>
   select(-n, -mean) |>
   mutate(method = "bootstrapped 95% CI")
 
-ci_sem <- d |>
+ci_sem <- sgf |>
   group_by(condition, age_group, subid) |>
   summarize(rating = mean(correct)) |>
   group_by(condition, age_group) |>
@@ -476,12 +459,10 @@ bind_rows(boot, ci_sem, ci_ci) |>
     geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
     geom_line() +
     facet_wrap(~ method) +
-    labs(y = "mean response") +
-    theme_few(base_size = 10)
-    # theme(aspect.ratio = 1)
+    labs(x = "Age group", y = "Mean accuracy", color = "Condition")
 ```
 
-![Three different error bars for the Stiller data: bootstrapped 95% confidence intervals (left), standard error of the mean (middle), and analytically computed confidence intervals (right).](015-viz_files/figure-pdf/fig-viz-boot-1.png){#fig-viz-boot width="80%"}
+![Three different error bars for the Stiller data: bootstrapped 95% confidence intervals (left), standard error of the mean (middle), and analytically computed confidence intervals (right).](015-viz_files/figure-html/fig-viz-boot-1.png){#fig-viz-boot}
 
 As we can see, the bootstrapped 95% CI looks similar to the analytic 95% CI derived from the standard error, except the upper and lower limits are slightly asymmetric (reflecting outliers in one direction or another). 
 Of course, the bootstrap is not a silver bullet and can be abused in particularly small samples. 
@@ -505,23 +486,20 @@ The worst offenders have a very low density while also using a lot of excess ink
 ![This figure uses complicated 3D ribbons to compare distributions across four countries (from @roeder1994dna). How could the same data have been presented more legibly?](images/viz/roeder_badviz.jpeg){#fig-viz-bad2 .column-margin width="90%"}
 
 The defaults in modern visualization libraries like `ggplot` prevent some of the worst offenses, but are still often suboptimal.
-For example: consider whether the visual complexity introduced by the default grey background and grid lines in @fig-viz-themes0) is justified, or whether a more minimal theme would be sufficient (see the [`ggthemes`](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/) package for a good collection of themes. 
+For example: consider whether the visual complexity introduced by the default grey background and grid lines in @fig-viz-themes0) is justified, or whether a more minimal theme would be sufficient (see the [`ggthemes`](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/) package for a good collection of themes).
 
 ```{r viz-themes0}
 #| label: fig-viz-themes0
-#| fig-cap: "Standard \"gray\" themed Stiller figure."
+#| fig-cap: Standard "gray" themed Stiller figure.
 #| fig-cap-location: margin
 #| out-width: 80%
 
-ggplot(ms, aes(x = age_group, y = empirical_stat, 
-               color = condition, group = condition)) +
-  geom_point() +
+ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition, group = condition)) +
   geom_line() +
-  # geom_text_repel(aes(label = condition, colour = condition), 
-  #                 data = . |> filter(age_group == "(4,5]")) +
-  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
-  geom_jitter(aes(x = age_group, y = rating, color = condition, fill = condition), alpha = 0.25, width = 0.05, data = mss) +
-  labs(x = "Age Group", y = "Mean Accuracy") +
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
+  geom_jitter(alpha = 0.25, width = 0.05, data = sgf_subj_means) +
+  scale_color_hue() +
+  labs(x = "Age group", y = "Mean accuracy") +
   theme_gray()
 ```
 
@@ -532,38 +510,32 @@ ggplot(ms, aes(x = age_group, y = empirical_stat,
 #| fig-cap: "Custom themed Stiller figure with direct labels."
 #| fig-cap-location: margin
 #| fig-width: 6
+#| out-width: 80%
 
-ggplot(ms, aes(x = age_group, y = empirical_stat, 
-               color = condition, group = condition)) +
-  geom_point() +
+library(directlabels)
+
+ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition, group = condition)) +
   geom_line() +
-  ggrepel::geom_text_repel(aes(label = condition, colour = condition), 
-                           data = ms |> filter(age_group == "(3,4]"), 
-                           nudge_y = .1, nudge_x = .5, segment.color = NA) +
-  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
-  geom_jitter(aes(x = age_group, y = rating, color = condition, fill = condition),
-              alpha = 0.25, width = 0.05, data = mss) +
-  labs(x = "Age Group", y = "Mean Accuracy") +
-  scale_colour_few() +
-  # theme_few(base_size = 10) +
-  theme_few() +
-  theme(legend.position = "none") 
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
+  geom_jitter(alpha = 0.25, width = 0.05, data = sgf_subj_means) +
+  geom_dl(aes(label = condition),
+          method = list("last.points", dl.trans(x = x + 0.5), fontfamily = .font)) +
+  scale_x_discrete(expand = expansion(mult = c(0.1, 0.3))) +
+  labs(x = "Age group", y = "Mean accuracy") +
+  guides(color = "none")
 ```
 
 ::: {.callout-note title="code"}
 To produce the plot above, we've added a few styling elements including:
 
-* The nice and minimal `theme_few` from the `ggthemes` package.
-* A corresponding color palette (`scale_colour_few`) from the same package. 
-* Manual specification of the aspect ratio (`theme(aspect.ratio = 1)`).
-* Direct labels using the `geom_text_repel` call from `ggrepel`. 
+* The nice and minimal custom theme, with a larger font size.
+* A more accessible color palette (`scale_colour_ptol()`) from the `ggthemes` package.
+* Direct labels using `geom_dl()` from the `directlabels` package.
 
-This last item is a bit trickier to implement. To do so, we select one set of points to label and feed these in as a filtered data frame. A few manual arguments customize the placement of the labels (you can spend hours tweaking this sort of thing by hand).
+<!-- This last item is a bit trickier to implement. To do so, we select one set of points to label and feed these in as a filtered data frame. A few manual arguments customize the placement of the labels (you can spend hours tweaking this sort of thing by hand). -->
 
-```{r eval=FALSE, echo=TRUE}
-geom_text_repel(data = ms |> filter(age_group == "(3,4]"),
-                aes(label = condition, colour = condition), 
-                nudge_y = .1, nudge_x = .5, segment.color = NA)
+```{r, opts.label='code'}
+geom_dl(aes(label = condition), method = list("last.points", dl.trans(x = x + 0.5)))
 ```
 :::
 
@@ -595,8 +567,6 @@ In this section, we consider some best practices for exploratory visualization.
 
 ### Examining distributional information
 
-![Anscombe's quartet [@anscombe1973graphs].](images/viz/viz_anscombe.png){#fig-viz-anscombe .margin-caption}
-
 The primary advantage of exploratory visualization -- the reason it is uniquely important for data science -- is that it gives us access to holistic information about the distribution of the data, that cannot be captured in any single summary statistic.
 The most famous example is known as "Anscombe's quartet," a set of four datasets with identical statistics (@fig-viz-anscombe).
 They have the same means, the same variances, the same correlation, the same regression line, and the same $R^2$ value. 
@@ -604,13 +574,71 @@ Yet when they are plotted, they reveal striking structural differences.
 The first looks like a noisy linear relationship -- the kind of idealized relationship we imagine when we imagine a regression line.
 But the second is a perfect quadratic arc, the third is a perfectly noiseless line with a single outlier, and the fourth is nearly categorical: every observation except one shares exactly the same x-value.
 
+```{r fig-viz-anscombe}
+#| fig-cap: Anscombe's quartet [@anscombe1973graphs].
+#| fig-width: 8
+#| fig-height: 2.5
+#| cap-location: margin
+
+ans <- datasets::anscombe
+ans_long <- ans |>
+  mutate(i = 1:n()) |>
+  pivot_longer(-i, names_to = c("name", "k"), names_sep = 1, values_to = "value") |>
+  pivot_wider()
+
+ggplot(ans_long, aes(x = x, y = y)) +
+  facet_wrap(vars(k), nrow = 1,
+             labeller = as_labeller(c("1" = "I", "2" = "II",
+                                      "3" = "III", "4" = "IV"))) +
+  geom_smooth(method = "lm", se = FALSE, fullrange = TRUE, colour = pal$grey, linewidth = 0.5) +
+  geom_point(alpha = 0.5, size = 1.5) +
+  scale_y_continuous(breaks = seq(5, 15, 5), limits = c(3, 15)) +
+  xlim(c(3, 19))
+```
+
 If our analyses are supposed to help us distinguish between different data-generating processes, corresponding to different psychological theories, it is clear that these four datasets would correspond to dramatically different theories even though they share the same statistics.
 Of course, there are arbitrarily many datasets with the same statistics, and most of these differences don't matter (this is why they are called "summary" statistics, after all!). 
-@fig-viz-datasaurus shows just how bad things can get when we rely on summary statistics. 
+@fig-viz-datasaurus and @tbl-datasaurus show just how bad things can get when we rely on summary statistics.
 When we operationalize a theory's predictions in terms of a single statistic (e.g., a difference between groups or a regression coefficient) we can lose track of everything else that may be going on.
 Good visualizations force us to zoom out and take in the bigger picture.
 
-![Originally inspired by a figure constructed by @albertocairo [@cairo2016] using the DrawMyData tool (<http://robertgrantstats.co.uk/drawmydata.html>), we can actually construct an arbitrary number of different graphs with exactly the same statistics [@matejka2017same;@murray2021generating]. This set, known as the The Datasaurus Dozen [@matejka2017same], even has the same set of boxplots.](images/viz/datasaurus.png){#fig-viz-datasaurus .margin-caption}
+<!-- # | fig-height: 6 -->
+
+```{r fig-viz-datasaurus}
+#| fig-cap: Originally inspired by the Datasaurus figure constructed by \@albertocairo on Twitter [@cairo2016] using the DrawMyData tool (<http://robertgrantstats.co.uk/drawmydata.html>), we can construct an arbitrary number of different graphs with exactly the same statistics [@matejka2017same;@murray2021generating], such as the Datasaurus Dozen [@matejka2017same].
+#| fig-width: 8
+#| fig-height: 8
+#| cap-location: margin
+
+dino <- ggplot(datasauRus::datasaurus_dozen |> filter(dataset == "dino"),
+               aes(x = x, y = y)) +
+  coord_equal(ratio = 0.7) +
+  geom_point(size = 0.7) +
+  theme_void()
+
+not_dino <- ggplot(datasauRus::datasaurus_dozen |> filter(dataset != "dino"),
+                   aes(x = x, y = y)) +
+  facet_wrap(vars(dataset), ncol = 4) +
+  coord_equal(ratio = 0.7) +
+  geom_point(size = 0.7) +
+  theme(strip.text = element_blank())
+
+cowplot::plot_grid(dino, not_dino, nrow = 2, rel_heights = c(1, 3))
+```
+
+```{r tbl-datasaurus}
+#| tbl-cap: Summary statistics for each dataset in the Datasaurus Dozen [@matejka2017same].
+#| column: margin
+
+datasauRus::datasaurus_dozen |>
+  group_by(dataset) |>
+  summarise(mean_x = mean(x), mean_y = mean(y),
+            sd_x = sd(x), sd_y = sd(y),
+            cor_xy = cor(x, y)) |>
+  mutate(across(c(starts_with("mean"), starts_with("sd")),
+                \(x) round(x, 1)),
+         cor_xy = round(cor_xy, 3))
+```
 
 ### Data diagnostics
 
@@ -626,7 +654,23 @@ Fourteen of these students failed to notice a gorilla, suggesting that they eval
 Another group of 14 students were simply asked what, if anything, they could conclude (without being given explicit hypotheses).
 More of these students apparently made the visualization, but five of them still failed to notice the gorilla (@fig-viz-gorilla)!
 
-![A dataset was constructed by @yanai2020 which revealed a picture of a gorilla when the raw data were plotted.](images/viz/gorilla.png){#fig-viz-gorilla width="50%"}
+```{r fig-viz-gorilla}
+#| output: false
+#| fig-width: 4
+#| fig-height: 4
+
+# from helper/download_gorilla.R
+go <- read_rds("data/viz/gorillas.rds") |>
+  as_tibble() |>
+  mutate(group = group |> fct_recode("Female" = "F", "Male" = "M"))
+
+ggplot(go, aes(x = steps, y = bmi, colour = group)) +
+  geom_point(size = 0.5) +
+  labs(x = "Steps", y = "Body Mass Index", colour = "") +
+  theme(legend.position = c(.9, 1), legend.key.width = unit(.05, "lines"))
+```
+
+![A dataset constructed by @yanai2020 which revealed a picture of a gorilla when the raw data were plotted.](015-viz_files/figure-html/fig-viz-gorilla-1.png){#fig-viz-gorilla width=50%}
 
 While it may not be surprising that a group of students would take the shortest path to completing their assignment, similar concerns have been raised in much more serious cases concerning how experienced researchers could fail to notice obviously fraudulent data.
 For example, when @datacolada made a simple histogram of the car mileage data reported in @shu2012signing [released publicly by @kristal2020signing], they were immediately able to observe that it followed a perfectly uniform distribution, truncated at exactly 50,000 miles (@fig-viz-uniform).
@@ -636,7 +680,21 @@ So it is highly surprising to find exactly the same number of drivers in every m
 While further specialized analyses revealed additional evidence of fraud (e.g. based on patterns of rounding and pairs of duplicated data points), this humble histogram was already enough to set off alarm bells.
 A recurring regret raised by the co-authors of this paper is that they never thought to make this visualization before reporting their statistical tests.
 
-![A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!](images/viz/data_colada_uniform.png){#fig-viz-uniform width="70%"}
+```{r fig-viz-uniform}
+#| output: FALSE
+#| fig-width: 5
+#| fig-height: 3
+
+# from helper/driving.R
+driving_diffs <- read_rds("data/viz/driving_diffs.rds")
+
+ggplot(driving_diffs, aes(x = miles)) +
+  geom_histogram(fill = "white", colour = "black") +
+  xlim(c(0, 100000)) +
+  labs(x = "Implied miles driven", y = "Count")
+```
+
+![A suspiciously uniform distribution abruptly cutting off at 50k miles. Ring the alarm!](015-viz_files/figure-html/fig-viz-uniform-1.png){#fig-viz-uniform width="70%"}
 
 Our data are always messier than we expect.
 There might be a bug in our coding scheme, a column might be mislabeled, or might contain a range of values that we didn't expect. 
@@ -648,33 +706,21 @@ So which visualizations should we start with? The best practice is to always sta
 ::: {.callout-note title="code"}
 If you want to follow along with this example at home, you can load the data from our repository!
 
-```{r eval=FALSE, echo=TRUE}
+```{r viz-blake1, echo=TRUE}
+#, opts.label='code'}
 repo <- "https://raw.githubusercontent.com/langcog/experimentology/main/"
-fairness <- read_csv(paste0(repo, "data/viz/ontogeny_of_fairness.csv")) |>
-  mutate(trial_num = as.numeric(gsub(".(\\d+)", "\\1", trial)),
-         trial_type = factor(eq.uneq,
-                             levels = c("E","U"),
-                             labels = c("Equal","Unequal")),
-         condition = factor(condition,
-                            levels = c("AI","DI"),
-                            labels = c("Advantageous","Disadvantageous"))) |>
-  arrange(country, condition, actor.id, trial_num)
-```
-:::
+fairness_raw <- read_csv(file.path(repo, "data/viz/ontogeny_of_fairness.csv"))
 
-```{r viz-blake1}
-d <- read_csv("data/viz/ontogeny_of_fairness.csv") |>
-  mutate(trial_num = as.numeric(gsub(".(\\d+)", "\\1", trial)),
-         trial_type = factor(eq.uneq,
-                             levels = c("E","U"),
-                             labels = c("Equal","Unequal")),
-         condition = factor(condition,
-                      levels = c("AI","DI"),
-                      labels = c("Advantageous","Disadvantageous")),
+fairness <- fairness_raw |>
+  mutate(trial_num = trial |> str_remove("t") |> as.numeric(),
+         trial_type = eq.uneq |> fct_recode("Equal" = "E", "Unequal" = "U"),
+         condition = condition |> fct_recode("Advantageous" = "AI", "Disadvantageous" = "DI"),
          age = floor(actor.age.years),
          reject = decision == "reject") |>
-  arrange(country, condition, actor.id, trial_num)
+  select(subj_id = actor.id, age, country, condition, trial_num, trial_type, reject) |>
+  arrange(country, condition, subj_id, trial_num)
 ```
+:::
 
 In this study, pairs of children played the "inequity game": they sat across from one another and were given a particular allocation of snacks.
 On some trials, each participant was allocated the same amount (Equal trials) and on some trials they were allocated different amounts (Unequal trials).
@@ -693,48 +739,42 @@ Let's start by getting a handle on some of the basic sample characteristics.
 For example, how many participants were in each age bin (@fig-viz-blake3)?
 
 ```{r viz-blake3}
-#| label: fig-viz-blake3
-#| fig-cap: "Participants by age in the Blake data."
+fairness_by_age <- fairness |>
+  count(age, subj_id) |>
+  count(age)
+```
+
+```{r fig-viz-blake3}
+#| fig-cap: Participants by age in the Blake data.
 #| fig-cap-location: margin
+#| out-width: 80%
 
-ps_by_age <- d |>
-  count(age, actor.id) |>
-  count(age) 
-
-ggplot(ps_by_age, aes(x = age, y = n)) +
-    geom_bar(stat = "identity") +
-    xlim(0, 18) +
-    theme_few(base_size = 10)
+ggplot(fairness_by_age, aes(x = age, y = n)) +
+  geom_col() +
+  xlim(0, 18) +
+  labs(x = "Age (years)", y = "Count")
 ```
 
 ::: {.callout-note title="code"}
-Exploratory histograms are often a combination of an aggregation step and a plotting step. In the aggregation step, we make use of the convenience `count` function, which gives the number (`n`) of rows in a particular grouping. Here we `count` twice in order to get first one row per participant and then count the number of participants within each age group. 
+Exploratory histograms are often a combination of an aggregation step and a plotting step. In the aggregation step, we make use of the convenience `count()` function, which gives the number (`n`) of rows in a particular grouping. Here we `count()` twice in order to get first one row per participant and then count the number of participants within each age group. 
 
-```{r eval=FALSE, echo=TRUE}
-ps_by_age <- d |>
-  mutate(age = floor(actor.age.years)) |>
-  count(age, actor.id) |>
-  count(age) 
+```{r viz-blake3, opts.label='code'}
 ```
 
-And then we plot using `ggplot`:
+And then we plot using `ggplot()`:
 
-```{r eval=FALSE, echo=TRUE}
-ggplot(ps_by_age, aes(x = age, y = n)) +
-    geom_bar(stat = "identity") +
-    xlim(0, 18) +
-    ggthemes::theme_few()
+```{r fig-viz-blake3, opts.label='code'}
 ```
 
 An alternative (perhaps more elegant) workflow here would be to use a histogram:
 
-```
-ps_by_age <- d |>
-  mutate(age = floor(actor.age.years)) |>
-  count(age, actor.id) 
+```{r, opts.label='code'}
+fairness_by_age <- fairness |>
+  count(age, subj_id) 
   
-ggplot(ps_by_age, aes(x = age)) +
-    geom_histogram(binwidth = 1)
+ggplot(fairness_by_age, aes(x = age)) +
+  geom_histogram(binwidth = 1) +
+  labs(x = "Age (years)", y = "Count")
 ```
 
 Histograms are intended by `ggplot` to be for continuous data, however, and so they don't give the discrete bars that our earlier workflow did. 
@@ -742,70 +782,53 @@ Histograms are intended by `ggplot` to be for continuous data, however, and so t
 
 How many participants were included from each country (@fig-viz-blake5)?
 
-```{r viz-blake5}
-#| label: fig-viz-blake5
-#| fig-cap: "Participants by country in the Blake data."
+```{r fig-viz-blake5}
+#| fig-cap: Participants by country in the Blake data.
 #| fig-cap-location: margin
+#| out-width: 80%
 
-d |>
-  count(country, actor.id) |>
+fairness |>
+  count(country, subj_id) |>
   count(country) |>
   mutate(country = fct_reorder(country, -n)) |>
   ggplot(aes(x = country, y = n)) +
-    geom_bar(stat = "identity") +
-    theme_few(base_size = 10)
+    geom_col() +
+    labs(x = "Country", y = "Count")
 ```
 
 ::: {.callout-note title="code"}
-Here we are going to make things even terser and use a pipe chain that *includes* the ggplot, just so we are writing only a single call to produce our plot. It's up to you whether you think this enhances the readability of your code or decreases it. We find that it's sometimes useful when you don't plan on keeping the intermediate data frame for any other use than plotting.
+Here we are going to make things even terser and use a pipe chain that *includes* the `ggplot()` call, just so we are writing only a single call to produce our plot. It's up to you whether you think this enhances the readability of your code or decreases it. We find that it's sometimes useful when you don't plan on keeping the intermediate data frame for any other use than plotting.
 
-```{r eval=FALSE, echo=TRUE}
-d |>
-  count(country, actor.id) |>
-  count(country) |>
-  mutate(country = fct_reorder(country, -n)) |>
-  ggplot(aes(x = country, y = n)) +
-    geom_bar(stat = "identity") 
+```{r fig-viz-blake5, opts.label='code'}
 ```
 
-If you use this technique, be careful to pipe (`|>` or `%>%`) between `tidyverse` operators but add (`+`) the `ggplot` operators!
+If you use this technique, be careful to use pipe (`|>` or `%>%`) between function calls but use (`+`) between `ggplot` layers!
 
-The only other trick to point out here is that we use the `fct_reorder` call to order the levels of the `country` factor in descending order. This function is found in the very useful `forcats` package of the `tidyverse`, which contains all sorts of functions for working with factors.
+The only other trick to point out here is that we use the `fct_reorder()` call to order the levels of the `country` factor in descending order. This function is found in the very useful `forcats` package of the `tidyverse`, which contains all sorts of functions for working with factors.
 :::
 
 Are ages roughly similar across each country (@fig-viz-blake6)?
 
-```{r viz-blake6}
-#| label: fig-viz-blake6
-#| fig-cap: "Age distribution across countries in the Blake data."
+```{r fig-viz-blake6}
+#| fig-cap: Age distribution across countries in the Blake data.
 #| fig-cap-location: margin
+#| fig-height: 3.5
 
-d |>
-  mutate(age = floor(actor.age.years)) |>
-  count(country, age, actor.id) |>
+fairness |>
+  count(country, age, subj_id) |>
   count(country, age) |>
   mutate(country = fct_reorder(country, -n)) |>
   ggplot(aes(x = age, y = n)) +
-    geom_bar(stat = "identity") +
-    facet_wrap(~ country, ncol = 4) +
-    # xlim(0, 18) +
-    theme_few(base_size = 10) +
-    theme(aspect.ratio = 1)
+    facet_wrap(vars(country), ncol = 4) +
+    geom_col() +
+    xlim(0, 18) +
+    labs(x = "Age (years)", y = "Count")
 ```
 
 ::: {.callout-note title="code"}
-This next plot simply combines the grouping factors of each of the last two plots, and uses `facet_wrap` to show a separate histogram by country: 
+This next plot simply combines the grouping factors of each of the last two plots, and uses `facet_wrap()` to show a separate histogram by country: 
 
-```{r eval=FALSE, echo=TRUE}
-d |>
-  mutate(age = floor(actor.age.years)) |>
-  count(country, age, actor.id) |>
-  count(country, age) |>
-  mutate(country = fct_reorder(country, -n)) |>
-  ggplot(aes(x = age, y = n)) +
-    geom_bar(stat = "identity") +
-    facet_wrap(~ country) +
-    xlim(0, 18) 
+```{r fig-viz-blake6, opts.label='code'}
 ```
 :::
 
@@ -823,69 +846,51 @@ Now that we have a handle on the sample, let's get a sense of the dependent vari
 Before we start taking means, let's look at how the "rejection rate" variable is distributed.
 We'll aggregate at the participant level, and check the frequency of different rejection rates, overall (@fig-viz-blake7).
 
-```{r viz-blake7}
-#| label: fig-viz-blake7
-#| fig-cap: "Rejection rates in the Blake data."
+```{r fig-viz-blake7}
+#| fig-cap: Rejection rates in the Blake data.
 #| fig-cap-location: margin
+#| out-width: 80%
 
-d.indiv.rates <- d |>
-  filter(!is.na(eq.uneq)) |>
-  group_by(actor.id) |>
-  summarise(reject = mean(reject, na.rm=TRUE))
+fairness_by_subj <- fairness |>
+  filter(!is.na(trial_type)) |>
+  group_by(subj_id) |>
+  summarise(mean_reject = mean(reject, na.rm = TRUE))
 
-d |>
-  filter(!is.na(eq.uneq)) |>
-  group_by(actor.id) |>
-  summarise(reject = mean(reject, na.rm=TRUE)) |>
-  ggplot(aes(x = reject)) +
-    geom_histogram(binwidth = .05) +
-    theme_few(base_size = 10)
+ggplot(fairness_by_subj, aes(x = mean_reject)) +
+  geom_histogram(binwidth = .05) +
+  labs(x = "Proportion of offers rejected", y = "Count")
 ```
 
 ::: {.callout-note title="code"}
 Rejection rate is a continuous variable, so we switch to using a histogram in this case, choosing .05 as a reasonable bin width to see the distribution.
 
-```{r eval=FALSE, echo=TRUE}
-d |>
-  filter(!is.na(eq.uneq)) |>
-  group_by(actor.id) |>
-  summarise(reject = mean(reject, na.rm=TRUE)) |>
-  ggplot(aes(x = reject)) +
-    geom_histogram(binwidth = .05)
+```{r fig-viz-blake7, opts.label='code'}
 ```
 :::
 
-We notice that many participants (`r round(mean(d.indiv.rates$reject == 0),2)*100`%) never reject in the entire experiment.
+We notice that many participants (`r round(mean(fairness_by_subj$mean_reject == 0),2)*100`%) never reject in the entire experiment.
 This kind of "zero-inflated" distribution is not uncommon in psychology, and may warrant special consideration when designing the statistical model.
 We also notice that there is clumping around certain values.
 This clumping leads us to check how many trials each participant is completing (@fig-viz-blake8).
 
-```{r viz-blake8}
-#| label: fig-viz-blake8
-#| fig-cap: "Trials per participant in the Blake data."
+```{r fig-viz-blake8}
+#| fig-cap: Trials per participant in the Blake data.
 #| fig-cap-location: margin
+#| out-width: 80%
 
-d |>
-  filter(!is.na(eq.uneq)) |>
-  count(actor.id) |>
+fairness |>
+  filter(!is.na(trial_type)) |>
+  count(subj_id) |>
   count(n) |>
   ggplot(aes(x = n, y = nn)) +
-    geom_bar(stat = "identity") +
-    labs(x = "# trials", y = "proportion of participants") +
-    theme_few(base_size = 10)
+    geom_col() +
+    labs(x = "Number of trials", y = "Count of participants")
 ```
 
 ::: {.callout-note title="code"}
-This histogram is very similar to the ones above; however, we now `count` twice, first getting the trial counts for each participant and then counting how many times each count occurs overall!
+This histogram is very similar to the ones above; however, we now use `count()` twice, first getting the trial counts for each participant and then counting how many times each count occurs overall!
 
-```{r eval=FALSE, echo=TRUE}
-d |>
-  filter(!is.na(eq.uneq)) |>
-  count(actor.id) |>
-  count(n) |>
-  ggplot(aes(x = n, y = nn)) +
-    geom_bar(stat = "identity") +
-    labs(x = "# trials", y = "proportion of participants") 
+```{r fig-viz-blake8, opts.label='code'}
 ```
 :::
 
@@ -907,28 +912,31 @@ Finally, we can make a few versions of the design plot that are broken out by di
 Let's start by just looking at the data from the largest site (@fig-viz-blake9).
 
 ```{r viz-blake9}
-#| label: fig-viz-blake9
-#| fig-cap: "Rejection rates in the US data from Blake, plotted by age."
-#| fig-cap-location: margin
-
-ms <- d |>
+fairness_by_age <- fairness |>
   filter(!is.na(reject)) |>
-  group_by(country, trial_type, condition, age, actor.id) |>
-  summarise(reject = mean(reject, na.rm=TRUE)) |>
+  group_by(country, trial_type, condition, age, subj_id) |>
+  summarise(mean_reject_subj = mean(reject, na.rm = TRUE)) |>
   group_by(country, trial_type, condition, age) |>
-  summarise(reject = mean(reject, na.rm=TRUE),
-            n = n()) 
+  summarise(mean_reject_age = mean(mean_reject_subj, na.rm = TRUE),
+            n_subj = n()) |>
+  ungroup()
+```
 
-ggplot(filter(ms, country == "US"),
-       aes(x = age, y = reject, col = country)) +
-    geom_point(aes(size = n)) +
-    facet_grid(trial_type ~ condition) +
-    geom_smooth(method="lm", se = FALSE) +
-    ylab("Proportion offers rejected") +
-    xlab("Age (years)") +
-    ylim(c(0,1)) +
-    theme_few(base_size = 10) +
-    scale_color_solarized()
+```{r fig-viz-blake9}
+#| fig-cap: Rejection rates in the US data from Blake, plotted by age.
+#| fig-cap-location: margin
+#| fig-height: 7
+#| out-width: 90%
+
+fairness_by_age |> filter(country == "US") |>
+  ggplot(aes(x = age, y = mean_reject_age, color = condition)) +
+    facet_grid(vars(trial_type), vars(condition)) +
+    geom_smooth(method = "lm", se = FALSE) +
+    geom_point(aes(size = n_subj), alpha = .5) +
+    ylim(c(0, 1)) +
+    labs(x = "Age (years)", y = "Proportion of offers rejected",
+         color = "Condition", size = "N subjects") +
+    theme(legend.position = "bottom")
 ```
 
 ::: {.callout-note title="code"}
@@ -944,24 +952,12 @@ In a confirmatory visualization --- if you are going to include a smoothing curv
 
 We begin by making a summary dataset:
 
-```{r eval=FALSE, echo=TRUE}
-ms <- d |>
-  filter(!is.na(reject)) |>
-  group_by(country, trial_type, condition, age, actor.id) |>
-  summarise(reject = mean(reject, na.rm=TRUE)) |>
-  group_by(country, trial_type, condition, age) |>
-  summarise(reject = mean(reject, na.rm=TRUE),
-            n = n()) 
+```{r viz-blake9, opts.label='code'}
 ```
 
-Then we can create the visualization (labels and styling omitted for clarity):
+Then we can create the visualization:
 
-```{r eval=FALSE, echo=TRUE}
-ggplot(filter(ms, country == "US"),
-       aes(x = age, y = reject, col = country)) +
-    geom_point(aes(size = n)) +
-    facet_grid(trial_type ~ condition) +
-    geom_smooth(method="lm", se = FALSE)
+```{r fig-viz-blake9, opts.label='code'}
 ```
 
 We often find it convenient to filter the summary dataset in the plotting call, so that we can reuse it again. 
@@ -972,51 +968,39 @@ There appears to be an age trend that's specific to the Unequal trials, with rej
 Meanwhile, rejection rates for the Disadvantageous group also seem slightly higher than those in the Advantageous group.
 Now let's re-bin the data into two-year age groups so that individual point estimates are a bit more reliable, and add the other countries back in.^[Binning data is a trick that we often use for reducing complexity in a plot when data are noisy. It should be used with care, however, since different binning decisions can sometimes lead to different conclusions. Here we tried several binning intervals and decided that two-year age bins showed the underlying trends pretty well.]
 
-```{r viz-blake10}
-#| label: fig-viz-blake10
-#| fig-cap: "Rejection rates by age for all data in the Blake dataset."
-#| fig-cap-location: margin
+```{r fig-viz-blake10}
+#| fig-cap: Rejection rates by age for all data in the Blake dataset.
+#| fig-width: 9
+#| fig-height: 4
+#| fig-column: page-right
 
-ms <- d |>
+fairness_by_age_binned <- fairness |>
   filter(!is.na(reject)) |>
-  mutate(age_binned = floor(actor.age.years/2)*2) |>
-  group_by(country, trial_type, condition, age_binned, actor.id) |>
-  summarise(reject = mean(reject, na.rm=TRUE)) |>
+  mutate(age_binned = floor(age / 2) * 2) |>
+  group_by(country, trial_type, condition, age_binned, subj_id) |>
+  summarise(mean_reject_subj = mean(reject, na.rm = TRUE)) |>
   group_by(country, trial_type, condition, age_binned) |>
-  summarise(reject = mean(reject, na.rm=TRUE),
-            n = n()) 
+  summarise(mean_reject_age = mean(mean_reject_subj, na.rm = TRUE),
+            n = n())  |>
+  ungroup()
 
-ggplot(ms, aes(x = age_binned, y = reject, col = condition)) +
-    geom_point(aes(size = n), alpha = .5) +
-    facet_grid(trial_type ~ country) +
-    geom_smooth(method="lm", se = FALSE) +
-    ylab("Proportion offers rejected") +
-    xlab("Age (years)") +
-    ylim(c(0,1)) +
-    theme_few(base_size = 10) +
-    theme(aspect.ratio = 1) + 
-    theme(legend.position = "bottom")
+ggplot(fairness_by_age_binned,
+       aes(x = age_binned, y = mean_reject_age, color = condition)) +
+  facet_grid(vars(trial_type), vars(country)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(alpha = .5) +
+  scale_x_continuous(breaks = seq(4, 12, 4)) +
+  scale_y_continuous(limits = c(0, 1), breaks = c(0, .5, 1)) +
+  labs(x = "Age (years)", y = "Proportion of offers rejected",
+       color = "Condition", size = "N subjects") +
+  theme(legend.position = "bottom")
 ```
 
 ::: {.callout-note title="code"}
 Despite the difference between the plot above and this one, the code to produce them is actually very similar. The only difference is the creation of the binned variable and a slight shift of aesthetic and faceting variables. 
 
-```{r eval=FALSE, echo=TRUE}
-ms <- d |>
-  filter(!is.na(reject)) |>
-  mutate(age_binned = floor(actor.age.years/2)*2) |>
-  group_by(country, trial_type, condition, age_binned, actor.id) |>
-  summarise(reject = mean(reject, na.rm=TRUE)) |>
-  group_by(country, trial_type, condition, age_binned) |>
-  summarise(reject = mean(reject, na.rm=TRUE),
-            n = n()) 
-
-ggplot(ms, aes(x = age_binned, y = reject, col = condition)) +
-    geom_point(aes(size = n), alpha = .5) +
-    facet_grid(trial_type ~ country) +
-    geom_smooth(method="lm", se = FALSE)
+```{r fig-viz-blake10, opts.label='code'}
 ```
-
 :::
 
 @fig-viz-blake10 is now looking much closer to a quick-and-dirty version of a "design plot" we might include in a paper.
@@ -1062,5 +1046,3 @@ For a more classical treatment, see:
 
 * Tufte, E. R. (1997). *The Visual Display of Quantitative Information*. Graphics Press.
 :::
-
-<!-- \refs -->
