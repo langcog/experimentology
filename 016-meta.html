@@ -472,7 +472,7 @@ case study
 <p>According to the contact hypothesis, prejudice towards members of minority groups can be reduced through intergroup contact interventions, in which members of majority and minority groups work together to pursue a common goal <span class="citation" data-cites="allport1954nature">(<a href="#ref-allport1954nature" role="doc-biblioref">Allport 1954</a>)</span>. To aggregate the evidence on the contact hypothesis, <span class="citation" data-cites="paluck2019contact">Paluck, Green, and Green (<a href="#ref-paluck2019contact" role="doc-biblioref">2019</a>)</span> meta-analyzed studies that tested the effects of intergroup contact interventions on long-term prejudice-related outcomes.</p>
 <div class="page-columns page-full"><p>Using a systematic literature search, <span class="citation" data-cites="paluck2019contact">Paluck, Green, and Green (<a href="#ref-paluck2019contact" role="doc-biblioref">2019</a>)</span> searched for all papers that tested these effects and then extracted effect size estimates from each paper.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> Because not every paper reports standardized effect sizes – or even means and standard deviations for every group – this process can often involve scraping information from plots, tables, and statistical tests to try to reconstruct effect sizes.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn3"><p><sup>3</sup>&nbsp;This book will not cover the process of conducting a systematic literature search and extracting effect sizes, but these topics are critical to understand if you plan to conduct a meta-analysis or other evidence synthesis. Our experience is that extracting effect sizes from papers with inconsistent reporting standards can be especially tricky, so it can be helpful to talk to someone with experience in meta-analysis to get advice about this.</p></li><li id="fn4"><p><sup>4</sup>&nbsp;For example, if the outcome variable is continuous, we could estimate Cohen’s <span class="math inline">\(d\)</span> from group means and standard deviations reported in the paper, even without having access to raw data.</p></li></div></div>
 <p>Following best practices for meta-analysis (where there are almost never privacy concerns to worry about), <span class="citation" data-cites="paluck2019contact">Paluck, Green, and Green (<a href="#ref-paluck2019contact" role="doc-biblioref">2019</a>)</span> shared their data openly. The first few lines are shown in <a href="#tbl-meta-dataset">Table&nbsp;<span>16.1</span></a>. We’ll use these data as our running example throughout.</p>
-<div class="cell" data-hash="016-meta_cache/html/tbl-meta-dataset_d51a5731bbb0819cc0b31d01420bfc98">
+<div class="cell" data-hash="016-meta_cache/html/tbl-meta-dataset_1c7a8a8cb63f8bd92645afb5a30a8574">
 <div class="cell-output-display">
 <div class="kable-table">
 <div id="tbl-meta-dataset" class="anchored">
@@ -480,7 +480,7 @@ case study
 <caption>Table&nbsp;16.1: First few lines of extracted effect sizes (d) and their variances (var_d) in the Paluck, Green, and Green (2019) meta-analysis.</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;">name_short</th>
+<th style="text-align: left;">name</th>
 <th style="text-align: right;">pub_date</th>
 <th style="text-align: left;">target</th>
 <th style="text-align: right;">n_total</th>
@@ -544,7 +544,7 @@ case study
 </div>
 </div>
 <div class="page-columns page-full"><p>As we’ve seen throughout this book, visualizing data before and after analysis helps benchmark and check our intuitions about the formal statistical results. In a meta-analysis, a common way to plot effect sizes is the <strong>forest plot</strong>, which depicts individual studies’ estimates and confidence intervals.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> In the forest plot in <a href="#fig-meta-forest">Figure&nbsp;<span>16.1</span></a>, the larger squares correspond to more precise studies; notice how much narrower their confidence intervals are than the confidence intervals of less precise studies.</p><div class="no-row-height column-margin column-container"><li id="fn5"><p><sup>5</sup>&nbsp;You can ignore for now the column of percentages and the final line, “RE Model”; we will return to these later.</p></li></div></div>
-<div class="cell page-columns page-full" data-hash="016-meta_cache/html/fig-meta-forest_44ed3fc6a69c72b52d546c434de8efe7">
+<div class="cell page-columns page-full" data-hash="016-meta_cache/html/fig-meta-forest_204ad37cd03774e2b6a4db5cee58f509">
 <div class="cell-output-display page-columns page-full">
 <div id="fig-meta-forest" class="quarto-figure quarto-figure-center anchored page-columns page-full">
 <figure class="figure page-columns page-full">
@@ -584,7 +584,7 @@ code
 <p>In general terms, the fixed-effect pooled estimate is:</p>
 <div class="page-columns page-full"><p><span class="math display">\[\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}\]</span> where <span class="math inline">\(k\)</span> is the number of studies, <span class="math inline">\(\widehat{\theta}_i\)</span> is the point estimate of the <span class="math inline">\(i^{th}\)</span> study, and <span class="math inline">\(w_i = 1/\widehat{\sigma}^2_i\)</span> is study <span class="math inline">\(i\)</span>’s weight in the analysis (i.e., the inverse of its variance).<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn6"><p><sup>6</sup>&nbsp;If you are curious, the standard error of the fixed-effect <span class="math inline">\(\widehat{\mu}\)</span> is <span class="math inline">\(\frac{1}{\sum_{i=1}^k w_i}\)</span>. This standard error can be used to construct a confidence interval or <span class="math inline">\(p\)</span>-value, as described in <a href="006-inference.html"><span>Chapter&nbsp;6</span></a>.</p></li></div></div>
 <!-- In Paluck et al.'s meta-analysis, we would calculate the fixed-effect estimate, $\widehat{\mu}$, as: -->
-<!-- <!-- hard-coded from DF$d[1:2] and DF$se_d[1:2] -->
+<!-- <!-- hard-coded from df$d[1:2] and df$se_d[1:2] -->
 <!-- $$\widehat{\mu} = \frac{ \frac{\widehat{\theta}_{study1}}{\widehat{\sigma}^2_{study1}} + \frac{\widehat{\theta}_{study2}}{\widehat{\sigma}^2_{study2}} + \cdots}{ \frac{1}{\widehat{\sigma}^2_{study1}} + \frac{1}{\widehat{\sigma}^2_{study2}} + \cdots } = -->
 <!-- \frac{ \frac{0.03}{0.08^2} + \frac{0.30}{0.08^2} + \cdots }{ \frac{1}{0.08^2} + \frac{1}{0.08^2} + \cdots }$$ -->
 <p>Using the fixed-effects formula, we can estimate that the overall effect size in Paluck et al.’s meta-analysis is a standardized mean difference of <span class="math inline">\(\widehat{\mu}\)</span> = 0.28; 95% confidence interval [0.23, 0.34]; <span class="math inline">\(p &lt; .001\)</span>. Because Cohen’s <span class="math inline">\(d\)</span> is our effect size index, this estimate would suggest that intergroup contact decreased prejudice by 0.28 standard deviations.</p>
@@ -600,14 +600,11 @@ code
 </div>
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Fitting meta-analytic models in <code>metafor</code> is quite simple. For example, for the fixed effects model above, we simply the <code>rma</code> function and specified that we wanted a fixed effects analysis.</p>
-<div class="cell" data-hash="016-meta_cache/html/unnamed-chunk-3_15dec68e267dfd1415fddb5833c6298a">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>fe.m <span class="ot">&lt;-</span> <span class="fu">rma</span>(<span class="at">yi =</span> d,</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">vi =</span> var_d,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> paluck,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">method =</span> <span class="st">"FE"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Fitting meta-analytic models in <code>metafor</code> is quite simple. For example, for the fixed effects model above, we simply ran the <code>rma()</code> function and specified that we wanted a fixed effects analysis.</p>
+<div class="cell" data-opts.label="code" data-hash="016-meta_cache/html/unnamed-chunk-1_0dc7839ac49b1b476f8a54a95095c10a">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>fe_model <span class="ot">&lt;-</span> <span class="fu">rma</span>(<span class="at">yi =</span> d, <span class="at">vi =</span> var_d, <span class="at">data =</span> paluck, <span class="at">method =</span> <span class="st">"FE"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Then <code>summary(fe.m)</code> gives us the relevant information about the fitted model.</p>
+<p>Then <code>summary(fe_model)</code> gives us the relevant information about the fitted model.</p>
 </div>
 </div>
 </div>
@@ -636,24 +633,20 @@ code
 </div>
 <div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Fitting a random effects model requires only a small change to the methods argument of <code>rma</code>. (We also include the <code>knha</code> flag that adds a correction to the computation of standard errors and p-values).</p>
-<div class="cell" data-hash="016-meta_cache/html/unnamed-chunk-4_7f7002a9aa41f0b28c6baccaf4ef8494">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>re.m <span class="ot">&lt;-</span> <span class="fu">rma</span>(<span class="at">yi =</span> d,</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">vi =</span> var_d,</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> paluck,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">method =</span> <span class="st">"REML"</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">knha =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Fitting a random effects model requires only a small change to the methods argument of <code>rma()</code>. (We also include the <code>knha</code> flag that adds a correction to the computation of standard errors and p-values).</p>
+<div class="cell" data-opts.label="code" data-hash="016-meta_cache/html/unnamed-chunk-2_09d57ecd22b554aa1be517da62ee0dab">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>re_model <span class="ot">&lt;-</span> <span class="fu">rma</span>(<span class="at">yi =</span> d, <span class="at">vi =</span> var_d, <span class="at">data =</span> paluck, <span class="at">method =</span> <span class="st">"REML"</span>, <span class="at">knha =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 </div>
 <p>Based on the random effects model, intergroup contact effects appear to differ across studies. Paluck et al.&nbsp;estimated that the standard deviation of effects across studies was <span class="math inline">\(\widehat{\tau}\)</span> = 0.44 ; 95% confidence interval [0.25, 0.57]. This estimate indicates a substantial amount of heterogeneity! To visualize these results, we can plot the estimated density of the population effects, which is just a normal distribution with mean <span class="math inline">\(\widehat{\mu}\)</span> and standard deviation <span class="math inline">\(\widehat{\tau}\)</span> (<a href="#fig-meta-densities">Figure&nbsp;<span>16.2</span></a>).</p>
-<div class="cell page-columns page-full" data-hash="016-meta_cache/html/fig-meta-densities_be97de4d0eac93b321ee79064d70b6ae">
+<div class="cell page-columns page-full" data-hash="016-meta_cache/html/fig-meta-densities_ebac3bfdf0dbb5b8d894d09be64e6177">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
 <div id="fig-meta-densities" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="016-meta_files/figure-html/fig-meta-densities-1.png" class="img-fluid figure-img" width="2100"></p>
+<p><img src="016-meta_files/figure-html/fig-meta-densities-1.png" class="img-fluid figure-img" width="1050"></p>
 <figcaption class="figure-caption">Figure&nbsp;16.2: Estimated distribution of population effects from random-effects meta-analysis of Paluck et. al’s dataset (heavy red curve) and estimated density of studies’ point estimates (thin black curve).</figcaption>
 </figure>
 </div>
@@ -725,7 +718,7 @@ accident report
 </div>
 <div class="page-columns page-full"><p>Like within-study biases, meta-analysts often try to mitigate across-study biases by being careful about what studies make it into the meta-analysis. Meta-analysts don’t only want to capture high-profile, published studies on their effect of interest, but also studies published in low-profile journals and the so-called “gray literature” [i.e., unpublished dissertations and theses; <span class="citation" data-cites="lefebvre2019searching">Lefebvre et al. (<a href="#ref-lefebvre2019searching" role="doc-biblioref">2019</a>)</span>].<a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn10"><p><sup>10</sup>&nbsp;Evidence is mixed regarding whether including gray literature actually reduces across-study biases in meta-analysis <span class="citation" data-cites="tsuji2020addressing sapbe">(<a href="#ref-tsuji2020addressing" role="doc-biblioref">Tsuji et al. 2020</a>; <a href="#ref-sapbe" role="doc-biblioref">Mathur and VanderWeele 2021</a>)</span>, but it is still common practice to try to include this literature.</p></li></div></div>
 <p>There are also statistical methods to help assess how robust the results may be to across-study biases. Among the most popular tools to assess and correct for publication bias is the <strong>funnel plot</strong> <span class="citation" data-cites="duval2000trim egger1997bias">(<a href="#ref-duval2000trim" role="doc-biblioref">Duval and Tweedie 2000</a>; <a href="#ref-egger1997bias" role="doc-biblioref">Egger et al. 1997</a>)</span>. A funnel plot shows the relationship between studies’ effect estimates and their precision (usually their standard error). These plots are called “funnel plots” because if there is no publication bias, then as precision increases, the effects “funnel” towards the meta-analytic estimate. As the precision is smaller, they spread out more because of greater measurement error. <a href="#fig-meta-funnel-unbiased">Figure&nbsp;<span>16.4</span></a> is an example of one type of funnel plot <span class="citation" data-cites="sapb">(<a href="#ref-sapb" role="doc-biblioref">Mathur and VanderWeele 2020b</a>)</span> for a simulated meta-analysis of 100 studies with no publication bias.</p>
-<div class="cell page-columns page-full" data-hash="016-meta_cache/html/fig-meta-funnel-unbiased_60ef1a7d8973c7a73bd1f2df1d81ba85">
+<div class="cell page-columns page-full" data-hash="016-meta_cache/html/fig-meta-funnel-unbiased_4fe10858a69a3a8a950da8f2e73d2bd4">
 <div class="cell-output-display page-columns page-full">
 <div id="fig-meta-funnel-unbiased" class="quarto-figure quarto-figure-center anchored page-columns page-full">
 <figure class="figure page-columns page-full">
@@ -747,21 +740,16 @@ code
 </div>
 <div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>For this plot, we use the <code>PublicationBias</code> package and the <code>significance_funnel</code> function. (An alternative function is the <code>metafor</code> function <code>funnel</code>, which results in the figure in the margins, a more “classic” funnel plot.) We use our fitted model <code>re.m</code> and feed the relevant parameters into the fucntion:</p>
-<div class="cell" data-hash="016-meta_cache/html/unnamed-chunk-5_65f4f0e73ed465cb7d271f9cf6337f9d">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">significance_funnel</span>(<span class="at">yi =</span> re.m<span class="sc">$</span>yi,</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">vi =</span> re.m<span class="sc">$</span>vi,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">favor.positive =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">plot.pooled =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">est.all =</span> re.m<span class="sc">$</span>b,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">est.N =</span> <span class="cn">NA</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>For this plot, we use the <code>PublicationBias</code> package and the <code>significance_funnel()</code> function. (An alternative function is the <code>metafor</code> function <code>funnel()</code>, which results in a more “classic” funnel plot.) We use our fitted model <code>re_model</code>:</p>
+<div class="cell" data-opts.label="code" data-hash="016-meta_cache/html/unnamed-chunk-3_7fd026567f636f4be36fd815def0db83">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">significance_funnel</span>(<span class="at">yi =</span> re_model<span class="sc">$</span>yi, <span class="at">vi =</span> re_model<span class="sc">$</span>vi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>As you can see, because meta-analysis is such a well-established method, many of the relevant operations are “plug and play.”</p>
 </div>
 </div>
 </div>
 <div class="page-columns page-full"><p>As implied by the “funnel” moniker, our plot looks a little like a funnel. Larger studies (those with smaller standard errors) cluster more closely around the mean of 0.34 than do smaller studies, but large and small studies alike have point estimates centered around the mean. That is, the funnel plot is symmetric.<a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn11"><p><sup>11</sup>&nbsp;Classic funnel plots look more like <a href="#fig-meta-classic-funnel">Figure&nbsp;<span>16.5</span></a>). Our version is different in a couple of ways. Most prominently, we don’t have the vertical axis reversed (which we think is confusing). We also don’t have the left boundary highlighted, because we think folks don’t typically select for negative studies.</p></li></div></div>
-<div class="cell page-columns page-full" data-hash="016-meta_cache/html/fig-meta-classic-funnel_59a449fb95d93289459216bd619f688d">
+<div class="cell page-columns page-full" data-hash="016-meta_cache/html/fig-meta-classic-funnel_93e99f4fea7c7d9bc416827545b928a4">
 <div class="cell-output-display page-columns page-full">
 <div id="fig-meta-classic-funnel" class="quarto-figure quarto-figure-center anchored page-columns page-full">
 <figure class="figure page-columns page-full">
@@ -772,7 +760,7 @@ code
 </div>
 </div>
 <p>Not all funnel plots are symmetric! <a href="#fig-meta-funnel-biased">Figure&nbsp;<span>16.6</span></a> is what happens to our hypothetical meta-analysis if all studies with <span class="math inline">\(p&lt;0.05\)</span> and positive estimates are published, but only 10% of studies with <span class="math inline">\(p \ge 0.05\)</span> or with negative estimates are published. The introduction of publication bias dramatically inflates the pooled estimate from 0.34 to 1.15. Also, there appears to be a correlation between studies’ estimates and their standard errors, such that smaller studies tend to have larger estimates than do larger studies. This correlation is often called <strong>funnel plot asymmetry</strong> because the funnel plot starts to look like a right triangle rather than a funnel. Funnel plot asymmetry <em>can</em> be a diagnostic for publication bias, though it isn’t always a perfect indicator, as we’ll see in the next subsection.</p>
-<div class="cell page-columns page-full" data-hash="016-meta_cache/html/fig-meta-funnel-biased_b0455af22708ae16a24d06f0a0236b40">
+<div class="cell page-columns page-full" data-hash="016-meta_cache/html/fig-meta-funnel-biased_dfb7456a3930a75f439306effef0f83b">
 <div class="cell-output-display page-columns page-full">
 <div id="fig-meta-funnel-biased" class="quarto-figure quarto-figure-center anchored page-columns page-full">
 <figure class="figure page-columns page-full">
@@ -852,12 +840,11 @@ readings
 <div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ul>
-<li>A nice, free textbook with lots of good code examples: Harrer, M., Cuijpers, P., Furukawa, T., &amp; Ebert, D. (2022). Doing Meta-Analysis with R: A Hands-On Guide. Chapman &amp; Hall/CRC Press. Available free online at <a href="">https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/</a>.</li>
+<li>A nice, free textbook with lots of good code examples: Harrer, M., Cuijpers, P., Furukawa, T., &amp; Ebert, D. (2022). Doing Meta-Analysis with R: A Hands-On Guide. Chapman &amp; Hall/CRC Press. Available free online at <a href="https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/" class="uri">https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/</a>.</li>
 </ul>
 </div>
 </div>
 </div>
-<!-- \refs -->
 
 
 </section>
