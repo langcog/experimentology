@@ -1,5 +1,6 @@
-```{r}
-# library(tidyverse)
+```{r setup}
+#| cache: FALSE
+
 library(dplyr)
 library(tidyr)
 library(readr)
@@ -13,11 +14,17 @@ library(knitr)
 
 set.seed(42)
 
+knitr::opts_template$set(
+  code = list(echo = TRUE, eval = FALSE)
+)
+
+# load font for plots
 .font <- "Source Sans Pro"
 if (!(.font %in% sysfonts::font_families()))
   sysfonts::font_add_google(.font, .font)
 showtext::showtext_auto()
 
+# set custom plot theme
 theme_set(theme_bw(base_size = 14, base_family = .font))
 theme_update(panel.grid = element_blank(),
              strip.background = element_blank(),
@@ -25,39 +32,27 @@ theme_update(panel.grid = element_blank(),
              panel.border = element_blank(),
              axis.line = element_line(),
              strip.text = element_text(face = "bold"))
-.grey <- "grey70"
-.refline <- "dotted"
-.coef_line <- element_line(colour = .grey, size = 0.1)
 
-.pal <- ptol_pal
-.scale_colour_discrete <- scale_colour_ptol
-.scale_color_discrete <- .scale_colour_discrete
-.scale_fill_discrete <- scale_fill_ptol
+# set options for default color and fill scales
+options("ggplot2.discrete.colour"   = ggthemes::scale_colour_ptol   )
+options("ggplot2.continuous.colour" =  viridis::scale_colour_viridis)
+options("ggplot2.discrete.fill"     = ggthemes::scale_fill_ptol     )
+options("ggplot2.continuous.fill"   =  viridis::scale_fill_viridis  )
 
-.scale_colour_continuous <- viridis::scale_colour_viridis
-.scale_color_continuous <- .scale_colour_continuous
-.scale_fill_continuous <- viridis::scale_fill_viridis
-
-.scale_colour_numerous <- scale_colour_discrete
-.scale_color_numerous <- .scale_colour_numerous
-.scale_fill_numerous <- scale_fill_discrete
+# solarized colors for individual elements (like reference lines)
+pal <- list(
+  grey   = "#93a1a1",
+  red    = "#dc322f",
+  blue   = "#268bd2",
+  purple = "#6c71c4"
+)
 
 # from https://bookdown.org/yihui/rmarkdown-cookbook/font-color.html
 colorize <- function(x, color) {
   if (knitr::is_latex_output()) {
-    sprintf("\\textcolor{%s}{%s}", color, x)
+    glue("\\textcolor{<color>}{<x>}", .open = "<", .close = ">")
   } else if (knitr::is_html_output()) {
-    sprintf("<span style='color: %s;'>%s</span>", color,
-            x)
+    glue("<span style='color: {color};'>{x}</span>")
   } else x
-}
-```
-
-```{r}
-appendix <- function(name) {
-  suffix <- if (is_html_output()) "html" else if (is_latex_output()) "latex"
-  qmd <- glue("{name}-{suffix}.qmd")
-  out <- knit_child(qmd, quiet = TRUE)
-  cat(out, sep = "\n")
 }
 ```

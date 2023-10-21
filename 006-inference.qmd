@@ -1,5 +1,7 @@
 {{< include _setup.qmd >}}
 
+{{< include helper/tea_helper.qmd >}}
+
 # Inference {#sec-inference}
 
 ::: {.callout-note title="learning goals"}
@@ -45,16 +47,13 @@ In @sec-estimation, we introduced Fisher's tea-tasting experiment and discussed 
 
 To characterize the uncertainty in an estimate, it helps to picture what is called its **sampling distribution**, which is the distribution of the estimate across different, hypothetical samples. That is, let's imagine -- purely hypothetically -- that we conducted the tea experiment not just once, but dozens, hundreds, or even thousands of times. This idea is often called **repeated sampling** as a shorthand. For each hypothetical sample, we use similar recruitment methods to recruit a new sample of participants, and we compute $\widehat{\beta}$ for that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability (noise). If we plotted these estimates, $\widehat{\beta}$, we would get the sampling distribution in @fig-inference-sampling-small. 
 
-```{r}
-source("helper/tea_helper.R")
-```
-
 ::: {.callout-note title="code"}
 In this chapter and the subsequent statistics and visualization chapters of the book, we'll try to facilitate understanding and illustrate how to use these concepts in practice by giving the R code we use in constructing our examples in these code boxes. We'll assume that you have some knowledge of base R and the Tidyverse -- to get started with these, go ahead and take a look at @sec-tidyverse if you haven't already. Although our figures are often drawn by hand, even the hand-drawn ones are based on actual simulation results!
 
-Since we're going to be working with lots of data from the tea tasting example, we wrote a function called `make_tea_data()` that creates a `tibble` with some (made up) data from our modern tea-tasting experiment. You can find the function on GitHub (<https://github.com/langcog/experimentology/blob/main/helper/tea_helper.R>) if you want to follow along.
+Since we're going to be working with lots of data from the tea tasting example, we wrote a function called `make_tea_data()` that creates a `tibble` with some (made up) data from our modern tea-tasting experiment. You can find the function on GitHub (<https://github.com/langcog/experimentology/blob/main/helper/tea_helper.qmd>) if you want to follow along.
 
-```{r echo=TRUE}
+```{r, opts.label='code'}
+#| eval: TRUE
 #| label: tbl-tea-data
 #| tbl-cap: "Part of the tea tasting example data."
 
@@ -72,21 +71,22 @@ Now imagine we also did thousands of repetitions of the experiment with $n=200$ 
 The sampling distribution is not the same thing as the distribution of tea ratings in a single sample. Instead, it's a distribution of *estimates across samples of a given size*. In essence, it tells us what the mean of a new experiment might be, if we ran it with a particular sample size. 
 
 ::: {.callout-note title="code"}
-To do simulations where we repeat the tea-tasting experiment over and over again, we're using a special tidyverse function from the `purrr` library: `map`. `map` is an extremely powerful function that allows us to run another function (in this case, the `make_tea_data` function that we introduced last chapter) many times with different inputs. Here we create a tibble made up of a set of 1000 runs of the `make_tea_data` function.
+To do simulations where we repeat the tea-tasting experiment over and over again, we're using a special tidyverse function from the `purrr` library: `map()`. `map()` is an extremely powerful function that allows us to run another function (in this case, the `make_tea_data()` function that we introduced last chapter) many times with different inputs. Here we create a tibble made up of a set of 1000 runs of the `make_tea_data()` function.
 
-```{r eval=FALSE, echo=TRUE}
+```{r, opts.label='code'}
 samps <- tibble(sim = 1:1000) |>
-  mutate(data = map(sim, ~make_tea_data(n_total = 18))) |>
-  unnest(cols = "data")
+  mutate(data = map(sim, \(i) make_tea_data(n_total = 18))) |>
+  unnest(cols = data)
 ```
 
-Next, we just use the `group_by` and `summarise` workflow from @sec-tidyverse to get the estimated treatment effect for each of these simulations.
+Next, we just use the `group_by()` and `summarise()` workflow from @sec-tidyverse to get the estimated treatment effect for each of these simulations.
 
-```{r eval=FALSE, echo=TRUE}
+```{r, opts.label='code'}
 tea_summary <- samps |>
+  group_by(sim, condition) |>
+  summarise(mean_rating = mean(rating)) |>
   group_by(sim) |>
-  summarise(delta = mean(rating[condition == "milk first"]) -
-              mean(rating[condition == "tea first"]))
+  summarise(delta = mean_rating[condition == "milk first"] - mean_rating[condition == "tea first"])
 ```
 
 This tibble gives us what we would need to plot the sampling distributions above in @fig-inference-sampling-small and @fig-inference-sampling-big.
@@ -107,19 +107,17 @@ But look what happens as we draw increasingly larger samples in @fig-inference-c
 The practical upshot is that the Central Limit Theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\widehat{SE} = \sigma/\sqrt{n}$. The sampling distribution becomes narrower as the sample size increases because we are dividing by the square root of the number of observations.
 
 ::: {.callout-note title="code"}
-For our central limit theorem simulations, we again use the `map` function. We set up a tibble with the different values we want to to try (which we call `n_flips`). Then we make use of the `map` function to run `rbinom` (random binomial samples) for each value of `n_flips`.
+For our central limit theorem simulations, we again use the `map()` function. We set up a tibble with the different values we want to to try (which we call `n_flips`). Then we make use of the `map()` function to run `rbinom()` (random binomial samples) for each value of `n_flips`.
 
-One trick we make use of here is that `rbinom` takes an extra argument that says how many of these random values you want to generate. Here we generate `nsamps = 1000` samples, giving us 1000 independent replicates at each `n`. But returning an array of 1000 values for a single value of `n_flips` results in something odd: the value for each element of `flips` is an array. To deal with that, we use the `unnest` function, which expands the array back into a normal tibble.
+One trick we make use of here is that `rbinom()` takes an extra argument that says how many of these random values you want to generate. Here we generate `nsamps = 1000` samples, giving us 1000 independent replicates at each `n`. But returning an array of 1000 values for a single value of `n_flips` results in something odd: the value for each element of `flips` is an array. To deal with that, we use the `unnest()` function, which expands the array back into a normal tibble.
 
-```{r eval=FALSE, echo=TRUE}
+```{r, opts.label='code'}
 n_samps <- 1000
 n_flips_list <- c(2, 8, 32, 128)
 
 sample_p <- tibble(n_flips = n_flips_list) |>
-  group_by(n_flips) |>
-  mutate(flips = map(n_flips, 
-                     ~rbinom(n = n_samps, size = n_flips, prob = .7))) |>
-  unnest(cols = c(flips)) |>
+  mutate(flips = map(n_flips, \(f) rbinom(n = n_samps, size = f, prob = .7))) |>
+  unnest(cols = flips) |>
   mutate(p = flips / n_flips)
 ```
 :::
@@ -141,23 +139,23 @@ Let's apply Fisher's standard. If our observation has less than a 5% probability
 ![One example of the distribution of treatment effects under the null model (with N=9 per group). The red regions indicate the part of the distribution in  which less than 5% of observations should fall.](images/inference/p-region.png){#fig-inference-null-model .margin-caption}
 
 ::: {.callout-note title="code"}
-To simulate our null model, we can do the same kind of thing we did before, just specifying to our `make_tea_data` function that the true difference in effects is zero!
+To simulate our null model, we can do the same kind of thing we did before, just specifying to our `make_tea_data()` function that the true difference in effects is zero!
 
-```{r eval=FALSE, echo=TRUE}
-null_model <- expand_grid(sim = 1:n_sims, 
-                          n = 18) |>
-  rowwise() |>
-  mutate(data = map(n, ~make_tea_data(n_total = n, delta = 0))) |>
-  unnest(cols = c(data))
+```{r, opts.label='code'}
+n_sims <- 1000
+null_model <- tibble(sim = 1:n_sims, n = 18) |>
+  mutate(data = map(sim, \(i) make_tea_data(n_total = n, delta = 0))) |>
+  unnest(cols = data)
 ```
 
-Now again we can `group_by` and `summarise` to get the distribution of treatment effects under the null hypothesis. 
+Now again we can `group_by()` and `summarise()` to get the distribution of treatment effects under the null hypothesis. 
 
-```{r eval=FALSE, echo=TRUE}
+```{r, opts.label='code'}
 null_model_summary <- null_model |>
-  group_by(n, sim) |>
-  summarise(delta = mean(rating[condition == "milk first"]) - 
-              mean(rating[condition == "tea first"]))
+  group_by(sim, condition) |>
+  summarise(mean_rating = mean(rating)) |>
+  group_by(sim) |>
+  summarise(delta = mean_rating[condition == "milk first"] - mean_rating[condition == "tea first"])
 ```
 :::
 
@@ -170,43 +168,41 @@ As we saw before, the larger the sample size, the smaller the standard error. Th
 The more participants in the experiment, the tighter the null distribution becomes, and hence the smaller the region in which we should expect a null treatment effect to fall. Because our expectation based on the null becomes more precise, we will be able to reject the null based on smaller treatment effects. In inference of this type, as with estimation, our goals matter. If we're merely testing a hypothesis out of curiosity, perhaps we don't want to measure too many cups of tea. But if we were designing the tea strategy for a major cafe chain, the stakes would be higher and a more precise estimate might necessary; in that case, maybe we'd want to do a more extensive experiment! 
 
 ::: {.callout-note title="code"}
-
 We can do a more systematic simulation of the null regions for different sample sizes by simply adding a parameter to our simulation. 
 
-```{r eval=FALSE, echo=TRUE}
+```{r, opts.label='code'}
 n_sims <- 10000
 
-null_model_multi_n <- expand_grid(sim = 1:n_sims, 
-                          n = c(12,24,48,96)) |>
-  rowwise() |>
-  mutate(data = map(n, ~make_tea_data(n_total = n, delta = 0))) |>
-  unnest(cols = c(data))
+null_model_multi_n <- expand_grid(sim = 1:n_sims, n = c(12, 24, 48, 96)) |>
+  mutate(sim_data = map(n, \(n_i) make_tea_data(n_total = n_i, delta = 0))) |>
+  unnest(cols = sim_data)
 
 null_model_summary_multi_n <- null_model_multi_n |>
+  group_by(n, sim, condition) |>
+  summarise(mean_rating = mean(rating)) |>
   group_by(n, sim) |>
-  summarise(delta = mean(rating[condition == "milk first"]) - 
-              mean(rating[condition == "tea first"]))
+  summarise(delta = mean_rating[condition == "milk first"] - mean_rating[condition == "tea first"])
 
 null_model_quantiles_multi_n <- null_model_summary_multi_n |>
   group_by(n) |>
-  summarise(q25 = quantile(delta, .025), 
-            q975 = quantile(delta, .975)) 
+  summarise(q_025 = quantile(delta, .025), 
+            q_975 = quantile(delta, .975)) 
 ```
 
 Here is the plotting code to produce a comparable figure to our illustration:
 
-```{r eval=FALSE, echo=TRUE}
-ggplot(null_model_summary_multi_n, aes(x =delta)) + 
+```{r, opts.label='code'}
+ggplot(null_model_summary_multi_n, aes(x = delta)) + 
+  facet_wrap(vars(n), nrow = 1, labeller = label_both) +
   geom_histogram(binwidth = .25) +
+  geom_vline(xintercept = 0, color = pal$grey, linetype = "dotted") + 
   geom_vline(data = null_model_quantiles_multi_n, 
-             aes(xintercept = q25), col = "red", lty = 2) + 
+             aes(xintercept = q_025), color = pal$red, linetype = "dotted") + 
   geom_vline(data = null_model_quantiles_multi_n, 
-             aes(xintercept = q975), col = "red", lty = 2) + 
-  facet_wrap(~n) +
+             aes(xintercept = q_975), color = pal$red, linetype = "dotted") + 
   xlim(-2.5, 2.5) + 
-  ylab("Frequency") + xlab("Difference in rating")
+  labs(x = "Difference in rating", y = "Frequency")
 ```
-
 :::
 
 One last note: You might notice an interesting parallel between Fisher's paradigm for NHST and Popper's falsificationist philosophy (introduced in @sec-theories). In both cases, you never get to *accept* the actual hypothesis of interest. The only thing you can do is observe evidence that is inconsistent with the null hypothesis. The added limitation of NHST is that the only hypothesis you can falsify is the null!
@@ -236,11 +232,13 @@ There are a couple of things to notice about the Bayes Factor. The first is that
 The second thing to notice about the Bayes Factor is that it doesn't depend on our prior probability of $H_1$ vs. $H_0$. We might think of $H_1$ as very implausible. But the BF is independent of that prior belief. So that means it's a measure of how much the evidence should shift our beliefs away from our prior. One nice way to think about this is that the Bayes Factor computes how much our beliefs -- whatever they are -- should be changed by the data [@morey2011].
 
 ::: {.callout-note title="code"}
-Bayes Factors are delightfully easy to compute using the `BayesFactor` R package. All we do is feed in the two sets of ratings to the `ttestBF` function!
+Bayes Factors are delightfully easy to compute using the `BayesFactor` R package. All we do is feed in the two sets of ratings to the `ttestBF()` function!
 
-```{r eval=FALSE, echo=TRUE}
-tea_bf <- ttestBF(x = tea_data$rating[tea_data$condition == "milk first"],
-                  y = tea_data$rating[tea_data$condition == "tea first"],
+```{r, opts.label='code'}
+library(BayesFactor)
+
+tea_bf <- ttestBF(x = filter(tea_data, condition == "milk first")$rating,
+                  y = filter(tea_data, condition == "tea first")$rating,
                   paired = FALSE)
 ```
 :::
@@ -285,18 +283,16 @@ Next we can use a simple statistical test, a $t$-test, to compute $p$-values for
 ```{r inference-t-test}
 set.seed(42)
 tea_data <- make_tea_data(n_total = 48)
-tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
-                y = tea_data$rating[tea_data$condition == "tea first"], 
-                paired = FALSE, var.equal = TRUE)
-
 ```
 
 ::: {.callout-note title="code"}
-The standard `t.test` function is built into R via the default `stats` package. Here we simply make sure to specify the variety of test we want by using the flags `paired = FALSE` and `var.equal = TRUE` (denoting the assumption of equal variances). 
+The standard `t.test()` function is built into R via the default `stats` package. Here we simply make sure to specify the variety of test we want by using the flags `paired = FALSE` and `var.equal = TRUE` (denoting the assumption of equal variances). 
 
-```{r eval=FALSE, echo=TRUE}
-tea_t <- t.test(x = tea_data$rating[tea_data$condition == "milk first"],
-                y = tea_data$rating[tea_data$condition == "tea first"], 
+```{r, opts.label='code'}
+#| eval: TRUE
+
+tea_t <- t.test(x = filter(tea_data, condition == "milk first")$rating,
+                y = filter(tea_data, condition == "tea first")$rating,
                 paired = FALSE, var.equal = TRUE)
 ```
 :::
@@ -313,14 +309,11 @@ The expression `r papaja::apa_print(tea_t)$statistic` is the standard way to rep
 set.seed(11)
 # options(scipen = 999) # remove scientific notation here
 
-expand_grid(N = c(12,24,48,96), 
-       `Effect size` = c(.5, 1, 1.5)) |>
-  rowwise() |>
-  mutate(data = map2(N, `Effect size`, 
-                     ~make_tea_data(n_total = N, delta = `Effect size`))) |>
-  unnest(cols = c(data)) |>
-  group_by(N, `Effect size`) |>
-  summarise(`p-value` = papaja::printp(
+bf_comp <- expand_grid(n = c(12, 24, 48, 96), d = c(.5, 1, 1.5)) |>
+  mutate(data = map2(n, d, \(n_i, d_i) make_tea_data(n_total = n_i, delta = d_i))) |>
+  unnest(cols = data) |>
+  group_by(n, d) |>
+  summarise(p = papaja::printp(
     t.test(x = rating[condition == "milk first"],
            y = rating[condition == "tea first"], 
            paired = FALSE, 
@@ -328,8 +321,9 @@ expand_grid(N = c(12,24,48,96),
     BF = round(BayesFactor::extractBF(
       BayesFactor::ttestBF(x = rating[condition == "milk first"],
                            y = rating[condition == "tea first"], 
-                           paired = FALSE))$bf,1)) |>
-  kable(align = "rrrr")
+                           paired = FALSE))$bf, 1))
+
+kable(bf_comp, align = "rrrr", col.names = c("N", "Effect size", "p-value", "BF"))
 ```
 :::
 
@@ -429,7 +423,7 @@ Up until now we've presented Bayesian and frequentist tools as two different set
 
 You don't have to take sides in this deep philosophical debate about what probability is. But it's helpful to know that people actually seem to reason about the world in ways that are well described by the subjective Bayesian view of probability. Recent cognitive science research has made a lot of headway in describing reasoning as a process of Bayesian inference [for review, see @probmods2] where probabilities describe degrees of belief in different hypotheses. These hypotheses in turn are a lot like the theories we described in @sec-theories: they describe the relationships between different abstract entities [@tenenbaum2011]. You might think that scientists are different from lay-people in this regard, but one of the striking findings from research on probabilistic reasoning and judgment is that expertise doesn't matter that much. Statistically-trained scientists -- and even statisticians -- make many of the same reasoning mistakes as their un-trained students [@kahneman1979]. Even children seem to reason intuitively in a way that looks a bit like Bayesian inference [@gopnik2012].
 
-These cognitive science findings help to explain some of the problems that people (scientists included) have in reasoning about $p$-values. If you are an intuitively Bayesian reasoner, the quantity that you're probably tracking is how much you believe in your hypothesis (its posterior probability). So, many people treat the $p$-value as the posterior probability of the null hypothesis.[^inference-23] That's exactly what fallacy \#1 in Table dirty-dozen states -- "If *p* = .05, the null hypothesis has only a 5% chance of being true." But this equivalence is incorrect! Written in math, $p(\text{data} | H_0)$ (the likelihood that lets us compute the p-value) is not the same thing as $p(H_0 | \text{data})$ (the posterior that we want). Pulling from our accident report above, even if the *probability of the observed ESP data given the null hypothesis* is low, that doesn't mean that the *probability of ESP* is high.
+These cognitive science findings help to explain some of the problems that people (scientists included) have in reasoning about $p$-values. If you are an intuitively Bayesian reasoner, the quantity that you're probably tracking is how much you believe in your hypothesis (its posterior probability). So, many people treat the $p$-value as the posterior probability of the null hypothesis.[^inference-23] That's exactly what fallacy \#1 in @tbl-dirty-dozen states -- "If *p* = .05, the null hypothesis has only a 5% chance of being true." But this equivalence is incorrect! Written in math, $p(\text{data} | H_0)$ (the likelihood that lets us compute the p-value) is not the same thing as $p(H_0 | \text{data})$ (the posterior that we want). Pulling from our accident report above, even if the *probability of the observed ESP data given the null hypothesis* is low, that doesn't mean that the *probability of ESP* is high.
 
 [^inference-23]: @cohen1994 is a great treatment of this issue.
 
@@ -483,26 +477,30 @@ Confidence intervals are like betting on the inferences drawn from your sample. 
 ::: {.callout-note title="code"}
 Computing confidence intervals analytically is pretty easy. Here we first compute the standard error for the difference between conditions. The only tricky bit here is that we need to compute a pooled standard deviation.
 
-```{r eval=FALSE, echo=TRUE}
-tea_ratings <- tea_data$rating[tea_data$condition == "tea first"]
-milk_ratings <- tea_data$rating[tea_data$condition == "milk first"]
+```{r, opts.label='code'}
+tea_ratings <- filter(tea_data, condition == "tea first")$rating
+milk_ratings <- filter(tea_data, condition == "milk first")$rating
+
 n_tea <- length(tea_ratings)
 n_milk <- length(milk_ratings)
 sd_tea <- sd(tea_ratings)
 sd_milk <- sd(milk_ratings)
 
-tea_sd_pooled <- sqrt(((n_tea-1)*sd_tea^2 + (n_milk-1)*sd_milk^2) / 
+tea_sd_pooled <- sqrt(((n_tea - 1) * sd_tea ^ 2 + (n_milk - 1) * sd_milk ^ 2) / 
                         (n_tea + n_milk - 2))
 
-tea_se <- tea_sd_pooled * sqrt((1/n_tea) + (1/n_milk))
+tea_se <- tea_sd_pooled * sqrt((1 / n_tea) + (1 / n_milk))
 ```
 
 Once we have the standard error, we can get the estimated difference between conditions and compute the confidence intervals by multiplying the standard error by 1.96. 
 
-```
+```{r}
+#| eval: false
+#| echo: true
+
 delta_hat <- mean(milk_ratings) - mean(tea_ratings)
-tea_ci_lower <- delta_hat - tea_se *1.96
-tea_ci_upper <- delta_hat + tea_se *1.96
+tea_ci_lower <- delta_hat - tea_se * qnorm(0.975)
+tea_ci_upper <- delta_hat + tea_se * qnorm(0.975)
 ```
 :::
 

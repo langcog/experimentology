@@ -1,5 +1,7 @@
 {{< include _setup.qmd >}}
 
+{{< include helper/tea_helper.qmd >}}
+
 # Models {#sec-models} 
 
 ::: {.callout-note title="learning goals"}
@@ -30,9 +32,9 @@ There are many types of statistical models, but this chapter will focus primaril
 ### Regression for estimating a simple treatment effect
 
 ```{r models-helper}
-source("helper/tea_helper.R")
 tea_data <- make_tea_data(n = 24)
-small_tea_data <- bind_rows(slice_head(tea_data, n= 6), slice_tail(tea_data, n=6))
+small_tea_data <- bind_rows(slice_head(tea_data, n = 6),
+                            slice_tail(tea_data, n = 6))
 ```
 
 Let's start with one of these special cases, namely estimating a treatment effect, $\beta$, in a two-group design. In @sec-estimation, we solved this exact challenge for the tea-tasting experiment. We applied a classical model in which the milk-first ratings are assumed to be normally distributed with mean $\theta_{\text{<}} = \theta_{\text{T}} + \beta$ and standard deviation $\sigma$.^[Here's a quick reminder that "model" here is a way of saying "set of assumptions about the data generating procedure." So saying that some equation is a "model" is the same as saying that we think this is where the data came from. We can "turn the crank" -- generate data through the process that's specified in those equations, e.g., pulling numbers from a normal distribution with mean $\theta_{\text{M}}$ and standard deviation $\sigma$. In essence, we're committing to the idea that this process will give us data that are substantively similar to the ones we have already.] 
@@ -46,11 +48,8 @@ Let's now write that model as a regression model, that is, as a model that predi
 #| column: margin
 
 small_tea_data |> 
-  mutate(id = 1:n(),
-         X = ifelse(condition == "tea first", 1, 0)) |>
-  rename(`rating (Y)` = rating) |>
-  select(id, condition, X, `rating (Y)`) |>
-  kable()
+  mutate(id = 1:n(), X = if_else(condition == "tea first", 1, 0)) |>
+  select(id, condition, X, `rating (Y)` = rating)
 ```
 \normalsize
 
@@ -65,68 +64,40 @@ The term $\beta_0 + \beta_1 X_i$ is called the **linear predictor**, and it desc
 The term $\epsilon_i$ is the **error term**, referring to random variation of participants' ratings around the group mean.^[Formally, we'd write $\epsilon_i \sim \mathcal{N}(0, \sigma^2)$. The tilde means "is distributed as", and what follows is a normal distribution with mean 0 and variance $\sigma^2$.] Note that this is a very specific kind of "error"; it does not include "error" due to bias, for example. Instead, you can think of the error terms as capturing the "error" that would be associated with predicting any given participant's rating based on just the linear predictor. If you predicted a control group participant's rating as $\beta_0$, that would be a good guess -- but you still expect the participant's rating to deviate somewhat from $\beta_0$ (i.e., due to variability across participants beyond what is captured by their treatment groups). In our regression model, the linear predictor and error terms together say that participants' ratings scatter randomly (in fact, normally) around their group means with standard deviation $\sigma$. And that is exactly the same model we posited in @sec-estimation.^[You may be wondering why so much effort was put into building boutique solutions for these special cases when a unified framework was available the whole time. A partial answer is that the classical infrastructure of statistics was developed before computers were widespread, and these special cases were chosen because they were easy to work with "analytically" (meaning to work out all the math with pen-and-paper, using values from big numerical tables). Now that we have computers with more flexible algorithms, the model-based perspective is more practical and accessible than it used to be.]
 
 Now we have the model. But how do we estimate the regression coefficients $\beta_0$ and $\beta_1$? The usual method is called **ordinary least squares (OLS)**. Here's the basic idea. For any given regression coefficient estimates $\widehat{\beta}_0$ and $\widehat{\beta}_1$, we would obtain different **predicted values**, $\widehat{Y}_i = \widehat{\beta}_0 + \widehat{\beta}_1 X_i$ for each participant. Some regression coefficient estimates will yield better predictions than others. OLS estimation is designed to find the values of the regression coefficients that optimize these predictions, meaning that the predictions are as close as possible to participants' true outcomes, $Y_i$.^[Specifically, OLS minimizes squared error loss, in the sense that it will choose the regression coefficient estimates whose predictions minimize $\sum_{i=1}^n \left( Y_i - \widehat{Y}_i\right)^2$, where $n$ is the sample size. A wonderful thing about OLS is that those optimal regression coefficients (generically termed $\widehat{\mathbf{\beta}}$) turn out to have a very simple closed form solution: $\widehat{\mathbf{\beta}} = \left( \mathbf{X}'\mathbf{X} \right)^{-1} \mathbf{X}'\mathbf{y}$. We are using more general notation here that supports multiple independent variables: $\widehat{\mathbf{\beta}}$ is a vector, $\mathbf{X}$ is a matrix of independent variables for each subject, and $\mathbf{y}$ is a vector of participants' outcomes. As more good news, the standard error for $\widehat{\mathbf{\beta}}$ has a similarly simple closed form!]
-  
-<!-- [MM: In this figure, the LHS ggtitle and beta labels are cut off in the web version of book. Also maybe use subscripts on betas for consistency.] -->
 
 ```{r models-ols-plot, fig.width=8.5}
 #| label: fig-models-ols-plot
 #| fig-cap: "(left) Best-fitting regression coefficients for the tea-tasting experiment. (right) Much worse coefficients for the same data. Dotted lines: residuals. Circles: data points for individual participants."
 #| cap-location: margin
 
-tea_data <- tea_data |>
+tea_data_means <- tea_data |>
   group_by(condition) |>
-  mutate(cond_mean = mean(rating), 
-         bad_cond_mean = ifelse(condition == "milk first", 
-                                cond_mean + 1.5, cond_mean - 1.5))
+  mutate(best = mean(rating), 
+         worse = if_else(condition == "milk first", best + 1.5, best - 1.5)) |>
+  ungroup() |>
+  pivot_longer(c(best, worse), names_to = "mean_type", values_to = "mean")
 
 j <- .25
-p1 <- ggplot(tea_data, 
-       aes(x = condition, y = rating)) + 
-  geom_pointrange(aes(xmin = condition, xmax = condition,
-                   ymin = cond_mean, ymax = rating, y = rating), 
-                  position = position_jitter(width = j, height = 0), 
-                  alpha = .5,
-                  lty = 3) + 
-  geom_segment(aes(x = as.numeric(as.factor(condition)) - j, 
-                   xend = as.numeric(as.factor(condition)) + j,
-                   y = cond_mean, 
-                   yend = cond_mean), col = "blue") +
-  geom_text(data = data.frame(x = c(2 + j + .1, 1 + j + .1),
-                              y = c(mean(tea_data$rating[tea_data$condition == "tea first"]), 
-                                  mean(tea_data$rating[tea_data$condition == "milk first"])),
-                              label = c("β0 + β1", "β0")),
-            mapping = aes(x = x, y = y, label = label),
-            col = "blue", 
-            hjust = 0, 
-            inherit.aes = FALSE) + 
-  xlab("Condition") + 
-  ylab("Rating") + 
-  ggtitle("Best fitting regression coefficients")
+tea_data_coefs <- tea_data_means |>
+  distinct(condition, mean_type, mean) |>
+  mutate(x = c(rep(1 + j + .05, 2), rep(2 + j + .05, 2)),
+         label = c(rep("beta[0]", 2), rep("beta[0] + beta[1]", 2)))
 
-p2 <- ggplot(tea_data, 
-       aes(x = condition, y = rating)) + 
-  geom_pointrange(aes(xmin = condition, xmax = condition,
-                   ymin = bad_cond_mean, ymax = rating, y = rating), 
-                  position = position_jitter(width = j, height = 0), 
-                  alpha = .5,
-                  lty = 3) + 
-  geom_segment(aes(x = as.numeric(as.factor(condition)) - j, 
-                   xend = as.numeric(as.factor(condition)) + j,
-                   y = bad_cond_mean, 
-                   yend = bad_cond_mean), col = "blue") +
-  geom_text(data = data.frame(x = c(2 + j + .1, 1 + j + .1),
-                              y = c(mean(tea_data$rating[tea_data$condition == "tea first"]) - 1.5, 
-                                  mean(tea_data$rating[tea_data$condition == "milk first"]) + 1.5),
-                              label = c("β0 + β1", "β0")),
-            mapping = aes(x = x, y = y, label = label),
-            col = "blue", 
-            hjust = 0,
-            inherit.aes = FALSE) + 
-  xlab("Condition") + 
-  ylab("Rating") + 
-  ggtitle("Much worse coefficients")
+coef_labels <- c("best" = "Best fitting regression coefficients",
+                 "worse" = "Much worse coefficients")
 
-cowplot::plot_grid(p1,p2)
+ggplot(tea_data_means, aes(x = condition, y = rating)) +
+  facet_wrap(vars(mean_type), labeller = as_labeller(coef_labels)) +
+  geom_pointrange(aes(xmin = condition, xmax = condition,
+                      ymin = mean, ymax = rating),
+                  position = position_jitter(width = j, height = 0),
+                  alpha = .5, linetype = "dotted") +
+  geom_segment(aes(x = as.numeric(as.factor(condition)) - j,
+                   xend = as.numeric(as.factor(condition)) + j,
+                   y = mean, yend = mean), color = pal$blue) +
+  geom_text(aes(x = x, y = mean, label = label), data = tea_data_coefs,
+            color = pal$blue, hjust = 0, parse = TRUE) +
+  labs(x = "Condition", y = "Rating")
 ```
 
 @fig-models-ols-plot illustrates the tea tasting data for each condition (the dots) along with the model predictions for each condition $\beta_0$ and $\beta_0 + \beta_1$ (blue lines). The gap between each data point and the corresponding predictions (the thing that OLS wants to minimize) is shown by the dotted lines. These distances are sample estimates, called **residuals**, of the true errors ($\epsilon_i$. The left-hand plot shows the OLS coefficient values -- the ones that move the model's predictions as close as possible to the data points, in the sense of minimizing the total squared length of the dashed lines. The right-hand plot shows a substantially worse set of coefficient values. 
@@ -134,17 +105,17 @@ cowplot::plot_grid(p1,p2)
 You'll notice that we aren't talking much about $p$-values in this chapter. Regression models can be used to produce $p$-values for specific coefficients, representing inferences about the likelihood of the observed data under some null hypothesis regarding the coefficients. You can also compute Bayes Factors for specific regression coefficients, or use Bayesian inference to fit these coefficients under some prior expectation about their distribution. We won't talk much about this, or more generally how to fit the models we describe. As we said, we're not going to give a full treatment of all the relevant statistical topics. Instead we want to help you begin thinking about making models of your data.
 
 ::: {.callout-note title="code"}
-As it turns out, fitting an OLS regression model in R is extremely easy. The underlying call is `lm`, which stands for linear model. You can fit the model with a single call to this function with a "formula" as its argument. Here's the call:
+As it turns out, fitting an OLS regression model in R is extremely easy. The underlying function is `lm()`, which stands for linear model. You can fit the model with a single call to this function with a "formula" as its argument. Here's the call:
 
-```{r eval=FALSE, echo=TRUE}
+```{r, opts.label='code'}
 mod <- lm(rating ~ condition, data = tea_data)
 ```
 
 Formulas in R are a special kind of terse notation for regression equations where you write the outcome, `~` (distributed as), and the predictors. R assumes that you want an intercept by default, and there are also a number of other handy defaults that make R formulas a nice easy way to specify relatively complex regression models, as we'll see below. 
 
-Once you've fit the model and assigned it to a variable, you can call `summary` to see a summary of the parameters of the model:
+Once you've fit the model and assigned it to a variable, you can call `summary()` to see a summary of the parameters of the model:
 
-```{r eval=FALSE, echo=TRUE}
+```{r, opts.label='code'}
 summary(mod)
 ```
 
@@ -246,36 +217,35 @@ Exponentiating the coefficients (i.e., $e^{\beta}$) would yield **odds ratios**,
 ```{r models-logistic-ex, fig.width = 6.5}
 #| label: fig-models-logistic-ex
 #| fig-cap: "An example of how logistic regression transforms a change in the mean-centered predictor X into a change in the expected outcome Y. The same absolute change in X is associated in a large difference in the probability of the outcome when X is near its mean (blue) vs. a small change in the outcome when X is large (red) or small."
-#| cap-location: margin
+#| fig-width: 4
+#| fig-height: 3
+#| column: margin
 
-x <- seq(-5,5,.1)
+x <- seq(-5, 5, .1)
 y <- boot::inv.logit(x)
-d_ex <- tibble(x = x, 
-               y = y) 
+d_ex <- tibble(x = x, y = y)
 
 ggplot(d_ex, aes(x = x, y = y)) + 
   geom_line() + 
-  geom_line(data = filter(d_ex, x >= -.5, x <= .5), col = "blue", size = 2) + 
-  geom_line(data = filter(d_ex, x >= 3.5, x <= 4.5), col = "red", size = 2) +
+  geom_line(data = filter(d_ex, x >= -.5, x <= .5), color = pal$blue, size = 2) + 
+  geom_line(data = filter(d_ex, x >= 3.5, x <= 4.5), color = pal$red, size = 2) +
   geom_segment(aes(x = -.5, y = 0, xend = .5, yend = 0),
-                  arrow = arrow(length = unit(0.25, "cm")), col = "blue") + 
+                  arrow = arrow(length = unit(0.25, "cm")), color = pal$blue) + 
   geom_segment(aes(x = 3.5, y = 0, xend = 4.5, yend = 0),
-                 arrow = arrow(length = unit(0.25, "cm")), col = "red") + 
-  xlab("X (independent variable)") + 
-  ylab("Probability of Y (outcome)")
-
+                 arrow = arrow(length = unit(0.25, "cm")), color = pal$red) + 
+  labs(x = "X (independent variable)", y = "Probability of Y (outcome)")
 ```
 
 @fig-models-logistic-ex shows the way that a logistic regression model transforms a predictor ($X$) into an outcome probability that is bounded at 0 and 1. Critically, although the predictor is still linear, the logit link means that the same change in $X$ can result in a different change in the absolute probability of $Y$ depending on where you are on the $X$ scale. In this example, if you are in the middle of the predictor range, a one-unit change in $X$ results in a `r round(y[x == .5] - y[x == -.5], 2)` change in probability (blue). At a higher value, the change is much smaller (`r round(y[x == 4.5] - y[x == 3.5], 2)`. Notice how this is different from the linear regression model above, where the same change in age always resulted in the same change in preference! 
 
 ::: {.callout-note title="code"}
-GLMs are as easy to fit in R as standard LMs. You simply need to call the `glm` function -- and to specify the link function. For our example above of a binary "liking" judgment, the call would be:
+GLMs are as easy to fit in R as standard LMs. You simply need to call the `glm()` function -- and to specify the link function. For our example above of a binary "liking" judgment, the call would be:
 
-```{r eval=FALSE, echo=TRUE}
+```{r, opts.label='code'}
 glm(liked_tea ~ condition, data = tea_data, family = "binomial")
 ```
 
-The `family` argument specifies the type of distribution being used, where "binomial" is the logistic link function. 
+The `family` argument specifies the type of distribution being used, where `binomial` is the logistic link function. 
 :::
 
 We have only scratched the surface of GLMs here. First, there are many different link functions that are suitable for different outcome types. And second, GLMs differ from OLS not only in their link functions, but also in how they handle the error terms. Our broader goal in this chapter is to show you how regression models are *models of data*. In that context, GLMs use link functions as a way to make models that generate many different times types of outcome data.^[We sometimes think of linear models as a set of tinker toys you can snap together to stack up a set of predictors. In that context, link functions are an extra "attachment" that you can snap onto your linear model to make it generate a different response type.]
@@ -313,9 +283,9 @@ The random intercept means that we have assumed that each participant has their 
 Following the same logic, we could fit random intercepts for different stimulus items (for example, if we used different types of tea for different trials). We modeled participants as having  normally distributed variation, and we can model stimulus variation the same way. Each stimulus item is assumed to produce a particular average outcome (i.e. some teas are tastier than others), with these average outcomes sampled from a normally distributed population. 
 
 ::: {.callout-note title="code"}
-Remarkably, GLMMs are not much harder to specify in R than standard LMs. One very popular package is `lme4` [@bates2014], which provides the `lmer` and `glmer` functions (the latter for generalized linear mixed effect models). For our example here, we'd write:
+Remarkably, GLMMs are not much harder to specify in R than standard LMs. One very popular package is `lme4` [@bates2014], which provides the `lmer()` and `glmer()` functions (the latter for generalized linear mixed effect models). For our example here, we'd write:
 
-```{r eval=FALSE, echo=TRUE}
+```{r, opts.label='code'}
 library(lme4)
 lmer(rating ~ condition + (1 | id), data = tea_data)
 ```
@@ -345,7 +315,7 @@ More generally, linear mixed effects models are very flexible, and they have bec
 ::: {.callout-note title="code"}
 Specifying random slopes in the `lme4` package is also relatively straightforward:
 
-```{r eval=FALSE, echo=TRUE}
+```{r, opts.label='code'}
 lmer(rating ~ condition + (condition | id), data = tea_data)
 ```
 
@@ -387,13 +357,14 @@ Here's a bit more guidance about this modeling strategy.
 ```{r models-ex-viz, fig.width = 3}
 #| label: fig-models-ex-viz
 #| fig-cap: "Raw data, means, and confidence intervals for the tea-tasting experiment."
+#| fig-width: 3
+#| fig-height: 3.5
 #| column: margin
 
 ggplot(tea_data, aes(x = condition, y = rating)) + 
   geom_jitter(width = .03, height = .1, alpha = .5) +
-  stat_summary(fun.data = "mean_cl_boot", col = "red") + 
-  xlab("Condition") +
-  ylab("Rating")
+  stat_summary(fun.data = "mean_cl_boot", color = pal$red) + 
+  labs(x = "Condition", y = "Rating")
 ```
 
 3. **Interpret the model predictions**. Once you have a model, don't just read off the $p$-values for your coefficients of interest. Walk through the each coefficient, considering how it relates to your outcome variable. For a simple two group design like we've been considering, the condition coefficient is the estimate of the causal effect that you intended to measure! Consider its sign, its magnitude, and its precision (standard error or confidence interval). 
@@ -417,13 +388,12 @@ To estimate the effect, participants were randomly assigned to either the experi
 ::: {.callout-note title="code"}
 If you want to follow along with this example, you'll have to load the example data and do a little bit of preprocessing (also covered in @sec-tidyverse):
 
-```{r eval=FALSE, echo=TRUE}
+```{r, opts.label='code'}
 repo <- "https://raw.githubusercontent.com/langcog/experimentology/main/"
-sgf <- read_csv(paste0(repo, "data/tidyverse/stiller_scales_data.csv")) |>
+sgf <- read_csv(file.path(repo, "data/tidyverse/stiller_scales_data.csv")) |>
   mutate(age_group = cut(age, 2:5, include.lowest = TRUE), 
-         condition = fct_recode(condition,
-                                "Experimental" = "Label",
-                                "Control" = "No Label"))
+         condition = condition |>
+           fct_recode("Experimental" = "Label", "Control" = "No Label"))
 ```
 :::
 
@@ -431,10 +401,13 @@ All this advice may seem abstract, so let's put it into practice on a simple exa
 
 To estimate the effect, participants were randomly assigned to either the experimental condition or to a control condition in which the puppet had eaten too much peanut butter and couldn't talk, but they still had to guess which face was his friend. There were also three other types of experimental stimuli (houses, beds, and plates of pasta). Data from this experiment consisted of `r nrow(sgf)` total observations from `r length(unique(sgf$subid))` children, with all four stimuli presented to each child. The primary hypothesis of this experiment was that that preschool children could make pragmatic inferences by correctly inferring which of the three faces (for example) the puppet was describing.
 
-```{r models-sgf-plot, fig.width=6.5}
+```{r models-sgf-plot}
 #| label: fig-models-sgf-plot
 #| fig-cap: "Data for @stiller2015. Each point shows a single participant's proportion correct trials (out of 4 experimental stimuli) plotted by age group, jittered slightly to avoid overplotting. Larger points and associated confidence intervals show mean and 95% confidence intervals for each condition."
+#| fig-width: 6.5
 #| cap-location: margin
+
+library(directlabels)
 
 sgf_sub_means <- sgf |>
   group_by(age_group, condition, subid) |>
@@ -448,19 +421,16 @@ sgf_group_means <- sgf_sub_means |>
             ci = sem * 1.96,
             mean_correct = mean(mean_correct))
 
-ggplot(sgf_group_means, 
-       aes(x = age_group, y = mean_correct, 
-           col = condition, group = condition)) + 
+ggplot(sgf_group_means, aes(x = age_group, y = mean_correct,
+                            color = condition, group = condition)) + 
   geom_line() + 
-  geom_pointrange(aes(ymin = mean_correct - ci, 
-                      ymax = mean_correct + ci)) +
-  geom_jitter(data = sgf_sub_means, alpha = .3, 
-              width = .1, height = .02) + 
-  ylim(0,1) + 
-  ggthemes::scale_color_solarized(name = "Condition") + 
-  xlab("Age group (years)") + 
-  ylab("Proportion correct") + 
-  theme_classic()
+  geom_pointrange(aes(ymin = mean_correct - ci, ymax = mean_correct + ci)) +
+  geom_jitter(data = sgf_sub_means, alpha = .3, width = .1, height = .02) +
+  geom_dl(aes(label = condition),
+          method = list("last.qp", dl.trans(x = x + 0.3), fontfamily = .font)) +
+  ylim(0,1) +
+  guides(color = "none") +
+  labs(x = "Age group (years)", y = "Proportion correct")
 ```
 
 This experimental design looks a lot like some versions of our tea-tasting experiment. We have one primary condition manipulation (the puppet provides information versus does not), presented between-participants so that some participants are in the experimental condition and others are in the control condition. Our measurements are repeated within participants across different experimental stimuli. Finally, we have one important, pre-planned covariate: children's age. Experimental data are plotted in @fig-models-sgf-plot.^[Our sampling plan for this experiment was actually **stratified** across age, meaning that we intentionally recruited the same number of participants for each one-year age group -- because we anticipated that age was highly correlated with children's ability to succeed in this task. We'll describe this kind of sampling in more detail in @sec-sampling.]
@@ -511,18 +481,18 @@ apa_tab
 ::: {.callout-note title="code"}
 To fit the model described above, the first step is to prepare your predictors. In this case, we center the `age` predictor. 
 
-```{r eval=FALSE, echo=TRUE}
-sgf$age_centered <- scale(sgf$age, scale=FALSE)
+```{r, opts.label='code'}
+sgf$age_centered <- scale(sgf$age, center = TRUE, scale = FALSE)
 ```
 
-Again we use the `lme4` package, this time with the `glmer` function. Again we have to specify our link function, just like in a standard GLM, by choosing the distribution family. 
+Again we use the `lme4` package, this time with the `glmer()` function. Again we have to specify our link function, just like in a standard GLM, by choosing the distribution family. 
 
-```{r eval=FALSE, echo=TRUE}
+```{r, opts.label='code'}
 mod <- glmer(correct ~ age_centered * condition + (1|subid) + (1|item), 
              family = "binomial", data = sgf)
 ```
 
-You can see a summary of the fitted model using `summary(mod)` as before. The only big difference from `lm` is that here you can extract both fixed and random effects (with `fixef(mod)` and `ranef(mod)` respectively). 
+You can see a summary of the fitted model using `summary(mod)` as before. The only big difference from `lm()` is that here you can extract both fixed and random effects (with `fixef(mod)` and `ranef(mod)` respectively). 
 :::
 
 Let's estimate this model and see how it looks. We'll focus here on interpretation of the so-called **fixed effects** (the main predictors), as opposed to the participant and item random effects.^[Participant means are estimated to have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[1],2)` (in log-odds) while items have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[2],2)`. These indicate that both of our random effects capture meaningful variation.] @tbl-models-sgf-model-print shows the coefficients. Again, let's walk through each.
@@ -560,51 +530,47 @@ Further, including covariates can increase the precision of your estimates by re
 # library(tidyverse)
 
 set.seed(1234567)
-num.reps = 1000
+num.reps <- 1000
 
 # True treatment effect is 0 for every unit
 
-adj.est = function(n, cov.matrix, treated) {
-  Y.and.X  =  MASS::mvrnorm(n, mu = c(0, 0), Sigma = cov.matrix)
-  Y   =  Y.and.X[, 1]
-  X   =  Y.and.X[, 2]
+adj.est <- function(n, cov.matrix, treated) {
+  Y.and.X <- MASS::mvrnorm(n, mu = c(0, 0), Sigma = cov.matrix)
+  Y <- Y.and.X[, 1]
+  X <- Y.and.X[, 2]
   coef(lm(Y ~ treated + X))[2]
 }
 
-unadj.est = function(n, treated) {
-  Y = rnorm(n)
+unadj.est <- function(n, treated) {
+  Y <- rnorm(n)
   coef(lm(Y ~ treated))[2]
 }
 
-rmse = function(half.n, rho = 0, control = TRUE) {
-  treated  =  rep(c(0, 1), half.n)
-  n = 2 * half.n
+rmse <- function(half.n, rho = 0, control = TRUE) {
+  treated <- rep(c(0, 1), half.n)
+  n <- 2 * half.n
 
   if (control) {
-    cov.matrix  =  matrix(c(1, rho, rho, 1), nrow = 2, ncol = 2)
-    return( sqrt(mean(replicate(num.reps, adj.est(n, cov.matrix, treated)) ^ 2)) )
+    cov.matrix <- matrix(c(1, rho, rho, 1), nrow = 2, ncol = 2)
+    sqrt(mean(replicate(num.reps, adj.est(n, cov.matrix, treated)) ^ 2))
   }
   else {
-    return( sqrt(mean(replicate(num.reps, unadj.est(n, treated)) ^ 2)) )
+    sqrt(mean(replicate(num.reps, unadj.est(n, treated)) ^ 2))
   }
 }
 
-d <- expand.grid(half_n =  c(5, 10, 20, 50, 100, 200),
-                 rho = seq(0, .8, .2)) %>%
-  rowwise() %>%
+d <- expand_grid(half_n =  c(5, 10, 20, 50, 100, 200), rho = seq(0, .8, .2)) |>
+  rowwise() |>
   mutate(rmse = rmse(half_n, rho))
 
-ggplot(d, aes(x = half_n, y = rmse, 
-              col = factor(rho))) +
+ggplot(d, aes(x = half_n, y = rmse, color = factor(rho))) +
   geom_line() + 
-  theme_classic() + 
-  ggthemes::scale_color_solarized(name = "correlation of X (outcome) and Z (covariate)") + 
-  xlab("N per group") +
-  ylab("Estimation error") + 
-  theme(legend.position = "bottom")
+  labs(x = "N per group", y = "Estimation error",
+       color = "Correlation of X and Z") +
+  theme(legend.position = c(.8, .8))
 ```
 
-![Decreases in estimation error due to adjusting for covariates, plotted by the N participants in each group and the correlation between the covariate and the outcome.](007-models_files/figure-html/models-precision-1.png){#fig-models-precision width=70%}
+![Decreases in estimation error due to adjusting for covariates, plotted by the N participants in each group and the correlation between the outcome (X) and the covariate (Z).](007-models_files/figure-html/models-precision-1.png){#fig-models-precision width=70%}
 
 That said, there are quite a few reasons not to include covariates -- motivating our recommendation to skip them in your default model unless you have very strong theory-based expectations for either (A) a correlation with the outcome or (B) a strong moderation relationship.
 

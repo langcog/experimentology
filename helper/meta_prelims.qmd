@@ -3,18 +3,11 @@
 # Paluck et al. meta-analysis
 # Note: I cannot perfectly reproduce their results
 #--------------------------------------------------------------------------------
-# library(tidyverse)
-library(dplyr)
-library(metafor)
-library(MetaUtility)
-library(PublicationBias)
-
 # rounding digits
-digits = 2
+digits <- 2
 
 # helper fn taken from https://osf.io/ue36m/
-sim_data2 = function(p,
-                     keep.all.studies = FALSE) {
+sim_data2 <- function(p, keep.all.studies = FALSE) {
   
   N = p$k * p$per.cluster
   
@@ -122,53 +115,33 @@ sim_data2 = function(p,
 
 
 
-DF <- read.csv(here::here("data","Contact_quant_outcomes.csv"))
-
+df <- read_csv("data/Contact_quant_outcomes.csv")
 
 # remove supplemental studies (see Paluck et al. Supplement Section 1)
-DF <- DF[1:27, ]
+df <- df |> slice(1:27)
 
 # calculate total n and determine whether d estimate was significant
-DF <- DF %>% 
-  
-  rowwise() %>% 
+df <- df |> 
   
   # calculate total n
-  mutate(n_total = n_t + n_c) %>% 
+  mutate(n_total = n_t + n_c) |> 
   
   # determine whether d estimate was significant
   ## calculate lower and upper bounds
-  mutate(lb = d - (1.96 * sqrt(var_d)),
-         ub = d + (1.96 * sqrt(var_d))) %>% 
+  mutate(lb = d - (1.96 * sqrt(var_d)), ub = d + (1.96 * sqrt(var_d))) |> 
   
-  ## determine significance
-  mutate(sig = if_else(
-    condition = lb > 0,
-    true = 1,
-    false = 0)) %>% 
-  
-  ungroup() %>% 
-  
-  # MM likes it ordered by variance for forest plot prettiness
+  # determine significance
+  mutate(sig = lb > 0) |>
   arrange(var_d)
 
 # fixed effect meta
-fe.m <- rma(yi = d,
-            vi = var_d,
-            data = DF,
-            method = "FE")
+fe_model <- metafor::rma(yi = d, vi = var_d, data = df, method = "FE")
 
 # random effect meta
-re.m <- rma(yi = d,
-            vi = var_d,
-            data = DF,
-            method = "REML",
-            knha = TRUE,
-            # for forest plot joy:
-            slab = DF$name_short)
+re_model <- metafor::rma(yi = d, vi = var_d, data = df, method = "REML",
+                         knha = TRUE, slab = df$name_short)
 
 # estimated heterogeneity with inference
-t2.CI = tau_CI(meta = re.m)
-tauStats = round( c( sqrt(re.m$tau2), t2.CI[1], t2.CI[2] ), digits )
-
+t2_ci <- MetaUtility::tau_CI(meta = re_model)
+tau_stats <- round(c(sqrt(re_model$tau2), t2_ci[1], t2_ci[2]), digits)
 ```

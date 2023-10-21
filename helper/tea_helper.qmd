@@ -1,0 +1,12 @@
+```{r}
+#| cache: FALSE
+
+make_tea_data <- function(n_total = 48, sigma = 1.25, delta = 1) {
+  n_half <- n_total / 2
+  tibble(condition = c(rep("milk first", n_half), rep("tea first", n_half)),
+         rating = c(round(rnorm(n_half, mean = 3.5 + delta, sd = sigma)), 
+                    round(rnorm(n_half, mean = 3.5, sd = sigma)))) |>
+    mutate(rating = if_else(rating > 10, 10, rating), # truncate
+           rating = if_else(rating < 1, 1, rating))
+}
+```
