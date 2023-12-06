@@ -28,11 +28,17 @@ jobs:
       #   with:
       #     to: html
 
+      - name: Render to pdf
+        run: quarto render --to pdf --profile pdf
+
+      - name: Render to html
+        run: quarto render --to html --profile html --no-clean
+
       - name: Publish to GitHub Pages
         uses: quarto-dev/quarto-actions/publish@v2
         with:
           target: gh-pages
-          # render: false
+          render: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # this secret is always available for github actions
       
