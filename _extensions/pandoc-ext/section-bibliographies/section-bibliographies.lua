@@ -20,7 +20,7 @@ local orig_bibliography
 local function is_section_div (div)
   return div.t == 'Div'
     and div.classes[1] == 'section'
-    -- and div.attributes.number
+    and div.attributes.number
 end
 
 local function section_header (div)
@@ -44,13 +44,11 @@ local function adjust_refs_components (div)
       return b.attr and b.identifier == 'refs'
   end)
   if bib_header then
-    -- bib_header.identifier = 'bibliography-' .. header.attributes.number
-    bib_header.identifier = 'bibliography-' .. (header.attributes.number or 999)
+    bib_header.identifier = 'bibliography-' .. header.attributes.number
     bib_header.level = header.level + 1
   end
   if refs and refs.identifier == 'refs' then
-    -- refs.identifier = 'refs-' .. header.attributes.number
-    refs.identifier = 'refs-' .. (header.attributes.number or 999)
+    refs.identifier = 'refs-' .. header.attributes.number
   end
   return div
 end
@@ -146,6 +144,5 @@ return {
   remove_pandoc_citeproc_results,
   {Pandoc = setup_document},
   {Div = create_section_bibliography},
-  {Meta = restore_bibliography}
-  -- {Div = flatten_sections, Meta = restore_bibliography}
+  {Div = flatten_sections, Meta = restore_bibliography}
 }
