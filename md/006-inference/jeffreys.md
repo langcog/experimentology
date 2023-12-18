@@ -2,10 +2,9 @@
 |------------|-------------------------|
 | < 1        | Negative evidence       |
 |            | (supports $H_0$)        |
-| 1 -- 3     | Barely worth mentioning |
-| 3 -- 10    | Substantial             |
-| 10 -- 30   | Strong                  |
-| 30 -- 100  | Very strong             |
-| > 100      | Decisive                |
+| 1 -- 5     | Weak                    |
+| 5 -- 10    | Moderate                |
+| 10 -- 20   | Moderate to strong      |
+| 20 -- 100  | Strong to very strong   |
 
-: @jeffreys1998 interpretation guidelines for Bayes Factors. {#tbl-inference-jeffreys}
+: @goodman1999 interpretation guidelines for Bayes Factors. {#tbl-inference-jeffreys}
