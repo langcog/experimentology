@@ -14,7 +14,7 @@ Yet in recent years there has been an increasing recognition that this idealized
 
 How do we know about these problems? A burgeoning field called **meta-science** is providing the evidence. Meta-science is research *about research*, for example investigating how often findings in a literature can be successfully built on, or trying to figure out how widespread some negative practice is. Meta-science allows us to go beyond one-off anecdotes about a particular set of flawed results or rumors about bad practices. Perhaps the most obvious sign that something is wrong is that when independent scientists team up in meta-science projects and try to repeat previous studies, they often do not get the same results.
 
-![A framework for understanding different terms related to the repeatabilty of scientific findings.](images/replication/terms2.png){#fig-replication-terms .column-margin}
+![A framework for understanding different terms related to the repeatabilty of scientific findings.](images/replication/terms.png){#fig-replication-terms .column-margin}
 
 Before we begin reviewing this evidence, let's discuss the different ways in which a scientific finding can be repeated. @fig-replication-terms gives us a basic starting point for our definitions (based on [\"Publishing a reproducible paper\" by Kirstie Whitaker](https://figshare.com/articles/Publishing_a_reproducible_paper/5440621)). For a particular finding in a paper, if we take the same data, do the same analysis, and get the same result, we call that finding **reproducible** (sometimes, **analytically** or **computationally reproducible**. If we collect *new* data using the same methods, do the same analysis, and get the same result, we call that a **replication** and say that the finding is **replicable**. If we do a different analysis with the same data, we call this a **robustness check** and if we get a similar result, we say that the finding is **robust**.^[You might have observed that a lot of work is being done here by the word "same." How do we operationalize same-ness for experimental procedures, statistical analyses, samples, or results? These are difficult questions that we'll touch on below. Keep in mind that there's no single answer and so these terms are always going to helpful guides rather than exact labels.] We leave the last quadrant empty because there's no specific term for it in the literature -- the eventual goal is to draw **generalizable** conclusions but this term means more than just having a finding that is reproducible and replicable.
 
@@ -30,7 +30,7 @@ Around 2011, we were teaching our Experimental Methods course for the first time
 
 In the course that year we chose replication projects from the sample that Nosek had told us about. Four of these projects were executed very well and were nominated by the course TAs for inclusion in the broader project. A few years later, when the final group of 100 replication studies was completed, we got a look at the results, shown in @fig-replication-osc-2015.
 
-![Results from the @osc2015. Each point represents one of the studies in the sample, with the horizontal position giving the original effect size and the vertical position giving the replication effect size. Dot size represents estimated statistical power. The dotted line represents a perfect replication.](images/replication/osc-2015.png){#fig-replication-osc-2015 width=70%}
+![Results from the @osc2015. Each point represents one of the studies in the sample, with the horizontal position giving the original effect size and the vertical position giving the replication effect size. Dot size represents estimated statistical power. The dotted line represents a perfect replication.](images/replication/osc-2015.png){#fig-replication-osc-2015 width=80%}
 
 The resulting meta-science paper, which we and others refer to as the "replication project in psychology" (RPP), made a substantial impression on both psychologists and the broader research community, defining both a field of psychology meta-science studies and providing a template for many-author collaborative projects [@osc2015]. But the most striking thing was the result: disappointingly, only around a third of the replications had similar findings to the original studies. The others yielded smaller effects that were not statistically significant in the replication sample (almost all of the original studies were significant). RPP provided the first large-scale evidence that there were systematic issues with replicability in the psychology literature.
 
@@ -132,7 +132,21 @@ Some have called the narrative that emerges from the sum of these meta-science s
 
 Followup work has questioned these findings, however. A replication study with a larger number of participants (N=200) failed to find evidence for physiological effects of power-posing, even as it did find some effects on participants' own beliefs [@ranehill2015]. And a review of the published literature suggested that many findings appeared to be the result of some sort of publication bias, as far too many of them had *p*-values very close to the .05 threshold [@simmons2017]. In light of this evidence, the first author of the replication study bravely made a public statement that she does not believe that "power pose" effects are real [@carney2016].
 
-![Google trends time series for "power pose" from 2004-2021.](images/replication/powerpose.png){#fig-replication-powerpose width=70%}
+```{r}
+#| label: fig-replication-powerpose
+#| fig-cap: Google trends time series for "power pose" from 2007-2023.
+#| fig.height: 2.25
+
+pp <- read_csv("data/replication/powerpose.csv")
+
+pp |>
+  mutate(date = lubridate::as_date(Month, format = "%Y-%m")) |>
+  filter(lubridate::year(date) >= 2007) |>
+  ggplot(aes(x = date, y = hits)) +
+    geom_line(color = pal$blue) +
+    scale_x_date(date_breaks = "47 months", date_labels = "%e %b %Y") +
+    labs(x = "Date", y = "Search interest")
+```
 
 From the scientific perspective, it's very tempting to take this example as a case in which the scientific ecosystem corrects itself. Although many people continue to cite the original power posing work, we suspect the issues are well-known throughout the social psychology community, and overall interest from the lay public has gone down (see @fig-replication-powerpose). But this narrative masks the very real human impacts of the self-correction process, which can raise ethical questions about the best way to address issues in the scientific record. 
 
@@ -239,7 +253,7 @@ The **open science movement** is, in part, a response -- really a set of respons
 
 <!-- (https://laneblog.stanford.edu/2020/09/01/introducing-the-open-science-reading-group/) -->
 
-![The broad umbrella of open science (adapted from an image created for the Stanford Lane Library Blog).](images/replication/umbrella2.png){#fig-replication-umbrella .column-margin}
+![The broad umbrella of open science (adapted from an image created for the Stanford Lane Library Blog).](images/replication/umbrella.png){#fig-replication-umbrella .column-margin}
 
 Transparency initiatives are critical for ensuring reproducibility. As we discussed above, you cannot even evaluate reproducibility in the absence of data sharing. Code sharing can go even further towards helping reproducibility, as code makes the exact computations involved in data analysis much more explicit than the verbal descriptions that are the norm in papers [@hardwicke2018b]. Further, as we will discuss in @sec-management, the set of practices involved in preparing materials for sharing can themselves encourage reproducibility by leading to better organizational practices for research data, materials, and code.
 
