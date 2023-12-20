@@ -6,6 +6,7 @@
 - Estimate the causal effect of a manipulation
 - Discuss differences between frequentist and Bayesian estimation
 - Reason about standardized effect sizes and their strengths and weaknesses 
+- Quantify the relationship between variables
 :::
 
 > "In every quantitative paper we read, every quantitative talk we attend, and every quantitative article we write, we should all ask one question: *what is the estimand*? The estimand is the object of inquiry -- it is the precise quantity about which we marshal data to draw an inference. Yet, too often social scientists skip the step of defining the estimand. Instead, they leap straight to describing the data they analyze and the statistical procedures they apply. Without a statement of the estimand, it becomes impossible for the reader to know whether those procedures were appropriate." [@lundberg2021]
@@ -42,7 +43,7 @@ As our manipulation, we follow Fisher in randomly assigning participants (who of
 
 ![Schematic data from the tea tasting experiment.](images/estimation/data.png){#fig-estimation-data .column-margin}
 
-A sample dataset from our experiment is shown in @fig-estimation-data. Eventually, we'll want to estimate the effect of milk-first preparation on quality ratings (our effect of interest). But for now, our goal will be to estimate the quality of the tea when it is milk-first (the better way, according to the real data; @kennedy2003). More formally, we want to use our **sample** of 9 milk-first tea judgments to estimate a number that we can't directly observe, namely the true perceived quality of all possible milk-first cups. We'll call this number a **population parameter** for reasons that will become clear in a moment.
+An example dataset from our experiment is shown in @fig-estimation-data. Eventually, we'll want to estimate the effect of milk-first preparation on quality ratings (our effect of interest). But for now, our goal will be to estimate the quality of the tea when it is milk-first (the better way, according to the real data; @kennedy2003). More formally, we want to use our sample of 9 milk-first tea judgments to estimate a number that we can't directly observe, namely the true perceived quality of all possible milk-first cups. We'll call this number a **population parameter** for reasons that will become clear in a moment.
 
 We'll try to go easy on notation but some amount will hopefully make things clearer. We will use $\theta_{\textrm{M}}$ ("theta") to denote the parameter we want to estimate (the **population parameter**) and $\widehat{\theta}_{\textrm{M}}$, its **sample estimate**.^[Statisticians use "hats" like this to denote estimates from a specific sample. One way to remember this is that the "person in the hat" is wearing a hat to dress up as the actual quantity. Feel free to ignore this mnemonic; it helps us.]
 
@@ -54,15 +55,17 @@ First, we assume a **model** for how the data were generated.^[This sense of "mo
 
 ![The best-fitting normal distribution for data from the milk-first condition.](images/estimation/maximum-likelihood.png){#fig-estimation-ml .column-margin}
 
-Let's take a look at the data from the milk-first condition, shown in @fig-estimation-ml). Our observations are clustered around the mean, but they also show some variation. Some are higher and some are lower. Variation of this type is a feature of every data set. This variation can be summarized via a **probability distribution**, a mathematical entity that describes the properties of possible datasets. 
+Let's take a look at the data from the milk-first condition, shown in @fig-estimation-ml. Our observations are clustered around the mean, but they also show some variation. Some are higher and some are lower. Variation of this type is a feature of every data set. This variation can be summarized via a **probability distribution**, a mathematical entity that describes the properties of possible datasets. 
 
-The only probability distribution we'll discuss here is the ubiquitous **normal distribution** (also sometimes called a "Gaussian distribution"). A normal distribution has two **parameters** (numbers that define its shape), a **mean** and a **standard deviation**. These two parameters define the shape of the curve. The mean describes where its center goes, and the standard deviation describes how wide it is.^[Now we can see that the population parameter that we are trying to estimate is a number that describes the shape of the population distribution.] Using a probability distribution to describe our dataset gives us a way of summarizing our observations through the parameters of the distribution and encoding an assumption about what future observations might look like.
+The only probability distribution we'll discuss here is the ubiquitous **normal distribution** (also sometimes called a "Gaussian distribution"). A normal distribution has two **parameters** (numbers that define its shape), a **mean** and a **standard deviation**. These two parameters define the shape of the curve. 
 
-How do we fit a normal distribution to our data? We try to find the values of the population parameters that make our observed data as likely as possible. Let's start with the mean. 
+The mean ($\theta_M$) describes where its center goes, and the standard deviation describes how wide it is.^[Now we can see that the population parameter that we are trying to estimate is a number that describes the shape of the population distribution.] Technically, the mean is the **expected value** for new samples from the distribution. Our best guess about the value of these new samples is that they are at the mean. We can write this more formally by introducing $E[M]$ to denote the expectation of the variable $M$.
+
+The standard deviation $\sigma_M$ is then a way of describing the expected *variation* in these samples. A bigger standard deviation means that we expect samples to be on average further from the mean. We can write this formally as $\sigma_M = \sqrt{E[(M - \theta_M)^2]}$: the standard deviation is the expected distance between individual samples and the mean, with the square and square root being necessary to compute distance. 
+
+Using a probability distribution to describe our dataset gives us a way of summarizing our observations through the parameters of the distribution and encoding an assumption about what future observations might look like.How do we fit a normal distribution to our data? We try to find the values of the population parameters that make our observed data as likely as possible. Let's start with the mean. 
 
 ![Comparison of the best-fitting normal distribution and a substantially worse curve.](images/estimation/maximum-likelihood2.png){#fig-estimation-ml2 .column-margin}
-
-<!-- MM: For the likelihood of each point, maybe show this as a rug plot on the Y-axis instead? Current presentation seems to suggest likelihood is the vertical "distance" between each point and the curve.  -->
 
 For example, if our sample mean is $\widehat{\theta}_{\textrm{M}} = 4.5$, what underlying value of $\theta_{\textrm{M}}$ would make these data most likely to occur? Well, suppose the underlying parameter were $\theta_{\textrm{M}}=2.5$. Then it would be pretty unlikely that our sample mean would be so much bigger. So $\widehat{\theta}_{\textrm{M}}=2.5$ is a poor estimate of the population parameter based on these data (@fig-estimation-ml2). Conversely, if the parameter were $\theta_{\textrm{M}}=6.5$, it would be a bit unlikely that our sample mean would be so much *smaller*. The value of $\widehat{\theta}_{\textrm{M}}$ that makes these data most likely is just 4.5 itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate.
 
@@ -184,6 +187,26 @@ $$\widehat{d}_{kids} = \frac{\widehat{\theta}_{\textrm{M}} - \widehat{\theta}_{\
 So which is better: describing raw measures or standardized effect sizes? In general our response is "Why not both?" But if you wanted to pick one or the other, we recommend considering what type of measurement you are using. With measures that yield common measurement units that are likely to be reported in many studies already, use raw scores [@baguley2009]. For example, if your study uses physical units such as milliseconds (e.g., for reaction times) or counts (e.g., for a study tracking an outcome like number of words), these measurements can be quite useful to compare across studies. Reporting raw measurements also can allow you to check whether your measurements make sense -- for example, a reaction time of 70 milliseconds is inhumanly fast, while a reaction time of 10 seconds might be extremely slow (at least, for many speeded tasks).
 
 In contrast, we recommend using standardized effect sizes for cases where the measurement is relatively unlikely to be comparable with other studies in its original form, or unlikely to be meaningful on its own. For example, reporting the effect of an intervention on raw math test scores is only meaningful if the reader knows how many items are on the test, how difficult it is, and so forth. In such a case where there it is hard for a reader to be "calibrated" to the specific measurement units you are using, standardized effect sizes may be the best way to report your finding [@kelley2012].
+
+## Estimating the relationship between variables
+
+Our focus up until now has been in estimating individual effects, but sometimes we also want to estimate the relationship between two different variables. Extending our example,  @fig-estimation-corr1 shows the relationship between the age of the tea taster and their rating of milk-first tea. It seems that younger people overall like tea less than older people. How could we quantify this result? 
+
+![The relationship between age and milk-first tea rating.](images/estimation/corr1.png){#fig-estimation-corr1 .column-margin}
+The first concept we need is **covariance**. Covariance captures the degree to which we expect two variables to deviate from their means in the same direction. We're looking at milk-first tea ratings $M$ and participant ages $A$. We can write the covariance between these two variables as 
+
+$$Cov(M, A) = E[(M - \theta_M) (A - \theta_A)]$$
+
+This formula multiplies together how much each point differs from its expectation (mean) in each direction. @fig-estimation-corr2 shows these differences.^[This looks a little tricky, but it's actually very related to the basic concepts we've already seen. Remember when we introduced the standard deviation, we described it as the expected distance between new samples from a distribution and the mean of that distribution. The covariance is very related: the standard deviation is just the square root of the covariance of a variable with itself.]
+
+![Estimating the covariation between age and milk-first tea rating.](images/estimation/corr2.png){#fig-estimation-corr2 .column-margin}
+This covariance number gives us an estimate of how much age and ratings covary, but its units are a bit funny: it's an expected years X ratings deviation. We can do a simple trick to standardize its units and make it into a wonderful form of effect size called the **correlation coefficient** (denoted $r$). Remember that to create effect sizes above, we divided by the standard deviation of the variable. Here all we have to do is divide by the standard deviation of both variables.
+
+$$r_{M,A} = \frac{Cov(M,A)}{\sigma_M \sigma_A}$$
+\noindent In other words, the correlation between two variables is the standardized covariation.^[This section has described one way of looking at a correlation coefficient. For a great discussion of all the different ways of thinking about correlations, see @lee-rodgers1988.]
+
+
+The correlation coefficient is the most ubiquitous measure of association between variables. It ranges between -1, where two variables covary in exactly the opposite direction, to 1, when two variables covary perfectly. A correlation of -1 or 1 doesn't mean that these two variables have the same scale, however. This presentation of the correlation coefficient highlights that it is an effect size. Correlations can be compared across different measures and different studies, making it a very valuable scale-free comparison tool. 
 
 ## Chapter summary: Estimation
 
