@@ -68,7 +68,7 @@ Probably everyone who has ever collaborated electronically has experienced the f
 
 These two problems are solved by modern version control systems. Here we focus on the use of **git**, which is the most widely used version control system. Git is a great general solution for version control, but many people -- including several of us -- don't love it for collaborative manuscript writing. We'll introduce git and its principles here, while noting that online collaboration tools like Google Docs and Overleaf^[Overleaf is actually supported by git on the back-end!] can be easier for writing prose (as opposed to code); we cover this topic in a bit more depth in @sec-writing.
 
-![isualisation of Git version control showing a series of commits (circles) on three different branches: the main branch (green) and two others (blue and red). Branches can be created and then merged back into the main branch.](images/management/git2.png){#fig-management-git .column-margin}
+![isualisation of Git version control showing a series of commits (circles) on three different branches: the main branch (green) and two others (blue and red). Branches can be created and then merged back into the main branch.](images/management/git.png){#fig-management-git .column-margin}
 
 Git is a tool for creating and managing projects, which are called **repositories**. A Git repository is a directory whose revision history is tracked via a series of **commits** -- snapshots of the state of the project. These commits can form a tree with different **branches**, as when two contributors to the project are working on two different parts simultaneously (@fig-management-git). These branches can later be **merged** either automatically or via manual intervention in the case of conflicting changes. 
 
@@ -113,7 +113,13 @@ Raw data are often not anonymized -- or even anonymizable. Anonymizing them some
 
 You can use your repository's README to describe what is and is not shared. For example, a README might state that "We provide anonymized versions of the files originally downloaded from Qualtrics" or "Participants did not provide permission for public distribution of raw video recordings, which are retained on a secure university server." Critically, if you share the derived tabular data, it should still be possible to reproduce the analytic results in your paper, even if checking the provenance of those numbers from the raw data is not possible for every reader.^[One way we organize the raw data in some of our paper is to have three different subfolders in the `data/` directory: `raw/`, for the original data; `processed/`, for the anonymized or otherwise pre-processed data; and `/scripts`, for the code that does the preprocessing. Since these folders are in a git repository, we can then add `raw/*` to the `.gitignore` file, ensuring that they are never added to the public version of the repository even though they sit within our local file hierarchy in the appropriate place.] 
 
-![Example participant (top) and trial (bottom) level data from the ManyBabies (2020) case study.](images/management/mb-combined.png){#fig-management-mb-datafiles .margin-caption}
+::: {#fig-management-mb-datafiles .margin-caption}
+![](images/management/mb-subjects.png){fig-align="left"}
+
+![](images/management/mb-trials.png){fig-align="left" width="62%"}
+
+Example participant (top) and trial (bottom) level data from the ManyBabies (2020) case study.
+:::
 
 One common practice is the use of participant identifiers to link specific experimental data -- which, if they are responses on standardized measures, rarely pose a significant identifiability risk -- to demographic data sheets that might include more sensitive and potentially identifiable data.^[A word about subject identifiers. These should be anonymous identifiers, like randomly generated numbers, that cannot be linked to participant identities (like data of birth) and are unique. You laugh, but one of us was in a lab where all the subject IDs were the date of test and the initials of the participant. These were neither unique nor anonymous. One common convention is to give your study a code-name and to number participants sequentially, so your first participant in a sequence of experiments on information processing might be `INFO-1-01`.] Depending on the nature of the analyses being reported, the experimental data can then be shared with limited risk. Then a selected set of demographic variables -- for example, those that do not increase privacy risks but are necessary for particular analyses -- can be distributed as a separate file and joined back into the data later.
 
@@ -129,7 +135,17 @@ Regardless of what specific documentation you keep, it's critical to create some
 
 Data come in many forms, but chances are that at some point during your project you will end up with a spreadsheet full of information. Well-organized spreadsheets cam mean the difference between project success and failure! A wonderful article by @broman2018 lays out principles of good spreadsheet design. We highlight some of their principles here (with our own, opinionated ordering):
 
-![Examples of non-rectangular spreadsheet formats that are likely to cause problems in analysis. From @broman2018.](images/management/broman2018.png){#fig-management-broman-nonrect .margin-caption}
+::: {#fig-management-broman-nonrect layout-ncol=2 .margin-caption}
+![](images/management/bromanA.png)
+
+![](images/management/bromanB.png)
+
+![](images/management/bromanC.png)
+
+![](images/management/bromanD.png)
+
+Examples of non-rectangular spreadsheet formats that are likely to cause problems in analysis. From @broman2018.
+:::
 
 1. *Make it a rectangle*.^[Think of your data like a well-ordered plate of sushi, neatly packed together without any gaps.] Nearly all data analysis software, like SPSS, Stata, Jamovi and JASP (and many R packages), require data to be in a tabular format.^[Tabular data is a precursor to "tidy" data, which we describe in more detail in Appendix @sec-tidyverse.] If you are used to analyzing data exclusively in a spreadsheet, this kind of tabular data isn't quite as readable, but readable formatting gets in the way of almost any analysis you want to do. @fig-management-broman-nonrect gives some examples of non-rectangular spreadsheets. All of these will cause any analytic package to choke because of inconsistencies in how rows and columns are used!
 
@@ -182,7 +198,7 @@ The moral of the story: Obscure variable names can hide existing errors and crea
 
 Even the best-organized tabular data are not always easy to understand by other researchers, or even yourself, especially after some time has passed. For that reason, you should make a **codebook** (also known as a **data dictionary**) that explicitly documents what each variable is. @fig-management-mb-codebook shows an example codebook for the trial-level data in the bottom of @fig-management-mb-datafiles. Each row represents one variable in the associated dataset. Codebooks often describe what type of variable a column is (e.g., numeric, string), and what values can appear in that column. A human-readable explanation is often given as well, providing providing units (e.g., "seconds") and a translation of numeric codes (e.g., "test condition is coded as 1") where relevant.
 
-![Codebook for trial-level data (see above) from the ManyBabies (2020) case study.](images/management/mb1-codebook.png){#fig-management-mb-codebook .margin-caption}
+![Codebook for trial-level data (see above) from the ManyBabies (2020) case study.](images/management/mb-codebook.png){#fig-management-mb-codebook .margin-caption}
 
 Creating a codebook need not require a lot of work. Almost any documentation is better than nothing! There are also several R packages that can automatically generate a codebook for you, for example `codebook`, `dataspice`, and `dataMaid` [@arslan2019]. Adding a codebook can substantially increase the reuse value of the data and prevent hours of frustration as future you and others try to decode your variable names and assumptions.
 
@@ -217,7 +233,7 @@ First, we discovered that MTurk IDs were in some cases linked to study participa
 Then, a little later we received an irate email from an MTurk participant who had discovered their data on github via a search for their MTurk ID. Although they were not identified in this dataset, it convinced us that at least some participants would not like this ID shared. After another consultation with the IRB, we apologized to this individual and removed their and others' IDs from our github commit histories across that and other repositories. Prior to posting data, we now take care to anonymize IDs by creating a secret mapping between the IDs we post and the actual MTurk IDs. 
 :::
 
-![A decision chart for thinking about sharing research products. Adapted from @klein2018.](images/management/kline2.png){#fig-management-sharing-chart .margin-caption}
+![A decision chart for thinking about sharing research products. Adapted from @klein2018.](images/management/kline.png){#fig-management-sharing-chart .margin-caption}
 
 ### Where and how to share: the FAIR principles
 
