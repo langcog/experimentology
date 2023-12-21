@@ -6,4 +6,4 @@
 | Ratio    | Numerical with zero | Equality of ratios        | Coefficient of variation |
 
 
-: @stevens1946 table of scale types and their associated operations and statistics. {#tbl-stevens}
+: Scale types and their associated operations and statistics, based on @stevens1946. {#tbl-stevens}
