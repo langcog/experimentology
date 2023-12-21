@@ -61,7 +61,7 @@ $$
 
 The term $\beta_0 + \beta_1 X_i$ is called the **linear predictor**, and it describes the expected value of an individual's tea rating, $Y_i$, given that participant's treatment group $X_i$ (the single independent variable in this model). That is, for a participant in the control group ($X_i=0$), the linear predictor is just equal to $\beta_0$, which is indeed the mean for the control group that we specified above. On the other hand, for a participant in the treatment group, the linear predictor is equal to $\beta_0 + \beta_1$, which is the mean for the treatment group that we specified. In regression jargon, $\beta_0$ and $\beta_1$ are **regression coefficients**, where $\beta_1$ represents the association of the independent variable $X$ with the outcome $Y$.
 
-The term $\epsilon_i$ is the **error term**, referring to random variation of participants' ratings around the group mean.^[Formally, we'd write $\epsilon_i \sim \mathcal{N}(0, \sigma^2)$. The tilde means "is distributed as", and what follows is a normal distribution with mean 0 and variance $\sigma^2$.] Note that this is a very specific kind of "error"; it does not include "error" due to bias, for example. Instead, you can think of the error terms as capturing the "error" that would be associated with predicting any given participant's rating based on just the linear predictor. If you predicted a control group participant's rating as $\beta_0$, that would be a good guess -- but you still expect the participant's rating to deviate somewhat from $\beta_0$ (i.e., due to variability across participants beyond what is captured by their treatment groups). In our regression model, the linear predictor and error terms together say that participants' ratings scatter randomly (in fact, normally) around their group means with standard deviation $\sigma$. And that is exactly the same model we posited in @sec-estimation.^[You may be wondering why so much effort was put into building boutique solutions for these special cases when a unified framework was available the whole time. A partial answer is that the classical infrastructure of statistics was developed before computers were widespread, and these special cases were chosen because they were easy to work with "analytically" (meaning to work out all the math with pen-and-paper, using values from big numerical tables). Now that we have computers with more flexible algorithms, the model-based perspective is more practical and accessible than it used to be.]
+The term $\epsilon_i$ is the **error term**, referring to random variation of participants' ratings around the group mean.^[Formally, we'd write $\epsilon_i \sim \mathcal{N}(0, \sigma^2)$. The tilde means "is distributed as", and what follows is a normal distribution with mean 0 and variance $\sigma^2$.] Note that this is a very specific kind of "error"; it does not include "error" due to bias, for example. Instead, you can think of the error terms as capturing the "error" that would be associated with predicting any given participant's rating based on just the linear predictor. If you predicted a control group participant's rating as $\beta_0$, that would be a good guess -- but you still expect the participant's rating to deviate somewhat from $\beta_0$ (i.e., due to variability across participants beyond what is captured by their treatment groups). In our regression model, the linear predictor and error terms together say that participants' ratings scatter randomly (in fact, normally) around their group means with standard deviation $\sigma$. And that is exactly the same model we posited in @sec-estimation.^[You may be wondering why so much effort was put into building boutique solutions for these special cases when a unified framework was available the whole time. A partial answer is that the classical infrastructure of statistics was developed before computers were widespread, and these special cases were chosen because they were easy to work with "analytically" (meaning to work out all the math by hand, using values from big numerical tables). Now that we have computers with more flexible algorithms, the model-based perspective is more practical and accessible than it used to be.]
 
 Now we have the model. But how do we estimate the regression coefficients $\beta_0$ and $\beta_1$? The usual method is called **ordinary least squares (OLS)**. Here's the basic idea. For any given regression coefficient estimates $\widehat{\beta}_0$ and $\widehat{\beta}_1$, we would obtain different **predicted values**, $\widehat{Y}_i = \widehat{\beta}_0 + \widehat{\beta}_1 X_i$ for each participant. Some regression coefficient estimates will yield better predictions than others. OLS estimation is designed to find the values of the regression coefficients that optimize these predictions, meaning that the predictions are as close as possible to participants' true outcomes, $Y_i$.
 
@@ -101,11 +101,7 @@ ggplot(tea_data_means, aes(x = condition, y = rating)) +
   labs(x = "Condition", y = "Rating")
 ```
 
-
-[OLS minimizes squared error loss, in the sense that it will choose the regression coefficient estimates whose predictions minimize $\sum_{i=1}^n \left( Y_i - \widehat{Y}_i\right)^2$, where $n$ is the sample size. A wonderful thing about OLS is that those optimal regression coefficients (generically termed $\widehat{\mathbf{\beta}}$) turn out to have a very simple closed form solution: $\widehat{\mathbf{\beta}} = \left( \mathbf{X}'\mathbf{X} \right)^{-1} \mathbf{X}'\mathbf{y}$. We are using more general notation here that supports multiple independent variables: $\widehat{\mathbf{\beta}}$ is a vector, $\mathbf{X}$ is a matrix of independent variables for each subject, and $\mathbf{y}$ is a vector of participants' outcomes. As more good news, the standard error for $\widehat{\mathbf{\beta}}$ has a similarly simple closed form!]{.aside}
-
-@fig-models-ols-plot illustrates the tea tasting data for each condition (the dots) along with the model predictions for each condition $\beta_0$ and $\beta_0 + \beta_1$ (blue lines). The gap between each data point and the corresponding predictions (the thing that OLS wants to minimize) is shown by the dotted lines. These distances are sample estimates, called **residuals**, of the true errors ($\epsilon_i$. The left-hand plot shows the OLS coefficient values -- the ones that move the model's predictions as close as possible to the data points, in the sense of minimizing the total squared length of the dashed lines. The right-hand plot shows a substantially worse set of coefficient values. 
-
+@fig-models-ols-plot illustrates the tea tasting data for each condition (the dots) along with the model predictions for each condition $\beta_0$ and $\beta_0 + \beta_1$ (blue lines). The gap between each data point and the corresponding predictions (the thing that OLS wants to minimize) is shown by the dotted lines.^[OLS minimizes squared error loss, in the sense that it will choose the regression coefficient estimates whose predictions minimize $\sum_{i=1}^n \left( Y_i - \widehat{Y}_i\right)^2$, where $n$ is the sample size. A wonderful thing about OLS is that those optimal regression coefficients (generically termed $\widehat{\mathbf{\beta}}$) turn out to have a very simple closed form solution: $\widehat{\mathbf{\beta}} = \left( \mathbf{X}'\mathbf{X} \right)^{-1} \mathbf{X}'\mathbf{y}$. We are using more general notation here that supports multiple independent variables: $\widehat{\mathbf{\beta}}$ is a vector, $\mathbf{X}$ is a matrix of independent variables for each subject, and $\mathbf{y}$ is a vector of participants' outcomes. As more good news, the standard error for $\widehat{\mathbf{\beta}}$ has a similarly simple closed form!] These distances are sample estimates, called **residuals**, of the true errors ($\epsilon_i$. The left-hand plot shows the OLS coefficient values -- the ones that move the model's predictions as close as possible to the data points, in the sense of minimizing the total squared length of the dashed lines. The right-hand plot shows a substantially worse set of coefficient values. 
 
 You'll notice that we aren't talking much about $p$-values in this chapter. Regression models can be used to produce $p$-values for specific coefficients, representing inferences about the likelihood of the observed data under some null hypothesis regarding the coefficients. You can also compute Bayes Factors for specific regression coefficients, or use Bayesian inference to fit these coefficients under some prior expectation about their distribution. We won't talk much about this, or more generally how to fit the models we describe. As we said, we're not going to give a full treatment of all the relevant statistical topics. Instead we want to help you begin thinking about making models of your data.
 
@@ -132,12 +128,9 @@ You can also extract the coefficient values using `coef(mod)`, and put them in a
 The regression model we just wrote down is the same model that underlies the $t$-test from @sec-inference. But the beauty of regression modeling is that much more complex estimation problems can also be written as regression models that extend the model we made above. For example, we might want to add another predictor variable, such as the age of the participant.^[The ability to estimate multiple coefficients at once is a huge strength of regression modeling, so much so that sometimes people use the label **multiple regression** to denote that there is more than one predictor + coefficient pair.]
 
 Let's add this new independent variable and a corresponding regression coefficient to our model:
-
 $$
 Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2}  + \epsilon_i 
 $$
-
-
 Now that we have multiple independent variables, we've labeled them $X_{1}$ (treatment group) and $X_{2}$ (age) for clarity.
 
 To illustrate how to interpret the regression coefficients in this model, let's use the linear predictor to compare the model's predicted tea ratings for two hypothetical participants who are both in the treatment group: 20-year-old Alice and 21-year old Bob. Alice's linear predictor tells us that her expected rating is $\beta_0 + \beta_1 + \beta_2 \cdot 20$. In contrast, Bob's linear predictor is $\beta_0 + \beta_1 + \beta_2 \cdot 21$. We could therefore calculate the expected difference in ratings for 21-year-olds versus 20-year olds by subtracting Alice's linear predictor from Bob's, yielding just $\beta_2$. 
@@ -153,7 +146,6 @@ Here, the coefficient compares participants who differ by 1 year of age. In "Pra
 In our running example, we now have two predictors: condition and age. But what if the effect of condition varies depending on the age of the participant? This situation would correspond to a case where (say) older people were more sensitive to tea ordering, perhaps because of their greater tea experience. We call this an **interaction** effect: the effect of one predictor depends on the state of another. 
 
 Interaction effects are easily accommodated in our modeling framework. We simply add a term to our model that is the product of condition ($X_1$) and age ($X_2$), and weight this product by another beta, which represents the strength of this interaction:
-
 $$
 Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2}  + \beta_3 X_{i1} X_{i2}  + \epsilon_i
 $$
@@ -192,31 +184,23 @@ So far we have considered continuous outcome measures, like tea ratings. What if
 Binary outcomes inherently produce heteroskedastic errors because the variance of a binary variable depends directly on the outcome probability. Errors will be more variable when the outcome probability is closer to 0.50, and much less variable for when the probability is closer to 0 or 1.^[Specifically, the variance of a binary variable with probability $p$ is simply $p(1-p)$, which is largest when $p=0.50$.] This heteroskedasticity in turn means that inferences from the model (e.g., $p$-values) can be incorrect; sometimes just a little bit off but sometimes dramatically incorrect.^[OLS can also be used with binary outcomes, in which case the coefficients represent differences in probabilities. However, the usual model-based standard errors will be incorrect.]
 
 Happily, **generalized linear models** (GLMs) are regression models closely related to OLS that can handle non-continuous outcomes. These models are called "generalized" because OLS is one of many members of this large class of models. To see the connection, let's first write an OLS model more generally in terms of what it says about the expected value of the outcome, which we notate as $E[Y_i]$:
-
 $$
 E[Y_i] = \beta_0 + \sum_{j=1}^p \beta_j X_{ij}
 $$
-
 where $p$ is the number of independent variables, $\beta_0$ is the intercept, and $\beta_j$ is the regression coefficient for the $j^{th}$ independent variable. This equation is just a math-y way of saying that you predict from a regression model by adding up each of the predictors' contributions to the expected outcome ($\beta_j X_{ij}$).
 
 The linear predictor of a GLM (i.e., $\beta_0 + \sum_{j=1}^p \beta_j X_{ij}$) looks exactly the same as for OLS, but instead of modeling $E[Y_i]$, a GLM models some **transformation**, $g(.)$, of the expectation:
-
 $$
 g( E[Y_i] ) = \beta_0 + \sum_{j=1}^p \beta_j X_{ij} 
 $$
-
 GLMs involve transforming the *expectation* of the outcome, not the outcome itself! That is, in GLMs, we are not just taking the outcome variable in our dataset and transforming it before fitting an OLS model, but rather we are fitting a different model entirely, one that posits a fundamentally different relationship between the predictors and the expected outcomes. This transformation is called the **link function**. In other words, to fit different kinds of outcomes, all we need to do is construct a standard linear model and then just transform its output via the appropriate link function. 
 
 Perhaps the most common link function is the **logit** link, which is suitable for binary data. This link function looks like this, where $w$ is any probability that is strictly between 0 and 1:
-
 $$g(w) = \log \left( \frac{w}{1 - w} \right)$$
-
 The term $w / (1 - w)$ is called the **odds** and represents the probability of an event occurring divided by the probability of its not occurring. The resulting model is called **logistic regression** and looks like:
-
 $$
 \text{logit}( E[Y_{it}] ) = \log \left( \frac{ E[Y_i] }{1 - E[Y_i] } \right) = \beta_0 + \sum_{j=1}^p \beta_j X_{ij} 
 $$
-
 Exponentiating the coefficients (i.e., $e^{\beta}$) would yield **odds ratios**, which are the *multiplicative* increase in the odds of $Y_i=1$ that is associated with a one-unit increase in the relevant predictor variable.
 
 ```{r models-logistic-ex, fig.width = 6.5}
@@ -272,11 +256,9 @@ How can we make models that deal with clustered data? There are a number of wide
 ### Modeling random variation in clusters
 
 In linear mixed effects models, we modify the linear predictor itself to model differences across clusters. Instead of just measuring George's preferences, suppose we modified the original tea-tasting experiment (without the age covariate) to collect ten ratings from each participant: five milk-first and five tea-first. We define the model the same way as we did before, with some minor differences:
-
 $$
 Y_{it} = \beta_0 + \beta_1 X_{it} + \gamma_i + \epsilon_{it} 
 $$
-
 where $Y_{it}$ is participant $i$'s rating in trial $t$ and $X_{it}$ is the participant's assigned treatment in trial $t$ (i.e., milk-first or tea-first).
 
 If you compare this equation to the OLS equation above, you will notice that we added two things. First, we've added subscripts that distinguish trials from participants. But the big one is that we added $\gamma_i$, a separate intercept value for each participant. We call this a **random intercept** because it varies across participants (who are randomly selected from the population).^[Formally, we'd notate this random variation by saying that $\gamma_i \sim N(0, \tau^2)$ -- in other words, that participants' random intercepts are sampled from a normal distribution around the shared intercept $\beta_0$ with standard deviation $\tau$.]
@@ -301,20 +283,12 @@ In this model, the syntax `(1 | id)` specifies that we want a random intercept f
 ### Random slopes and the challenges of mixed effects models
 
 Linear mixed effects models can be further extended to model clustering of the independent variables' *effects* within subjects, not just clustering of average *outcomes* within subjects.  To do so, we can introduce **random slopes** ($\delta_i$) to the model, which are multiplied by the condition variable $X$ and represent differences across participants in the effect of tea-tasting:
-
 $$
 Y_i = \beta_0 + \beta_1 X_{it} + \gamma_i + \delta_{i} X_{it} + \epsilon_{it} 
 $$
-
 Just like the random intercepts, these random slopes will be assumed to vary across participants, following a normal distribution.^[These random slopes and intercepts can be assumed to be independent or correlated with one another, depending on the modeler's preference.] 
 
 This model now describes random variation in both overall how much someone likes tea *and* how strong their ordering preference is. Both of these likely do vary in the population and so it seems like a good thing to put these in your model. Indeed under some circumstances, adding random slopes is argued to be very important for making appropriate inferences.^[There's lots of debate in the literature about the best random effect structure for mixed effects models. This is a very tricky and technical subject. In brief, some folks argue for so-called **maximal** models, in which you include every random effect that is justified by the design [@barr2013]. Here that would mean including random slopes for each participant. The problem is that these models can get very complex, and can be very hard to fit using standard software. We won't weigh in on this topic, but as you start to use these models on more complex experimental designs, it might be worth reading up.] 
-
-On the other hand, the model is much more complicated. When we had a simple OLS model above, we had only two parameters to fit ($\beta_0$ and $\beta_1$) but now we have those two plus two more, representing the standard deviations of the individual participant intercepts and slopes, plus parameters for each participant and for the condition effect for each participant. So we went from two parameters to 24!^[Though we should note that these parameters aren't technically all independent from one another due to the structure of the mixed effect model.] 
-This complexity can lead to problems in fitting the models, especially with very small datasets (where these parameters are not very well-constrained by the data) or very large datasets (where computing all these parameters can be tricky).^[Many R users may be familiar with the widely-used `lme4` package for fitting mixed effects models using frequentist tools related to maximum likelihood. Such models can also be fit using Bayesian inference with the `brms` package, which provides many powerful methods for specifying complex models.]
-
-More generally, linear mixed effects models are very flexible, and they have become quite common in psychology. But they do have significant limitations. As we discussed, they can be tricky to fit in standard software packages. Further, the accuracy of these models relies on our ability to specify the structure of the random effects correctly.^[One particularly problematic situation is when the correlation structure of the errors is mis-specified, for example if observations within a participant are more correlated for participants in the treatment group than in the control group; in such cases, mixed model estimates can be substantially biased [@bie2021fitting].] If we specify an incorrect model, our inferences will be wrong! But it is sometimes difficult to know how to check whether your model is reasonable, especially with a small number of clusters or observations. 
-
 
 ::: {.callout-note title="code"}
 Specifying random slopes in the `lme4` package is also relatively straightforward:
@@ -326,6 +300,16 @@ lmer(rating ~ condition + (condition | id), data = tea_data)
 Here, `(condition | id)` means "a separate random slope for `condition` should be fit for each level of `id`." Of course, specifying such a model is easier than fitting it correctly. 
 :::
 
+On the other hand, the model is much more complicated. When we had a simple OLS model above, we had only two parameters to fit ($\beta_0$ and $\beta_1$) but now we have those two plus two more, representing the standard deviations of the individual participant intercepts and slopes, plus parameters for each participant and for the condition effect for each participant. So we went from two parameters to 24!^[Though we should note that these parameters aren't technically all independent from one another due to the structure of the mixed effect model.] 
+This complexity can lead to problems in fitting the models, especially with very small datasets (where these parameters are not very well-constrained by the data) or very large datasets (where computing all these parameters can be tricky).^[Many R users may be familiar with the widely-used `lme4` package for fitting mixed effects models using frequentist tools related to maximum likelihood. Such models can also be fit using Bayesian inference with the `brms` package, which provides many powerful methods for specifying complex models.]
+
+More generally, linear mixed effects models are very flexible, and they have become quite common in psychology. But they do have significant limitations. As we discussed, they can be tricky to fit in standard software packages. Further, the accuracy of these models relies on our ability to specify the structure of the random effects correctly.^[One particularly problematic situation is when the correlation structure of the errors is mis-specified, for example if observations within a participant are more correlated for participants in the treatment group than in the control group; in such cases, mixed model estimates can be substantially biased [@bie2021fitting].] If we specify an incorrect model, our inferences will be wrong! But it is sometimes difficult to know how to check whether your model is reasonable, especially with a small number of clusters or observations.
+
+## How do you use models to analyze data? 
+
+In the prior parts of this chapter, we've described a suite of regression-based techniques -- standard OLS, the generalized linear model, and linear mixed effects models -- that can be used to model the data resulting from randomized experiments (as well as many other kinds of data). The advantage of regression models over the simpler estimation and inference methods we described in the prior two chapters is that these models can more effectively take into account a range of different kinds of variation including covariates, multiple manipulations, and clustered structure. Further, when used appropriately to analyze a well-designed randomized experiment, regression models can give an unbiased estimate of a causal effect of interest, our main goal in doing experiments.
+
+But -- practically speaking -- how should go you about building a model for your experiment? What covariates should you include and what should you leave out? There are many ways to use models to explore datasets, but in this section we will try to sketch a default approach for the use of models to estimate causal effects in experiments in the most straightforward way. Think of this as a starting point. We'll begin this section by giving a set of rules of thumb, then discuss a worked example. Our final subsections will deal with the issues of when you should include covariates in your model and how to check if your result is robust across multiple different model specifications. 
 
 ::: {.callout-note title="depth"}
 ## An alternative approach: Generalized estimating equations {-}
@@ -337,12 +321,6 @@ In GEE, we instead provide the model with an initial "guess" about how we think 
 The price paid for these nice safeguards against model misspecification is that, in principle, GEE will typically have less statistical power than LMM *if* the LMM is in fact correctly specified, but the difference may be surprisingly slight in practice [@bie2021fitting]. For these reasons, some of this book's authors actually favor GEE with finite-sample corrections over LMM as the default model for clustered data, though they are much less common in psychology. 
 <!-- In general, we tend to favor LMM over GEE only when the number of observations and clusters are quite large, and when careful diagnostics also indicate that distributional assumptions are fulfilled. -->
 :::
-
-## How do you use models to analyze data? 
-
-In the prior parts of this chapter, we've described a suite of regression-based techniques -- standard OLS, the generalized linear model, and linear mixed effects models -- that can be used to model the data resulting from randomized experiments (as well as many other kinds of data). The advantage of regression models over the simpler estimation and inference methods we described in the prior two chapters is that these models can more effectively take into account a range of different kinds of variation including covariates, multiple manipulations, and clustered structure. Further, when used appropriately to analyze a well-designed randomized experiment, regression models can give an unbiased estimate of a causal effect of interest, our main goal in doing experiments.
-
-But -- practically speaking -- how should go you about building a model for your experiment? What covariates should you include and what should you leave out? There are many ways to use models to explore datasets, but in this section we will try to sketch a default approach for the use of models to estimate causal effects in experiments in the most straightforward way. Think of this as a starting point. We'll begin this section by giving a set of rules of thumb, then discuss a worked example. Our final subsections will deal with the issues of when you should include covariates in your model and how to check if your result is robust across multiple different model specifications. 
 
 ### Modeling rules of thumb
 
@@ -430,11 +408,9 @@ This experimental design looks a lot like some versions of our tea-tasting exper
 How should we go about making our default model for this dataset?^[This experiment was not preregistered, but the paper includes a separate replication dataset with the same analysis.] We simply include each of these design factors in a mixed effects model; we use a logistic link function for our mixed effects model (a **generalized linear mixed effects model**) because we would like to predict correct performance on each trial, which is a binary variable. So that gives us an effect of condition and age as a covariate. We further add an interaction between condition and age in case the condition effect varies meaningfully across groups. Finally, we add random effects of participant, $\gamma_i$, and experimental item, $\gamma_t$.^[As discussed above, this is a tricky decision-point; we could very reasonably have added random slopes as well.]
 
 The resulting model looks like this:
-
 $$
 \text{logit}( E[Y_{it}] ) = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i1} X_{i2} + \gamma_i + \delta_t 
 $$
-
 
 Let's break this complex equation down left to right:
 
@@ -453,6 +429,7 @@ mod <- lme4::glmer(correct ~ age_centered * condition + (1|subid) + (1|item),
                    data = sgf)
 ```
 
+\vspace{0.5em}
 \footnotesize
 ```{r models-sgf-model2}
 #| label: tbl-models-sgf-model-print
@@ -510,8 +487,6 @@ Well, if you have one or at most a small handful of covariates that you believe 
 
 Further, including covariates can increase the precision of your estimates by reducing "noise" in your outcome, if you hypothesize that they interact. What's surprising though is how *little* this adjustment does to increase your overall precision unless the correlation between covariate and outcome is very strong. 
 
-@fig-models-precision shows the results of a simple simulation investigating the relationship between estimation error and the inclusion of covariates. Only when the correlation between covariate and outcome (e.g., age and tea rating) is greater than $r=0.6$ to $r=0.8$ does this adjustment really help.
-
 ```{r models-precision}
 #| output: false
 #| fig-width: 6
@@ -558,28 +533,30 @@ ggplot(d, aes(x = half_n, y = rmse, color = factor(rho))) +
   geom_line() + 
   labs(x = "N per group", y = "Estimation error",
        color = "Correlation of X and Z") +
-  theme(legend.position = c(.8, .8))
+  theme(legend.position = c(.8, .7))
 ```
 
 ::: {#fig-models-precision}
 
 ::: {.content-visible when-format="html"}
-![](007-models_files/figure-html/models-precision-1.png){width=70%}
+![](007-models_files/figure-html/models-precision-1.png){width=60%}
 :::
 
 ::: {.content-visible when-format="pdf"}
-![](007-models_files/figure-pdf/models-precision-1.png){width=70%}
+![](007-models_files/figure-pdf/models-precision-1.png){width=60%}
 :::
 
 Decreases in estimation error due to adjusting for covariates, plotted by the N participants in each group and the correlation between the outcome (X) and the covariate (Z).
 
 :::
 
+@fig-models-precision shows the results of a simple simulation investigating the relationship between estimation error and the inclusion of covariates. Only when the correlation between covariate and outcome (e.g., age and tea rating) is greater than $r=0.6$ to $r=0.8$ does this adjustment really help.
+
 That said, there are quite a few reasons not to include covariates. These  motivate our recommendation to skip them in your default model unless you have very strong theory-based expectations for either (A) a correlation with the outcome or (B) a strong moderation relationship.
 
 The first reason not to include covariates is simply because we don't need to. Because randomization cuts causal links, our experimental estimate is an unbiased estimate of the causal effect of interest (at least for large samples). We are guaranteed that, in the limit of many different experiments, even though people with different ages will be in the different tea tasting conditions, this source of variation will be averaged out. Actually, including unnecessary covariates into models (slightly) decreases the probability that the model can detect a true effect (that is, it decreases statistical precision and power). Just by chance, covariates can "soak up" variation in the outcome, leaving less to be accounted for by the true effect!
 
-The second reason is that you can actually compromise your causal inference by including some covariates, particularly those that are collected *after* randomization. The logic of randomization is that you cut all causal links between features of the sample and the condition manipulation. But you can "uncut" these links by accident by adding variables into your model that are related to group status. This problem is generically called **conditioning on post-treatment variables** and a full discussion of  is out of the scope of this book, but it's something to avoid [and read up on if you're worried about it; @montgomery2018]. 
+The second reason is that you can actually compromise your causal inference by including some covariates, particularly those that are collected *after* randomization. The logic of randomization is that you cut all causal links between features of the sample and the condition manipulation. But you can "uncut" these links by accident by adding variables into your model that are related to group status. This problem is generically called **conditioning on post-treatment variables** and a full discussion of  is out of the scope of this book, but it's something to avoid [and read up on if you're worried about it, see @montgomery2018]. 
 
 Finally, one of the standard justifications for adding covariates -- because your groups are unbalanced -- is actually ill-founded as well. People often talk about "unhappy randomization": you randomize to the different tea-tasting groups, for example, but then it turns out the mean age is a bit different between groups. Then you do a $t$-test or some other statistical test and find out that you actually have a significant age difference. This practice makes no sense! Because you randomized, you know that the difference in ages occurred by chance. Further, incidental demographic differences between groups are unlikely to be important unless that characteristic is highly correlated with the outcome (see above). Instead, if the sample size is small enough that meaningfully large incidental differences could arise in important confounders, then it is preferable to **stratify** on that confounder at the outset -- we'll have  lot more to say about this issue in @sec-sampling.
 
