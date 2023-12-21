@@ -5,7 +5,7 @@
 ::: {.callout-note title="learning goals"}
 - Estimate the causal effect of a manipulation
 - Discuss differences between frequentist and Bayesian estimation
-- Reason about standardized effect sizes and their strengths and weaknesses 
+- Reason about standardized effect sizes and their strengths and weaknesses
 - Quantify the relationship between variables
 :::
 
@@ -91,43 +91,47 @@ These kind of expectations are most useful when we have a very small amount of d
 
 How do we quantify this tradeoff between our prior expectations and our current observations? We can do this via **Bayesian estimation** of $\widehat{\theta}_{\textrm{M}}$. Bayesian estimation provides a principled framework for integrating prior beliefs and data. These estimation techniques can be very helpful in cases where data are sparse or prior beliefs are strong.
 
-In Bayesian estimation, we observe some data $d$, consisting of the set of responses in the experiment. Now we can use **Bayes' rule**, a tool from basic probability theory, to estimate this number (@fig-estimation-bayes). Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute ($p(\theta_{\textrm{M}} |\text{data})$) is called the **posterior probability** -- it tell us what we should believe about the population parameter on tea quality, given the data we observed.^[We're making the posterior `r colorize("purple", ".violet")` to indicate the combination of likelihood (`r colorize("red", ".red")`) and prior (`r colorize("blue", ".blue")`).]
+In Bayesian estimation, we observe some data $d$, consisting of the set of responses in the experiment. Now we can use **Bayes' rule**, a tool from basic probability theory, to estimate this number (@fig-estimation-bayes). Each part of this equation has a name, and it's worth becoming familiar with them. The thing we want to compute, $p(\theta_{\textrm{M}} |\text{data})$, is called the **posterior probability** -- it tell us what we should believe about the population parameter on tea quality, given the data we observed.^[We're making the posterior `r colorize("purple", ".violet")` to indicate the combination of likelihood (`r colorize("red", ".red")`) and prior (`r colorize("blue", ".blue")`).]
 
 The first part of the numerator is $p(\text{data}|\theta_{\textrm{M}})$, the probability of the data we observed given our hypothesis about the participant's ability. This part is called the **likelihood**.^[Speaking informally, "likelihood" is just a synonym for probability, but in Bayesian estimation, "likelihood" is a technical term specifically referring to probability of the data given our hypothesis. This ambiguity can get a bit confusing.] This term tells us about the relationship between our hypothesis and the data we observed -- so if we think the tea is of high quality (say $\theta_{\textrm{M}} = 6.5$) then the probability of observing a bunch of low quality ratings will be fairly low.
 
-The second term in the numerator, $p(\theta_{\textrm{M}} )$, is called the **prior**. This term encodes our beliefs about the likely distribution of tea quality. Intuitively, if we think that the tea is likely of high quality, we should require more evidence to convince us that it's bad. In contrast, if we think it's probably bad, a few examples of low ratings might serve to convince us.
 
 ![Bayesian inference about tea ratings with a strong prior on low values.](images/estimation/bayes-curves.png){#fig-estimation-bayes-curves .column-margin}
 
-@fig-estimation-bayes-curves) gives an example of the combination of prior and data. In this example, we look at what difference the prior makes after observing 9 ratings.  If we go in assuming that the tea is likely to be bad, the posterior mean (purple line) will be pushed downward relative to the maximum likelihood estimate (red line).^[Note that this prior is operating only over on ratings -- estimates of tea quality. Later on when we talk about comparing milk-first and tea-first ratings to get an estimate of the experimental effect, we could consider putting a prior on tea *discrimination* (e.g., the experimental effect.]
+The second term in the numerator, $p(\theta_{\textrm{M}} )$, is called the **prior**. This term encodes our beliefs about the likely distribution of tea quality. Intuitively, if we think that the tea is likely of high quality, we should require more evidence to convince us that it's bad. In contrast, if we think it's probably bad, a few examples of low ratings might serve to convince us.
 
 ![Bayesian inference about tea ratings with a weak prior on low values.](images/estimation/bayes-curves-weak.png){#fig-estimation-bayes-curves-weak .column-margin}
 
-Priors aren't usually as strong as the one shown above. @fig-estimation-bayes-curves-weak) shows how the picture shifts when we have a weaker prior reflecting a flatter, more widely spread belief about the distribution of ratings. Now the posterior mean (purple) is closer to the maximum likelihood mean (red. This situation is more common -- the prior encodes a weak assumption that ratings won't cluster around the ends of the scale.
+
+@fig-estimation-bayes-curves gives an example of the combination of prior and data. In this example, we look at what difference the prior makes after observing 9 ratings.  If we go in assuming that the tea is likely to be bad, the posterior mean (purple line) will be pushed downward relative to the maximum likelihood estimate (red line). This prior is operating only over on ratings -- estimates of tea quality. Later on when we talk about comparing milk-first and tea-first ratings to get an estimate of the experimental effect, we could consider putting a prior on tea *discrimination* (e.g., the experimental effect).
 
 ![Bayesian inference about tea ratings with a a strong prior on low values and more data.](images/estimation/bayes-curves-moredata.png){#fig-estimation-bayes-curves-moredata .column-margin}
 
-The effect of the prior is also decreased when you have more data. Take a look at @fig-estimation-bayes-curves-moredata). The prior is the same as in @fig-estimation-bayes-curves, but we have more data. As a result, the posterior distribution is much more peaked and also much closer to the data -- the prior makes much less difference.
+Priors aren't usually as strong as the one shown above. @fig-estimation-bayes-curves-weak shows how the picture shifts when we have a weaker prior reflecting a flatter, more widely spread belief about the distribution of ratings. Now the posterior mean (purple) is closer to the maximum likelihood mean (red). This situation is more common -- the prior encodes a weak assumption that ratings won't cluster around the ends of the scale.
 
-Bayesian estimation is most important when you have strong beliefs and not a lot of data. That can be a case where you have just a few participants in your experiment, but it's also good -- and perhaps more common -- to use Bayesian methods when you have a lot of data, but maybe not that much data about particular units that you care about. For example, you might have a large dataset about the effects of an educational intervention but not that much data about how it affects a particular subgroup. In general, though, Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior (a prior that makes any value equally likely) or as you gather infinite data.
+
+The effect of the prior is also decreased when you have more data. Take a look at @fig-estimation-bayes-curves-moredata. The prior is the same as in @fig-estimation-bayes-curves, but we have more data. As a result, the posterior distribution is much more peaked and also much closer to the data -- the prior makes much less difference.
+
+Bayesian estimation is most important when you have strong beliefs and not a lot of data. That can be a case where you have just a few participants in your experiment, but it's also good -- and perhaps more common -- to use Bayesian methods when you have a lot of data, but maybe not that much data about particular units that you care about. For example, you might have a large dataset about the effects of an educational intervention but not that much data about how it affects a particular subgroup. Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior (a prior that makes any value equally likely) or as the amount of data goes to infinity.
 
 ## Estimating and comparing effects
 
-We've now covered estimating a single parameter (the mean for people who had milk-first tea) using both frequentist and Bayesian methods. But recall that what we really wanted to do was to estimate the causal effect we were interested in, namely the milk-first vs. tea-first effect.^[This method doesn't have to be used only with a causal effect, it can be any between-group difference. In the current example, we can say with certainty that this effect is a causal because our experiment uses random assignment.] In this section, we'll discuss how to estimate the effect, and then how to use **effect size** measures to compare effects across experiments (as well as some of the pros and cons of doing so). 
+We've now covered estimating a single parameter (the mean for people who had milk-first tea) using both frequentist and Bayesian methods. But recall that what we really wanted to do was to estimate the *causal effect* we were interested in, namely the milk-first vs. tea-first effect. In this section, we'll discuss how to estimate the effect, and then how to use **effect size** measures to compare effects across experiments (as well as some of the pros and cons of doing so).^[This method doesn't have to be used only with a causal effect, it can be any between-group difference. In the current example, we can say with certainty that this effect is a causal because our experiment uses random assignment.]
 
 ### Estimating the treatment effect 
-
+ 
 Let's refer to the causal effect we care about as our **treatment effect**.^[This is the effect of our manipulation -- what we sometimes call an "intervention" as well. "Treatment" is a term that comes from medical statistics but is used more broadly in statistics now.] In practice, estimating $\beta$ (a parameter describing the treatment effect) is going to be a pretty straightforward extension to what we did before.
 
-In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution, but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let's term the parameters for the tea-first group $\theta_{\textrm{T}}$ (the mean) and $\sigma$ (the standard deviation). To estimate the treatment effect, we are positing a **model** in which the milk-first ratings are normally distributed with mean $\theta_{\textrm{M}} = \theta_{\textrm{T}} + \beta$ and with standard deviation $\sigma$.^[For simplicity, we're assuming that the standard deviations in each tea group are equal.] This equation says that milk-first ratings have the same distribution as tea-first ratings, except that their average is shifted by $\beta$. Setting our model up this way then lets us compute $\hat{\beta}$, our estimate of the treatment effect in our sample.
 
 ![Estimating the average treatment effect from the tea-tasting data.](images/estimation/data-difference.png){#fig-estimation-data-difference .column-margin}
+
+In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution, but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let's term the parameters for the tea-first group $\theta_{\textrm{T}}$ (the mean) and $\sigma$ (the standard deviation). To estimate the treatment effect, we are positing a **model** in which the milk-first ratings are normally distributed with mean $\theta_{\textrm{M}} = \theta_{\textrm{T}} + \beta$ and with standard deviation $\sigma$.^[For simplicity, we're assuming that the standard deviations in each tea group are equal.] This equation says that milk-first ratings have the same distribution as tea-first ratings, except that their average is shifted by $\beta$. Setting our model up this way then lets us compute $\hat{\beta}$, our estimate of the treatment effect in our sample.
 
 As in the one-sample case (i.e., estimating the mean of just the milk-first group), maximum likelihood estimation would then proceed by finding the value of $\beta$ that makes the data most likely under the assumed model. As you'd probably expect, this estimate $\widehat{\beta}$ turns out to be simply the difference in sample means, $\widehat{\theta}_{\textrm{M}} - \widehat{\theta}_{\textrm{T}}$. You can see this difference pictured in @fig-estimation-data-difference.
 
 In the Bayesian framework, we would again specify a prior $p(\beta)$ that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could  specify a flat prior, $p(\beta) \propto 1$.^[This equation says that the probability of any value of $\beta$ is "proportional to" 1, meaning that it's constant ("flat") regardless of what value $\beta$ takes.].  If we believe the treatment effect is likely to favor milk-first pouring ($\beta>0$), we could specify the prior is a normal distribution centered at some positive value (e.g., $\beta=0.5$); the standard deviation of this prior would encode how certain we are about our prior beliefs. And if we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at 0, which has the effect of "shrinking" the estimates closer to 0.^[The measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Statistical uncertainty is only one kind of uncertainty, though. A more holistic view of the overall credibility of an estimate should also account for other things outside of the model, like study design issues and bias.]
 
-As in our example above, maximum likelihood estimates and Bayesian estimates are going to be pretty similar if we have a lot of data or weak priors. They will only diverge when we have strong priors or relatively little data. The reason we are setting up these two different frameworks, however, is that they will provide very different inferential tools in the next chapter.
+As in our example above, maximum likelihood estimates and Bayesian estimates are going to be pretty similar if we have a lot of data or weak priors. They will only diverge when we have strong priors or relatively little data. The reason we are setting up these two different frameworks, however, is that they provide very different inferential tools, as we'll see in the next chapter.
 
 ### Measures of effect size
 
@@ -135,9 +139,8 @@ Once we have measured something, we need to make a decision about how to describ
 
 But what about our participants' ratings of tea quality, which were provided on an arbitrary 7-point rating scale that we devised? What does it mean to that participants who drank milk-first tea rated it 1 point higher than participants who drank tea-first tea (i.e., that $\widehat{\beta} = 1$ point)? And how is this difference comparable to, for instance, a 1-point change on a scale that has similar anchors ("terrible" and "delicious") but uses a 100-point rating system?
 
-![Schematic effect size computation.](images/estimation/es-calc.png){#fig-estimation-es-calc .margin-caption}
 
-To provide a common language for describing these relationships, some researchers use *standardized effect sizes.* A common standardized effect size is Cohen's *d*, which provides a standardized estimate of the difference between two means. There are many different ways to calculate Cohen's *d* [@lakens2013], but all approaches are usually some variant of the following formula:
+To provide a common language for describing these relationships, some researchers use **standardized effect sizes.** A common standardized effect size is Cohen's *d*, which provides a standardized estimate of the difference between two means. There are many different ways to calculate Cohen's *d* [@lakens2013], but all approaches are usually some variant of the following formula:
 
 $$
 d = \frac{\theta_{\textrm{M}} - \theta_{\textrm{T}}}{\sigma_{\text{pooled}}}
@@ -145,10 +148,13 @@ $$
 
 \noindent where the difference between means ($\theta_{\textrm{T}}$ and $\theta_{\textrm{M}}$) is divided by the pooled standard deviation $\sigma_{\text{pooled}}$. Intuitively, what you're doing is taking the study effect ($\beta$) and dividing it -- scaling it -- by the variation we saw between individuals in the study. 
 
+
+![Schematic effect size computation.](images/estimation/es-calc.png){#fig-estimation-es-calc .margin-caption width=80%}
+
 Let's compute this measure for our tea-drinking study. We can just plug in the estimates we see in @fig-estimation-data-difference and compute the standard deviation of our observed data:
 
 $$\widehat{d} = \frac{\widehat{\theta}_{\textrm{M}} - \widehat{\theta}_{\textrm{T}}}{\widehat{\sigma}_{\text{pooled}}} = \frac{4.5- 3.5}{1.25} = \frac{1}{1.25} = 0.80$$
-\noindent In other words, the effect size of the difference between the two conditions is .8 standard deviations. This process is shown graphically in @fig-estimation-es-calc. 
+\noindent In other words, the effect size of the difference between the two conditions is .8 standard deviations. This process is shown graphically in @fig-estimation-es-calc.^[Cohen's $d$, also referred to as a **standardized mean difference** (SMD), can be tricky to apply to more complex experimental designs, such as when you have within-participant designs and multiple measurements of each participant. For some guidance on this topic, see @lakens2013.]
 
 We previously said that people who drank milk-first tea had quality ratings that were, on average, 1 point higher on a 7-point scale ($\beta = 1$ point). Cohen's *d* translates the arbitrary units of our rating scale into a **unit-less** effect size that is measured in terms of the variation in the data. You may find yourself wondering: "why would I ever describe things in terms of standard deviations?" The key benefit is that it allows us to compare the size of the effect between studies that use different measures.
 
@@ -162,17 +168,17 @@ $$\widehat{d}_{US} = \frac{\widehat{\theta}_{\textrm{M}} - \widehat{\theta}_{\te
 
 \noindent A Cohen's *d* of .2 means that US cafe patrons rated their tea .2 standard deviations higher when it was milk-first, much smaller than the .8 standard deviation difference in the UK patrons. 
 
-There are no hard and fast rules for interpreting what makes a big effect or a small effect, but people often refer back to a standard suggested by @cohen1992. On those standards, $d = 0.8$ is a "large effect", and $d = 0.2$ is a "small effect." But these effect size interpretation norms are somewhat arbitrary. More broadly, though US and UK patrons had the same raw score change in quality ratings ($\widehat{\beta} = 1$) and standardizing the differences allowed us to communicate that the difference was much larger among the UK patrons.
+There are no hard and fast rules for interpreting what makes a big effect or a small effect, but people often refer back to a standard suggested by @cohen1992. On those standards, $d = 0.8$ is a "large effect", and $d = 0.2$ is a "small effect." But these effect size interpretation norms are somewhat arbitrary. The key point here was that US and UK patrons had the same raw score change in quality ratings ($\widehat{\beta} = 1$) and standardizing the differences allowed us to communicate that the difference was larger among the UK patrons.
 
-Cohen's *d* is one of many standardized effect sizes that researchers can use. Just as Cohen's *d* standardizes differences in group means, there are also generalizations that allow for continuous treatment variables or adjusted covariates (e.g., Pearson's *r*, $r^2$, or $\eta^2$). Other effect-size measures apply for relationships between binary variables (e.g., odds ratio) and more. We'll be using effect sizes throughout the book, but in most cases -- for example, sample size planning in @sec-sampling and meta-analysis in @sec-meta -- we'll be using Cohen's *d* as our example.^[If you'd like to learn more about other varieties of effect size, take a look at @fritz2012.] 
+Cohen's *d* is one of many standardized effect sizes that researchers can use. Just as Cohen's *d* standardizes differences in group means, there are also generalizations that allow for continuous treatment variables or covariate adjustment (e.g., Pearson's *r*, as we discuss below; $r^2$; or $\eta^2$). And there is a whole other set of effect-size measures for relationships between binary variables (e.g., odds ratio). We'll be using effect sizes throughout the book, but we'll be using Cohen's *d* as our example.^[If you'd like to learn more about other varieties of effect size, take a look at @fritz2012 and @lakens2013.] 
 
 ### Pros and cons of standardizing effect sizes
 
-There are some pros and cons of standardizing effect sizes. Sure, it helps communicate that a 1-point change on a 7-point scale is not the same as a 1-point change on a 100-point scale. But is it any better to say that the first change represents a 0.80 standard deviation difference and the second a 0.08 standard deviation difference? 
+Standardizing effect size helps communicate that a 1-point change on a 7-point scale is not the same as a 1-point change on a 100-point scale. But is it any better to say that the first change represents a 0.80 standard deviation difference and the second a 0.08 standard deviation difference? 
 
 Effect sizes allow us to compare results across studies more easily. Across studies, researchers use different measures, different study designs, and different populations. Standardization gives us a "common language" to describe estimated relationships in these varied contexts. This language is helpful when we want to aggregate and compare effects across studies via meta-analysis. And it is also helpful when planning new studies. When trying to figure out how many participants to run in a study, almost all techniques for sample size planning use standardized effect sizes to determine how much data would be needed to reliably detect an effect.
 
-Standardizing effect sizes has limitations, though. For example, if two interventions produce the same absolute change in the same outcome measure, but are studied in different populations in which the variability on the outcome differs substantially, the interventions would produce different standardized mean differences [@baguely2009; see "Reliability paradoxes!" in @sec-measurement]. 
+Standardizing effect sizes has limitations, though. For example, if two interventions produce the same absolute change in the same outcome measure, but are studied in different populations in which the variability on the outcome differs substantially, the interventions would produce different standardized mean differences [@baguley2009] (see the Depth box "Reliability paradoxes!" in @sec-measurement). 
 
 Imagine we conducted our tea experiment again, but this time with (decaf) tea, and focusing on children. Maybe milk-first tea tastes the same amount better than tea-first tea for kids and for adults. But kids are, as a rule, more variable in their responding than adults. This higher level of variability would lead us to observe a smaller effect size in kids vs. adults. Recall that our UK adult SD was 1.25, and our effect size was $d = .8$. Imagine that children's SD is 2.5. In this scenario, even if tea led to the same 1-point absolute change in ratings among adults and children, the standardized effect size for kids would look half as big:
 
@@ -189,26 +195,26 @@ In contrast, we recommend using standardized effect sizes for cases where the me
 
 ![The relationship between age and milk-first tea rating.](images/estimation/corr1.png){#fig-estimation-corr .column-margin}
 
-Our focus up until now has been in estimating individual effects, but sometimes we also want to estimate the relationship between two different variables. Extending our example, @fig-estimation-corr shows the relationship between the age of the tea taster and their rating of milk-first tea. It seems that younger people overall like tea less than older people. How could we quantify this result? 
+Our focus up until now has been in estimating individual effects, but sometimes we also want to estimate the relationship between two different variables. Extending our example, @fig-estimation-corr shows the relationship between the age of the tea taster and their rating of milk-first tea. It seems that younger people overall like tea less than older people.^[Remember, this is a correlational relationship, and there's no causal inference possible here.] How could we quantify this result? 
 
 The first concept we need is **covariance**. Covariance captures the degree to which we expect two variables to deviate from their means in the same direction. We're looking at milk-first tea ratings $M$ and participant ages $A$. We can write the covariance between these two variables as 
 
 $$Cov(M, A) = E[(M - \theta_M) (A - \theta_A)]$$
 
-This formula multiplies together how much each point differs from its expectation (mean) in each direction. @fig-estimation-corr2 shows these differences.^[This looks a little tricky, but it's actually very related to the basic concepts we've already seen. Remember when we introduced the standard deviation, we described it as the expected distance between new samples from a distribution and the mean of that distribution. The covariance is very related: the standard deviation is just $\sqrt{Cov(X,X)}$, in other words, the square root of the covariance of a variable with itself.]
+This formula expresses the expected product of how much each observation differs from its expectation (mean) along each variable. @fig-estimation-corr2 shows these differences, which are multiplied together for each point to get the covariation.^[This looks a little tricky, but it's actually very related to the basic concepts we've already seen. Remember when we introduced the standard deviation, we described it as the expected distance between new samples from a distribution and the mean of that distribution. The covariance is very related: the standard deviation is just $\sqrt{Cov(X,X)}$, in other words, the square root of the covariance of a variable with itself.]
 
 ![Estimating the covariation between age and milk-first tea rating.](images/estimation/corr2.png){#fig-estimation-corr2 .column-margin}
 
-
-<!-- ![Estimating the covariation between age and milk-first tea rating.](images/estimation/corr2.png){#fig-estimation-corr2 .column-margin} -->
-This covariance number gives us an estimate of how much age and ratings covary, but its units are a bit funny: it's an expected years X ratings deviation. We can do a simple trick to standardize its units and make it into a wonderful form of effect size called the **correlation coefficient** (denoted $r$). Remember that to create effect sizes above, we divided by the standard deviation of the variable. Here all we have to do is divide by the standard deviation of both variables.
+This covariance number gives us an estimate of how much age and ratings covary, but its units are a bit funny: it's hard to know what to make of an expected deviation of 1 point-year. We can do a simple trick to standardize its units and make it into a wonderful form of effect size called the **correlation coefficient** (denoted $r$). Remember that to create effect sizes above, we divided by the standard deviation of the variable. Here all we have to do is divide by the standard deviation of both variables.
 
 $$r_{M,A} = \frac{Cov(M,A)}{\sigma_M \sigma_A}$$
-\noindent In other words, the correlation between two variables is the standardized covariation.^[This section has described one way of looking at a correlation coefficient. For a great discussion of all the different ways of thinking about correlations, see @lee-rodgers1988.]
+\noindent In other words, the correlation between two variables is the standardized covariation.
 
 The correlation coefficient is the most ubiquitous measure of association between variables. It ranges between -1, where two variables covary in exactly the opposite direction, to 1, when two variables covary perfectly. A correlation means that there is no association between two variables. A correlation of -1 or 1 doesn't mean that these two variables have the same scale, however: it just means that they "move together." 
 
-Critically, a correlation is an effect size. Correlations can be compared across different measures and different studies, making it a very valuable scale-free comparison tool. 
+[This section has described one way of looking at a correlation coefficient: as standardized covariation. For a great discussion of all the different ways of thinking about correlations, see @lee-rodgers1988.]{.aside}
+
+Critically, a correlation is an effect size. Correlations can be compared across different measures and different studies (including both experimental and observational studies), making it a very valuable scale-free comparison tool. 
 
 ## Chapter summary: Estimation
 
