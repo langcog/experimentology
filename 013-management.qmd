@@ -28,7 +28,7 @@ As we have discussed in @sec-replication, even when data are shared, they are no
 
 Sound project management practices and sharing of research projects are mutually reinforcing goals that bring benefits for both yourself, the broader research community, and scientific progress. One particularly important benefit of good project management practices is that they enable reproducibility. As we discussed in @sec-replication, computational reproducibility involves being able to trace the provenance of any reported analytic result in a research report back to its original source. That means being able to recreate the entire analytic chain from data collection to data files, though analytic specifications to the research results reported in text, tables, and figures. If data collection is documented appropriately, and if data are stored, organized, and shared, then the provenance of a particular result is relatively easy to verify. But once this chain is broken it can be hard to reconstruct [@hardwicke2018b; @fig-management-chain]. That's why it's critical to build good project management practices into your research workflow right from the start.
 
-In this chapter, you will learn how to manage your research project both efficiently and transparently. Working towards these goals can create a virtuous cycle: if you organize your research products well, they are easier to share later, and if you assume that you will be sharing, you will be motivated to organize your work better! We begin by discussing some important principles of project management, including folder structure, file naming, organization, and version control. Then we zoom in specifically on data and discuss best practices for data sharing. We end by discussing the question of what research products to share and some of the potential ethical issues that might limit your ability to share in certain circumstances.^[This chapter -- especially the last section -- draws heavily on @klein2018, an article on research transparency that several of us contributed to.]
+In this chapter, you will learn how to manage your research project both efficiently and transparently.^[This chapter -- especially the last section -- draws heavily on @klein2018, an article on research transparency that several of us contributed to.] Working towards these goals can create a virtuous cycle: if you organize your research products well, they are easier to share later, and if you assume that you will be sharing, you will be motivated to organize your work better! We begin by discussing some important principles of project management, including folder structure, file naming, organization, and version control. Then we zoom in specifically on data and discuss best practices for data sharing. We end by discussing the question of what research products to share and some of the potential ethical issues that might limit your ability to share in certain circumstances.
 
 ::: {.callout-note title="case study"}
 ## ManyBabies, ManySpreadsheetFormats! {-}
@@ -67,7 +67,7 @@ There are many reasonable ways to organize the sub-folders of a research project
 
 Probably everyone who has ever collaborated electronically has experienced the frustration of editing a document, only to find out that you are editing the wrong version -- perhaps some of the problems you are working on have already been corrected, or perhaps the section you are adding has already been written by someone else. A second common source of frustration comes when you take a wrong turn in a project, perhaps by reorganizing a manuscript in a way that doesn't work or refactoring code in a way that turns out to be short-sighted. 
 
-These two problems are solved by modern version control systems. Here we focus on the use of **git**, which is the most widely used version control system. Git is a great general solution for version control, but many people -- including several of us -- don't love it for collaborative manuscript writing. We'll introduce git and its principles here, while noting that online collaboration tools like Google Docs and Overleaf^[Overleaf is actually supported by git on the back-end!] can be easier for writing prose (as opposed to code); we cover this topic in a bit more depth in @sec-writing.
+These two problems are solved by modern version control systems. Here we focus on the use of **git**, which is the most widely used version control system. Git is a great general solution for version control, but many people -- including several of us -- don't love it for collaborative manuscript writing. We'll introduce git and its principles here, while noting that online collaboration tools like Google Docs and Overleaf^[Overleaf is actually supported by git on the backend!] can be easier for writing prose (as opposed to code); we cover this topic in a bit more depth in @sec-writing.
 
 ![Visualisation of Git version control showing a series of commits (circles) on three different branches: the main branch (green) and two others (blue and red). Branches can be created and then merged back into the main branch.](images/management/git.png){#fig-management-git .column-margin}
 
@@ -101,10 +101,10 @@ We've just discussed how to manage projects in general; in this section we zoom 
 
 How can you make sure that your data are managed so as to enable effective sharing? We make four primary recommendations:
 
-1. save your raw data, 
-2. document your data collection process,
-3. organize your raw data for later analysis, and
-4. document your data using a codebook or other appropriate metadata.
+1. save your raw data
+2. document your data collection process
+3. organize your raw data for later analysis
+4. document your data using a codebook or other metadata
 
 \noindent Let's look at each in turn. 
 
@@ -115,14 +115,6 @@ Raw data take many forms. For many of us, the raw data are those returned by the
 Raw data are often not anonymized -- or even anonymizable. Anonymizing them sometimes means altering them (e.g., in the case of downloaded logs from a service that might include IDs or IP addresses). Or in some cases, anonymization is difficult or impossible without significant effort and loss of some value from the data, e.g. for video data or MRI data [@bischoff-grethe2007]. Unless you have specific permission for broad distribution of these identifiable data, the raw data may then need to be stored in a different way. In these cases, we recommend saving your raw data in a separate repository with the appropriate permissions. For example, in the ManyBabies 1 study we described above, the public repository does not contain the raw data contributed by participating labs, which the team could not guarantee was anonymized; these data are instead stored in a private repository.^[The precise repository you use for this task is likely to vary by the kind of data that you're trying to store and the local regulatory environment. For example, in the United States, to store de-anonymized data with certain fields requires a server that is certified for HIPAA (the relevant privacy law). Many -- but by no means all -- universities provide HIPAA-compliant cloud storage.] 
 
 You can use your repository's README to describe what is and is not shared. For example, a README might state that "We provide anonymized versions of the files originally downloaded from Qualtrics" or "Participants did not provide permission for public distribution of raw video recordings, which are retained on a secure university server." Critically, if you share the derived tabular data, it should still be possible to reproduce the analytic results in your paper, even if checking the provenance of those numbers from the raw data is not possible for every reader.^[One way we organize the raw data in some of our paper is to have three different subfolders in the `data/` directory: `raw/`, for the original data; `processed/`, for the anonymized or otherwise pre-processed data; and `/scripts`, for the code that does the preprocessing. Since these folders are in a git repository, we can then add `raw/*` to the `.gitignore` file, ensuring that they are never added to the public version of the repository even though they sit within our local file hierarchy in the appropriate place.] 
-
-::: {#fig-management-mb-datafiles .margin-caption}
-![](images/management/mb-subjects.png){fig-align="left"}
-
-![](images/management/mb-trials.png){fig-align="left" width="62%"}
-
-Example participant (top) and trial (bottom) level data from the ManyBabies (2020) case study.
-:::
 
 One common practice is the use of participant identifiers to link specific experimental data -- which, if they are responses on standardized measures, rarely pose a significant identifiability risk -- to demographic data sheets that might include more sensitive and potentially identifiable data.^[A word about subject identifiers. These should be anonymous identifiers, like randomly generated numbers, that cannot be linked to participant identities (like data of birth) and are unique. You laugh, but one of us was in a lab where all the subject IDs were the date of test and the initials of the participant. These were neither unique nor anonymous. One common convention is to give your study a code-name and to number participants sequentially, so your first participant in a sequence of experiments on information processing might be `INFO-1-01`.] Depending on the nature of the analyses being reported, the experimental data can then be shared with limited risk. Then a selected set of demographic variables -- for example, those that do not increase privacy risks but are necessary for particular analyses -- can be distributed as a separate file and joined back into the data later.
 
@@ -138,6 +130,8 @@ Regardless of what specific documentation you keep, it's critical to create some
 
 Data come in many forms, but chances are that at some point during your project you will end up with a spreadsheet full of information. Well-organized spreadsheets cam mean the difference between project success and failure! A wonderful article by @broman2018 lays out principles of good spreadsheet design. We highlight some of their principles here (with our own, opinionated ordering):
 
+1. *Make it a rectangle*.^[Think of your data like a well-ordered plate of sushi, neatly packed together without any gaps.] Nearly all data analysis software, like SPSS, Stata, Jamovi and JASP (and many R packages), require data to be in a tabular format.^[Tabular data is a precursor to "tidy" data, which we describe in more detail in Appendix @sec-tidyverse.] If you are used to analyzing data exclusively in a spreadsheet, this kind of tabular data isn't quite as readable, but readable formatting gets in the way of almost any analysis you want to do. @fig-management-broman-nonrect gives some examples of non-rectangular spreadsheets. All of these will cause any analytic package to choke because of inconsistencies in how rows and columns are used!
+
 ::: {#fig-management-broman-nonrect layout-ncol=2 .margin-caption}
 ![](images/management/bromanA.png)
 
@@ -149,8 +143,6 @@ Data come in many forms, but chances are that at some point during your project 
 
 Examples of non-rectangular spreadsheet formats that are likely to cause problems in analysis. Adapted from @broman2018.
 :::
-
-1. *Make it a rectangle*.^[Think of your data like a well-ordered plate of sushi, neatly packed together without any gaps.] Nearly all data analysis software, like SPSS, Stata, Jamovi and JASP (and many R packages), require data to be in a tabular format.^[Tabular data is a precursor to "tidy" data, which we describe in more detail in Appendix @sec-tidyverse.] If you are used to analyzing data exclusively in a spreadsheet, this kind of tabular data isn't quite as readable, but readable formatting gets in the way of almost any analysis you want to do. @fig-management-broman-nonrect gives some examples of non-rectangular spreadsheets. All of these will cause any analytic package to choke because of inconsistencies in how rows and columns are used!
 
 2. *Choose good names for your variables*. No one convention for name formatting is best, but it's important to be consistent. We tend to follow the [tidyverse style guide](https://style.tidyverse.org) and use lowercase words separated by underscores (`_`). It's also helpful to give units where these are available, e.g., are reaction times in seconds or milliseconds. @tbl-broman-ex gives some examples of good and bad variable names. 
 
@@ -201,6 +193,14 @@ The moral of the story: Obscure variable names can hide existing errors and crea
 
 Even the best-organized tabular data are not always easy to understand by other researchers, or even yourself, especially after some time has passed. For that reason, you should make a **codebook** (also known as a **data dictionary**) that explicitly documents what each variable is. @fig-management-mb-codebook shows an example codebook for the trial-level data in the bottom of @fig-management-mb-datafiles. Each row represents one variable in the associated dataset. Codebooks often describe what type of variable a column is (e.g., numeric, string), and what values can appear in that column. A human-readable explanation is often given as well, providing providing units (e.g., "seconds") and a translation of numeric codes (e.g., "test condition is coded as 1") where relevant.
 
+::: {#fig-management-mb-datafiles layout-ncol=1 .margin-caption}
+![](images/management/mb-subjects.png){}
+
+![](images/management/mb-trials.png){width="62%"}
+
+Example participant (top) and trial (bottom) level data from the ManyBabies (2020) case study.
+:::
+
 ![Codebook for trial-level data (see above) from the ManyBabies (2020) case study.](images/management/mb-codebook.png){#fig-management-mb-codebook .margin-caption}
 
 Creating a codebook need not require a lot of work. Almost any documentation is better than nothing! There are also several R packages that can automatically generate a codebook for you, for example `codebook`, `dataspice`, and `dataMaid` [@arslan2019]. Adding a codebook can substantially increase the reuse value of the data and prevent hours of frustration as future you and others try to decode your variable names and assumptions.
@@ -222,10 +222,6 @@ Under both frameworks, **anonymization** (or equivalently **de-identification**)
 
 The EU's GDPR also allows fully anonymized data sharing, with one big complication. Putting anonymous identifiers in a data file and removing identifiable fields does not itself suffice for GDPR anonymization if the data are still **in-principle re-identifiable** because you have maintained documentation linking IDs to identifiable data like names or email addresses. Only when the key linking identifiers to data has been destroyed are the data truly de-identified according to this standard. 
 
-De-identification is not always enough. As datasets get richer, **statistical reidentification risks** go up substantially such that, with a little bit of outside information, data can be matched with a unique individual. These risks are especially high with linguistic, physiological, and geospatial data, but they can be present even for simple behavioral experiments. In one influential demonstration, knowing a person's location on two occasions was often enough to identify their data uniquely in a huge database of credit card transactions [@de-montjoye2015].^[For an example closer to home, many of the contributing labs in the ManyBabies project logged the date of test for each participant. This useful and seemingly innocuous piece of information is unlikely to identify any particular participant -- but alongside a social media post about a lab visit or a dataset about travel records, it could easily reveal a particular participant's identity.] Thus, simply removing fields from the data is a good starting point -- but if you are collecting richer data about participants' behavior you may need to consult an expert. 
-
-Privacy issues are ubiquitous in data sharing, and almost every experimental research project will need to solve them before sharing data. For simple projects, often these are the only issues that preclude data sharing. However, in more complex projects, other concerns can arise. Funders may have specific mandates regarding where your data should be shared. Data use agreements or collaborator preferences may restrict where and when you can share. And certain data types require much more sensitivity since they are more consequential than, say, the reaction times on a Stroop task. We include here a set of questions to walk through to plan your sharing (@fig-management-sharing-chart). When in doubt, it's often a good idea to consult with the relevant local authority, e.g. your ethics board for ethical issues or your research management office for regulatory issues.
-
 ::: {.callout-note title="accident report"}
 ## Really anonymous? {-}
 
@@ -235,6 +231,10 @@ First, we discovered that MTurk IDs were in some cases linked to study participa
 
 Then, a little later we received an irate email from an MTurk participant who had discovered their data on github via a search for their MTurk ID. Although they were not identified in this dataset, it convinced us that at least some participants would not like this ID shared. After another consultation with the IRB, we apologized to this individual and removed their and others' IDs from our github commit histories across that and other repositories. Prior to posting data, we now take care to anonymize IDs by creating a secret mapping between the IDs we post and the actual MTurk IDs. 
 :::
+
+De-identification is not always enough. As datasets get richer, **statistical reidentification risks** go up substantially such that, with a little bit of outside information, data can be matched with a unique individual. These risks are especially high with linguistic, physiological, and geospatial data, but they can be present even for simple behavioral experiments. In one influential demonstration, knowing a person's location on two occasions was often enough to identify their data uniquely in a huge database of credit card transactions [@de-montjoye2015].^[For an example closer to home, many of the contributing labs in the ManyBabies project logged the date of test for each participant. This useful and seemingly innocuous piece of information is unlikely to identify any particular participant -- but alongside a social media post about a lab visit or a dataset about travel records, it could easily reveal a particular participant's identity.] Thus, simply removing fields from the data is a good starting point -- but if you are collecting richer data about participants' behavior you may need to consult an expert. 
+
+Privacy issues are ubiquitous in data sharing, and almost every experimental research project will need to solve them before sharing data. For simple projects, often these are the only issues that preclude data sharing. However, in more complex projects, other concerns can arise. Funders may have specific mandates regarding where your data should be shared. Data use agreements or collaborator preferences may restrict where and when you can share. And certain data types require much more sensitivity since they are more consequential than, say, the reaction times on a Stroop task. We include here a set of questions to walk through to plan your sharing (@fig-management-sharing-chart). When in doubt, it's often a good idea to consult with the relevant local authority, e.g. your ethics board for ethical issues or your research management office for regulatory issues.
 
 ![A decision chart for thinking about sharing research products. Adapted from @klein2018.](images/management/kline.png){#fig-management-sharing-chart .margin-caption}
 
