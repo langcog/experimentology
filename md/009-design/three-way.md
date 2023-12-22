@@ -8,4 +8,4 @@
 | Belief X Outcome          | 2-way interaction |
 | Affect X Belief X Outcome | 3-way interaction |
 
-: Possible effects in a hypothetical 2x2x2 experimental design with affect, belief, and outcome as factors. {#tbl-three-way}
+: Effects in a 2x2x2 design with affect, belief, and outcome as factors. {#tbl-three-way}
