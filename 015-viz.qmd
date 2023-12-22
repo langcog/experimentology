@@ -5,7 +5,7 @@
 ::: {.callout-note title="learning goals"}
 - Analyze the principles behind informative visualizations
 - Incorporate visualization into an analysis workflow
-- Learn to make "the design plot"
+- Learn to make "the design plot": a standard visualization of experimental data
 - Select different visualizations of variability and distribution
 - Connect visualization concepts to measurement principles
 :::
@@ -14,8 +14,10 @@ What makes visualizations so useful, and what role do they play in the experimen
 Simply put, data visualization is the act of "making the invisible visible." 
 Our visual systems are remarkably powerful pattern detectors, and relationships that aren't at all clear when scanning through rows of raw data can immediately jump out at us when presented in an appropriate graphical form [@zacks2020designing].
 Good visualizations aim to deliberately harness this power and put it to work at every stage of the research process, from the quick sanity checks we run when first reading in our data to the publication-quality figures we design when we are ready to communicate our findings.
+
+
 Yet our powerful pattern detectors can also be a liability; if we're not careful, we can easily be fooled into seeing patterns that are unreliable or even misleading.
-As psychology moves into an era of bigger data and more complex behaviors, we become increasingly reliant on **data visualization literacy** [@borner2019data] to make sense of what is going on. Further, as a researcher reporting about your data, creating appropriate visualizations that are aligned with your analyses (as well as your design and preregistration) is an important part of _transparency_ and _bias reduction_ in your reporting. 
+As psychology moves into an era of bigger data and more complex behaviors, we become increasingly reliant on **data visualization literacy** [@borner2019data] to make sense of what is going on. Further, as a researcher reporting about your data, creating appropriate visualizations that are aligned with your analyses (as well as your design and preregistration) is an important part of [transparency]{.smallcaps} and [bias reduction]{.smallcaps} in your reporting. 
 
 ::: {.callout-note title="case study"}
 ## Mapping a pandemic {-}
@@ -63,13 +65,15 @@ Remember that our needs may be distinct from other fields, such as journalism or
 You may have seen beautiful and engaging full-page graphics with small print and a wealth of information.
 The art of designing and producing these graphics is typically known as **infoviz** and should be distinguished from what we call **statistical visualization** [@gelman2013].
 
+
+![Unlike statistical visualization, which aims to clearly expose the logic of an experiment at a glance, infoviz aims to provide a rich world of patterns to explore [reproduced from @infoviz].](images/viz/viz_infoviz.png){#fig-viz-infoviz .column-margin}
+
+
 Roughly, infoviz aims to construct rich and immersive worlds to visually explore: a reader can spend hours pouring over the most intricate graphics and continue to find new and intriguing patterns.
 **Statistical visualization**, on the other hand, aims to crisply convey the logic of a specific inference at a glance.
 These visualizations are the production-ready figures that anchor the results section of a paper and accompany the key, pre-registered analyses of interest.
 In this section, we review several basic principles of making statistical visualizations.
 We then return below to the role of visualization in more exploratory analyses.
-
-![Unlike statistical visualization, which aims to clearly expose the logic of an experiment at a glance, infoviz aims to provide a rich world of patterns to explore [reproduced from @infoviz].](images/viz/viz_infoviz.png){#fig-viz-infoviz .column-margin}
 
 ### Principle 1: Show the design
 
@@ -78,9 +82,11 @@ How do we begin to decide how to navigate these decisions?
 The first principle guiding good statistical visualizations is to *show the design* of your experiment. 
 
 The first confirmatory plot you should have in mind for your experiment is the **design plot**.
-Analogous to the "default model" in @sec-models, the design plot should show the key dependent variable of the experiment, broken down by all of the key manipulations.
+Analogous to the "default" or "saturated" model in @sec-models, the design plot should show the key dependent variable of the experiment, broken down by all of the key manipulations.
 Critically, design plots should neither omit particular manipulations because they didn't yield an effect or include extra covariates because they seemed interesting after looking at the data.
-Both of these steps are the visual analogue of p-hacking! Instead, the design plot is the "preregistered analysis" of your visualization: it illustrates a first look at the estimated causal effects from your experimental manipulations. In the words of @coppock2019, "visualize as you randomize"!^[It can sometimes be a challenge to represent the full pattern of manipulations from an experiment in a single plot. Below we give some tricks for maximizing the legible information in your plot. But if you have tried these and your design plot still looks crowded and messy, that could be an indication that your experiment is manipulating too many things at once!]
+Both of these steps are the visual analogue of p-hacking! Instead, the design plot is the "preregistered analysis" of your visualization: it illustrates a first look at the estimated causal effects from your experimental manipulations. In the words of @coppock2019, "visualize as you randomize"!
+
+It can sometimes be a challenge to represent the full pattern of manipulations from an experiment in a single plot. Below we give some tricks for maximizing the legible information in your plot. But if you have tried these and your design plot still looks crowded and messy, that could be an indication that your experiment is manipulating too many things at once!
 
 There are strong (unwritten) conventions about how your confirmatory analysis is expected to map onto graphical elements, and following these conventions can minimize confusion.
 Start with the variables you manipulate, and make sure they are clearly visible.
@@ -148,7 +154,8 @@ For example, we *could* start by plotting the accuracy of each age group as colo
 #| out-width: 80%
 
 ggplot(sgf_cond_means, aes(x = age_group, y = condition, fill = rating)) +
-  geom_tile()
+  geom_tile() + 
+  labs(x = "Age group", y = "Condition") 
 ```
 
 ::: {.callout-note title="code"}
@@ -174,7 +181,8 @@ Or we could plot the accuracy of each age group as sizes/areas (@fig-viz-prepost
 #| out-width: 80%
 
 ggplot(sgf_cond_means, aes(x = age_group, y = condition, size = rating)) +
-  geom_point()
+  geom_point() + 
+  labs(x = "Age group", y = "Condition") 
 ```
 
 ::: {.callout-note title="code"}
@@ -195,7 +203,8 @@ Maybe the age groups then are represented as different colors, as in @fig-viz-pr
 #| out-width: 80%
 
 ggplot(sgf_cond_means, aes(x = condition, y = rating, fill = age_group)) +
-  geom_col(position = "dodge")
+  geom_col(position = "dodge") + 
+  labs(x = "Condition", y = "Mean accuracy") 
 ```
 
 ::: {.callout-note title="code"}
@@ -226,7 +235,8 @@ Consider the line plot in @fig-viz-prepost5.
 
 ggplot(sgf_cond_means, aes(x = age_group, y = rating, color = condition, group = condition)) +
   geom_point() +
-  geom_line()
+  geom_line() + 
+  labs(x = "Age group", y = "Mean accuracy") 
 ```
 
 ::: {.callout-note title="code"}
@@ -237,8 +247,8 @@ Using a combination of `geom_point()` and `geom_line()`:
 :::
 
 The interaction contrast we want to interpret is highlighted visually in this plot.
-It is much easier to compare the slopes of two lines than mentally compute a difference of differences between four bars.
-A few corollaries of this principle [see this helpful presentation from Karl Broman](https://www.biostat.wisc.edu/~kbroman/presentations/IowaState2013/graphs_combined.pdf):
+It is much easier to compare the slopes of two lines than mentally compute a difference of differences between bars.
+Here are a few corollaries of this principle (adapted from [a presentation by Karl Broman](https://www.biostat.wisc.edu/~kbroman/presentations/IowaState2013/graphs_combined.pdf)).
 
 * It is easier to compare values that are *adjacent* to one another. This is especially important when there are many different conditions included on the same plot. If particular sets of conditions are of theoretical interest, place them close to one another. Otherwise, sort conditions by a meaningful value (rather than alphabetically, which is usually the default for plotting software).
 
@@ -248,9 +258,13 @@ A few corollaries of this principle [see this helpful presentation from Karl Bro
 
 * If the scale makes it hard to see important differences, consider transforming the data (e.g. taking the logarithm).
 
-* When making bar plots, be very careful about the vertical y-axis. A classic "misleading visualization" mistake is to cut off the bottom of the bars by placing the endpoint of the y-axis at some arbitrary value near the smallest data point. This is misleading because people interpret bar plots in terms of the relative *area* of the bars (i.e. the amount of ink taken up by the bar), not just their absolute y-values. If the difference between data points is very small relative to the overall scale (e.g. means of 32 vs. 33 on a scale from 0 to 100), then using a scale with limits of 31 and 33 would make one bar look twice as big as the other! Conversely, if plotting means from Likert scales with a minimum value of 1, then starting the scale at 0 would shrink the effective difference! If you must use bars, use the natural end points of your measure (see @sec-measurement). Otherwise, consider dropping the bars and allowing the data points to 'float' with error bars.
+* When making bar plots, be very careful about the vertical y-axis. A classic "misleading visualization" mistake is to cut off the bottom of the bars by placing the endpoint of the y-axis at some arbitrary value near the smallest data point. This is misleading because people interpret bar plots in terms of the relative *area* of the bars (i.e. the amount of ink taken up by the bar), not just their absolute y-values. 
 
-* If a key variable from your design is mapped to color, choose the color scale carefully. For example, if the variable is binary or categorical, choose visually distinct colors to maximize contrast (e.g. black, blue, and orange). If the variable is ordinal or continuous, use a color gradient. If there is a natural midpoint (e.g. if some values are negative and some are positive), consider using a diverging scale (e.g. different colors at each extreme). Remember also that a portion of your audience may be color-blind. Palettes like [viridis](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html) have been designed to be colorblind-friendly and also perceptually uniform (i.e. the perceived difference between 0.1 and 0.2 is approximately the same as the difference between 0.8 and 0.9). Finally, if the same manipulation or variable appears across multiple figures in your paper, keep the color mapping consistent: it is confusing if "red" means something different from figure to figure. 
+<!-- If the difference between data points is very small relative to the overall scale (e.g. means of 32 vs. 33 on a scale from 0 to 100), then using a scale with limits of 31 and 33 would make one bar look twice as big as the other! Conversely, if plotting means from Likert scales with a minimum value of 1, then starting the scale at 0 would shrink the effective difference! If you must use bars, use the natural end points of your measure (see @sec-measurement). Otherwise, consider dropping the bars and allowing the data points to 'float' with error bars. -->
+
+* If a key variable from your design is mapped to color, choose the color scale carefully. For example, if the variable is binary or categorical, choose visually distinct colors to maximize contrast (e.g. black, blue, and orange). If the variable is ordinal or continuous, use a color gradient. If there is a natural midpoint (e.g. if some values are negative and some are positive), consider using a diverging scale (e.g. different colors at each extreme). Remember also that a portion of your audience may be color-blind.^[Palettes like [viridis](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html) have been designed to be colorblind-friendly and also perceptually uniform (i.e. the perceived difference between 0.1 and 0.2 is approximately the same as the difference between 0.8 and 0.9).] 
+
+<!-- Finally, if the same manipulation or variable appears across multiple figures in your paper, keep the color mapping consistent: it is confusing if "red" means something different from figure to figure.  -->
 
 
 ### Principle 3: Show the data
@@ -281,7 +295,7 @@ ggplot(sgf_cond_boot, aes(x = age_group, y = empirical_stat, color = condition, 
   geom_point() +
   geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
   geom_line() +
-  labs(y = "Mean accuracy")
+  labs(x = "Age group", y = "Mean accuracy") 
 ```
 
 ::: {.callout-note title="code"}
@@ -297,7 +311,8 @@ But this doesn't work! The rationale is kind of technical, but the width of the 
 
 ```{r, opts.label='code'}
 geom_col(position = position_dodge()) +
-geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), position = position_dodge(width = 0.9))
+geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), 
+              position = position_dodge(width = 0.9)) 
 ```
 
 This does the trick!
@@ -326,7 +341,9 @@ sgf_subj_means <- sgf |>
   summarize(rating = mean(correct))
 
 ggplot(sgf_subj_means, aes(x = age_group, y = rating, color = condition)) +
-  geom_boxplot(alpha = 0.8)
+  geom_boxplot(alpha = 0.8) +
+  labs(x = "Age group", y = "Mean accuracy")
+
 ```
 
 ::: {.callout-note title="code"}
@@ -363,8 +380,9 @@ sgf_subj_ci <- sgf_subj_means |>
 ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition, group = condition)) +
   geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
   geom_line() +
-  geom_jitter(data = sgf_subj_means, alpha = 0.25, width = 0.1) +
-  ylab("Mean accuracy")
+  geom_jitter(data = sgf_subj_means, alpha = 0.25, width = 0.1, height = .03) +
+  labs(x = "Age group", y = "Mean accuracy") 
+
 ```
 
 ::: {.callout-note title="code"}
@@ -415,8 +433,8 @@ Given the central limit theorem, which tells us that this sampling distribution 
 Error bars based on the SEM often looked misleadingly small, as they only represent a 68% interval of the sampling distribution and go to zero quickly as a function of sample size.
 As a result, it became more common to show the 95\% confidence interval instead: [-1.96 $\times$ SEM, 1.96 $\times$ SEM].
 
-While these analytic equations remain common, an increasingly popular alternative is to *bootstrap* confidence intervals.
-A deep theoretical understanding of the bootstrap technique is outside the scope of this text, but you can think of it as a way of deriving a sampling distribution from your dataset using *simulations* instead of mathematical derivations about the properties of the sampling distribution.
+While these analytic equations remain common, an increasingly popular alternative is to *bootstrap* confidence intervals (see Depth box in @sec-inference for more on bootstrapping).
+<!-- A deep theoretical understanding of the bootstrap technique is outside the scope of this text, but you can think of it as a way of deriving a sampling distribution from your dataset using *simulations* instead of mathematical derivations about the properties of the sampling distribution. -->
 The bootstrap is a powerfully generic technique, especially when you want to show error bars for summary statistics that are more complex than means, where we do not have such convenient asymptotic guarantees and "closed-form" equations.
 For example, suppose you are working with a skewed response variable or a dataset with clear outliers, and you want to estimate medians and quartiles.  
 
@@ -509,7 +527,7 @@ For example: consider whether the visual complexity introduced by the default gr
 ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition, group = condition)) +
   geom_line() +
   geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
-  geom_jitter(alpha = 0.25, width = 0.05, data = sgf_subj_means) +
+  geom_jitter(alpha = 0.25, width = 0.05, height=.03, data = sgf_subj_means) +
   scale_color_hue() +
   labs(x = "Age group", y = "Mean accuracy") +
   theme_gray()
@@ -522,14 +540,14 @@ ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition, group = co
 #| fig-cap: "Custom themed Stiller figure with direct labels."
 #| fig-cap-location: margin
 #| fig-width: 6
-#| out-width: 80%
+#| out-width: 70%
 
 library(directlabels)
 
 ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition, group = condition)) +
   geom_line() +
   geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
-  geom_jitter(alpha = 0.25, width = 0.05, data = sgf_subj_means) +
+  geom_jitter(alpha = 0.25, width = 0.05, height=.03, data = sgf_subj_means) +
   geom_dl(aes(label = condition),
           method = list("last.points", dl.trans(x = x + 0.5), fontfamily = .font)) +
   scale_x_discrete(expand = expansion(mult = c(0.1, 0.3))) +
@@ -850,6 +868,7 @@ Are ages roughly similar across each country (@fig-viz-blake6)?
 #| fig-cap: Age distribution across countries in the Blake data.
 #| fig-cap-location: margin
 #| fig-height: 3.5
+#| out.width: 80%
 
 fairness |>
   count(country, age, subj_id) |>
@@ -1010,6 +1029,7 @@ Now let's re-bin the data into two-year age groups so that individual point esti
 #| fig-width: 9
 #| fig-height: 4
 #| fig-column: page-right
+#| out.width: 80%
 
 fairness_by_age_binned <- fairness |>
   filter(!is.na(reject)) |>
@@ -1024,9 +1044,9 @@ fairness_by_age_binned <- fairness |>
 ggplot(fairness_by_age_binned,
        aes(x = age_binned, y = mean_reject_age, color = condition)) +
   facet_grid(vars(trial_type), vars(country)) +
-  geom_smooth(method = "lm", se = FALSE) +
-  geom_point(alpha = .5) +
-  scale_x_continuous(breaks = seq(4, 12, 4)) +
+  geom_smooth(method = "lm", se = FALSE, aes(weight=n)) +
+  geom_point(alpha = .5, aes(size = n)) +
+  scale_x_continuous(breaks = seq(4, 12, 4), limits = c(3,13)) +
   scale_y_continuous(limits = c(0, 1), breaks = c(0, .5, 1)) +
   labs(x = "Age (years)", y = "Proportion of offers rejected",
        color = "Condition", size = "N subjects") +
