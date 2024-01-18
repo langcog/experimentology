@@ -30,13 +30,12 @@ He marked each case on a map of the area, and indicated the locations of the wat
 Furthermore, a line could be drawn representing the region that was closest to each water pump, a technique which is now known as a Voronoi diagram (<https://en.wikipedia.org/wiki/Voronoi_diagram>).
 The resulting illustration clearly reveals that cases clustered around an area called Golden Square, which received water from a pump on Broad Street (@fig-viz-cholera).
 Although the precise causal role of these maps in Snow's own thinking is disputed, and it is likely that he produced them well after the incident [@brody2000map], they nonetheless played a significant role in the history of data visualization [@friendly2021history].
-<!-- ^[Actually, the use of disease maps goes back even further! @seaman1798inquiry mapped an outbreak of yellow fever in New York City to argue that deaths clustered around a handful of waste sites. He turned out to be right, but for the wrong reasons! These waste sites were breeding grounds for mosquitoes, which were the real culprits. Coincidentally, Seaman is also known as the first to introduce vaccines to the United States. He vaccinated his children against smallpox and later organized a program to provide free vaccines to the public.] -->
 
 ![Mapping out a cholera epidemic (1854). Line shows region for which Broad Street pump is nearest.](images/viz/snow_cholera_voronoi.png){#fig-viz-cholera width="45%"}
 
-Nearly two centuries later, as the COVID-19 pandemic swept through the world, governmental agencies like the CDC (<https://covid.cdc.gov/covid-data-tracker>) produced maps of the outbreak that became much more familiar (@fig-viz-covid). 
+Nearly two centuries later, as the COVID-19 pandemic swept through the world, governmental agencies like the CDC produced maps of the outbreak that became much more familiar (@fig-viz-covid). 
 
-![Map showing the known locations of cumulative coronavirus cases by share of the population in each county (reproduced from the New York Times).](images/viz/covid-hot-spots.png){#fig-viz-covid width="60%"}
+![Map showing the known locations of cumulative coronavirus cases by share of the population in each county (reproduced from the New York Times).](images/viz/covid-hot-spots.png){#fig-viz-covid width="55%"}
 
 These maps make abstract statistics visible: By assigning higher cumulative case rates to darker colors, we can see at a glance which areas have been most affected.
 And we're not limited by the spatial layout of a map.
@@ -44,13 +43,13 @@ We're now also used to seeing the horizontal axis correspond to *time* and the v
 Curves like the following, showing the 7-day average of new cases, allow us to see other patterns, like the *rate of change*.
 Even though more and more cases accumulate every day, we can see at a glance the different "waves" of cases, and when they peaked (@fig-viz-cases). 
 
-![7-day average of new reported COVID cases (reproduced from the New York Times).](images/viz/covid-cases.png){#fig-viz-cases width="70%"}
+![7-day average of new reported COVID cases (reproduced from the New York Times).](images/viz/covid-cases.png){#fig-viz-cases width="65%"}
 
 While these visualizations capture purely descriptive statistics, we often want our visualizations to answer more specific questions.
 For example, we may ask about the effectiveness of vaccinations: how do case rates differ across vaccinated and unvaccinated populations?
 In this case, we may talk about "breaking out" a curve by some other variable, like vaccination status (@fig-viz-cases2). 
 
-![Rates of COVID cases by vaccination status (reproduced from <https://covid.cdc.gov/covid-data-tracker/#rates-by-vaccine-status>).](images/viz/vaccination.png){#fig-viz-cases2 width="70%"}
+![Rates of COVID cases by vaccination status (reproduced from <https://covid.cdc.gov/covid-data-tracker>).](images/viz/vaccination.png){#fig-viz-cases2 width="60%"}
 
 From this visualization, we can see that unvaccinated individuals are about 6x more likely to test positive. At the same time, these visualizations were produced using *observational* data, which makes it challenging to draw causal inferences.
 For example, people were not randomly assigned to vaccination conditions, and those who have avoided vaccinations may differ in other ways than those who sought out vaccinations.
@@ -135,7 +134,7 @@ sgf_cond_means <- sgf |>
 
 ### Principle 2: Facilitate comparison
 
-![Principles of visual perception can help guide visualization choices. Reproduced from @mackinlay1986 (see also @cleveland1984).](images/viz/viz_hierarchy.png){#fig-viz-hierarchy .column-margin}
+![Principles of visual perception can help guide visualization choices. Reproduced from @mackinlay1986 [see also @cleveland1984].](images/viz/viz_hierarchy.png){#fig-viz-hierarchy .column-margin}
 
 Now that you've mapped elements of your design to the figure's axes, how do you decide which graphical elements to display?
 You might think: well, in principle, these assignments are all arbitrary anyway.
@@ -150,14 +149,15 @@ For example, we *could* start by plotting the accuracy of each age group as colo
 
 ```{r fig-viz-prepost2}
 #| fig-cap: A first visualization of the @stiller2015 data.
-#| fig-cap-location: margin
-#| out-width: 80%
+#| cap-location: margin
+#| out-width: 60%
 
 ggplot(sgf_cond_means, aes(x = age_group, y = condition, fill = rating)) +
   geom_tile() + 
   labs(x = "Age group", y = "Condition") 
 ```
 
+\clearpage
 ::: {.callout-note title="code"}
 To make this (bad) visualization, we used a `ggplot` function called `geom_tile()`.
 
@@ -170,21 +170,22 @@ In these cases, bar plots and line plots tend to get extremely cluttered, making
 Heat maps help these relationships to pop out as clear "hot" and "cold" regions.
 For example, in @barnett2022, a heatmap was used to show a specific range of parameters where an effect of interest emerged (see @fig-viz-heatmap).
 
-![Heatmap showing a specific range of continuous parameters where an effect emerged (reproduced from @barnett2022).](images/viz/viz_heatmap_example.png){#fig-viz-heatmap width="40%"}
+![Heatmap showing a specific range of continuous parameters where an effect emerged [reproduced from @barnett2022].](images/viz/viz_heatmap_example.png){#fig-viz-heatmap width="35%"}
 :::
 
 Or we could plot the accuracy of each age group as sizes/areas (@fig-viz-prepost3).
 
 ```{r fig-viz-prepost3}
 #| fig-cap: Iterating on the Stiller data using size.
-#| fig-cap-location: margin
-#| out-width: 80%
+#| cap-location: margin
+#| out-width: 60%
 
 ggplot(sgf_cond_means, aes(x = age_group, y = condition, size = rating)) +
   geom_point() + 
   labs(x = "Age group", y = "Condition") 
 ```
 
+\clearpage
 ::: {.callout-note title="code"}
 To make this (bad) visualization, we mapped the rating DV to the `size` element in our `aes()` call.
 
@@ -199,7 +200,7 @@ Maybe the age groups then are represented as different colors, as in @fig-viz-pr
 
 ```{r fig-viz-prepost4}
 #| fig-cap: A bar graph of the Stiller data.
-#| fig-cap-location: margin
+#| cap-location: margin
 #| out-width: 80%
 
 ggplot(sgf_cond_means, aes(x = condition, y = rating, fill = age_group)) +
@@ -230,7 +231,7 @@ Consider the line plot in @fig-viz-prepost5.
 
 ```{r fig-viz-prepost5}
 #| fig-cap: A line graph of the Stiller data promotes comparison.
-#| fig-cap-location: margin
+#| cap-location: margin
 #| out-width: 80%
 
 ggplot(sgf_cond_means, aes(x = age_group, y = rating, color = condition, group = condition)) +
@@ -262,7 +263,7 @@ Here are a few corollaries of this principle (adapted from [a presentation by Ka
 
 <!-- If the difference between data points is very small relative to the overall scale (e.g. means of 32 vs. 33 on a scale from 0 to 100), then using a scale with limits of 31 and 33 would make one bar look twice as big as the other! Conversely, if plotting means from Likert scales with a minimum value of 1, then starting the scale at 0 would shrink the effective difference! If you must use bars, use the natural end points of your measure (see @sec-measurement). Otherwise, consider dropping the bars and allowing the data points to 'float' with error bars. -->
 
-* If a key variable from your design is mapped to color, choose the color scale carefully. For example, if the variable is binary or categorical, choose visually distinct colors to maximize contrast (e.g. black, blue, and orange). If the variable is ordinal or continuous, use a color gradient. If there is a natural midpoint (e.g. if some values are negative and some are positive), consider using a diverging scale (e.g. different colors at each extreme). Remember also that a portion of your audience may be color-blind.^[Palettes like [viridis](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html) have been designed to be colorblind-friendly and also perceptually uniform (i.e. the perceived difference between 0.1 and 0.2 is approximately the same as the difference between 0.8 and 0.9).] 
+* If a key variable from your design is mapped to color, choose the color scale carefully. For example, if the variable is binary or categorical, choose visually distinct colors to maximize contrast (e.g. black, blue, and orange). If the variable is ordinal or continuous, use a color gradient. If there is a natural midpoint (e.g. if some values are negative and some are positive), consider using a diverging scale (e.g. different colors at each extreme). Remember also that a portion of your audience may be color-blind.^[Palettes like `viridis` have been designed to be colorblind-friendly and also perceptually uniform (i.e. the perceived difference between 0.1 and 0.2 is approximately the same as the difference between 0.8 and 0.9).] 
 
 <!-- Finally, if the same manipulation or variable appears across multiple figures in your paper, keep the color mapping consistent: it is confusing if "red" means something different from figure to figure.  -->
 
@@ -284,7 +285,7 @@ They represent a minimal form of uncertainty about the possible statistics that 
 
 ```{r fig-viz-show-data1}
 #| fig-cap: Error bars (95% CIs) added to the Stiller data line graph.
-#| fig-cap-location: margin
+#| cap-location: margin
 #| out-width: 80%
 
 sgf_cond_boot <- sgf |>
@@ -333,7 +334,7 @@ Lines then extend out to the biggest and smallest values (excluding outliers, wh
 
 ```{r fig-viz-show-data2}
 #| fig-cap: Boxplot of the Stiller data.
-#| fig-cap-location: margin
+#| cap-location: margin
 #| out-width: 80%
 
 sgf_subj_means <- sgf |>
@@ -361,7 +362,11 @@ Otherwise, if it's still coded as `numeric`, `ggplot` will collapse all of the l
 It is also common to show the raw data as jittered values with low transparency.
 In @fig-viz-show-data4, we jitter the points because many participants have the same numbers (e.g. 50% and if they overlap it is hard to see how many points there are.
 
-```{r viz-show-data3}
+```{r fig-viz-show-data4}
+#| fig-cap: Jittered points representing the data distribution of the Stiller data.
+#| cap-location: margin
+#| out-width: 80%
+
 sgf_subj_means <- sgf |> 
   group_by(condition, age_group, subid) |>
   summarize(rating = mean(correct)) 
@@ -370,12 +375,6 @@ sgf_subj_ci <- sgf_subj_means |>
   group_by(condition, age_group) |>
   tidyboot::tidyboot_mean(rating) |>
   rename(rating = empirical_stat)
-```
-
-```{r fig-viz-show-data4}
-#| fig-cap: Jittered points representing the data distribution of the Stiller data.
-#| fig-cap-location: margin
-#| out-width: 80%
 
 ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition, group = condition)) +
   geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
@@ -390,11 +389,6 @@ Adding the jittered points is simple using `geom_jitter()`, but we are starting 
 
 To plot both *condition* means and *participant* means, we need to create two different data frames. Here `sgf_subj_means` is a data frame of means for each participant; `sgf_subj_ci` is a data frame with means and confidence intervals *across* participants. For this purpose, we use the `tidyboot` package and the `tidyboot_mean()` function, which gives us bootstrapped 95% confidence intervals for the means.
 
-```{r viz-show-data3, opts.label='code'}
-```
-
-With these two dataframes in hand, we can now make our plot.
-
 ```{r fig-viz-show-data4, opts.label='code'}
 ```
 
@@ -402,25 +396,34 @@ The most noteworthy aspect of this code is that the `geom_jitter()` function doe
 :::
 
 Perhaps the format that takes this principle the furthest is the so-called "raincloud plot" [@allen2019raincloud] shown in @fig-viz-raincloud.
-A raincloud plot combines the raw data (the "rain") with a smoothed density (the "cloud") and a boxplot giving the median and quartiles of the distribution. 
+A raincloud plot combines the raw data ("rain") with a smoothed density ("cloud") and a boxplot giving the median and quartiles of the distribution. 
 
 ```{r fig-viz-raincloud}
 #| fig-cap: Raincloud plot of the Stiller data.
-#| fig-cap-location: margin
+#| cap-location: margin
 #| fig-height: 6
 #| out-width: 80%
 
+library(ggridges)
+library(ggstance)
 ggplot(sgf_subj_means, aes(y = age_group, x = rating, color = condition)) +
-  ggridges::geom_density_ridges(
-    aes(fill = condition), alpha = 0.2, scale = 0.7,
-    jittered_points = TRUE, point_alpha = 0.7,
-    position = ggridges::position_raincloud(width = 0.05, height = 0.15, ygap = 0.1)) +
-  ggstance::geom_boxploth(width = 0.1, alpha = 0.2, outlier.shape = NA, show.legend = FALSE) +
+  geom_density_ridges(aes(fill = condition), alpha = 0.2, scale = 0.7,
+                      jittered_points = TRUE, point_alpha = 0.7,
+                      position = position_raincloud(width = 0.05, height = 0.15,
+                                                    ygap = 0.1)) +
+  geom_boxploth(width = 0.1, alpha = 0.2, outlier.shape = NA, show.legend = FALSE) +
   scale_y_discrete(expand = expansion(mult = c(0.2, 0.4))) +
   guides(fill = "none", color = guide_legend(reverse = TRUE)) +
   labs(x = "Mean accuracy", y = "Age group", color = "Condition") +
   theme(legend.position = "top")
 ```
+
+::: {.callout-note title="code"}
+This raincloud plot requires two additional plotting packages: `ggridges` for the densities and `ggstance` for the horizontal boxplots.
+
+```{r fig-viz-raincloud, opts.label='code'}
+```
+:::
 
 ::: {.callout-note title="depth"}
 ## Visualizing uncertainty with error bars {-}
@@ -436,7 +439,7 @@ As a result, it became more common to show the 95\% confidence interval instead:
 While these analytic equations remain common, an increasingly popular alternative is to *bootstrap* confidence intervals (see Depth box in @sec-inference for more on bootstrapping).
 <!-- A deep theoretical understanding of the bootstrap technique is outside the scope of this text, but you can think of it as a way of deriving a sampling distribution from your dataset using *simulations* instead of mathematical derivations about the properties of the sampling distribution. -->
 The bootstrap is a powerfully generic technique, especially when you want to show error bars for summary statistics that are more complex than means, where we do not have such convenient asymptotic guarantees and "closed-form" equations.
-For example, suppose you are working with a skewed response variable or a dataset with clear outliers, and you want to estimate medians and quartiles.  
+For example, if you're working with a skewed response variable or a dataset with clear outliers, and you want to estimate medians and quartiles.  
 
 Or suppose you want to estimate proportions from categorical data, or a more *ad hoc* statistic like the AUC (area underneath the curve) in a  hierarchical design where it is not clear how to aggregate across items or participants in a mixed-effects model. 
 Analytic estimators of confidence intervals can in principle be derived for these statistics, subject to different assumptions, but it is often more transparent and reliable in practice to use the bootstrap. 
@@ -483,11 +486,11 @@ bind_rows(boot, ci_sem, ci_ci) |>
 ::: {#fig-viz-boot}
 
 ::: {.content-visible when-format="html"}
-![](015-viz_files/figure-html/fig-viz-boot-1.png)
+![](015-viz_files/figure-html/fig-viz-boot-1.png){width="80%"}
 :::
 
 ::: {.content-visible when-format="pdf"}
-![](015-viz_files/figure-pdf/fig-viz-boot-1.png)
+![](015-viz_files/figure-pdf/fig-viz-boot-1.png){width="80%"}
 :::
 
 Three different error bars for the Stiller data: bootstrapped 95% confidence intervals (left), standard error of the mean (middle), and analytically computed confidence intervals (right).
@@ -513,7 +516,7 @@ Simply put, we should try to use the simplest possible presentation of the maxim
 To calculate the amount of information shown, @tufte2001visual suggested a measure called the "data density index," the "numbers plotted per square inch".
 The worst offenders have a very low density while also using a lot of excess ink (e.g., @fig-viz-bad and @fig-viz-bad2)
 
-![This figure uses complicated 3D ribbons to compare distributions across four countries (from @roeder1994dna). How could the same data have been presented more legibly?](images/viz/roeder_badviz.png){#fig-viz-bad2 .column-margin width="90%"}
+![This figure uses complicated 3D ribbons to compare distributions across four countries [from @roeder1994dna]. How could the same data have been presented more legibly?](images/viz/roeder_badviz.png){#fig-viz-bad2 .column-margin width="90%"}
 
 The defaults in modern visualization libraries like `ggplot` prevent some of the worst offenses, but are still often suboptimal.
 For example: consider whether the visual complexity introduced by the default grey background and grid lines in @fig-viz-themes0) is justified, or whether a more minimal theme would be sufficient (see the [`ggthemes`](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/) package for a good collection of themes).
@@ -521,8 +524,7 @@ For example: consider whether the visual complexity introduced by the default gr
 ```{r viz-themes0}
 #| label: fig-viz-themes0
 #| fig-cap: Standard "gray" themed Stiller figure.
-#| fig-cap-location: margin
-#| out-width: 80%
+#| out-width: 85%
 
 ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition, group = condition)) +
   geom_line() +
@@ -533,14 +535,15 @@ ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition, group = co
   theme_gray()
 ```
 
+\clearpage
 @fig-viz-themes shows a slightly more "styled" version of the same plot with labels directly on the plot and a lighter-weight theme.
 
 ```{r viz-themes}
 #| label: fig-viz-themes
 #| fig-cap: "Custom themed Stiller figure with direct labels."
-#| fig-cap-location: margin
-#| fig-width: 6
-#| out-width: 70%
+#| cap-location: margin
+#| fig-width: 5.5
+#| out-width: 85%
 
 library(directlabels)
 
@@ -633,7 +636,7 @@ When we operationalize a theory's predictions in terms of a single statistic (e.
 Good visualizations force us to zoom out and take in the bigger picture.
 
 <!-- # | fig-height: 6 -->
-
+\clearpage
 ```{r fig-viz-datasaurus}
 #| fig-cap: Originally inspired by the Datasaurus figure constructed by \@albertocairo on Twitter [@cairo2016] using the DrawMyData tool (<http://robertgrantstats.co.uk/drawmydata.html>), we can construct an arbitrary number of different graphs with exactly the same statistics [@matejka2017same;@murray2021generating], such as the Datasaurus Dozen [@matejka2017same].
 #| fig-width: 8
@@ -657,8 +660,7 @@ cowplot::plot_grid(dino, not_dino, nrow = 2, rel_heights = c(1, 3))
 ```
 
 ```{r tbl-datasaurus}
-#| tbl-cap: Summary statistics for each dataset in the Datasaurus Dozen [@matejka2017same].
-#| column: margin
+#| tbl-cap: Summary statistics for each dataset in the Datasaurus Dozen (Matejka 2017).
 
 datasauRus::datasaurus_dozen |>
   group_by(dataset) |>
@@ -670,7 +672,7 @@ datasauRus::datasaurus_dozen |>
          cor_xy = round(cor_xy, 3))
 ```
 
-### Data diagnostics
+\clearpage
 
 ::: {.callout-note title="accident report"}
 ## [Distributional] gorillas in our midst. {-}
@@ -714,7 +716,6 @@ A dataset constructed by @yanai2020 which revealed a picture of a gorilla when t
 
 :::
 
-
 While it may not be surprising that a group of students would take the shortest path to completing their assignment, similar concerns have been raised in much more serious cases concerning how experienced researchers could fail to notice obviously fraudulent data.
 For example, when the Datacolada bloggers -@datacolada made a simple histogram of the car mileage data reported in @shu2012signing [released publicly by @kristal2020signing], they were immediately able to observe that it followed a perfectly uniform distribution, truncated at exactly 50,000 miles (@fig-viz-uniform).
 Given a little thought, this pattern should be extremely puzzling.
@@ -756,20 +757,23 @@ There might be a bug in our coding scheme, a column might be mislabeled, or migh
 Maybe our design wasn't perfectly balanced, or something went wrong with a particular participant's keyboard presses. Most of the time, it's not tractable to manually scroll through our raw data looking for such problems. Visualization is our first line of defense for the all-important process of running "data diagnostics." If there is a weird artifact in our data, it will pop out if we just make the right visualizations.
 :::
 
+### Data diagnostics
+
 So which visualizations should we start with? The best practice is to always start by making histograms of the raw data. As an example, let's consider the rich and interesting dataset shared by Blake, McAuliffe, and colleagues [-@blake2015ontogeny] in their article "Ontogeny of fairness in seven societies." This article studies the emergence of children's reasoning about fairness -- both when it benefits them and when it harms them -- across cultures.
 
+\clearpage
 ::: {.callout-note title="code"}
 If you want to follow along with this example at home, you can load the data from our repository!
 
 ```{r viz-blake1, echo=TRUE}
-#, opts.label='code'}
 repo <- "https://raw.githubusercontent.com/langcog/experimentology/main/"
 fairness_raw <- read_csv(file.path(repo, "data/viz/ontogeny_of_fairness.csv"))
 
 fairness <- fairness_raw |>
   mutate(trial_num = trial |> str_remove("t") |> as.numeric(),
          trial_type = eq.uneq |> fct_recode("Equal" = "E", "Unequal" = "U"),
-         condition = condition |> fct_recode("Advantageous" = "AI", "Disadvantageous" = "DI"),
+         condition = condition |> fct_recode("Advantageous" = "AI",
+                                             "Disadvantageous" = "DI"),
          age = floor(actor.age.years),
          reject = decision == "reject") |>
   select(subj_id = actor.id, age, country, condition, trial_num, trial_type, reject) |>
@@ -801,7 +805,7 @@ fairness_by_age <- fairness |>
 
 ```{r fig-viz-blake3}
 #| fig-cap: Participants by age in the Blake data.
-#| fig-cap-location: margin
+#| cap-location: margin
 #| out-width: 80%
 
 ggplot(fairness_by_age, aes(x = age, y = n)) +
@@ -835,11 +839,12 @@ ggplot(fairness_by_age, aes(x = age)) +
 Histograms are intended by `ggplot` to be for continuous data, however, and so they don't give the discrete bars that our earlier workflow did. 
 :::
 
+\clearpage
 How many participants were included from each country (@fig-viz-blake5)?
 
 ```{r fig-viz-blake5}
 #| fig-cap: Participants by country in the Blake data.
-#| fig-cap-location: margin
+#| cap-location: margin
 #| out-width: 80%
 
 fairness |>
@@ -862,11 +867,12 @@ If you use this technique, be careful to use pipe (`|>` or `%>%`) between functi
 The only other trick to point out here is that we use the `fct_reorder()` call to order the levels of the `country` factor in descending order. This function is found in the very useful `forcats` package of the `tidyverse`, which contains all sorts of functions for working with factors.
 :::
 
+\clearpage
 Are ages roughly similar across each country (@fig-viz-blake6)?
 
 ```{r fig-viz-blake6}
 #| fig-cap: Age distribution across countries in the Blake data.
-#| fig-cap-location: margin
+#| cap-location: margin
 #| fig-height: 3.5
 #| out.width: 80%
 
@@ -904,7 +910,7 @@ We'll aggregate at the participant level, and check the frequency of different r
 
 ```{r fig-viz-blake7}
 #| fig-cap: Rejection rates in the Blake data.
-#| fig-cap-location: margin
+#| cap-location: margin
 #| out-width: 80%
 
 fairness_by_subj <- fairness |>
@@ -931,7 +937,7 @@ This clumping leads us to check how many trials each participant is completing (
 
 ```{r fig-viz-blake8}
 #| fig-cap: Trials per participant in the Blake data.
-#| fig-cap-location: margin
+#| cap-location: margin
 #| out-width: 80%
 
 fairness |>
@@ -980,8 +986,8 @@ fairness_by_age <- fairness |>
 
 ```{r fig-viz-blake9}
 #| fig-cap: Rejection rates in the US data from Blake, plotted by age.
-#| fig-cap-location: margin
-#| fig-height: 7
+#| cap-location: margin
+#| fig-height: 6
 #| out-width: 90%
 
 fairness_by_age |> filter(country == "US") |>
@@ -992,9 +998,14 @@ fairness_by_age |> filter(country == "US") |>
     ylim(c(0, 1)) +
     labs(x = "Age (years)", y = "Proportion of offers rejected",
          color = "Condition", size = "N subjects") +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom", legend.box = "vertical")
 ```
 
+@fig-viz-blake9 is not a figure we'd put in a paper, but it helps us get a sense of the pattern in the data.
+There appears to be an age trend that's specific to the Unequal trials, with rejection rates rising over time (compared to roughly even or decreasing rates in the Equal trials).
+Meanwhile, rejection rates for the Disadvantageous group also seem slightly higher than those in the Advantageous group.
+
+\clearpage
 ::: {.callout-note title="code"}
 Here, we are using `geom_smooth()` to overlay regression trends over the raw data.
 `geom_smooth()` takes a number of different options corresponding to different smoothing techniques.
@@ -1019,17 +1030,15 @@ Then we can create the visualization:
 We often find it convenient to filter the summary dataset in the plotting call, so that we can reuse it again. 
 :::
 
-@fig-viz-blake9 is not a figure we'd put in a paper, but it helps us get a sense of the pattern in the data.
-There appears to be an age trend that's specific to the Unequal trials, with rejection rates rising over time (compared to roughly even or decreasing rates in the Equal trials).
-Meanwhile, rejection rates for the Disadvantageous group also seem slightly higher than those in the Advantageous group.
 Now let's re-bin the data into two-year age groups so that individual point estimates are a bit more reliable, and add the other countries back in.^[Binning data is a trick that we often use for reducing complexity in a plot when data are noisy. It should be used with care, however, since different binning decisions can sometimes lead to different conclusions. Here we tried several binning intervals and decided that two-year age bins showed the underlying trends pretty well.]
+
+\clearpage
 
 ```{r fig-viz-blake10}
 #| fig-cap: Rejection rates by age for all data in the Blake dataset.
 #| fig-width: 9
 #| fig-height: 4
-#| fig-column: page-right
-#| out.width: 80%
+#| cap-location: margin
 
 fairness_by_age_binned <- fairness |>
   filter(!is.na(reject)) |>
@@ -1053,16 +1062,16 @@ ggplot(fairness_by_age_binned,
   theme(legend.position = "bottom")
 ```
 
+@fig-viz-blake10 is now looking much closer to a quick-and-dirty version of a "design plot" we might include in a paper.
+The DV (rejection rate) is on the y-axis, and the primary variable of interest (age) is on the x-axis. 
+Other elements of the design (country and trial type) are mapped to color and facets, respectively.
+
 ::: {.callout-note title="code"}
 Despite the difference between the plot above and this one, the code to produce them is actually very similar. The only difference is the creation of the binned variable and a slight shift of aesthetic and faceting variables. 
 
 ```{r fig-viz-blake10, opts.label='code'}
 ```
 :::
-
-@fig-viz-blake10 is now looking much closer to a quick-and-dirty version of a "design plot" we might include in a paper.
-The DV (rejection rate) is on the y-axis, and the primary variable of interest (age) is on the x-axis. 
-Other elements of the design (country and trial type) are mapped to color and facets, respectively.
 
 ### Visualization as debugging
 
