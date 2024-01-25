@@ -25,11 +25,45 @@ In an early version of our course, student Desmond Ong set out to replicate a th
 
 The experimental design investigated two factors: whether the participant believed the ball was present or absent (P+/P-) and whether the animated agent *would have believed* the ball was present or absent (A+/A-) based on what it saw. The result was four conditions: P+/A+, P+/A-, P-/A+, and P-/A-. (We could call this a **fully crossed** design because each level of one factor was presented with each level of the other). 
 
-![Original data from @kovacs2010. Error bars show 95% confidence intervals.](images/design/kovacs-original.png){#fig-design-kovacs-original width="35%"}
+```{r fig-design-kovacs-original}
+#| fig-cap: Original data from @kovacs2010. Error bars show 95% confidence intervals. Based on @phillips2015.
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: 45%
+
+# from https://github.com/langcog/KTE -> helper/design/KTE/KTE_markdown.Rmd
+conceptualFigDF <- readRDS("data/design/KTE/conceptualFigDF.rds")
+
+w <- .1
+conceptualFigDF |>
+  filter(str_detect(panel, "KTE")) |>
+ggplot(aes(x = participant, y = reactionTime, colour = agent, group = agent)) +
+  coord_cartesian(clip = "off") +
+  geom_line(position = position_dodge(width = w)) +
+  geom_pointrange(aes(ymin = reactionTime - ci.l, ymax = reactionTime + ci.h),
+                 position = position_dodge(width = w)) +
+  labs(y = "Reaction time (ms)", x = "Participant's belief", colour = "Agent's belief")
+```
 
 Both the original experiments and the replication that Desmond ran showed a significant effect of the agent's beliefs on participants' reaction times, suggesting that what the -- totally irrelevant -- agent thought about the ball was leading them to react more or less quickly to the presence of the ball. @fig-design-kovacs-original shows the original data (N=24). But although both studies showed an effect of agent belief, the replication and several variations also showed a crossover **interaction** of participant and agent belief. The participants were slower when the agents *and* the participants believed that the ball was behind the screen (@fig-design-kovacs-replication). That finding wasn't consistent with the theory that tracking inconsistent beliefs slowed down reaction times. If participants were tracking their own beliefs about the ball *and* the agent's, they should have been fastest in the P+/A+ condition, not slower.
 
-![Data from a series of replications of @kovacs2010, including versions on the web (Experiments 1a and 1b) and in lab (Experiment 1c), as well as several variations on the format of responding (Experiments 2 and 3; 2AFC = two alternative forced choice) and an experiment where a large wall kept the agent from seeing the ball at all (Experiment 4). "Hits" and "CRs" panels refer to different subsets of trials where participants responded "present" when the ball was present and "absent" when the ball was absent. Error bars are 95% confidence intervals.](images/design/kovacs-replication.png){#fig-design-kovacs-replication width="80%"}
+```{r fig-design-kovacs-replication}
+#| fig-cap: Data from a series of replications of @kovacs2010, including versions on the web (Experiments 1a and 1b) and in lab (Experiment 1c), as well as several variations on the format of responding (Experiments 2 and 3; 2AFC = two alternative forced choice) and an experiment where a large wall kept the agent from seeing the ball at all (Experiment 4). "Hits" and "CRs" panels refer to different subsets of trials where participants responded "present" when the ball was present and "absent" when the ball was absent. Error bars are 95% confidence intervals. Based on @phillips2015.
+#| fig-width: 7.5
+#| fig-height: 5.5
+#| out-width: 90%
+
+msSub <- readRDS("data/design/KTE/msSub.rds")
+msSub |>
+  mutate(expt = paste("Expt.", expt)) |>
+  mutate(expt = expt |> str_replace("([0-9]):", "\\1: ")) |>
+ggplot(aes(x = participant, y = reactionTime, colour = agent, group = agent)) +
+  facet_wrap(vars(expt), ncol = 3) +
+  geom_line(position = position_dodge(width = w)) +
+  geom_pointrange(aes(ymin = reactionTime - ci.l, ymax = reactionTime + ci.h),
+                  position = position_dodge(width = w), fatten = 1.5) +
+  labs(y = "Reaction time (ms)", x = "Participant's belief", colour = "Agent's belief")
+```
 
 A collaborative team working on this paradigm identified a key issue [@phillips2015]. There was a **confound** in the experimental design -- another factor that varied across conditions besides the target factors. In other words, something was changing between conditions other than the agent's and participant's belief states. The confound was an attention check (discussed further in @sec-collection): participants had to press a key when the agent left the scene to show that they were paying attention. This attention check appeared a few seconds later in the videos for the P+/A+ and P-/A- trials -- the ones that yielded the slow reaction times -- than it did for the other two. When the attention check was removed or when its timing was equalized across conditions, reaction time effects were eliminated, suggesting that the original pattern of findings may have been due to the confound. 
 
@@ -57,7 +91,28 @@ This logic is going to get more complicated if we have more than one distinct fa
 
 @young2007 were interested in how moral judgments depend on both the beliefs of actors and the outcomes of their actions. They presented participants with vignettes in which they learned, for example, that Grace visits a chemical factory with her friend and goes to the coffee break room, where she sees a white powder that she puts in her friend's coffee. They then manipulated both Grace's *beliefs* and the *outcomes* of her action following the schema in @fig-design-young-design. Participants (N=10) used a four-point Likert scale to rate whether the actions were morally forbidden (1) or permissible (4). @fig-design-young-data shows the data.
 
-![Moral permissability as a function of belief and outcome. Results from @young2007, annotated with the estimated effects. Simple effects measure differences between the individual conditions and the neutral belief, neutral outcome condition. The interaction measures the difference between the predicted sum of the two simple effects and the actual observed data for the negative belief, negative outcome condition.](images/design/young2007-data.png){#fig-design-young-data .margin-caption width=70%}
+```{r fig-design-young-data}
+#| fig-width: 7
+#| output: FALSE
+
+# negative, 3.2; neutral, 3.9; t(9) = −6.03
+# negative, 1.1; neutral, 1.2; t(9) = −1.83
+
+young <- tribble(
+  ~belief, ~outcome, ~mean,
+  "Neutral belief", "Negative outcome", 3.2,
+  "Neutral belief", "Neutral outcome", 3.9,
+  "Negative belief", "Negative outcome", 1.1,
+  "Negative belief", "Neutral outcome", 1.2
+) |> mutate(belief = fct_rev(belief), outcome = fct_rev(outcome))
+
+ggplot(young, aes(x = outcome, y = mean, fill = belief)) +
+  coord_cartesian(ylim = c(1, 4)) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.6) +
+  labs(x = "", y = "← Forbidden         Permissible →", fill = "")
+```
+
+![Moral permissability as a function of belief and outcome. Results from @young2007, annotated with the estimated effects. Simple effects measure differences between the individual conditions and the neutral belief, neutral outcome condition. The interaction measures the difference between the predicted sum of the two simple effects and the actual observed data for the negative belief, negative outcome condition.](images/design/young2007-data.png){#fig-design-young-data .margin-caption width=80%}
 
 Young et al.'s design has two factors -- belief and outcome -- each with two levels (neutral and negative, noted as $B$ and $-B$ for belief and $O$ and $-O$ for outcome).^[Neither of these is necessarily a "control" condition: the goal is simply to compare these two levels of the factor -- negative and neutral -- to estimate the effect due to the factor.] These factors are **fully crossed**: each level of each factor is combined with each level of each other. 
 
@@ -290,15 +345,54 @@ A **placebo** effect is a positive effect on the measure that comes as a result 
 
 Can doing challenging cognitive tasks make you smarter? In the late 2000s and early 2010s, a large industry for "brain training" emerged. Companies like Lumos Labs, CogMed, BrainHQ, and CogniFit offered games, often modeled on cognitive psychology tasks, that claimed to lead to gains in memory, attention, and problem solving. 
 
-![The primary outcome graph for @jaeggi2008.](images/design/jaeggi.png){#fig-design-jaeggi width="35%"}
-
 These companies were basing their claims in part on a scientific literature reporting that concerted training on difficult cognitive tasks could lead to benefits that **transferred** to other cognitive domains. Among the most influential of these was a study by @jaeggi2008. They conducted four experiments in which participants (N=70 across the studies) were assigned to either working memory training via a difficult working memory task (the "dual N-back") or a no-training control, with training varying from 8 days all the way to 19 days. 
 
 The finding from this study excited a tremendous amount of interest because they reported not only gains in performance on the specific training task but also on a general intelligence task that the participants had trained on. While the control group's scores on these tasks improved, presumably just from being tested twice, there was a condition by time (pre- vs. post) interaction such that the scores of the trained groups (consolidated across all four training experiments) grew significantly more over the training period (@fig-design-jaeggi). These results were interpreted as supporting transfer -- whereby training on one task leads to broader gains -- a key goal for "brain training."
 
-![The four sub-experiments of @jaeggi2008, now disaggregated. Panels show 8- (A), 12- (B), 17- (C), and 19-session (D) studies. Note the different scales and measures. RAPM = Raven's Advanced Progressive Matrices; BOMAT = Bochumer Matrizentest. From @redick2013.](images/design/jaeggi-disaggregated.png){#fig-design-jaeggi-disagg width="75%"}
+```{r fig-design-jaeggi}
+#| fig-cap: The primary outcome graph for data from @jaeggi2008.
+#| fig-width: 5.5
+#| fig-height: 3
+#| out-width: 50%
+
+# extracted from original plots using https://plotdigitizer.com/app
+jaeggi <- read_csv("data/design/jaeggi.csv") |>
+  pivot_wider(names_from = stat, values_from = score) |>
+  mutate(session = fct_rev(session),
+         condition = condition |>
+           fct_relevel("dual_nback") |>
+           fct_recode("Dual N-back" = "dual_nback",
+                      "Active control" = "active_control",
+                      "Control" = "control"))
+
+jaeggi |>
+  filter(!sessions) |> # aggregated
+ggplot(aes(x = session, y = mean, colour = condition)) +
+  geom_pointrange(aes(ymin = cil, ymax = ciu),
+                  position = position_dodge(width = w), fatten = 1.5) +
+  geom_line(aes(group = condition), position = position_dodge(width = w)) +
+  labs(x = "Training session", y = "Performance score", colour = "Condition")
+```
 
 Careful readers of the original paper noticed signs of analytic flexibility (as discussed in Chapters [-@sec-replication] and [-@sec-inference]), however. For example, the key statistical model was fit to dataset created by post-hoc consolidation of experiments, which yielded $p = .025$ on the key interaction [@redick2013]. When data were disaggregated, it was clear that the measures and effects had differed in each of the different sub-experiments (@fig-design-jaeggi-disagg). 
+
+```{r fig-design-jaeggi-disagg}
+#| dependson: fig-design-jaeggi
+#| fig-cap: "The four sub-experiments of @jaeggi2008, now disaggregated. Panels show 8-, 12-, 17-, and 19-session studies. Note the different measures: RAPM = Raven's Advanced Progressive Matrices; BOMAT = Bochumer Matrizentest. Based on @redick2013."
+#| fig-width: 8
+#| fig-height: 5
+#| out-width: 80%
+
+jaeggi |>
+    filter(sessions > 0) |> # diaggregated
+ggplot(aes(x = session, y = mean, colour = condition)) +
+  facet_wrap(vars(sessions, measure), labeller = labeller(.default = label_both, .multi_line = FALSE)) +
+  geom_pointrange(aes(ymin = cil, ymax = ciu),
+                  position = position_dodge(width = w), fatten = 1.5) +
+  geom_line(aes(group = condition), position = position_dodge(width = w)) +
+  scale_y_continuous(breaks = seq(6, 16, 2)) +
+  labs(x = "Training session", y = "Performance score", colour = "Condition")
+```
 
 Several replications by the same group addressed some of these issues, but still failed to show convincing evidence of transfer. In particular, there was no comparison to an **active control group** in which participants did some kind of alternative activity for the same amount of time [@simons2016]. Such a comparison is critical because a comparison to a **passive control group** (a group that does no intervention) confounds participants' general effort and involvement in the study with the specific training being used. Successful transfer compared to passive control could be the result of participants' involvement, expectations, or motivation rather than brain training per se.
 
@@ -313,9 +407,15 @@ If placebo effects reflect what participants expect from a treatment then **dema
 
 The final entry into this list of internal validity threats is **experimenter expectancy effects**, where the experimenter's behavior biases participants in a way that results in the appearance of condition differences where no true difference exists. The classic example of such effects is from the animal learning literature and the story of Clever Hans. Clever Hans was a horse who appeared able to do arithmetic by tapping out solutions with his hoof. On deeper investigation, it became apparent he was being cued by his trainer's posture (apparently without the trainer's knowledge) to stop tapping when the desired answer was reached. The horse knew nothing about math, but the experimenter's expectations were altering the horse's behavior across different conditions. 
 
-In any experiment delivered by human experimenters who know what condition they are delivering, condition differences can result from experimenters imparting their expectations. @fig-design-rosenthal shows the results of a meta-analysis estimating sizes of expectancy effects in a range of domains -- the magnitudes are shocking. There's no question that experimenter expectancy is sufficient to "create" many interesting phenomena artifactually. The mechanisms of expectancy are an interesting research topic in their own right; in many cases expectancies appear to be communicated non-verbally in much the same way that Clever Hans learned [@rosnow1997]. 
+In any experiment delivered by human experimenters who know what condition they are delivering, condition differences can result from experimenters imparting their expectations. @tbl-rosenthal shows the results of a meta-analysis estimating sizes of expectancy effects in a range of domains -- the magnitudes are shocking. There's no question that experimenter expectancy is sufficient to "create" many interesting phenomena artifactually. The mechanisms of expectancy are an interesting research topic in their own right; in many cases expectancies appear to be communicated non-verbally in much the same way that Clever Hans learned [@rosnow1997]. 
 
-![Magnitudes of expectancy effects. From @rosenthal1994.](images/design/rosenthal2004.png){#fig-design-rosenthal .margin-caption width=65%}
+\vspace{.5em}
+\footnotesize
+\renewcommand{\arraystretch}{1.5}
+{{< include md/009-design/rosenthal.md >}}
+\renewcommand{\arraystretch}{1}
+\normalsize
+\vspace{-1em}
 
 In medical research, the gold standard is an experimental design where neither patients nor experimenters know which condition the patients are in.^[These are commonly referred to as **double blind** designs (though the term **masked** is now often preferred).] Results from other designs are treated with suspicion because of their vulnerability to demand and expectancy effects. In psychology, the most common modern protection against experimenter expectancy is the delivery of interventions by a computer platform that can give instructions in a coherent and uniform way across conditions. 
 

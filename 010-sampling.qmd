@@ -28,9 +28,39 @@ Since Darwin, scientists have assumed that smell is a vestigial sense in humans 
 
 So, would it be a good generalization about human beings -- all people -- that olfaction as a sense is de-emphasized relative to, say, vision? This inference has a classic sample-to-population structure. Within several samples of participants using widely-spoken languages, we observe limited and inconsistent vocabulary for smells, as well as poor discrimination. We use these samples to license an inference to the population -- in this case, the entire human population. 
 
-![Data from @majid2014 on the consistency of color and odor naming in English and Jahai speakers. Higher values indicate more consistent descriptions. Pie charts indicate the type of language being used. Error bars show standard deviation.](images/sampling/majid2014.png){#fig-sampling-majid2014 width="40%"}
+```{r fig-sampling-majid2014}
+#| fig-cap: Data from @majid2014 on the consistency of color and odor naming in English and Jahai speakers. Higher values indicate more consistent descriptions. Error bars show standard deviation.
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: 45%
+# data extracted using https://apps.automeris.io/wpd/
+majid <- tribble(
+  ~language, ~condition,  ~stat, ~value,
+  "English",    "color",  "cil",   0.29,
+  "English",    "color", "mean",   0.59,
+  "English",    "color",  "ciu",   0.87,
+  "English",     "odor",  "cil",   0.00,
+  "English",     "odor", "mean",   0.04,
+  "English",     "odor",  "ciu",   0.08,
+    "Jahai",    "color",  "cil",   0.09,
+    "Jahai",    "color", "mean",   0.28,
+    "Jahai",    "color",  "ciu",   0.45,
+    "Jahai",     "odor",  "cil",   0.14,
+    "Jahai",     "odor", "mean",   0.23,
+    "Jahai",     "odor",  "ciu",   0.34
+)
 
-But these inferences about the universal lack of olfactory vocabulary are likely based on choosing non-representative samples! Multiple hunter-gatherer groups appear to have large vocabularies for consistent smell description. For example, the Jahai, a hunter-gatherer group on the Malay Peninsula, have a vocabulary that includes at least twelve words for distinct odors, for example /cŋεs/, which names odors with a "stinging smell" like gasoline, smoke, or bat droppings. When Jahai speakers are asked to name odors, they produce shorter and much more consistent descriptions than English speakers -- in fact, their smell descriptions were as consistent as their color descriptions (@fig-sampling-majid2014). Further studies implicate the hunter-gatherer lifestyle as a factor: while several hunter-gatherer groups show good odor naming, nearby horticulturalist groups don't [@majid2018].
+majid |>
+  pivot_wider(names_from = stat, values_from = value) |>
+ggplot(aes(x = condition, y = mean, colour = condition)) +
+  facet_wrap(vars(language), strip.position	= "bottom") +
+  geom_pointrange(aes(ymin = cil, ymax = ciu)) +
+  guides(color = "none") +
+  labs(x = "", y = "Codability\n(Simpson's diversity index)") +
+  theme(strip.placement = "outside")
+```
+
+But these inferences about the universal lack of olfactory vocabulary are likely based on choosing non-representative samples! Multiple hunter-gatherer groups appear to have large vocabularies for consistent smell description. For example, the Jahai, a hunter-gatherer group on the Malay Peninsula, have a vocabulary that includes at least twelve words for distinct odors, for example /cŋɛs/, which names odors with a "stinging smell" like gasoline, smoke, or bat droppings. When Jahai speakers are asked to name odors, they produce shorter and much more consistent descriptions than English speakers -- in fact, their smell descriptions were as consistent as their color descriptions (@fig-sampling-majid2014). Further studies implicate the hunter-gatherer lifestyle as a factor: while several hunter-gatherer groups show good odor naming, nearby horticulturalist groups don't [@majid2018].
 
 Generalizations about humans are tricky. If you want to estimate the average odor naming ability, you could take a random sample of humans and evaluate their odor naming. Most of the individuals in the sample would likely speak English, Mandarin, Hindi, or Spanish. Almost certainly, none of them would speak Jahai, which is spoken by only a little more than a thousand people and is listed as Threatened by Ethnologue (<https://www.ethnologue.com/language/jhi>). Your estimate of low odor naming stability might be a good guess for the *majority* of the world's population, but would tell you little about the Jahai. 
 

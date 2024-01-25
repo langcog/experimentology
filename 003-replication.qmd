@@ -49,7 +49,7 @@ These findings provide a lower bound on the number of errors in the literature a
 
 Nevertheless, a few years ago a group of us spotted an opportunity to check reproducibility by examining studies published in two journals that either required or encouraged data sharing. @hardwicke2018b and @hardwicke2021a first identified studies that shared data, then narrowed those down to studies that shared *reusable* data (the data were accessible, complete, and comprehensible). For 60 of these articles, we then attempted to reproduce numerical values related to a particular statistical result in the paper. The process was incredibly labor-intensive, with articles typically requiring 5--10 hours of work each. And the results were concerning: the targeted values in only about a third of articles were completely reproducible without help from the original authors! In many cases, after -- sometimes extensive -- correspondence with the original authors, they provided additional information that was not reported in the original paper. After author contact, the reproducibility success rate improved to 62% (@fig-replication-hardwicke). The remaining papers appeared to have some values that neither we, nor the original authors, could reproduce. Importantly, we didn't identify any patterns of non-reproducibility that seriously undermined the conclusions drawn in the original articles; however, other reproducibility studies have found a distressingly high number of decision errors [@artner2020], albeit with a slightly higher success rate overall.
 
-![Analytic reproducibility of results from open-data articles in _Cognition_ and _Psychological Science_. From @hardwicke2021a.](images/replication/hardwicke2021.png){#fig-replication-hardwicke .margin-caption}
+![Analytic reproducibility of results from open-data articles in _Cognition_ and _Psychological Science_. From @hardwicke2021a, Figure 1 (licensed under CC BY 4.0).](images/replication/hardwicke2021.png){#fig-replication-hardwicke .margin-caption}
 
 In sum: transparency is a critical imperative for decreasing the frequency of errors in the published literature. Reporting and computation errors are frequent in the published literature, and the identification of these errors depends on the findings being reproducible. If data are not available, then errors usually cannot be found.
 
@@ -60,7 +60,61 @@ Around 2011, we were teaching our Experimental Methods course for the first time
 
 In the course that year we chose replication projects from the sample that Nosek had told us about. Four of these projects were executed very well and were nominated by the course TAs for inclusion in the broader project. A few years later, when the final group of 100 replication studies was completed, we got a look at the results, shown in @fig-replication-osc-2015.
 
-![Results from the @osc2015. Each point represents one of the studies in the sample, with the horizontal position giving the original effect size and the vertical position giving the replication effect size. Dot size represents estimated statistical power. The dotted line represents a perfect replication.](images/replication/osc-2015.png){#fig-replication-osc-2015 width=80%}
+```{r fig-replication-osc-2015}
+#| fig-cap: Results from the @osc2015. Each point represents one of the studies in the sample, with the horizontal position giving the original effect size and the vertical position giving the replication effect size. Dot size represents estimated statistical power. The grey line represents a perfect replication.
+#| fig-width: 10
+#| fig-height: 8
+#| out-width: 80%
+
+rpp <- read_csv("data/replication/rpp_data.csv")
+rpp_data <- rpp |>
+  rename_with(\(s) s |> str_replace_all("_", ".") |> str_replace_all("\\.$", "")) |>
+  filter(!is.na(T.pval.USE..O), !is.na(T.pval.USE..R)) |>
+  mutate(oriSig = if_else(T.pval.USE..O <= 0.06, "Significant", "Not Significant"), # |> as_factor(),
+         repSig = if_else(T.pval.USE..R <= 0.05, "Significant", "Not Significant"), # |> as_factor(),
+         `Power (R)` = as.numeric(`Power (R)`))
+
+rpp_plot <- ggplot(rpp_data, aes(x = T.r..O, y = T.r..R)) +
+  geom_hline(aes(yintercept = 0), linetype = "dotted") +
+  geom_abline(intercept = 0, slope = 1, color = pal$grey) +
+  geom_point(aes(size = `Power (R)`, fill = repSig), alpha = .8, color = pal$grey, shape = 21) +
+  geom_rug(aes(color = oriSig), size = 1, sides = "b", alpha = .6, show.legend = FALSE) +
+  geom_rug(aes(color = repSig), size = 1, sides = "l", alpha = .6) +
+  scale_x_continuous(limits = c(0, 1), breaks = c(0, .25, .5, .75, 1)) + 
+  scale_y_continuous(limits = c(-.5, 1), breaks = c(-.5, -.25, 0, .25, .5, .75, 1)) + 
+  scale_size_continuous(range = c(1, 5)) +
+  labs(x = "Original effect size", y = "Replication effect size",
+       colour = "p-value", fill = "p-value", size = "Replication power") +
+  theme(legend.position = c(0.3, 0.87),
+        legend.box = "horizontal",
+        plot.margin = margin(0, 0, 7, 7))
+
+ori_hist <- ggplot(rpp_data, aes(x = T.r..O, fill = oriSig)) +
+  geom_density(aes(y = after_stat(count)), alpha = 0.5, show.legend = FALSE) +
+  lims(x = c(0, 1)) +
+  theme(axis.line = element_line(colour = "white"),
+        axis.ticks = element_line(colour = "white"),
+        axis.text.y = element_text(colour = "white"),
+        axis.text.x = element_blank(),
+        axis.title.y = element_text(colour = "white"),
+        axis.title.x = element_blank(),
+        plot.margin = margin(0))
+
+rep_hist <- ggplot(rpp_data, aes(x = T.r..R, fill = repSig)) +
+  coord_flip() +
+  geom_density(aes(y = after_stat(count)), alpha = 0.5, show.legend = FALSE) +
+  lims(x = c(-.5, 1)) +
+  theme(axis.line = element_line(colour = "white"),
+        axis.ticks = element_line(colour = "white"),
+        axis.text.x = element_text(colour = "white"),
+        axis.text.y = element_blank(),
+        axis.title.x = element_text(colour = "white"),
+        axis.title.y = element_blank(),
+        plot.margin = margin(0))
+
+cowplot::plot_grid(ori_hist, NULL, rpp_plot, rep_hist,
+                   rel_widths = c(4, 1.4), rel_heights = c(1.4, 4))
+```
 
 The resulting metascience paper, which we and others refer to as the "replication project in psychology" (RPP), made a substantial impression on both psychologists and the broader research community, defining both a field of psychology metascience studies and providing a template for many-author collaborative projects [@osc2015]. But the most striking thing was the result: disappointingly, only around a third of the replications had similar findings to the original studies. The others yielded smaller effects that were not statistically significant in the replication sample (almost all of the original studies were significant). RPP provided the first large-scale evidence that there were systematic issues with replicability in the psychology literature.
 
@@ -97,7 +151,23 @@ Some researchers have tried to distinguish "direct replications"^[These also get
 
 We've been discussing the question of invariance with respect to procedure and sample, but we haven't really discussed invariance with respect to the studies' statistical results. To what extent can we consider two statistical results to be "the same"? Several obvious metrics, including those used by RPP, have important limitations [@simonsohn2015]. For example, if one finding is statistically significant and the other isn't, they still could have effect sizes that are actually quite close to one another, in part because one might have a larger sample size than the other. Or you could have two significant findings that nevertheless have very different effect sizes. 
 
-![The original finding by @schwarz1983 and two replications with much larger samples. All three estimates include a 95% confidence interval, but the confidence intervals are very small for the two replication studies. The green dashed line shows the smallest effect that the origial study could reasonably have detected. From @simonsohn2015.](images/replication/telescopes.png){#fig-replication-telescopes width=60%}
+```{r fig-replication-telescopes}
+#| fig-cap: The original finding by @schwarz1983 and two replications with much larger samples. All three estimates include a 95% confidence interval, but the confidence intervals are very small for the two replication studies. The blue dotted line shows the smallest effect that the origial study could reasonably have detected. Based on @simonsohn2015.
+#| out-width: 60%
+
+source("helper/replication/telescopes.R")
+tele_data <- tibble(study = StudyLabels, h95 = h95, h90 = h90, d = d, l90 = l90, l95 = l95)
+ggplot(tele_data, aes(x = study)) +
+  coord_cartesian(clip = "off") +
+  geom_hline(yintercept = 0, color = pal$grey) +
+  geom_hline(yintercept = d33, linetype = "dotted", color = pal$blue) +
+  geom_pointrange(aes(y = d, ymin = l95, ymax = h95), fatten = 1.5) +
+  annotate(geom = "text", x = 3.5, y = d33 + 0.07,
+           label = 'italic(d)["33%"]', parse = TRUE,
+           family = .font, color = pal$blue) +
+  labs(x = "", y = bquote("Effect size (Cohen's" ~ italic(d) ~ ")")) +
+  theme(axis.text.x = element_text(size = rel(0.8)))
+```
 
 In a classic study, @schwarz1983 reported that participants (N=28) rated their life satisfaction as higher on sunny days than rainy days, suggesting that they mis-attributed temporary happiness about the weather to longer-term life satisfaction. However, when two more recent studies examined very large samples of survey responses, they yielded estimates of the effect that were much smaller. (All of these effects have been standardized so they are on the same scale using a metric called Cohen's $d$ that we will introduce more formally in @sec-estimation). In one survey, the effect was statistically significant but extremely small; in the other it was essentially zero (@fig-replication-telescopes). Using statistical significance as the metric of replication success, you might be tempted to say that the first of these studies was a successful replication and the second was a failed replication. 
 
@@ -170,7 +240,7 @@ These observations -- that 1) direct replications vary in how successful they ar
 
 We've personally had several experiences that corroborate the idea that there are hidden moderators. For example, in @lewis2016, we were unsuccessful in replicating a simple categorization experiment. We then made a series of iterative changes to the stimuli and instructions, for example changing the color and pattern of the stimuli (@fig-replication-lf), eventually resulting in a larger (and statistically significant) effect -- though still much smaller than the original. Critically, however, each alteration that we made to the procedure yielded a very small change in the effect, and it would have taken us many thousands of participants to figure exactly which alteration made the difference. (If you're keeping score, here's a case where stimulus color *did* matter to the outcome of the experiment!). 
 
-![Stimuli from @lewis2016.](images/replication/lewis-stims.png){#fig-replication-lf width=70%}
+![Stimuli from @lewis2016 (<https://github.com/mllewis/xtSamp>).](images/replication/lewis-stims.png){#fig-replication-lf width=70%}
 
 Another explanation for replication failure that is often cited is experimenter expertise [e.g., @schwarz2014]. On this hypothesis, replications fail because the researchers performing the replication do not have sufficient expertise to execute the study. Like context sensitivity, this explanation is almost certainly true for some replications. In our own work, we have repeatedly performed experiments that failed due to our own incompetence! 
 

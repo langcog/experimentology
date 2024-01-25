@@ -31,25 +31,25 @@ Furthermore, a line could be drawn representing the region that was closest to e
 The resulting illustration clearly reveals that cases clustered around an area called Golden Square, which received water from a pump on Broad Street (@fig-viz-cholera).
 Although the precise causal role of these maps in Snow's own thinking is disputed, and it is likely that he produced them well after the incident [@brody2000map], they nonetheless played a significant role in the history of data visualization [@friendly2021history].
 
-![Mapping out a cholera epidemic (1854). Line shows region for which Broad Street pump is nearest.](images/viz/snow_cholera_voronoi.png){#fig-viz-cholera width="45%"}
+![Mapping out a cholera epidemic [@snow1854report]. Dotted line shows region for which Broad Street pump is nearest.](images/viz/snow_cholera_voronoi.png){#fig-viz-cholera width="45%"}
 
 Nearly two centuries later, as the COVID-19 pandemic swept through the world, governmental agencies like the CDC produced maps of the outbreak that became much more familiar (@fig-viz-covid). 
 
-![Map showing the known locations of cumulative coronavirus cases by share of the population in each county (reproduced from the New York Times).](images/viz/covid-hot-spots.png){#fig-viz-covid width="55%"}
+![Map showing the counts of COVID hospitalizations by state since August 2020 as of January 2024 (from the CDC COVID Data Tracker, <https://covid.cdc.gov/covid-data-tracker>). _Usage does not constitute endorsement or recommendation by the U.S. Government, Department of Health and Human Services, or Centers for Disease Control and Prevention._](images/viz/cdc-covid-map.png){#fig-viz-covid width="55%"}
 
 These maps make abstract statistics visible: By assigning higher cumulative case rates to darker colors, we can see at a glance which areas have been most affected.
 And we're not limited by the spatial layout of a map.
 We're now also used to seeing the horizontal axis correspond to *time* and the vertical axis correspond to some value at that time.
-Curves like the following, showing the 7-day average of new cases, allow us to see other patterns, like the *rate of change*.
+Curves like the following, showing the weekly counts of new cases, allow us to see other patterns, like the *rate of change*.
 Even though more and more cases accumulate every day, we can see at a glance the different "waves" of cases, and when they peaked (@fig-viz-cases). 
 
-![7-day average of new reported COVID cases (reproduced from the New York Times).](images/viz/covid-cases.png){#fig-viz-cases width="65%"}
+![Weekly counts of new reported COVID hospital admissions in the US between August 2020 and January 2024 (from the CDC COVID Data Tracker, <https://covid.cdc.gov/covid-data-tracker>). _Usage does not constitute endorsement or recommendation by the U.S. Government, Department of Health and Human Services, or Centers for Disease Control and Prevention._](images/viz/cdc-covid-trend.png){#fig-viz-cases width="60%"}
 
 While these visualizations capture purely descriptive statistics, we often want our visualizations to answer more specific questions.
 For example, we may ask about the effectiveness of vaccinations: how do case rates differ across vaccinated and unvaccinated populations?
 In this case, we may talk about "breaking out" a curve by some other variable, like vaccination status (@fig-viz-cases2). 
 
-![Rates of COVID cases by vaccination status (reproduced from <https://covid.cdc.gov/covid-data-tracker>).](images/viz/vaccination.png){#fig-viz-cases2 width="60%"}
+![Rates of COVID cases by vaccination status (from the CDC COVID Data Tracker, <https://covid.cdc.gov/covid-data-tracker>). _Usage does not constitute endorsement or recommendation by the U.S. Government, Department of Health and Human Services, or Centers for Disease Control and Prevention._](images/viz/vaccination.png){#fig-viz-cases2 width="55%"}
 
 From this visualization, we can see that unvaccinated individuals are about 6x more likely to test positive. At the same time, these visualizations were produced using *observational* data, which makes it challenging to draw causal inferences.
 For example, people were not randomly assigned to vaccination conditions, and those who have avoided vaccinations may differ in other ways than those who sought out vaccinations.
@@ -63,10 +63,6 @@ In this section, we begin by introducing a few simple guidelines to keep in mind
 Remember that our needs may be distinct from other fields, such as journalism or public policy.
 You may have seen beautiful and engaging full-page graphics with small print and a wealth of information.
 The art of designing and producing these graphics is typically known as **infoviz** and should be distinguished from what we call **statistical visualization** [@gelman2013].
-
-
-![Unlike statistical visualization, which aims to clearly expose the logic of an experiment at a glance, infoviz aims to provide a rich world of patterns to explore [reproduced from @infoviz].](images/viz/viz_infoviz.png){#fig-viz-infoviz .column-margin}
-
 
 Roughly, infoviz aims to construct rich and immersive worlds to visually explore: a reader can spend hours pouring over the most intricate graphics and continue to find new and intriguing patterns.
 **Statistical visualization**, on the other hand, aims to crisply convey the logic of a specific inference at a glance.
@@ -134,7 +130,7 @@ sgf_cond_means <- sgf |>
 
 ### Principle 2: Facilitate comparison
 
-![Principles of visual perception can help guide visualization choices. Reproduced from @mackinlay1986 [see also @cleveland1984].](images/viz/viz_hierarchy.png){#fig-viz-hierarchy .column-margin}
+![Principles of visual perception can help guide visualization choices. Based on @mackinlay1986 [see also @cleveland1984].](images/viz/viz_hierarchy.png){#fig-viz-hierarchy .column-margin}
 
 Now that you've mapped elements of your design to the figure's axes, how do you decide which graphical elements to display?
 You might think: well, in principle, these assignments are all arbitrary anyway.
@@ -170,7 +166,7 @@ In these cases, bar plots and line plots tend to get extremely cluttered, making
 Heat maps help these relationships to pop out as clear "hot" and "cold" regions.
 For example, in @barnett2022, a heatmap was used to show a specific range of parameters where an effect of interest emerged (see @fig-viz-heatmap).
 
-![Heatmap showing a specific range of continuous parameters where an effect emerged [reproduced from @barnett2022].](images/viz/viz_heatmap_example.png){#fig-viz-heatmap width="35%"}
+![Heatmap showing a specific range of continuous parameters where an effect emerged. @barnett2022, Figure 3 (licensed under CC BY 4.0).](images/viz/viz_heatmap_example.png){#fig-viz-heatmap width="35%"}
 :::
 
 Or we could plot the accuracy of each age group as sizes/areas (@fig-viz-prepost3).
@@ -234,9 +230,9 @@ Consider the line plot in @fig-viz-prepost5.
 #| cap-location: margin
 #| out-width: 80%
 
-ggplot(sgf_cond_means, aes(x = age_group, y = rating, color = condition, group = condition)) +
+ggplot(sgf_cond_means, aes(x = age_group, y = rating, color = condition)) +
   geom_point() +
-  geom_line() + 
+  geom_line(aes(group = condition)) + 
   labs(x = "Age group", y = "Mean accuracy") 
 ```
 
@@ -292,10 +288,10 @@ sgf_cond_boot <- sgf |>
   group_by(condition, age_group) |>
   tidyboot::tidyboot_mean(correct)
 
-ggplot(sgf_cond_boot, aes(x = age_group, y = empirical_stat, color = condition, group = condition)) +
+ggplot(sgf_cond_boot, aes(x = age_group, y = empirical_stat, color = condition)) +
   geom_point() +
   geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
-  geom_line() +
+  geom_line(aes(group = condition)) +
   labs(x = "Age group", y = "Mean accuracy") 
 ```
 
@@ -376,9 +372,9 @@ sgf_subj_ci <- sgf_subj_means |>
   tidyboot::tidyboot_mean(rating) |>
   rename(rating = empirical_stat)
 
-ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition, group = condition)) +
+ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition)) +
   geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
-  geom_line() +
+  geom_line(aes(group = condition)) +
   geom_jitter(data = sgf_subj_means, alpha = 0.25, width = 0.1, height = .03) +
   labs(x = "Age group", y = "Mean accuracy") 
 
@@ -474,11 +470,10 @@ ci_ci <- ci_sem |>
   mutate(method = "analytic 95% CI")
 
 bind_rows(boot, ci_sem, ci_ci) |>
-  ggplot(aes(x = age_group, y = empirical_stat, 
-             color = condition, group = condition)) +
+  ggplot(aes(x = age_group, y = empirical_stat, color = condition)) +
     geom_point() +
     geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
-    geom_line() +
+    geom_line(aes(group = condition)) +
     facet_wrap(~ method) +
     labs(x = "Age group", y = "Mean accuracy", color = "Condition")
 ```
@@ -526,8 +521,8 @@ For example: consider whether the visual complexity introduced by the default gr
 #| fig-cap: Standard "gray" themed Stiller figure.
 #| out-width: 85%
 
-ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition, group = condition)) +
-  geom_line() +
+ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition)) +
+  geom_line(aes(group = condition)) +
   geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
   geom_jitter(alpha = 0.25, width = 0.05, height=.03, data = sgf_subj_means) +
   scale_color_hue() +
@@ -547,8 +542,8 @@ ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition, group = co
 
 library(directlabels)
 
-ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition, group = condition)) +
-  geom_line() +
+ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition)) +
+  geom_line(aes(group = condition)) +
   geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
   geom_jitter(alpha = 0.25, width = 0.05, height=.03, data = sgf_subj_means) +
   geom_dl(aes(label = condition),

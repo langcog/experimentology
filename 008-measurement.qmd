@@ -36,7 +36,21 @@ Anyone who has worked with little children, or had children of their own, can at
 
 Because bringing children into a lab can be expensive, one popular alternative option for measuring child language is the MacArthur Bates Communicative Development Inventory (CDI for short), a form which asks parents to mark words that their child says or understands. CDI forms are basically long checklists of words. But is parent report a reliable or valid measure of children's early language?
 
-![Longitudinal (test-retest) correlations between a child's score on one administration of the CDI and another one several months later. From @frank2021.](images/measurement/psycho-cors.png){#fig-measurement-psycho-cors width="50%"}
+```{r fig-measurement-psycho-cors}
+#| fig-cap: "Longitudinal (test-retest) correlations between a child's score on one administration of the CDI and another one several months later. Based on @frank2021."
+#| fig-height: 4.5
+#| out-width: 50%
+
+long_cor_pairs <- readRDS("data/measurement/long_cor_pairs.rds")
+long_cor_pairs |>
+  filter(language == "English (American)", n >= 50) |>
+ggplot(aes(x = dist, y = cor)) +
+  geom_point(aes(size = n, colour = age1)) + 
+  geom_smooth(aes(weight = n), method = "lm", colour = "black") +
+  scale_x_continuous(breaks = seq(2, 12, 2)) +
+  ylim(0, 1) +
+  labs(x = "Measurement gap (months)", y = "Correlation", size = "N", colour = "Starting age")
+```
 
 As we'll see below, one way to measure the reliability of the CDI to compute the correlation between two different administrations of the form for the same child. Unfortunately, this analysis has one issue: the longer you wait between observations the more the child has changed! @fig-measurement-psycho-cors displays these correlations for two CDIs, showing how correlations start off high and drop off as the gap between observations increases [@frank2021]. 
 
@@ -48,6 +62,8 @@ The combination of reliability and validity evidence suggests that CDIs are a us
 
 <!-- The story of the CDI is a success story -- it's a relatively inexpensive measure that has some evidence for both reliability and validity. We should celebrate (and also use it as a potential outcome measure in our studies). But there is also plenty more work to do! A critic could very reasonably point out that we haven't shown any evidence that reliability and validity extends across different populations or ages. For any measure, it's important to start by asking whether there is *any* evidence for reliability and validity. But once you have a specific target population in mind, you can also ask how likely it is that the measure will yield reliable and valid data with *that particular population*. Oftentimes you yourself will have to do this measurement work, "checking" that your instruments function appropriately in the particular situation you want to use them. This is sometimes a lot of hard work, but it's an important part of doing good experimental measurement! -->
 :::
+
+\clearpage
 
 ### Measurement scales
 

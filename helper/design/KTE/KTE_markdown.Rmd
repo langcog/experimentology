@@ -1,0 +1,971 @@
+---
+title: "Reconsidering Automatic Theory of Mind"
+author: "Desmond C. Ong"
+date: "October 13, 2014"
+output: html_document
+---
+
+This is an R Markdown document that accompanies the following manuscript:
+
+Phillips, J., Ong, D. C., Surtees, A. D. R., Xin, Y., Williams, S., Saxe, R., & Frank, M. C. (accepted). A second look at automatic false belief representation: reconsidering Kovács, Téglás, and Endress (2010).
+
+We have provided the raw data from all the experiments reported in the manuscript, as well as our analysis code. This document will walk through and allow you to reproduce the analyses that we have done. The text is from the paper.
+
+```{r preamble, echo=FALSE, message=FALSE, warning=FALSE}
+source("mcf.useful.R")
+
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+blackGreyPalette <- c("#000000", "#999999")
+cbbwPal <- c("#d8b365","#5ab4ac")
+cbbwPal2 <- c("orange","steelblue3") # changed color scheme slightly after copyediting
+
+setwd("../../data/design/KTE")
+#### --- Preprocessing --- ####
+s1a <- read.csv("study1a.csv") #direct replication 1
+s1b <- read.csv("study1b.csv") #direct replication 2
+s1c <- read.csv("study1c.csv") #direct replication 3 (in lab)
+
+s2a <- read.csv("study2a.csv") # 2AFC online
+s2aCR <- read.csv("study2aCR.csv") # 2AFC online Correct Rejections
+s2b <- read.csv("study2b.csv") # 2AFC lab
+s2bCR <- read.csv("study2bCR.csv") # 2AFC lab CR
+
+s3 <- read.csv("study3.csv") # answer on absent instead of present
+
+s4 <- read.csv("study4.csv") # Occluder
+s5a <- read.csv("study5a.csv") # Standard, with no attention check
+s5b <- read.csv("study5b.csv") # Standard, with and without attention check, counterbalanced
+s6 <- read.csv("study6.csv") # Standard; attention check at agent re-enter (19s for all movies)
+s7 <- read.csv("study7.csv") # No agent; attention check on lightbulb instead of agent.
+s8a <- read.csv("study8a.csv") # Standard; attention check on lightbulb at various timings
+s8b <- read.csv("study8b.csv") # Standard; attention check on lightbulb at various timings
+
+s1a$expt <- "1a:Replication1"
+s1b$expt <- "1b:Replication2"
+s1c$expt <- "1c:LabReplication"
+s2a$expt <- "2a:2AFC"
+s2aCR$expt <- "2a:2AFC,CR"
+s2b$expt <- "2b:Lab2AFC"
+s2bCR$expt <- "2b:Lab2AFC,CR"
+s3$expt <- "3:Absent"
+
+s4$expt <- "4:Occluder"
+s5a$expt <- "5a:NoAttn"
+# splitting up study 5b into two blocks
+s5b_noAttn = subset(s5b, (attentionCheckFirst==0 & trialNum<25) | (attentionCheckFirst==1 & trialNum>24))
+s5b_attn = subset(s5b, (attentionCheckFirst==1 & trialNum<25) | (attentionCheckFirst==0 & trialNum>24))
+
+s5b_noAttn <- s5b_noAttn[,-c(2)]
+s5b_attn <- s5b_attn[,-c(2)]
+
+s5b_noAttn$expt <- "5b:NoAttn"
+s5b_attn$expt <- "5b:Attn"
+
+s6$expt <- "6:Attn19s"
+s7$expt <- "7:NoAgent,LB"
+s8a$expt <- "8a:LBtimes"
+s8b$expt <- "8b:LBtimes"
+
+s1c$workerid = factor(s1c$workerid)
+s2b$workerid = factor(s2b$workerid)
+s2bCR$workerid = factor(s2bCR$workerid)
+
+d <- rbind(s1a,s1b,s1c,s2a,s2aCR,s2b,s2bCR,s3,s4,s5a,s5b_noAttn,s5b_attn,s6,s7)
+# add "attentionCheckTimings"
+d$attentionTime = (16.7*(d$PArray==1 & d$AArray==1) + 
+                     13.2*(d$PArray==1 & d$AArray==0) + 
+                     10.8*(d$PArray==0 & d$AArray==1) +
+                     16.7*(d$PArray==0 & d$AArray==0))*(
+                       d$expt!='attn19s' & d$expt!='noAgent' & d$expt!='noAttn') +
+  (d$expt=='attn19s')*19
+d <- rbind(d, s8a, s8b)
+
+expts <- c("1a:Replication1", "1b:Replication2", "1c:LabReplication", 
+           "2a:2AFC", "2a:2AFC,CR", "2b:Lab2AFC", "2b:Lab2AFC,CR",
+           "3:Absent", "4:Occluder", 
+           "5a:NoAttn", "5b:NoAttn", "5b:Attn",
+           "6:Attn19s", "7:NoAgent,LB", "8a:LBtimes", "8b:LBtimes")
+d$expt <- factor(d$expt, levels=expts)
+d$participant <- factor(c("Absent","Present")[d$PArray+1])
+d$agent <- factor(c("Absent","Present")[d$AArray+1])
+
+# library(lsr)
+
+# helper functions
+myCalculateCohensD <- function (comparison1, comparison2) {
+  c1aggregate <- aggregate(reactionTime ~ workerid + participant + agent, comparison1, mean)
+  c1aggregate = c1aggregate[order(c1aggregate$workerid),]
+  c2aggregate <- aggregate(reactionTime ~ workerid + participant + agent, comparison2, mean)
+  c2aggregate = c2aggregate[order(c2aggregate$workerid),]
+  #c1aggregate$workerid == c2aggregate$workerid # to check that the ordering are the same.
+  
+  manualDiff <- c1aggregate$reactionTime - c2aggregate$reactionTime
+  #stanDev <- sd(manualDiff)
+  #tStat <- mean(manualDiff)/sd(manualDiff) * sqrt(length(manualDiff))
+  cohenD <- mean(manualDiff)/sd(manualDiff); 
+  return(cohenD)
+}
+
+myCalculateTTest <- function (comparison1, comparison2) {
+  c1aggregate <- aggregate(reactionTime ~ workerid + participant + agent, comparison1, mean)
+  c1aggregate = c1aggregate[order(c1aggregate$workerid),]
+  c2aggregate <- aggregate(reactionTime ~ workerid + participant + agent, comparison2, mean)
+  c2aggregate = c2aggregate[order(c2aggregate$workerid),]
+  c1aggregate$workerid == c2aggregate$workerid
+  return(t.test(c1aggregate$reactionTime, c2aggregate$reactionTime, paired=TRUE))
+}
+```
+
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+conceptualFigDF = data.frame(panel = factor(c(rep("KTE",4), 
+                                              rep("Response: Ball Present",4),
+                                              rep("Response: Ball Absent",4), 
+                                              rep("Occluder",4)),
+                                            levels = c("KTE", "Response: Ball Present", "Response: Ball Absent", "Occluder"),
+                                            labels = c("a) KTE", "b) Response: Ball Present", "c) Response: Ball Absent", "d) Occluder")), # added letter labels after copyediting
+                             participant = factor(rep(c("Absent","Present"),2*4)),
+                             agent = factor(rep(c("Absent", "Absent", "Present", "Present"),4)),
+                             reactionTime = c( c(360,320,328,313), #KTE
+                                               c(360,330,340,310), #Ball Present prediction
+                                               c(310,340,330,360), #Ball Absent prediction
+                                               c(360,330,356,326)), #Occluder prediction
+                             ci.h = c(c(14, 10, 12, 10)*1.96, rep(NA,12)),
+                             ci.l = c(c(14, 10, 12, 10)*1.96, rep(NA,12)),
+                             illustrationData = factor(c(rep(0,4),rep(1,12)))
+                             )
+```
+
+```{r}
+write_rds(conceptualFigDF, "conceptualFigDF.rds")
+```
+
+```{r, fig.width = 10, fig.height = 3, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(conceptualFigDF, aes(x=participant, y=reactionTime, colour=agent, group=agent, shape=illustrationData)) + 
+  ylab("Reaction Time (ms)") + xlab("Participant Belief") +
+  guides(color=guide_legend(title="Agent Belief")) +
+  geom_line(position=position_dodge(width=.1),stat="identity") +
+  geom_point(aes(size=illustrationData), position=position_dodge(width=.1)) +
+  scale_colour_manual(values=blackGreyPalette) +
+  scale_size_discrete(guide=FALSE) +
+  scale_shape_manual(values=c(20,1), guide=FALSE) +
+  geom_linerange(aes(ymin=reactionTime - ci.l, ymax=reactionTime + ci.h),
+                 position=position_dodge(width=.1)) +
+  facet_wrap( ~ panel, ncol=4, as.table=TRUE, drop=FALSE) +
+  theme(strip.background = element_rect(fill="#FFFFFF"), 
+        strip.text = element_text(size=12), 
+        axis.text = element_text(size=12),
+        axis.title.x = element_text(size=16, vjust=-0.10),
+        axis.title.y = element_text(size=16, vjust=0.35),
+        legend.text = element_text(size=12),
+        title = element_text(size=16),
+        panel.grid = element_blank())
+# saved as pdf 10x3
+# 11x3 after adding letter labels
+```
+
+Figure 2: Left-most panel: data from KTE’s Experiment 1, estimated from KTE’s Fig. 2A. For purpose of comparison to other figures, error bars show 95% confidence intervals, rather than the standard error of the mean provided in the original. The next three panels show the pattern of reaction times that are predicted by Automatic ToM, for responding to “ball present” (second panel; identical to KTE’s paradigm), responding to “ball absent” (third panel; tested with our Studies 2–3), and responding to ball present in “occluder” trials, where there is an occluder between the agent and the ball at all times (fourth panel; tested with our Study 4).
+
+
+## Study 1–4 Results 
+#### We replicate the critical statistical results of KTE (2010). 
+
+We replicated the main statistical comparisons reported by KTE. KTE’s t-tests (p. 1832) are reported along with the equivalent tests for Studies 1a–1c in Table 1. There are four main comparisons of interest. First, participants were faster to detect the ball when both the participant and the agent believed that the ball was present, compared to when neither did (P+A+ < P-A-; Cohen’s d = 0.284, 0.393, 0.654 respectively for Studies 1a,b,c; Cohen’s d = D / s where D is the difference between means, and s the standard deviation of the differences. p’s = 0.04, 0.001, 0.004). 
+
+```{r, echo=FALSE}
+### for Studies 1a,b,c ###
+#---- P-A- - P+A+ ----#
+dValues = c(
+myCalculateCohensD(subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Absent"), 
+                   subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Present"))
+,
+myCalculateCohensD(subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Absent"),
+                   subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Present"))
+,
+myCalculateCohensD(subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Absent"),
+                   subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Present"))
+)
+pValues = c(
+myCalculateTTest(subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Absent"),
+                 subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Present"))$p.value
+,
+myCalculateTTest(subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Absent"), 
+                 subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Present"))$p.value
+,
+myCalculateTTest(subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Absent"), 
+                 subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Present"))$p.value
+)
+```
+
+```{r}
+dValues # P+A+ < P-A- #
+pValues
+```
+
+Second, participants were also faster when they believed that the ball was present but the agent did not, as compared to when neither they nor the agent believed that it was present (P+A- < P-A-; d’s = 0.611, 0.555, 0.792; all p’s < 0.001). These first two comparisons confirm the expected result that the participant’s belief has an effect on the participant’s reaction time. Specifically, when the participant believes that the ball is present behind the occluder, the participant is faster to detect the ball, as compared to when the participant expects the ball to be absent (and is presumably surprised by the presence of the ball).
+
+```{r, echo=FALSE}
+#---- P-A- - P+A- ----#
+dValues = c(
+myCalculateCohensD(subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Absent"), 
+                   subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Absent"))
+,
+myCalculateCohensD(subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Absent"),
+                   subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Absent"))
+,
+myCalculateCohensD(subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Absent"),
+                   subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Absent"))
+)
+pValues = c(
+myCalculateTTest(subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Absent"),
+                 subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Absent"))$p.value
+,
+myCalculateTTest(subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Absent"), 
+                 subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Absent"))$p.value
+,
+myCalculateTTest(subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Absent"), 
+                 subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Absent"))$p.value
+)
+```
+
+```{r}
+dValues # P+A- < P-A- #
+pValues
+```
+
+
+Third, and most importantly, we also replicated the critical result that KTE interpreted as providing evidence for automatic ToM: Participants were faster to respond when the agent believed that the ball was present (and the participant did not), as compared to when neither believed it was present (P-A+ < P-A-; d’s = 0.594, 0.473, 0.422; p < 0.001, p < 0.001, p =0.05 respectively). Based on this comparison, KTE proposed that the agent’s belief facilitated participants’ detection of the ball. 
+
+```{r, echo=FALSE}
+#---- P-A- - P-A+ ---- #
+dValues = c(
+myCalculateCohensD(subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Absent"), 
+                   subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Present"))
+,
+myCalculateCohensD(subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Absent"),
+                   subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Present"))
+,
+myCalculateCohensD(subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Absent"),
+                   subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Present"))
+)
+pValues = c(
+myCalculateTTest(subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Absent"),
+                 subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Present"))$p.value
+,
+myCalculateTTest(subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Absent"), 
+                 subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Present"))$p.value
+,
+myCalculateTTest(subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Absent"), 
+                 subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Present"))$p.value
+)
+```
+
+```{r}
+dValues # P-A+ < P-A- #
+pValues
+```
+
+
+
+Fourth, we replicated the null result that participants’ reaction times did not differ between the case when only the agent believed that the ball was present, and the case when only the participant had a belief that the ball was present (P-A+ ~ P+A-; d’s = 0.079, 0.062, 0.324; p’s = 0.57, 0.60, 0.13).. KTE suggest that both types of beliefs (participant beliefs and agent beliefs) individually facilitate reaction times to the same degree. All the statistical tests that were reported by KTE were replicated in all three studies; this robustness indicates that the effects that KTE reported are highly replicable across different sets of stimuli and different testing environments (online vs. in lab).
+
+```{r, echo=FALSE}
+#---- P-A+ - P+A- ---- #
+dValues = c(
+myCalculateCohensD(subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Present"), 
+                   subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Absent"))
+,
+myCalculateCohensD(subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Present"),
+                   subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Absent"))
+,
+myCalculateCohensD(subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Present"),
+                   subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Absent"))
+)
+pValues = c(
+myCalculateTTest(subset(d, d$expt=="1a:Replication1" & d$participant=="Absent" & d$agent=="Present"),
+                 subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Absent"))$p.value
+,
+myCalculateTTest(subset(d, d$expt=="1b:Replication2" & d$participant=="Absent" & d$agent=="Present"), 
+                 subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Absent"))$p.value
+,
+myCalculateTTest(subset(d, d$expt=="1c:LabReplication" & d$participant=="Absent" & d$agent=="Present"), 
+                 subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Absent"))$p.value
+)
+```
+
+```{r}
+# P-A+ ~ P+A- #
+dValues
+pValues
+```
+
+
+Comparison  Study	t-statistic	df	p value	Cohen’s d
+(P-A-) - (P+A+)	KTE	3.47	23	0.002	0.708
+	1a	2.09	53	0.042	0.284
+	1b	3.33	71	0.001	0.393
+	1c	3.21	23	0.004	0.654
+(P-A-) - (P+A-)	KTE	3.43	23	0.002	0.700
+	1a	4.49	53	<.001	0.611
+	1b	4.71	71	<.001	0.555
+	1c	3.88	23	<.001	0.792
+(P-A-) - (P-A+)	KTE	2.42	23	0.02	0.494
+	1a	4.37	53	<.001	0.594
+	1b	4.01	71	<.001	0.473
+	1c	2.07	23	0.05	0.422
+(P-A+) - (P+A-)	KTE	0.99	23	0.33 n.s.	0.202
+	1a	0.58	53	0.57 n.s.	0.079
+	1b	0.53	71	0.60 n.s.	0.062
+	1c	1.59	23	0.13 n.s.	0.324
+
+Table 1. Direct replication of results of Experiment 1 from KTE (2010) using Studies 1a–1c. The t, df, and p values from KTE were reported in the paper, while Cohen’s d for KTE’s studies were calculated from the t and df values.
+
+
+
+#### We observe a crossover interaction that is not consistent with KTE’s theory. 
+In addition to replicating KTE’s reported results, we also observed a consistent pattern in the reaction times that KTE did not report (Studies 1a–1c, top row of Fig. 3): all three experiments showed a strong crossover interaction.  The interaction coefficients for Studies 1a–1c (with 95% CIs) are: 175 [97, 253], 121 [65, 176], 66 [18, 114] msec (p < 0.001, p < 0.001, p = 0.007 respectively). The crossover was caused by relatively slow reaction times on P+A+ trials. If reaction times reflect automatic ToM, participants should be faster to respond to the ball when the agent correctly believes the ball is present than when the agent believes the ball is absent, but we observed the opposite pattern (P+A+ slower than P+A-; d’s = 0.35, 0.20, 0.41; p’s = 0.01, 0.09, 0.06). This crossover interaction is thus not consistent with automatic ToM, and it was not observed in the data that KTE report (Fig. 1) . Nevertheless, this crossover interaction was robustly present in all three of our replications (as well as in our subsequent studies, reported below). Hence, although we consistently replicated all of KTE’s reported statistical tests, our data are inconsistent with their theory. 
+
+```{r, echo=FALSE}
+# --- Crossover interaction section comparisons --- ####
+mss <- aggregate(reactionTime ~ workerid + participant + agent + expt , d,mean)
+
+# lmer for Study 1a
+lmerMod1a = summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="1a:Replication1")))
+Expt1a_Interaction = c(lmerMod1a$coefficients[4,1], lmerMod1a$coefficients[4,1] - 1.96 * lmerMod1a$coefficients[4,2], lmerMod1a$coefficients[4,1] + 1.96 * lmerMod1a$coefficients[4,2])
+Expt1a_pValue = 2*(1-pnorm(lmerMod1a$coefficients[4,3]))
+
+# lmer for Study 1b
+lmerMod1b = summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="1b:Replication2")))
+Expt1b_Interaction = c(lmerMod1b$coefficients[4,1], lmerMod1b$coefficients[4,1] - 1.96 * lmerMod1b$coefficients[4,2], lmerMod1b$coefficients[4,1] + 1.96 * lmerMod1b$coefficients[4,2])
+Expt1b_pValue = 2*(1-pnorm(lmerMod1b$coefficients[4,3]))
+
+# lmer for Study 1c
+lmerMod1c = summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="1c:LabReplication")))
+Expt1c_Interaction = c(lmerMod1c$coefficients[4,1], lmerMod1c$coefficients[4,1] - 1.96 * lmerMod1c$coefficients[4,2], lmerMod1c$coefficients[4,1] + 1.96 * lmerMod1c$coefficients[4,2])
+Expt1c_pValue = 2*(1-pnorm(lmerMod1c$coefficients[4,3]))
+
+
+# P+A+ slower than P+A-
+dValues = c(
+myCalculateCohensD(subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Present"), 
+                   subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Absent"))
+,
+myCalculateCohensD(subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Present"),
+                   subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Absent"))
+,
+myCalculateCohensD(subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Present"),
+                   subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Absent"))
+)
+pValues = c(
+myCalculateTTest(subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Present"),
+                 subset(d, d$expt=="1a:Replication1" & d$participant=="Present" & d$agent=="Absent"))$p.value
+,
+myCalculateTTest(subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Present"), 
+                 subset(d, d$expt=="1b:Replication2" & d$participant=="Present" & d$agent=="Absent"))$p.value
+,
+myCalculateTTest(subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Present"), 
+                 subset(d, d$expt=="1c:LabReplication" & d$participant=="Present" & d$agent=="Absent"))$p.value
+)
+```
+
+```{r}
+Expt1a_Interaction
+Expt1b_Interaction
+Expt1c_Interaction
+c(Expt1a_pValue, Expt1b_pValue, Expt1c_pValue)
+
+
+dValues # P+A+ slower than P+A- #
+pValues
+```
+
+
+#### The crossover interaction is observed regardless of the agent’s beliefs about the presence or absence of the ball. 
+Further evidence against the interpretation of this pattern in terms of automatic ToM comes from Studies 2a–2b and 3. Recall that the prediction based on a ToM account is that the pattern of RTs across conditions should reverse if participants are instructed to respond to the ball’s absence (or, at the very least, the previous pattern should no longer be observed). In Study 2a and 2b, participants responded to both ball presence and ball absence. The trials of interest are the correct rejections (“CR”), where participants correctly indicate that the ball is absent. In Study 3, participants only responded to the absence of the ball; the results of these studies are shown in Fig. 3.
+
+If reaction times reflect automatic ToM, participants should be faster (or at least not slower) to respond to the absence of the ball when the agent correctly believed the ball was absent (P-A-) than when the agent falsely believed the ball was present (P-A+), as illustrated in Fig. 2 (top row, right panel). Contrary to this prediction, participants were faster to respond to the ball’s absence for P-A+ than for P-A- (P-A+ faster than P-A-; d’s = 0.42, 0.81, 0.66 for Study 2a CR, 2b CR, 3 respectively; all p’s < 0.001). Moreover, we observed exactly the same crossover pattern of reaction times across conditions for responses to the ball’s absence as we did for responded to the ball’s presence (Fig. 3, interaction b in Study 2a CR, 2b CR and 3 are: 207 [114, 301], 161 [102, 221], 173 [116, 229] msec; all p’s < 0.001). 
+
+```{r, echo=FALSE}
+# --- Crossover interaction section comparisons --- ####
+
+# lmer for Study 2aCR
+lmerMod2aCR = summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="2a:2AFC,CR")))
+Expt2aCR_Interaction = c(lmerMod2aCR$coefficients[4,1], lmerMod2aCR$coefficients[4,1] - 1.96 * lmerMod2aCR$coefficients[4,2], lmerMod2aCR$coefficients[4,1] + 1.96 * lmerMod2aCR$coefficients[4,2])
+Expt2aCR_pValue = 2*(1-pnorm(lmerMod2aCR$coefficients[4,3]))
+
+# lmer for Study 2bCR
+lmerMod2bCR = summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="2b:Lab2AFC,CR")))
+Expt2bCR_Interaction = c(lmerMod2bCR$coefficients[4,1], lmerMod2bCR$coefficients[4,1] - 1.96 * lmerMod2bCR$coefficients[4,2], lmerMod2bCR$coefficients[4,1] + 1.96 * lmerMod2bCR$coefficients[4,2])
+Expt2bCR_pValue = 2*(1-pnorm(lmerMod2bCR$coefficients[4,3]))
+
+# lmer for Study 3
+lmerMod3 = summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="3:Absent")))
+Expt3_Interaction = c(lmerMod3$coefficients[4,1], lmerMod3$coefficients[4,1] - 1.96 * lmerMod3$coefficients[4,2], lmerMod3$coefficients[4,1] + 1.96 * lmerMod3$coefficients[4,2])
+Expt3_pValue = 2*(1-pnorm(lmerMod3$coefficients[4,3]))
+
+
+# for Studies 2a-b, 3 : P-A+ - P-A-
+dValues = c(
+myCalculateCohensD(subset(d, d$expt=="2a:2AFC,CR" & d$participant=="Absent" & d$agent=="Present"), 
+                   subset(d, d$expt=="2a:2AFC,CR" & d$participant=="Absent" & d$agent=="Absent"))
+,
+myCalculateCohensD(subset(d, d$expt=="2b:Lab2AFC,CR" & d$participant=="Absent" & d$agent=="Present"),
+                   subset(d, d$expt=="2b:Lab2AFC,CR" & d$participant=="Absent" & d$agent=="Absent"))
+,
+myCalculateCohensD(subset(d, d$expt=="3:Absent" & d$participant=="Absent" & d$agent=="Present"),
+                   subset(d, d$expt=="3:Absent" & d$participant=="Absent" & d$agent=="Absent"))
+)
+pValues = c(
+myCalculateTTest(subset(d, d$expt=="2a:2AFC,CR" & d$participant=="Absent" & d$agent=="Present"),
+                 subset(d, d$expt=="2a:2AFC,CR" & d$participant=="Absent" & d$agent=="Absent"))$p.value
+,
+myCalculateTTest(subset(d, d$expt=="2b:Lab2AFC,CR" & d$participant=="Absent" & d$agent=="Present"), 
+                 subset(d, d$expt=="2b:Lab2AFC,CR" & d$participant=="Absent" & d$agent=="Absent"))$p.value
+,
+myCalculateTTest(subset(d, d$expt=="3:Absent" & d$participant=="Absent" & d$agent=="Present"), 
+                 subset(d, d$expt=="3:Absent" & d$participant=="Absent" & d$agent=="Absent"))$p.value
+)
+```
+
+```{r}
+Expt2aCR_Interaction
+Expt2bCR_Interaction
+Expt3_Interaction
+c(Expt2aCR_pValue, Expt2bCR_pValue, Expt3_pValue)
+
+dValues # P-A+ faster than P-A-
+pValues
+```
+
+We next collapsed across Studies 1–3 and tested whether the CR and “absent” trials produced a different pattern of reaction times as the original “present” trials. The model for this analysis included terms for participant and agent belief, as well as a term for whether the trials were CR/absent trials (and all interactions). Although we found a main effect of CR/absent trials, which were overall slightly slower (b = 68 [39, 97] msec; p < .0001), there were no reliable two- or three-way interactions with CR/absent trials (all b’s < 44 msec, all p’s > .10). In addition, the two-way interaction between participant and agent beliefs that we observed in each individual experiment was still reliable (b = 139 [105, 172], p < .0001). This analysis thus supports the claim that, across studies, there was no statistical difference in the pattern of reaction times across different response criteria (responding “present” or “absent”). This result clearly contradicts the predictions of an automatic ToM account.
+
+
+```{r}
+# Tests for differences by response type ("Present" vs "Absent") across Studies1-3
+allStudies1to3 = subset(d, d$expt=="1a:Replication1" | d$expt=="1b:Replication2" | d$expt=="2a:2AFC" |
+                             d$expt=="2a:2AFC,CR" | d$expt=="3:Absent" | d$expt=="1c:LabReplication"  | 
+                          d$expt=="2b:Lab2AFC" | d$expt=="2b:Lab2AFC,CR" )
+
+allStudies1to3$Absent <- allStudies1to3$expt == "2a:2AFC,CR" | allStudies1to3$expt=="2b:Lab2AFC,CR" | 
+  allStudies1to3$expt=="3:Absent"
+# this tests whether there is a difference in CR/Absent conditions
+crmod <- summary(lmer(reactionTime ~ participant*agent*Absent + (participant*agent|workerid), data=allStudies1to3))
+#summary(crmod)
+# cr coefficient
+crCoefficient = c(crmod$coefficients[4,1], 
+                  crmod$coefficients[4,1] - crmod$coefficients[4,2] * 1.96,
+                  crmod$coefficients[4,1] + crmod$coefficients[4,2] * 1.96)
+
+cr_pValue = 2*(1-pnorm(crmod$coefficients[4,3])) # for the interaction t
+
+study1to3_interactionCoefficient = c(crmod$coefficients[5,1],
+                                     crmod$coefficients[5,1] - crmod$coefficients[5,3] * 1.96,
+                                     crmod$coefficients[5,1] + crmod$coefficients[5,3] * 1.96)
+study1to3_pValue = 2*(1-pnorm(crmod$coefficients[5,3])) # for the interaction t
+```
+
+```{r}
+crCoefficient
+cr_pValue
+study1to3_interactionCoefficient
+study1to3_pValue
+```
+
+
+
+#### The crossover interaction is independent of the agent’s perspective. 
+As a final check of whether participants’ reaction times reflect automatic encoding of the agent’s belief, we replicated Study 1 with one critical difference in the stimuli: a substantially large wall blocked the agent’s view. In this study, the agent has no perceptual access to the ball; thus the response time should be affected only by the participants’ own belief (compare the theoretical prediction in Fig. 2, last panel, with the data shown in Fig. 3, bottom right panel). Yet, contra that prediction, the pattern of reaction times across conditions remained similar to previous experiments, and the crossover interaction was still reliable (interaction b = 109 [49, 169] msec; p < 0.001).
+
+```{r echo=FALSE}
+# lmer for Study 4: Occluder
+lmerMod4 = summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="4:Occluder")))
+Expt4_Interaction = c(lmerMod4$coefficients[4,1], lmerMod4$coefficients[4,1] - 1.96 * lmerMod4$coefficients[4,2], lmerMod4$coefficients[4,1] + 1.96 * lmerMod4$coefficients[4,2])
+Expt4_pValue = 2*(1-pnorm(lmerMod4$coefficients[4,3]))
+```
+
+```{r}
+Expt4_Interaction
+Expt4_pValue
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+mss <- aggregate(reactionTime ~ workerid + participant + agent + expt , d,mean)
+ms <- aggregate(reactionTime ~  participant + agent + expt , mss,mean)
+ms$ci.h <- aggregate(reactionTime ~  participant + agent + expt , mss, ci.high)$reactionTime
+ms$ci.l <- aggregate(reactionTime ~  participant + agent + expt , mss, ci.low)$reactionTime
+ms$n <- aggregate(workerid ~  participant + agent + expt , mss, n.unique)$workerid
+
+msSub <- subset(ms,expt=="1a:Replication1"|expt=="1b:Replication2"|expt=="1c:LabReplication"|
+                  expt=="2a:2AFC"|expt=="2a:2AFC,CR"|expt=="2b:Lab2AFC"|expt=="2b:Lab2AFC,CR" | expt=="3:Absent" |
+                  expt=="4:Occluder")
+msSub$expt <- factor(msSub$expt)
+levels(msSub$expt) <- c("1a: Web 1","1b: Web 2","1c: Lab",
+                        "2a: Web 2AFC", "2a: Web 2AFC, CR","2b: Lab 2AFC", "2b: Lab 2AFC, CR", "3:Absent", "4:Occluder")
+msSub$expt <- factor(msSub$expt, levels = c("1a: Web 1","1b: Web 2","1c: Lab", "2a: Web 2AFC", "2b: Lab 2AFC", 
+                                            "2a: Web 2AFC, CR","2b: Lab 2AFC, CR", "3:Absent", "4:Occluder"))
+```
+
+```{r}
+write_rds(msSub, "msSub.rds")
+```
+
+```{r, fig.width = 10, fig.height = 5, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(msSub, aes(x=participant, y=reactionTime, colour=agent, group=agent)) + 
+  ylab("Reaction Time (ms)") + ylim(390,1100) +
+  xlab("Participant Belief") +
+  guides(color=guide_legend(title="Agent Belief")) +
+  geom_line(position=position_dodge(width=.1),stat="identity") +
+  scale_colour_manual(values=blackGreyPalette) +
+  facet_wrap( ~ expt, ncol=3, as.table=TRUE, drop=FALSE) + # ncol = 5 or 3
+  geom_linerange(aes(ymin=reactionTime - ci.l, ymax=reactionTime + ci.h),
+                 position=position_dodge(width=.1)) +
+  theme(strip.background = element_rect(fill="#FFFFFF"), 
+        strip.text = element_text(size=12), 
+        axis.text = element_text(size=12),
+        axis.title = element_text(size=16),
+        legend.text = element_text(size=12),
+        title = element_text(size=16),
+        panel.grid = element_blank())
+# pdf 10 by 5
+```
+ 
+Figure 3: Mean reaction times by condition and experiment. The crossover interaction is statistically reliable for every experiment and condition (see text for interpretation). Error bars represent 95% confidence intervals of the mean. Lines are displaced slightly along the horizontal axis for clarity. Top row from left to right: Studies 1a, 1b, and 1c (direct replications). Middle row: Study 2a, 2b Hits (respond “present” when ball is present), and 2a Correct Rejections (CRs; respond “absent” when ball is absent). Bottom row: 2b Correct Rejections, Study 3 (respond “absent” when ball is absent), and Study 4 (permanent occluder between agent and ball).
+
+
+
+
+
+## Study 5–8 Results
+#### The crossover interaction is observed only when there is an “attention check” with variable timing. 
+In Study 5a, the attention check requirement was removed, and the response time pattern became flat, with no crossover interaction (interaction b = 22 [-47, 91] msec; p = 0.53). 
+
+```{r echo=FALSE}
+# lmer for Study 5a: No Attention
+lmerMod5a = summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="5a:NoAttn")))
+Expt5a_Interaction = c(lmerMod5a$coefficients[4,1], lmerMod5a$coefficients[4,1] - 1.96 * lmerMod5a$coefficients[4,2], lmerMod5a$coefficients[4,1] + 1.96 * lmerMod5a$coefficients[4,2])
+Expt5a_pValue = 2*(1-pnorm(lmerMod5a$coefficients[4,3]))
+```
+
+```{r}
+Expt5a_Interaction
+Expt5a_pValue
+```
+
+Study 5b provided an additional replication of Study 1 and Study 5a in a within-subjects design, to allow for direct statistical comparisons between the two. In two blocks of 24 trials (6 trials per condition, with blocks in a random order across participants), participants were either asked to respond to the attention check or not. In this study, we found a reliable three-way interaction of participant condition, agent condition, and attention check condition (three-way interaction b = 76 [8, 145] msec, p = 0.029). There was still a crossover-interaction even when there was no attention check (interaction b = 62 [-16, 140] msec, p = 0.036), but the size of the effect was more than doubled in trials where there was an attention check (b = 140 [88, 192] msec, p < .001). The three-way interaction provides evidence that the magnitude of the crossover observed in Study 1, but not in Study 5a, is driven by the attention check.
+
+```{r echo=FALSE}
+
+# lmer for Study 5b: Within Subject Attention and No Attention; block design.
+
+# 3 way interaction
+lmerMod5b_3wayModel = summary(lmer(reactionTime ~ participant*agent*expt + (1 + participant*agent|workerid), subset(d, expt=="5b:Attn" | expt == "5b:NoAttn")))
+Expt5b_3wayInteraction = c(lmerMod5b_3wayModel$coefficients[8,1], lmerMod5b_3wayModel$coefficients[8,1] - 1.96 * lmerMod5b_3wayModel$coefficients[8,2], lmerMod5b_3wayModel$coefficients[8,1] + 1.96 * lmerMod5b_3wayModel$coefficients[8,2])
+Expt5b_3waypValue = 2*(1-pnorm(lmerMod5b_3wayModel$coefficients[8,3]))
+
+
+
+# with no attention check
+lmerMod5bNoAttn = summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(d, expt=="5b:NoAttn")))
+Expt5bNoAttn_Interaction = c(lmerMod5bNoAttn$coefficients[4,1], lmerMod5bNoAttn$coefficients[4,1] - 1.96 * lmerMod5bNoAttn$coefficients[4,2], lmerMod5bNoAttn$coefficients[4,1] + 1.96 * lmerMod5bNoAttn$coefficients[4,2])
+Expt5bNoAttn_pValue = 2*(1-pnorm(lmerMod5bNoAttn$coefficients[4,3]))
+
+# with attention check
+lmerMod5bAttn = summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(d, expt=="5b:Attn")))
+Expt5bAttn_Interaction = c(lmerMod5bAttn$coefficients[4,1], lmerMod5bAttn$coefficients[4,1] - 1.96 * lmerMod5bAttn$coefficients[4,2], lmerMod5bAttn$coefficients[4,1] + 1.96 * lmerMod5bAttn$coefficients[4,2])
+Expt5bAttn_pValue = 2*(1-pnorm(lmerMod5bAttn$coefficients[4,3]))
+
+```
+
+```{r}
+Expt5bNoAttn_Interaction
+Expt5bNoAttn_pValue
+
+Expt5bAttn_Interaction
+Expt5bAttn_pValue
+```
+
+
+
+Summarizing these results, Studies 5a and 5b show that removing the attention check reduces differences in RT across conditions. However, this experiment does not provide conclusive evidence for the role of the attention check; participants might simply have ignored the video display when the attention check was not required, keeping them from encoding either participant or agent beliefs. 
+To address this issue, in Study 6, the attention check was shifted to when the agent returned to the scene, which was at 19s in all conditions.  Once again, the pattern of responses was flat (interaction b = 12 [-35, 59] msec; p = 0.62). This study used the exact same stimuli as Studies 1–3, except that the attention check timing was matched across all four conditions, again based on a salient action of the agent. Critically, the characteristic pattern of response times found in Studies 1–3 was absent. 
+
+```{r echo=FALSE}
+# lmer for Study 6: 19s
+lmerMod6 = summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="6:Attn19s")))
+Expt6_Interaction = c(lmerMod6$coefficients[4,1], lmerMod6$coefficients[4,1] - 1.96 * lmerMod6$coefficients[4,2], lmerMod6$coefficients[4,1] + 1.96 * lmerMod6$coefficients[4,2])
+Expt6_pValue = 2*(1-pnorm(lmerMod6$coefficients[4,3]))
+```
+
+```{r}
+Expt6_Interaction
+Expt6_pValue
+```
+
+
+
+In sum, Studies 5 and 6 showed that the pattern of responses observed in Studies 1–4 disappeared when the attention check was removed or even when its timing was held constant across all videos, even though the stimuli were the same as those used in Studies 1–3.
+
+#### The pattern of observed reaction times is a parametric function of the timing of the attention check and is independent of belief condition and even the presence of the agent. 
+To directly test the attention check hypothesis, we next decoupled the timing of the attention check from the beliefs that the participant and agent would have formed in that condition. To make this possible, we included a light bulb in the videos and instructed participants to press an additional button when the light bulb came on. This event was then used as the attention check instead of the agent’s departure. (As before, all other aspects of the studies remained identical, except where noted). By replicating the asymmetric attention check pattern in the absence of an agent (Study 7), and by varying the attention check independent of the agent (Study 8), we were able to test for a complete dissociation between attention check timing and belief condition.
+In Study 7, we removed the agent entirely but had the light bulb differentially switch on at the times that corresponded to when the agent left the scene in Studies 1–4 (i.e., 10.8s, 13.2s and 16.7s, see Fig. 1.). As in Studies 1–4, participants were instructed to press an additional button to indicate that they had been paying attention. Thus, participants were asked to respond at the exact same times in Study 7 as they were in Studies 1–4. We once again observed a crossover interaction (interaction b = 86 [32, 140] msec; p = 0.002), though it was slightly smaller than before. This time, however, the crossover interaction was observed without an agent being present at all! Thus, the results of Study 7 support the hypothesis that the response times observed in Studies 1–3 were independent of agent beliefs, and were plausibly driven by the attention check.
+
+```{r echo=FALSE}
+# lmer for Study 7: No Agent, with lightbulb
+lmerMod7 = summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="7:NoAgent,LB")))
+Expt7_Interaction = c(lmerMod7$coefficients[4,1], lmerMod7$coefficients[4,1] - 1.96 * lmerMod7$coefficients[4,2], lmerMod7$coefficients[4,1] + 1.96 * lmerMod7$coefficients[4,2])
+Expt7_pValue = 2*(1-pnorm(lmerMod7$coefficients[4,3]))
+```
+
+```{r}
+Expt7_Interaction
+Expt7_pValue
+```
+
+
+
+Study 7 showed that the reaction time difference between conditions can be elicited without an agent but with the corresponding attention check timing. Study 8 goes further by showing that, even when the agent is present, the reaction time effect remains absent if the attention check timing is appropriately controlled.
+Study 8a crossed the timing of the light bulb flash with the video condition: 3 timings (10.8s, 13.2s, 16.7s) crossed with 8 belief condition videos. Study 8b used 5 evenly spaced timings when the light bulb switch on (10.9s, 12.9s, 14.9s, 16.9s and 18.9s), again crossed with the 8 videos.  As in Study 7, the participant was instructed to press a button when the light bulb flashed. Averaging across attention check timings, there was no cross-over interaction in RTs based on belief condition in either study (Fig. 4; Study 8a: interaction b = 5.3 [-38, 48] msec; p = 0.81; Study 8b: interaction b = -32.6 [-67, 2]; p = 0.07).
+
+```{r echo=FALSE}
+# lmer for Study 8: With lightbulb times
+lmerMod8a = summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="8a:LBtimes")))
+Expt8a_Interaction = c(lmerMod8a$coefficients[4,1], lmerMod8a$coefficients[4,1] - 1.96 * lmerMod8a$coefficients[4,2], lmerMod8a$coefficients[4,1] + 1.96 * lmerMod8a$coefficients[4,2])
+Expt8a_pValue = 2*(1-pnorm(lmerMod8a$coefficients[4,3]))
+
+# lmer for Study 8: With lightbulb times
+lmerMod8b = summary(lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(mss,expt=="8b:LBtimes")))
+Expt8b_Interaction = c(lmerMod8b$coefficients[4,1], lmerMod8b$coefficients[4,1] - 1.96 * lmerMod8b$coefficients[4,2], lmerMod8b$coefficients[4,1] + 1.96 * lmerMod8b$coefficients[4,2])
+Expt8b_pValue = 2*(1-pnorm(lmerMod8b$coefficients[4,3]))
+
+
+```
+
+```{r}
+Expt8a_Interaction
+Expt8b_Interaction
+c(Expt8a_pValue, Expt8b_pValue)
+```
+
+
+
+
+To test the effect of attention check timing on subsequent ball-detection RT, controlling for belief condition, we added attention check timing as a continuous predictor variable in our regression model (which, as discussed above, fits separate coefficients for participant and agent beliefs and their interaction). This model showed a reliable linear effect of attention check timing in both studies (coefficient on the attention time = 9.7 [5.5, 13.9] and 12.1 [9.1, 15.1] msec/sec; p’s < 0.001, Fig. 5). The closer to the ball-detection decision the attention check was, the slower the ball-detection decision was. As discussed above, this result is congruent with literature on the psychological refractory period, which suggests that the offset between two reaction-time measurements has systematic effects on the latency of the second measurement.
+
+
+```{r echo=FALSE}
+# lmers using time as a regressor
+
+# lmer for Study 8: With lightbulb times
+lmerMod8aTime = summary(lmer(reactionTime ~ participant*agent + attentionTime + (1 + participant*agent|workerid), subset(d, expt=="8a:LBtimes")))
+Expt8aTime_Coeff = c(lmerMod8aTime$coefficients[4,1], lmerMod8aTime$coefficients[4,1] - 1.96 * lmerMod8aTime$coefficients[4,2], lmerMod8aTime$coefficients[4,1] + 1.96 * lmerMod8aTime$coefficients[4,2])
+Expt8aTime_pValue = 2*(1-pnorm(lmerMod8aTime$coefficients[4,3]))
+
+# lmer for Study 8: With lightbulb times
+lmerMod8bTime = summary(lmer(reactionTime ~ participant*agent + attentionTime + (1 + participant*agent|workerid), subset(d, expt=="8b:LBtimes")))
+Expt8bTime_Coeff = c(lmerMod8bTime$coefficients[4,1], lmerMod8bTime$coefficients[4,1] - 1.96 * lmerMod8bTime$coefficients[4,2], lmerMod8bTime$coefficients[4,1] + 1.96 * lmerMod8bTime$coefficients[4,2])
+Expt8bTime_pValue = 2*(1-pnorm(lmerMod8bTime$coefficients[4,3]))
+```
+
+```{r}
+Expt8aTime_Coeff
+Expt8bTime_Coeff
+c(Expt8aTime_pValue, Expt8bTime_pValue)
+```
+ 
+
+ 
+ 
+ 
+ 
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+msSub2 <- subset(ms,expt=="5a:NoAttn"|expt=="5b:NoAttn"|expt=="5b:Attn"|
+                   expt=="6:Attn19s"|expt=="7:NoAgent,LB"|expt=="8a:LBtimes"|expt=="8b:LBtimes")
+msSub2$expt <- factor(msSub2$expt)
+levels(msSub2$expt) <- c("5a: No Check", "5b: No Check", "5b: Attention Check", 
+                         "6: Check at 19s", "7: No Agent, Lightbulb", "8a: Agent+Lightbulb", "8b: Agent+Lightbulb")
+msSub2$expt <- factor(msSub2$expt, c("5a: No Check", "5b: No Check", "5b: Attention Check", 
+                                     "6: Check at 19s", "7: No Agent, Lightbulb", "8a: Agent+Lightbulb", "8b: Agent+Lightbulb"))
+```
+
+```{r, fig.width = 10, fig.height = 5, echo=FALSE, message=FALSE, warning=FALSE}
+## Fig 4, with lines:
+ggplot(msSub2, aes(x=participant, y=reactionTime, colour=agent, group=agent)) + 
+  ylab("Reaction Time (ms)") + ylim(390,1100) +
+  xlab("Participant Belief") +
+  guides(color=guide_legend(title="Agent Belief")) +
+  geom_line(position=position_dodge(width=.1),stat="identity") +
+  scale_colour_manual(values=blackGreyPalette) +
+  facet_wrap( ~ expt, nrow=2) +
+  geom_linerange(aes(ymin=reactionTime - ci.l, ymax=reactionTime + ci.h), position=position_dodge(width=.1)) +
+  theme(strip.background = element_rect(fill="#FFFFFF"), 
+        strip.text = element_text(size=12), 
+        axis.text = element_text(size=12),
+        axis.title.x = element_text(size=14, vjust=-0.10),
+        axis.title.y = element_text(size=14, vjust=0.35),
+        legend.text = element_text(size=12),
+        title = element_text(size=18),
+        panel.grid = element_blank()) 
+# square: 10 by 5
+```
+
+Figure 4: Reaction times by condition and experiment. Crossover interaction was only statistically reliable in Study 5b and Study 7 (see text). Error bars represent 95% confidence intervals. Lines are displaced slightly along the horizontal axis for clarity. Top row, from left to right: Study 5a (attention check was removed), Study 5b trials with attention check removed, Study 5b trials with attention checks, and Study 6 (attention check was moved to the same time for all videos). Bottom row: Study 7 (agent was removed, and participants had to respond to the flash of a light bulb as an attention check), and Study 8a and 8b (agent is present, but participants responded to the flash of a light bulb at different times). 
+
+
+```{r, fig.width = 7, fig.height = 5, echo=FALSE, message=FALSE, warning=FALSE}
+mssAll <- aggregate(reactionTime ~ workerid + attentionTime + expt, subset(d, expt=="8a:LBtimes" | expt=="8b:LBtimes"),mean)
+msAll <- aggregate(reactionTime ~ attentionTime + expt, mssAll,mean)
+msAll$ci.h <- aggregate(reactionTime ~ attentionTime + expt, mssAll, ci.high)$reactionTime
+msAll$ci.l <- aggregate(reactionTime ~ attentionTime + expt, mssAll, ci.low)$reactionTime
+msAll$n <- aggregate(workerid ~ attentionTime + expt, mssAll, n.unique)$workerid
+
+msAll$expt = factor(msAll$expt)
+levels(msAll$expt) <- c("Study 8a", "Study 8b")
+msAll$expt <- factor(msAll$expt, levels=c("Study 8a", "Study 8b"),
+                     labels=c("Experiment 8a", "Experiment 8b"))
+
+ggplot(aes(x=attentionTime,y=reactionTime,
+           ymin=reactionTime-ci.l,ymax=reactionTime+ci.h,
+           colour=expt,linetype=expt, group=expt),
+       data=msAll) +
+  geom_line() + geom_pointrange() +
+  scale_colour_manual(values=cbbwPal2) + 
+  guides(color=guide_legend(title="Experiment"),
+         linetype=guide_legend(title="Experiment")) +
+  scale_x_continuous(breaks=c(10.9, 12.9, 14.9, 16.9, 18.9)) +
+  #ggtitle("Dissociation of attention check time from video condition") +
+  ylab("Reaction Time (ms)") + 
+  xlab("Attention Check Time (s)") + ylim(550,800) +
+  theme(strip.background = element_rect(fill="#FFFFFF"), 
+        strip.text = element_text(size=14), 
+        axis.text = element_text(size=14),
+        axis.title.x = element_text(size=16, vjust=-0.2),
+        axis.title.y = element_text(size=16, vjust=0.35),
+        legend.text = element_text(size=14),
+        title = element_text(size=18, vjust=1),
+        panel.grid = element_blank())
+# 7 by 5 pdf
+```
+
+Figure 5: Studies 8a and 8b, decomposed by the attention check timing and demonstrating slower response times with a progressively later attention check. Error bars represent 95% confidence intervals. 
+
+
+
+
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+myCalculateRTCI <- function (comparison1, comparison2) {
+  c1aggregate <- aggregate(reactionTime ~ workerid + participant + agent, comparison1, mean)
+  c1aggregate = c1aggregate[order(c1aggregate$workerid),]
+  c2aggregate <- aggregate(reactionTime ~ workerid + participant + agent, comparison2, mean)
+  c2aggregate = c2aggregate[order(c2aggregate$workerid),]
+  
+  means <- c1aggregate$reactionTime - c2aggregate$reactionTime  
+  cis <- list()
+  cis$M <- mean(means)
+  cis$N <- length(means)
+  cis$SE <- sd(means) / sqrt(cis$N)
+  
+  return(cis)
+}
+
+# doing meta analytic calculations from p7 of http://www.meta-analysis.com/downloads/Meta-analysis%20fixed%20effect%20vs%20random%20effects.pdf
+# updated: http://onlinelibrary.wiley.com/store/10.1002/jrsm.12/asset/12_ftp.pdf?v=1&t=hz05ch4u&s=1e2069ee724b3aad1941cbbd8e713de1bf4312d8
+# Borenstein, M., Hedges, L. V., Higgins, J., & Rothstein, H. R. (2010). A basic introduction to fixed‐effect and random‐effects models for meta‐analysis. Research Synthesis Methods, 1(2), 97-111
+
+ordered.expts <- c("1a",   "1b", "1c",  "2aHit", "2aCR", "2bHit", "2bCR", "3",   "4",  "5a", "5bNoAttn", "5bAttn", "6",  "7", "8a", "8b")
+predicted     <- c("Yes", "Yes", "Yes",  "Yes",  "Yes",  "Yes",   "Yes",  "Yes", "Yes", "No",     "No",    "Yes",  "No", "Yes", "No", "No")
+
+maAC <- data.frame()
+for (i in 1:length(expts)) {
+  thisLmer = lmer(reactionTime ~ participant*agent + (1 + participant*agent|workerid), subset(d, expt==expts[i]))
+  maAC <- rbind.fill(maAC,
+                     data.frame(study=ordered.expts[i],
+                                predicted=predicted[i],
+                                es= fixef(thisLmer)[4],
+                                SE= sqrt(diag(vcov(thisLmer)))[4],
+                                N = n.unique(subset(d, expt==expts[i])$workerid)))
+}
+
+maAC$ci.h = maAC$es + maAC$SE*1.96
+maAC$ci.l = maAC$es - maAC$SE*1.96
+
+maAC$withinStudyVar = (maAC$SE)^2
+maAC$withinStudyWeight = 1/maAC$withinStudyVar
+
+maAC_Q_for_yes = with(subset(maAC, maAC$predicted=="Yes"), sum(withinStudyWeight*es*es) - ((sum(withinStudyWeight*es))^2)/sum(withinStudyWeight))
+maAC_C_for_yes = with(subset(maAC, maAC$predicted=="Yes"), sum(withinStudyWeight) - sum(withinStudyWeight^2)/sum(withinStudyWeight))
+maAC_tauSquared_for_yes = max((maAC_Q_for_yes-(sum(predicted=="Yes")-1))/maAC_C_for_yes,0)
+maAC_Q_for_no = with(subset(maAC, maAC$predicted=="No"), sum(withinStudyWeight*es*es) - ((sum(withinStudyWeight*es))^2)/sum(withinStudyWeight))
+maAC_C_for_no = with(subset(maAC, maAC$predicted=="No"), sum(withinStudyWeight) - sum(withinStudyWeight^2)/sum(withinStudyWeight))
+maAC_tauSquared_for_no = max((maAC_Q_for_no-(sum(predicted=="No")-1))/maAC_C_for_no,0)
+
+maAC$tauSquared = maAC_tauSquared_for_yes * (maAC$predicted=="Yes") + maAC_tauSquared_for_no * (maAC$predicted=="No")
+maAC$var = (maAC$withinStudyVar + maAC$tauSquared)
+maAC$weight = 1/maAC$var # Eqn (5)
+
+# meta analytic weighted means
+maACsummary = data.frame(weightedMeanForYes = (sum(maAC$weight*maAC$es*1*(maAC$predicted=="Yes")))/
+                           (sum(maAC$weight*1*(maAC$predicted=="Yes"))),
+                         weightedMeanForNo = (sum(maAC$weight*maAC$es*1*(maAC$predicted=="No")))/
+                           (sum(maAC$weight*1*(maAC$predicted=="No"))),
+                         varForYes = 1/(sum(maAC$weight*1*(maAC$predicted=="Yes"))),
+                         varForNo = 1/(sum(maAC$weight*1*(maAC$predicted=="No")))
+)
+maACsummary$ciForYes = sqrt(maACsummary$varForYes) * 1.96
+maACsummary$ciForNo = sqrt(maACsummary$varForNo) * 1.96
+
+maAC <- rbind(maAC,
+              data.frame(study=c("","Positive Predictions","Null Predictions"),
+                         predicted=c("No","Yes","No"),
+                         es=c(NA,maACsummary$weightedMeanForYes, maACsummary$weightedMeanForNo),
+                         SE=c(NA,sqrt(maACsummary$varForYes),sqrt(maACsummary$varForNo)),
+                         N=c(NA,NA,NA),
+                         ci.l=c(NA, maACsummary$weightedMeanForYes - maACsummary$ciForYes,
+                                maACsummary$weightedMeanForNo - maACsummary$ciForNo),
+                         ci.h=c(NA, maACsummary$weightedMeanForYes + maACsummary$ciForYes,
+                                maACsummary$weightedMeanForNo + maACsummary$ciForNo),
+                         withinStudyVar=c(NA,NA,NA),
+                         withinStudyWeight=c(NA,NA,NA),
+                         tauSquared=c(NA,NA,NA),
+                         var=c(NA,maACsummary$varForYes,maACsummary$varForNo),
+                         weight=c(NA,NA,NA))
+)                        
+
+#### --- constructing meta analytic figure for the P-A- vs. P-A+ comparison ---- ####
+
+study <-     c("1a",  "1b",  "1c",  "2aHit", "2aCR", "2bHit", "2bCR", "3",  "4",  "5a",  "5bNoAttn", "5bAttn", "6",    "7", "8a",  "8b")
+predicted <- c("Yes", "Yes", "Yes", "Yes",   "No",   "Yes",   "No",   "No", "No", "Yes",  "Yes",     "Yes",    "Yes", "No", "Yes", "Yes")
+
+maABE <- data.frame()
+for (i in 1:length(expts)) {
+  es <- myCalculateRTCI(subset(d, d$expt==expts[i] & d$participant=="Absent" & d$agent=="Absent"),
+                        subset(d, d$expt==expts[i] & d$participant=="Absent" & d$agent=="Present"))
+  maABE <- rbind.fill(maABE,
+                      data.frame(study=study[i],
+                                 predicted=predicted[i],
+                                 es=es$M,
+                                 SE=es$SE,
+                                 N = es$N))
+}
+maABE$ci.h = maABE$es + maABE$SE*1.96
+maABE$ci.l = maABE$es - maABE$SE*1.96
+
+#maABE$var = (maABE$SE)^2 *maABE$N
+#maABE$weight = 1/maABE$var
+
+maABE$withinStudyVar = (maABE$SE)^2
+maABE$withinStudyWeight = 1/maABE$withinStudyVar
+
+maABE_Q_for_yes = with(subset(maABE, maABE$predicted=="Yes"), sum(withinStudyWeight*es*es) - ((sum(withinStudyWeight*es))^2)/sum(withinStudyWeight))
+maABE_C_for_yes = with(subset(maABE, maABE$predicted=="Yes"), sum(withinStudyWeight) - sum(withinStudyWeight^2)/sum(withinStudyWeight))
+maABE_tauSquared_for_yes = max((maABE_Q_for_yes-(sum(predicted=="Yes")-1))/maABE_C_for_yes,0)
+maABE_Q_for_no = with(subset(maABE, maABE$predicted=="No"), sum(withinStudyWeight*es*es) - ((sum(withinStudyWeight*es))^2)/sum(withinStudyWeight))
+maABE_C_for_no = with(subset(maABE, maABE$predicted=="No"), sum(withinStudyWeight) - sum(withinStudyWeight^2)/sum(withinStudyWeight))
+maABE_tauSquared_for_no = max((maABE_Q_for_no-(sum(predicted=="No")-1))/maABE_C_for_no,0)
+
+maABE$tauSquared = maABE_tauSquared_for_yes * (maABE$predicted=="Yes") + maABE_tauSquared_for_no * (maABE$predicted=="No")
+maABE$var = (maABE$withinStudyVar + maABE$tauSquared)
+maABE$weight = 1/maABE$var # Eqn (5)
+
+maABEsummary = data.frame(weightedMeanForYes = (sum(maABE$weight*maABE$es*1*(maABE$predicted=="Yes")))/
+                            (sum(maABE$weight*1*(maABE$predicted=="Yes"))),
+                          varForYes = 1/(sum(maABE$weight*1*(maABE$predicted=="Yes"))),
+                          weightedMeanForNo = (sum(maABE$weight*maABE$es*1*(maABE$predicted=="No")))/
+                            (sum(maABE$weight*1*(maABE$predicted=="No"))),
+                          varForNo = 1/(sum(maABE$weight*1*(maABE$predicted=="No")))
+)
+
+maABEsummary$ciForYes = sqrt(maABEsummary$varForYes) * 1.96
+maABEsummary$ciForNo = sqrt(maABEsummary$varForNo) * 1.96
+
+maABE <- rbind(maABE,
+               data.frame(study=c("","Positive Predictions","Null Predictions"),
+                          es=c(NA,maABEsummary$weightedMeanForYes, maABEsummary$weightedMeanForNo),
+                          SE=c(NA,sqrt(maABEsummary$varForYes),sqrt(maABEsummary$varForNo)),
+                          N=c(NA,NA,NA),
+                          predicted=c("No","Yes","No"),
+                          ci.l=c(NA,maABEsummary$weightedMeanForYes - maABEsummary$ciForYes,
+                                 maABEsummary$weightedMeanForNo - maABEsummary$ciForNo),
+                          ci.h=c(NA,maABEsummary$weightedMeanForYes + maABEsummary$ciForYes,
+                                 maABEsummary$weightedMeanForNo + maABEsummary$ciForNo),
+                          withinStudyVar=c(NA,NA,NA),
+                          withinStudyWeight=c(NA,NA,NA),
+                          tauSquared=c(NA,NA,NA),
+                          var=c(NA,maABEsummary$varForYes,maABEsummary$varForNo),
+                          weight=c(NA,NA,NA)))                        
+
+
+#### now try the combined plot
+
+maAC$hypothesis <- "Attention Check Hypothesis\n(Crossover Interaction)"
+maABE$hypothesis <- "Automatic ToM Hypothesis\n(P-A+ < P-A-)"
+ma <- rbind.fill(maAC,maABE)
+
+ma$study <- factor(ma$study, 
+                   levels=c("Positive Predictions","Null Predictions","","8b", "8a", "7", "6", "5bNoAttn", "5bAttn", "5a",
+                            "4", "3", "2bCR", "2bHit", "2aCR", "2aHit", "1c", 
+                            "1b", "1a"))
+ma$predicted = factor(ma$predicted, levels = c("Yes", "No"),
+                      labels = c("Hypothesis predicts\npositive effect\n","Hypothesis predicts\nnull effect\n"))
+
+ma$marker_size = factor(3 + 1*(ma$study=="Positive Predictions") + 1*(ma$study=="Null Predictions"))
+
+ma$study = factor(ma$study, levels = c("Positive Predictions", "Null Predictions", "", "8b", "8a", "6", "5bNoAttn", "5a",
+                                       "7", "5bAttn", "4", "3", "2bCR", "2bHit", "2aCR", "2aHit", "1c", "1b", "1a"))
+p1 <- ggplot(subset(ma, hypothesis=="Attention Check Hypothesis\n(Crossover Interaction)"), 
+             aes(x=study, y=es, ymin=ci.l, ymax=ci.h,colour=predicted, group=predicted, shape=predicted)) + 
+  geom_hline(yintercept=0,lty=3) +
+  geom_point(aes(size = marker_size)) +
+  scale_size_manual(name = "", values=c(3,5), guide=FALSE) +
+  geom_linerange() + 
+  ylim(-150,320) +
+  geom_vline(xintercept=3,lty=2) +
+  facet_grid(.~hypothesis, scales="free") + 
+  xlab("Study") + 
+  ylab("Reaction Time for Key Effect (ms)") +
+  scale_colour_manual(name="", values=cbbwPal) +
+  scale_shape_discrete(name="") +
+  coord_flip() + theme(strip.background = element_rect(fill="#FFFFFF"), 
+                       strip.text = element_text(size=14),
+                       axis.text = element_text(size=14),
+                       axis.title.x = element_text(size=16, vjust=-0.2),
+                       axis.title.y = element_text(size=16, vjust=0.35),
+                       legend.text = element_text(size=12),
+                       panel.grid = element_blank(),
+                       legend.position="left")
+
+
+ma$study = factor(ma$study, levels = c("Positive Predictions", "Null Predictions", "", "7", "4", "3", "2bCR", "2aCR", 
+                                       "8b", "8a", "6", "5bNoAttn", "5bAttn", "5a", "2bHit", "2aHit", "1c", "1b", "1a"))
+p2 <- ggplot(subset(ma, hypothesis=="Automatic ToM Hypothesis\n(P-A+ < P-A-)"), 
+             aes(x=study, y=es, ymin=ci.l, ymax=ci.h, colour=predicted, group=predicted, shape=predicted)) + 
+  geom_hline(yintercept=0,lty=3) +
+  geom_point(aes(size = marker_size)) +
+  scale_size_manual(name = "", values=c(3,5), guide=FALSE) +
+  geom_linerange() + 
+  ylim(-150,301) +
+  geom_vline(xintercept=3,lty=2) +
+  facet_grid(.~hypothesis, scales="free") + 
+  xlab("Study") + 
+  ylab("Reaction Time for Key Effect (ms)") +
+  scale_colour_manual(name="", values=cbbwPal) +
+  scale_shape_discrete(name="") +
+  coord_flip() + theme(strip.background = element_rect(fill="#FFFFFF"), 
+                       strip.text = element_text(size=14),
+                       axis.text = element_text(size=14),
+                       axis.title.x = element_text(size=16, vjust=-0.2),
+                       axis.title.y = element_text(size=16, vjust=0.35),
+                       legend.text = element_text(size=12),
+                       panel.grid = element_blank())
+```
+
+```{r, fig.width = 15, fig.height = 7, echo=FALSE, message=FALSE, warning=FALSE}
+multiplot(p1, p2, cols=2) #15 by 7
+```
+
+Figure 6. (a): Meta-analysis of the magnitude of the effect sizes of the crossover interaction for all the studies reported in this paper. The magnitudes are plotted along the horizontal axis as circles, and error bars represent 95% CIs. A solid vertical line at 0 msec is overlaid for reference. The effect sizes are grouped by whether the studies are predicted by the “Attention Check Hypothesis” to show a crossover interaction (i.e. whether or not the belief conditions differed by attention check timing). The bottom two points show the meta-analytic effect size for the “null prediction” and “positive prediction” studies, calculated using a random-effect meta-analysis (Borenstein, Hedges, & Higgins, & Rothstein, 2010). (b): A similar meta-analysis, but performed for the critical test of automatic false belief representation in KTE (2010): the difference in reaction times between P-A+ and P-A-. Note that effects are ordered differently between the two panels. 
