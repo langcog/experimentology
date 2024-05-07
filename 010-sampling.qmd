@@ -133,10 +133,11 @@ sims <- expand_grid(n_total = c(10, 25, 50, 100, 250),
 
 
 ggplot(sims, aes(x = n_total, y = mean)) + 
-  geom_jitter(width = 3, height = 0, alpha = .2) + 
   facet_grid(vars(sample)) + 
-  geom_hline(yintercept = mean(population$measure), linetype = "dashed") + 
-  stat_summary(color = pal$red, fun = mean, fun.min = \(x) mean(x) - sd(x),
+  geom_jitter(width = 3, height = 0, alpha = .2, size = 0.5) + 
+  geom_hline(yintercept = mean(population$measure), linetype = "dashed", colour = pal$grey) + 
+  stat_summary(#color = pal$red,
+               fun = mean, fun.min = \(x) mean(x) - sd(x),
                fun.max = \(x) mean(x) + sd(x)) +
   labs(x = "Total sample size (N)", y = "Mean")
 ```
