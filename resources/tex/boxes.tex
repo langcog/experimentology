@@ -12,6 +12,7 @@
 \definecolor{.cyan}{cmyk}{.77,.15,.46,.01}
 \definecolor{.green}{cmyk}{.53,.24,1,.04}
 \definecolor{.base0}{cmyk}{.52,.34,.37,.02}
+\definecolor{.grey}{cmyk}{0,0,0,.56}
 
 % icons for boxes
 % (not using fontawesome5 package because some needed icons are from 6)
@@ -38,7 +39,7 @@
         breakable,                                % break across pages
         boxrule=2pt,                              % border width
         colback=white,                            % background color
-        fonttitle=\sffamily\scshape\LARGE,        % title sans and small caps
+        fonttitle=\sffamily\scshape\Large,        % title sans and small caps
         left=2mm, right=2mm,                      % padding inside box
         toptitle=1mm, bottomtitle=1mm,            % spacing above/below title
         grow to right by=\pagewidth,              % fullwidth
@@ -53,17 +54,16 @@
   size=minimal}                 % no padding space, no box rules
   % fontupper=\footnotesize}      % smaller font inside
 
-% redefine CSLReferences to wrap in refsbox
-\renewenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
- {% don't indent paragraphs
- \begin{refsbox}
-  \setlength{\parindent}{0pt}
+\renewenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{refsbox}\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
   % turn on hanging indent if param 1 is 1
   \ifodd #1
-  \let\oldpar\par
-  \def\par{\hangindent=\cslhangindent\oldpar}
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
   \fi
   % set entry spacing
-  \setlength{\parskip}{#2\cslentryspacingunit}
- }%
- {\end{refsbox}}
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}\end{refsbox}}

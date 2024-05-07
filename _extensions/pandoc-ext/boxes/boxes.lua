@@ -20,7 +20,8 @@ local boxes = {
 
 -- generate tcolorbox options for a given box title
 local function boxOpts(title)
-  local color = boxes[title]['color']
+  --local color = boxes[title]['color']
+  local color = '.grey'
   local icon = boxes[title]['icon']
   local Title = title:gsub("^%l", string.upper)
   local opts = 'colframe=' .. color .. ', title=' .. icon .. ' \\enspace ' .. Title
@@ -31,6 +32,11 @@ end
 local function wrapEnv(el, env, opts)
   local beginEnv = pandoc.RawInline('latex', '\\begin{' .. env .. '}[' .. opts .. ']\n')
   local endEnv = pandoc.RawInline('latex', '\\end{' .. env .. '}\n')
+  
+  if pandoc.utils.type(el) == 'Block' then
+    return {beginEnv, el, endEnv}
+  end
+  
   table.insert(el, 1, beginEnv)
   table.insert(el, endEnv)
   return el
