@@ -41,23 +41,26 @@ Let's start with one of these special cases, namely estimating a treatment effec
 
 Let's now write that model as a regression model, that is, as a model that predicts each participant's tea rating, $Y_i$, given that participant's treatment assignment, $X_i$. $X_i=0$ represents the control (milk-first) group and $X_i=1$ represents the treatment (tea-first) group.^[Using 0 and 1 is known as **dummy coding**, and allows us to interpret the parameter as the difference of the treatment group (tea-first) from the baseline (milk-first). There are many other ways to code categorical variables, with other interpretations. As a practical tip, be careful to check how your variables are coded before reporting anything!] Here, $Y_i$ is the dependent variable, and $X_i$ is the independent variable. The subscripts $i$ index the participants. To make this concrete, you can see some sample tea-tasting data (the first three observations from each condition) below (@tbl-models-datatable), with the index $i$, the condition and its predictor $X_i$, and the rating $Y$.
 
+Let's write this model more formally as a **linear regression of Y on X**. Conventionally, regression models are written with "$\beta$'' symbols for all parameters, so we'll now use $\beta_0 = \theta_M$ for the mean in the milk-first group and $\beta_1 = \theta_T - \theta_M$ as the average difference between the tea-first and milk-first groups. This $\beta$ is a generalization of the one were using to denote the causal effect above and in the previous two chapters.
+
+$$
+Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
+$$
+
+\clearpage
+
+::: {.column-margin}
 \footnotesize
 ```{r models-datatable}
 #| label: tbl-models-datatable
 #| tbl-cap: Example tea tasting data.
-#| column: margin
 
 small_tea_data |> 
   mutate(id = 1:n(), X = if_else(condition == "tea first", 1, 0)) |>
   select(id, condition, X, `rating (Y)` = rating)
 ```
 \normalsize
-
-Let's write this model more formally as a **linear regression of Y on X**. Conventionally, regression models are written with "$\beta$'' symbols for all parameters, so we'll now use $\beta_0 = \theta_M$ for the mean in the milk-first group and $\beta_1 = \theta_T - \theta_M$ as the average difference between the tea-first and milk-first groups. This $\beta$ is a generalization of the one were using to denote the causal effect above and in the previous two chapters.
-
-$$
-Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
-$$
+:::
 
 The term $\beta_0 + \beta_1 X_i$ is called the **linear predictor**, and it describes the expected value of an individual's tea rating, $Y_i$, given that participant's treatment group $X_i$ (the single independent variable in this model). That is, for a participant in the control group ($X_i=0$), the linear predictor is just equal to $\beta_0$, which is indeed the mean for the control group that we specified above. On the other hand, for a participant in the treatment group, the linear predictor is equal to $\beta_0 + \beta_1$, which is the mean for the treatment group that we specified. In regression jargon, $\beta_0$ and $\beta_1$ are **regression coefficients**, where $\beta_1$ represents the association of the independent variable $X$ with the outcome $Y$.
 
