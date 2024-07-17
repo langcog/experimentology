@@ -56,6 +56,9 @@
   afterskip=0pt % remove extra space after for subsection
 ]{subsection}
 
+% only part number on part title pages
+\renewcommand{\partformat}{\thepart}
+
 % headers/footers
 \usepackage{scrlayer-scrpage}
 \KOMAoptions{headwidth=textwithmarginpar} % make header full width
@@ -98,13 +101,19 @@
 \usepackage{marginfix} % load before sidenotes to improve sidenote positioning
 \usepackage{sidenotes}
 \usepackage{marginnote}
-\definecolor{captioncolor}{cmyk}{.20,.10,0,.56} % grey
-\DeclareCaptionFont{caps}{\footnotesize\color{captioncolor}} % smaller and grey
-\captionsetup{labelfont=caps,textfont=caps,skip=0pt,belowskip=-6pt}
-\DeclareCaptionStyle{sidecaption}{labelfont=caps,textfont=caps,skip=6pt,belowskip=0pt}
-\DeclareCaptionStyle{marginfigure}{labelfont=caps,textfont=caps,skip=6pt,belowskip=0pt}
-\DeclareCaptionStyle{margintable}{labelfont=caps,textfont=caps,skip=6pt}
-\DeclareCaptionStyle{longtable}{labelfont=caps,textfont=caps,skip=6pt}
+\DeclareCaptionFont{caps}{\footnotesize}
+
+\captionsetup{
+  labelfont=caps,
+  textfont=caps,
+  skip=0pt,
+  belowskip=-6pt,
+  labelsep=newline
+}
+\DeclareCaptionStyle{sidecaption}{labelfont=caps,textfont=caps,skip=6pt,belowskip=0pt,labelsep=newline}
+\DeclareCaptionStyle{marginfigure}{labelfont=caps,textfont=caps,skip=6pt,belowskip=0pt,labelsep=newline}
+\DeclareCaptionStyle{margintable}{labelfont=caps,textfont=caps,skip=6pt,labelsep=newline}
+\DeclareCaptionStyle{longtable}{labelfont=caps,textfont=caps,skip=6pt,labelsep=newline}
 
 % reset sidenote counter at start of each chapter
 \let\oldchapter\chapter
@@ -119,6 +128,11 @@
 \usepackage[nodisplayskipstretch]{setspace}
 
 \ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[enhanced, borderline west={3pt}{0pt}{shadecolor}, breakable, interior hidden, frame hidden, boxrule=0pt, sharp corners]}{\end{tcolorbox}}\fi
+
+% temporary settings for copyediting
+\setstretch{2}
+\usepackage{lineno}
+\linenumbers
 
 %%%%%%%%%%%%%%%%%%
 % end preamble.tex
