@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Experimentology - 5&nbsp; Estimation</title>
+<title>5&nbsp; Estimation – Experimentology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -24,6 +24,7 @@ ul.task-list li input[type="checkbox"] {
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -68,7 +69,13 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -77,6 +84,7 @@ div.csl-indent {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -92,8 +100,35 @@ gtag('js', new Date());
 gtag('config', 'G-659MTW4XZ4', { 'anonymize_ip': true});
 </script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -103,13 +138,13 @@ gtag('config', 'G-659MTW4XZ4', { 'anonymize_ip': true});
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./005-estimation.html">Statistics</a></li><li class="breadcrumb-item"><a href="./005-estimation.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Estimation</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./005-estimation.html">Statistics</a></li><li class="breadcrumb-item"><a href="./005-estimation.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Estimation</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -118,13 +153,13 @@ gtag('config', 'G-659MTW4XZ4', { 'anonymize_ip': true});
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Experimentology</a> 
         <div class="sidebar-tools-main tools-wide">
-    <a href="https://github.com/langcog/experimentology" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="./Experimentology.pdf" rel="" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/langcog/experimentology" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="./Experimentology.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
     </div>
@@ -144,9 +179,9 @@ gtag('config', 'G-659MTW4XZ4', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Foundations</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -179,9 +214,9 @@ gtag('config', 'G-659MTW4XZ4', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Statistics</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -208,9 +243,9 @@ gtag('config', 'G-659MTW4XZ4', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
  <span class="menu-text">Planning</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -237,9 +272,9 @@ gtag('config', 'G-659MTW4XZ4', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
  <span class="menu-text">Execution</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -266,9 +301,9 @@ gtag('config', 'G-659MTW4XZ4', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
  <span class="menu-text">Reporting</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -301,9 +336,9 @@ gtag('config', 'G-659MTW4XZ4', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
  <span class="menu-text">Appendices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -343,7 +378,7 @@ gtag('config', 'G-659MTW4XZ4', { 'anonymize_ip': true});
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -365,12 +400,12 @@ gtag('config', 'G-659MTW4XZ4', { 'anonymize_ip': true});
   <li><a href="#chapter-summary-estimation" id="toc-chapter-summary-estimation" class="nav-link" data-scroll-target="#chapter-summary-estimation"><span class="header-section-number">5.4</span> Chapter summary: Estimation</a></li>
   <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">References</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/langcog/experimentology/blob/main/005-estimation.qmd" class="toc-action">View source</a></p><p><a href="https://github.com/langcog/experimentology/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/langcog/experimentology/blob/main/005-estimation.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/langcog/experimentology/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content page-columns page-full" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./005-estimation.html">Statistics</a></li><li class="breadcrumb-item"><a href="./005-estimation.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Estimation</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-estimation" class="quarto-section-identifier"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Estimation</span></span></h1>
 </div>
@@ -385,7 +420,9 @@ gtag('config', 'G-659MTW4XZ4', { 'anonymize_ip': true});
   </div>
   
 
+
 </header>
+
 
 <div class="callout callout-style-default callout-note callout-titled" title="learning goals">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
@@ -409,10 +446,10 @@ learning goals
 </div>
 </div>
 <blockquote class="blockquote">
-<p>“In every quantitative paper we read, every quantitative talk we attend, and every quantitative article we write, we should all ask one question: <em>what is the estimand</em>? The estimand is the object of inquiry – it is the precise quantity about which we marshal data to draw an inference. Yet, too often social scientists skip the step of defining the estimand. Instead, they leap straight to describing the data they analyze and the statistical procedures they apply. Without a statement of the estimand, it becomes impossible for the reader to know whether those procedures were appropriate.” <span class="citation" data-cites="lundberg2021">(<a href="#ref-lundberg2021" role="doc-biblioref">Lundberg, Johnson, and Stewart 2021</a>)</span></p>
+<p>“In every quantitative paper we read, every quantitative talk we attend, and every quantitative article we write, we should all ask one question: <em>what is the estimand</em>? The estimand is the object of inquiry—it is the precise quantity about which we marshal data to draw an inference. Yet, too often social scientists skip the step of defining the estimand. Instead, they leap straight to describing the data they analyze and the statistical procedures they apply. Without a statement of the estimand, it becomes impossible for the reader to know whether those procedures were appropriate.” <span class="citation" data-cites="lundberg2021">(<a href="#ref-lundberg2021" role="doc-biblioref">Lundberg, Johnson, and Stewart 2021</a>)</span></p>
 </blockquote>
 <p>In the first section of this book, our goal was to set up some of the theoretical ideas that motivate our approach to experimental design and planning. We introduced our key thesis, namely that experiments are about measuring causal effects. We also began to discuss our key themes, <span class="smallcaps">transparency</span>, <span class="smallcaps">measurement precision</span>, <span class="smallcaps">bias reduction</span>, and <span class="smallcaps">generalizability</span>.</p>
-<p>In this next section of the book – treating statistical topics – we will integrate these ideas with an analytic toolkit for <strong>estimating</strong> effects and quantifying their size (this chapter), making <strong>inferences</strong> about how these estimates relate to a population (<a href="006-inference.html"><span>Chapter&nbsp;6</span></a>), and building <strong>models</strong> for estimation and inference in more complex settings (<a href="007-models.html"><span>Chapter&nbsp;7</span></a>). Although this book does not provide an extensive treatment of statistics, we hope that these chapters provide a foundations – and an opinionated perspective – for beginning the statistical analysis of your experimental data, with a focus on <span class="smallcaps">measurement precision</span>.</p>
+<p>In this next section of the book—treating statistical topics—we will integrate these ideas with an analytic toolkit for <strong>estimating</strong> effects and quantifying their size (this chapter), making <strong>inferences</strong> about how these estimates relate to a population (<a href="006-inference.html" class="quarto-xref"><span>chapter 6</span></a>), and building <strong>models</strong> for estimation and inference in more complex settings (<a href="007-models.html" class="quarto-xref"><span>chapter 7</span></a>). Although this book does not provide an extensive treatment of statistics, we hope that these chapters provide a foundations—and an opinionated perspective—for beginning the statistical analysis of your experimental data, with a focus on <span class="smallcaps">measurement precision</span>.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="case study">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -428,56 +465,76 @@ case study
 <h2 class="unnumbered anchored" data-anchor-id="the-lady-tasting-tea">The Lady Tasting Tea</h2>
 <p>The birth of modern statistical inference arose from the age old conundrum of how to best make a cup of tea. The statistician Ronald Fisher was apparently at an afternoon tea party when a lady declared that she could tell the difference when tea was added to milk vs.&nbsp;milk to tea. Rather than taking her at her word, Fisher devised an experimental and data analysis procedure to test her claim.</p>
 <p>The lady would have to judge a set of six new cups of tea and sort them into milk-first vs.&nbsp;tea-first sets. Her data would then be analyzed to determine whether her level of correct choice exceeded that expected by chance. While this process now sounds like a quotidian experiment that might be done on a cooking reality show, it seems unremarkable in hindsight only because it set the standard for the way science was done going forward.</p>
-<p>The important and unusual element of the experiment was its treatment of potential design confounds such which cup of tea was prepared first, which cup of tea was presented first, or the material that the cups were made out of. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounds. Fisher recognized that this strategy was insufficient because of the presence of unobserved confounders. Only by randomizing all other aspects of the experiment could he make strong causal inferences about the treatment (milk then tea vs.&nbsp;tea then milk). We discussed the causal power of random assignment in <a href="001-experiments.html"><span>Chapter&nbsp;1</span></a> – the Lady Tasting Tea experiment is a key touchstone in the popularization of randomized experiments!</p>
+<p>The important and unusual element of the experiment was its treatment of potential design confounds such which cup of tea was prepared first, which cup of tea was presented first, or the material that the cups were made out of. Prior experimental practice would have been to try to equate all of the cups as closely as possible, decreasing the influence of confounds. Fisher recognized that this strategy was insufficient because of the presence of unobserved confounders. Only by randomizing all other aspects of the experiment could he make strong causal inferences about the treatment (milk then tea vs.&nbsp;tea then milk). We discussed the causal power of random assignment in <a href="001-experiments.html" class="quarto-xref"><span>chapter 1</span></a>—the Lady Tasting Tea experiment is a key touchstone in the popularization of randomized experiments!</p>
 </section>
 </div>
 </div>
 <section id="estimating-a-quantity" class="level2 page-columns page-full" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="estimating-a-quantity"><span class="header-section-number">5.1</span> Estimating a quantity</h2>
-<div id="fig-estimation-expt" class="quarto-figure quarto-figure-center anchored page-columns page-full">
-<figure class="figure page-columns page-full">
-<p><img src="images/estimation/tea-expt.png" class="img-fluid figure-img" style="width:50.0%"></p>
-<figcaption class="figure-caption margin-caption">Figure&nbsp;5.1: The structure of our tea tasting experiment.</figcaption>
+<div id="fig-estimation-expt" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full">
+<figure class="quarto-float quarto-float-fig figure page-columns page-full">
+<div aria-describedby="fig-estimation-expt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/estimation/tea-expt.png" class="img-fluid figure-img" style="width:50.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig margin-caption" id="fig-estimation-expt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.1: The structure of our tea tasting experiment.
+</figcaption>
 </figure>
 </div>
-<div class="page-columns page-full"><p></p><div class="no-row-height column-margin column-container"><span class="">An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed Social Darwinist who believed fervently in Eugenic legislation. These views are repugnant and provide important context for their statistical contributions.</span></div></div>
-<p>If experiments are about estimating effects, how do we actually use our experimental data to make these estimates? For our example we’ll design a slightly more modern version of Fisher’s experiment, shown in <a href="#fig-estimation-expt">Figure&nbsp;<span>5.1</span></a>.</p>
-<p>Our causal theory is that the tea quality is affected by milk-tea ordering, so we’ll test that by rating tea quality both milk-first and tea-first, represented by a DAG like the one in <a href="#fig-estimation-dag">Figure&nbsp;<span>5.2</span></a>. Our intended population to generalize to is the set of all tea drinkers, and towards that goal we sample a set of tea-drinkers. In practice, we might do a field trial in a cafe in which we approach patrons and ask them to participate in our experiment in exchange for a free cup of tea. Although this sample size is almost certainly too small to get precise estimates, for the purpose of this example, we’ll sample 18 tea drinkers – nine in each condition.</p>
+<div class="page-columns page-full"><p></p><div class="no-row-height column-margin column-container"><span class="margin-aside">An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding Chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed Social Darwinist who believed fervently in Eugenic legislation. These views are repugnant and provide important context for their statistical contributions.</span></div></div>
+<p>If experiments are about estimating effects, how do we actually use our experimental data to make these estimates? For our example we’ll design a slightly more modern version of Fisher’s experiment, shown in <a href="#fig-estimation-expt" class="quarto-xref">figure&nbsp;<span>5.1</span></a>.</p>
+<p>Our causal theory is that the tea quality is affected by milk-tea ordering, so we’ll test that by rating tea quality both milk-first and tea-first, represented by a DAG like the one in <a href="#fig-estimation-dag" class="quarto-xref">figure&nbsp;<span>5.2</span></a>. Our intended population to generalize to is the set of all tea drinkers, and towards that goal we sample a set of tea-drinkers. In practice, we might do a field trial in a cafe in which we approach patrons and ask them to participate in our experiment in exchange for a free cup of tea. Although this sample size is almost certainly too small to get precise estimates, for the purpose of this example, we’ll sample 18 tea drinkers—nine in each condition.</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-estimation-dag" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/estimation/tea-dag.png" class="img-fluid figure-img" style="width:30.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;5.2: A directed acyclic graph representing our causal theory of tea quality.</figcaption>
+<div class="no-row-height column-margin column-container"><div id="fig-estimation-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-estimation-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/estimation/tea-dag.png" class="img-fluid figure-img" style="width:30.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-estimation-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.2: A directed acyclic graph representing our causal theory of tea quality.
+</figcaption>
 </figure>
-</div></div><div class="page-columns page-full"><p>As our manipulation, we follow Fisher in randomly assigning participants (who of course should give consent to participate) into to one of our two conditions: milk-first and tea-first.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> This design is a between-participants design, so each participant gets only one cup of tea. They receive their cup of tea and taste it. Then as our measure, we ask for a rating of the tea on a continuous scale from 1 (terrible) to 7 (delicious).<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn1"><p><sup>1</sup>&nbsp;Technically, randomized experiments were not invented by Fisher. Perhaps the earliest example of a (somewhat) randomized experiment was a trial of scurvy treatments in the 1700s <span class="citation" data-cites="dunn1997">(<a href="#ref-dunn1997" role="doc-biblioref">Dunn 1997</a>)</span>. <span class="citation" data-cites="peirce1884">Peirce and Jastrow (<a href="#ref-peirce1884" role="doc-biblioref">1884</a>)</span> also report a strikingly modern use of randomized stimulus presentation (via shuffling cards). Nevertheless, Fisher’s statistical work popularized randomized experiments throughout the sciences, in part by integrating them with a set of analytic methods.</p></li><li id="fn2"><p><sup>2</sup>&nbsp;Right now we’re going to assume that our ratings are just simple numerical values and not worry about the fact that they come from a rating scale that is bounded (e.g., can’t go above 7). If you’re curious about <strong>Likert scales</strong> (the name for discrete numerical rating scales; pronounced LICK-ERT), we’ll talk a bit more about them in <a href="008-measurement.html"><span>Chapter&nbsp;8</span></a>.</p></li></div></div>
+</div><div id="fn1"><p><sup>1</sup>&nbsp;Technically, randomized experiments were not invented by Fisher. Perhaps the earliest example of a (somewhat) randomized experiment was a trial of scurvy treatments in the 1700s <span class="citation" data-cites="dunn1997">(<a href="#ref-dunn1997" role="doc-biblioref">Dunn 1997</a>)</span>. <span class="citation" data-cites="peirce1884">Peirce and Jastrow (<a href="#ref-peirce1884" role="doc-biblioref">1884</a>)</span> also report a strikingly modern use of randomized stimulus presentation (via shuffling cards). Nevertheless, Fisher’s statistical work popularized randomized experiments throughout the sciences, in part by integrating them with a set of analytic methods.</p></div><div id="fn2"><p><sup>2</sup>&nbsp;Right now we’re going to assume that our ratings are just simple numerical values and not worry about the fact that they come from a rating scale that is bounded (e.g., can’t go above 7). If you’re curious about <strong>Likert scales</strong> (the name for discrete numerical rating scales; pronounced LICK-ERT), we’ll talk a bit more about them in <a href="008-measurement.html" class="quarto-xref"><span>chapter 8</span></a>.</p></div></div><p>As our manipulation, we follow Fisher in randomly assigning participants (who of course should give consent to participate) into to one of our two conditions: milk-first and tea-first.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> This design is a between-participants design, so each participant gets only one cup of tea. They receive their cup of tea and taste it. Then as our measure, we ask for a rating of the tea on a continuous scale from 1 (terrible) to 7 (delicious).<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-estimation-data" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/estimation/data.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;5.3: Schematic data from the tea tasting experiment.</figcaption>
+<div class="no-row-height column-margin column-container"><div id="fig-estimation-data" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-estimation-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/estimation/data.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-estimation-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.3: Schematic data from the tea tasting experiment.
+</figcaption>
 </figure>
-</div></div><p>An example dataset from our experiment is shown in <a href="#fig-estimation-data">Figure&nbsp;<span>5.3</span></a>. Eventually, we’ll want to estimate the effect of milk-first preparation on quality ratings (our effect of interest). But for now, our goal will be to estimate the quality of the tea when it is milk-first [which some data suggest is actually the better way, at least for British tea drinkers; <span class="citation" data-cites="kennedy2003">Kennedy (<a href="#ref-kennedy2003" role="doc-biblioref">2003</a>)</span>]. More formally, we want to use our sample of 9 milk-first tea judgments to estimate a number that we can’t directly observe, namely the true perceived quality of all possible milk-first cups. We’ll call this number a <strong>population parameter</strong> for reasons that will become clear in a moment.</p>
-<div class="page-columns page-full"><p>We’ll try to go easy on notation but some amount will hopefully make things clearer. We will use <span class="math inline">\(\theta_{\textrm{M}}\)</span> (“theta”) to denote the parameter we want to estimate (the <strong>population parameter</strong>) and <span class="math inline">\(\widehat{\theta}_{\textrm{M}}\)</span>, its <strong>sample estimate</strong>.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn3"><p><sup>3</sup>&nbsp;Statisticians use “hats” like this to denote estimates from a specific sample. One way to remember this is that the “person in the hat” is wearing a hat to dress up as the actual quantity.</p></li></div></div>
-<section id="maximum-likelihood-estimation" class="level3 page-columns page-full" data-number="5.1.1">
+</div></div><p>An example dataset from our experiment is shown in <a href="#fig-estimation-data" class="quarto-xref">figure&nbsp;<span>5.3</span></a>. Eventually, we’ll want to estimate the effect of milk-first preparation on quality ratings (our effect of interest). But for now, our goal will be to estimate the quality of the tea when it is milk-first [which some data suggest is actually the better way, at least for British tea drinkers; <span class="citation" data-cites="kennedy2003">Kennedy (<a href="#ref-kennedy2003" role="doc-biblioref">2003</a>)</span>]. More formally, we want to use our sample of 9 milk-first tea judgments to estimate a number that we can’t directly observe, namely the true perceived quality of all possible milk-first cups. We’ll call this number a <strong>population parameter</strong> for reasons that will become clear in a moment.</p>
+<p>We’ll try to go easy on notation but some amount will hopefully make things clearer. We will use <span class="math inline">\(\theta_{\textrm{M}}\)</span> (“theta”) to denote the parameter we want to estimate (the <strong>population parameter</strong>) and <span class="math inline">\(\widehat{\theta}_{\textrm{M}}\)</span>, its <strong>sample estimate</strong>.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+<div class="no-row-height column-margin column-container"><div id="fn3"><p><sup>3</sup>&nbsp;Statisticians use “hats” like this to denote estimates from a specific sample. One way to remember this is that the “person in the hat” is wearing a hat to dress up as the actual quantity.</p></div></div><section id="maximum-likelihood-estimation" class="level3 page-columns page-full" data-number="5.1.1">
 <h3 data-number="5.1.1" class="anchored" data-anchor-id="maximum-likelihood-estimation"><span class="header-section-number">5.1.1</span> Maximum likelihood estimation</h3>
 <p>OK, you are probably saying, if we want our estimate of milk-first quality, shouldn’t we just take the average rating across the 9 cups of milk-first tea? The answer is yes. But let’s unpack that choice: taking the sample mean as our estimate <span class="math inline">\(\widehat{\theta}_{\textrm{M}}\)</span> is an example of an estimation approach called <strong>maximum likelihood estimation</strong>. In general terms, maximum likelihood estimation is a two-step process.</p>
-<div class="page-columns page-full"><p>First, we assume a <strong>model</strong> for how the data were generated.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> This model is specified in terms of certain population parameters. In our example, the model is as simple as they come: we just assume there is some average level of tea quality and that the measurements vary around it. Let’s take a look at the data from the milk-first condition, shown in <a href="#fig-estimation-ml">Figure&nbsp;<span>5.4</span></a>. Our observations are clustered around the mean, but they also show some variation. Some are higher and some are lower. Variation of this type is a feature of every data set. This variation can be summarized via a <strong>probability distribution</strong>, a mathematical entity that describes the properties of possible datasets.</p><div class="no-row-height column-margin column-container"><li id="fn4"><p><sup>4</sup>&nbsp;This sense of “model” is actually a formal instantiation of the type of causal model we discussed in <a href="001-experiments.html"><span>Chapter&nbsp;1</span></a>. As you get deeper into causal modeling, typically what you do is define a causal “story” for the statistical process that generated a dataset, using both DAGs and the kinds of probability distributions we define below.</p></li></div></div>
-
-<div class="no-row-height column-margin column-container"><div id="fig-estimation-ml" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/estimation/maximum-likelihood.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;5.4: The best-fitting normal distribution for data from the milk-first condition.</figcaption>
+<p>First, we assume a <strong>model</strong> for how the data were generated.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> This model is specified in terms of certain population parameters. In our example, the model is as simple as they come: we just assume there is some average level of tea quality and that the measurements vary around it. Let’s take a look at the data from the milk-first condition, shown in <a href="#fig-estimation-ml" class="quarto-xref">figure&nbsp;<span>5.4</span></a>. Our observations are clustered around the mean, but they also show some variation. Some are higher and some are lower. Variation of this type is a feature of every data set. This variation can be summarized via a <strong>probability distribution</strong>, a mathematical entity that describes the properties of possible datasets.</p>
+<div class="no-row-height column-margin column-container"><div id="fn4"><p><sup>4</sup>&nbsp;This sense of “model” is actually a formal instantiation of the type of causal model we discussed in <a href="001-experiments.html" class="quarto-xref"><span>chapter 1</span></a>. As you get deeper into causal modeling, typically what you do is define a causal “story” for the statistical process that generated a dataset, using both DAGs and the kinds of probability distributions we define below.</p></div><div id="fig-estimation-ml" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-estimation-ml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/estimation/maximum-likelihood.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-estimation-ml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.4: The best-fitting normal distribution for data from the milk-first condition.
+</figcaption>
 </figure>
-</div></div><p>The only probability distribution we’ll discuss here is the ubiquitous <strong>normal distribution</strong> (also sometimes called a “Gaussian distribution”). A normal distribution has two <strong>parameters</strong> (numbers that define its shape), a <strong>mean</strong> and a <strong>standard deviation</strong>. These two parameters define the shape of the curve. The mean (<span class="math inline">\(\theta_M\)</span>) describes where its center goes, and the standard deviation describes how wide it is. Technically, the mean is the <strong>expected value</strong> for new samples from the distribution. Our best guess about the value of these new samples is that they are at the mean. We can write this more formally by introducing <span class="math inline">\(E[M]\)</span> to denote the expectation of the variable <span class="math inline">\(M\)</span>.</p>
+</div></div>
+<p>The only probability distribution we’ll discuss here is the ubiquitous <strong>normal distribution</strong> (also sometimes called a “Gaussian distribution”). A normal distribution has two <strong>parameters</strong> (numbers that define its shape), a <strong>mean</strong> and a <strong>standard deviation</strong>. These two parameters define the shape of the curve. The mean (<span class="math inline">\(\theta_M\)</span>) describes where its center goes, and the standard deviation describes how wide it is. Technically, the mean is the <strong>expected value</strong> for new samples from the distribution. Our best guess about the value of these new samples is that they are at the mean. We can write this more formally by introducing <span class="math inline">\(E[M]\)</span> to denote the expectation of the variable <span class="math inline">\(M\)</span>.</p>
 <p>The standard deviation <span class="math inline">\(\sigma_M\)</span> is then a way of describing the expected <em>variation</em> in these samples. A bigger standard deviation means that we expect samples to be on average further from the mean. We can write this formally as <span class="math inline">\(\sigma_M = \sqrt{E[(M - \theta_M)^2]}\)</span>: the standard deviation is the expected absolute distance between individual samples and the mean, with the square and square root being necessary to compute distance.</p>
 <p>Using a probability distribution to describe our dataset gives us a way of summarizing our observations through the parameters of the distribution and encoding an assumption about what future observations might look like. How do we fit a normal distribution to our data? We try to find the values of the population parameters that make our observed data as likely as possible. Let’s start with the mean.</p>
-<div id="fig-estimation-ml2" class="quarto-figure quarto-figure-center anchored page-columns page-full">
-<figure class="figure page-columns page-full">
-<p><img src="images/estimation/maximum-likelihood2.png" class="img-fluid figure-img" style="width:60.0%"></p>
-<figcaption class="figure-caption margin-caption">Figure&nbsp;5.5: Comparison of the best-fitting normal distribution and a substantially worse curve.</figcaption>
+<div id="fig-estimation-ml2" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full">
+<figure class="quarto-float quarto-float-fig figure page-columns page-full">
+<div aria-describedby="fig-estimation-ml2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/estimation/maximum-likelihood2.png" class="img-fluid figure-img" style="width:60.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig margin-caption" id="fig-estimation-ml2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.5: Comparison of the best-fitting normal distribution and a substantially worse curve.
+</figcaption>
 </figure>
 </div>
-<p>For example, if our sample mean is <span class="math inline">\(\widehat{\theta}_{\textrm{M}} = 4.5\)</span>, what underlying value of <span class="math inline">\(\theta_{\textrm{M}}\)</span> would make these data most likely to occur? Well, suppose the underlying parameter were <span class="math inline">\(\theta_{\textrm{M}}=2.5\)</span>. Then it would be pretty unlikely that our sample mean would be so much bigger. So <span class="math inline">\(\widehat{\theta}_{\textrm{M}}=2.5\)</span> is a poor estimate of the population parameter based on these data (<a href="#fig-estimation-ml2">Figure&nbsp;<span>5.5</span></a>). Conversely, if the parameter were <span class="math inline">\(\theta_{\textrm{M}}=6.5\)</span>, it would be a bit unlikely that our sample mean would be so much <em>smaller</em>. The value of <span class="math inline">\(\widehat{\theta}_{\textrm{M}}\)</span> that makes these data most likely is just 4.5 itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate.</p>
+<p>For example, if our sample mean is <span class="math inline">\(\widehat{\theta}_{\textrm{M}} = 4.5\)</span>, what underlying value of <span class="math inline">\(\theta_{\textrm{M}}\)</span> would make these data most likely to occur? Well, suppose the underlying parameter were <span class="math inline">\(\theta_{\textrm{M}}=2.5\)</span>. Then it would be pretty unlikely that our sample mean would be so much bigger. So <span class="math inline">\(\widehat{\theta}_{\textrm{M}}=2.5\)</span> is a poor estimate of the population parameter based on these data (<a href="#fig-estimation-ml2" class="quarto-xref">figure&nbsp;<span>5.5</span></a>). Conversely, if the parameter were <span class="math inline">\(\theta_{\textrm{M}}=6.5\)</span>, it would be a bit unlikely that our sample mean would be so much <em>smaller</em>. The value of <span class="math inline">\(\widehat{\theta}_{\textrm{M}}\)</span> that makes these data most likely is just 4.5 itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate.</p>
 <!-- The second parameter of the normal distribution is the standard deviation. The standard deviation is just exactly what its name says: the average absolute deviation between the mean and any given observation. We won't discuss how to estimate the standard deviation for your sample here; you can do this computation easily in any software package. What's important for now is just that the standard deviation gives us a way to describe the width of the normal distribution. Together, the mean and standard deviation fully describe a particular normal distribution, allowing us to summarise our knowledge about the data using just two parameters. -->
 <!-- Let's visualize our milk-first tea ratings. Since ratings on our scale are discrete, @fig-estimation-milk-first shows them as a histogram. Our estimate of the mean, $\widehat{\theta}_{\textrm{M}}$, is shown as a blue dashed line. -->
 </section>
@@ -487,55 +544,75 @@ case study
 <p>Often this approach makes sense, especially when we have no prior expectations about the values we are estimating. But sometimes we <em>do</em> have relevant beliefs about the value. For example, before we perform our tea experiment, we don’t know exactly what <span class="math inline">\(\theta_{\textrm{M}}\)</span> will be, but it seems a bit unlikely that tea would be consistently rated as either horrible (1) or perfect (7). We have what you might call <em>weak prior expectations</em> about the kinds of ratings we’ll receive.</p>
 <p>These kind of expectations are most useful when we have a very small amount of data. Remember that our goal is to estimate a population parameter using the sample data, and small data sets can be rather noisy. Taking into account our prior expectations can help to temper the influence of noise. For example, if our very first participant in the experiment rated their tea as terrible, we wouldn’t want to jump to the conclusion that the tea was actually bad. Instead, we might speculate that the participant was having a bad day or just brushed their teeth. On the other hand, if all of our participants gave bad ratings to their tea, the data would be more persuasive; in that case, we might want to tell the cafe that they are serving substandard tea. The extent to which our prior expectations should moderate our conclusions should vary with the amount of sample data; with only a little data, our prior expectations should have more influence, but as we gather more, we should put greater weight on the data.</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-estimation-bayes" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/estimation/bayes.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;5.6: Bayes rule, annotated.</figcaption>
+<div class="no-row-height column-margin column-container"><div id="fig-estimation-bayes" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-estimation-bayes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/estimation/bayes.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-estimation-bayes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.6: Bayes rule, annotated.
+</figcaption>
 </figure>
 </div></div><p>How do we quantify this tradeoff between our prior expectations and our current observations? We can do this via <strong>Bayesian estimation</strong> of <span class="math inline">\(\widehat{\theta}_{\textrm{M}}\)</span>. Bayesian estimation provides a principled framework for integrating prior beliefs and data. These estimation techniques can be very helpful in cases where data are sparse or prior beliefs are strong.</p>
-<div class="page-columns page-full"><p>In Bayesian estimation, we observe some data <span class="math inline">\(d\)</span>, consisting of the set of responses in the experiment. Now we can use <strong>Bayes’ rule</strong>, a tool from basic probability theory, to estimate this number (<a href="#fig-estimation-bayes">Figure&nbsp;<span>5.6</span></a>). Each part of this equation has a name, and it’s worth becoming familiar with them. The thing we want to compute, <span class="math inline">\(p(\theta_{\textrm{M}} |\text{data})\)</span>, is called the <strong>posterior probability</strong> – it tell us what we should believe about the population parameter on tea quality, given the data we observed.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn5"><p><sup>5</sup>&nbsp;We’re making the posterior <span style="color: var(--violet);">purple</span> to indicate the combination of likelihood (<span style="color: var(--red);">red</span>) and prior (<span style="color: var(--blue);">blue</span>).</p></li></div></div>
-<div class="page-columns page-full"><p>The first part of the numerator is <span class="math inline">\(p(\text{data}|\theta_{\textrm{M}})\)</span>, the probability of the data we observed given our hypothesis about the participant’s ability. This part is called the <strong>likelihood</strong>.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> This term tells us about the relationship between our hypothesis and the data we observed – so if we think the tea is of high quality (say <span class="math inline">\(\theta_{\textrm{M}} = 6.5\)</span>) then the probability of observing a bunch of low quality ratings will be fairly low.</p><div class="no-row-height column-margin column-container"><li id="fn6"><p><sup>6</sup>&nbsp;Speaking informally, “likelihood” is just a synonym for probability, but in Bayesian estimation, “likelihood” is a technical term specifically referring to probability of the data given our hypothesis. This ambiguity can get a bit confusing.</p></li></div></div>
+<p>In Bayesian estimation, we observe some data <span class="math inline">\(d\)</span>, consisting of the set of responses in the experiment. Now we can use <strong>Bayes’ rule</strong>, a tool from basic probability theory, to estimate this number (<a href="#fig-estimation-bayes" class="quarto-xref">figure&nbsp;<span>5.6</span></a>). Each part of this equation has a name, and it’s worth becoming familiar with them. The thing we want to compute, <span class="math inline">\(p(\theta_{\textrm{M}} |\text{data})\)</span>, is called the <strong>posterior probability</strong>—it tell us what we should believe about the population parameter on tea quality, given the data we observed.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
+<div class="no-row-height column-margin column-container"><div id="fn5"><p><sup>5</sup>&nbsp;We’re making the posterior <span style="color: var(--violet);">purple</span> to indicate the combination of likelihood (<span style="color: var(--red);">red</span>) and prior (<span style="color: var(--blue);">blue</span>).</p></div><div id="fn6"><p><sup>6</sup>&nbsp;Speaking informally, “likelihood” is just a synonym for probability, but in Bayesian estimation, “likelihood” is a technical term specifically referring to probability of the data given our hypothesis. This ambiguity can get a bit confusing.</p></div></div><p>The first part of the numerator is <span class="math inline">\(p(\text{data}|\theta_{\textrm{M}})\)</span>, the probability of the data we observed given our hypothesis about the participant’s ability. This part is called the <strong>likelihood</strong>.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> This term tells us about the relationship between our hypothesis and the data we observed—so if we think the tea is of high quality (say <span class="math inline">\(\theta_{\textrm{M}} = 6.5\)</span>) then the probability of observing a bunch of low quality ratings will be fairly low.</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-estimation-bayes-curves" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/estimation/bayes-curves.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;5.7: Bayesian inference about tea ratings with a strong prior on low values.</figcaption>
+<div class="no-row-height column-margin column-container"><div id="fig-estimation-bayes-curves" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-estimation-bayes-curves-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/estimation/bayes-curves.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-estimation-bayes-curves-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.7: Bayesian inference about tea ratings with a strong prior on low values.
+</figcaption>
 </figure>
 </div></div><p>The second term in the numerator, <span class="math inline">\(p(\theta_{\textrm{M}} )\)</span>, is called the <strong>prior</strong>. This term encodes our beliefs about the likely distribution of tea quality. Intuitively, if we think that the tea is likely of high quality, we should require more evidence to convince us that it’s bad. In contrast, if we think it’s probably bad, a few examples of low ratings might serve to convince us.</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-estimation-bayes-curves-weak" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/estimation/bayes-curves-weak.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;5.8: Bayesian inference about tea ratings with a weak prior on low values.</figcaption>
+<div class="no-row-height column-margin column-container"><div id="fig-estimation-bayes-curves-weak" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-estimation-bayes-curves-weak-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/estimation/bayes-curves-weak.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-estimation-bayes-curves-weak-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.8: Bayesian inference about tea ratings with a weak prior on low values.
+</figcaption>
 </figure>
-</div></div><p><a href="#fig-estimation-bayes-curves">Figure&nbsp;<span>5.7</span></a> gives an example of the combination of prior and data. In this example, we look at what difference the prior makes after observing 9 ratings. If we go in assuming that the tea is likely to be bad, the posterior mean (purple line) will be pushed downward relative to the maximum likelihood estimate (red line). This prior is operating only over on ratings – estimates of tea quality. Later on when we talk about comparing milk-first and tea-first ratings to get an estimate of the experimental effect, we could consider putting a prior on tea <em>discrimination</em> (e.g., the experimental effect).</p>
+</div></div><p><a href="#fig-estimation-bayes-curves" class="quarto-xref">figure&nbsp;<span>5.7</span></a> gives an example of the combination of prior and data. In this example, we look at what difference the prior makes after observing 9 ratings. If we go in assuming that the tea is likely to be bad, the posterior mean (purple line) will be pushed downward relative to the maximum likelihood estimate (red line). This prior is operating only over on ratings—estimates of tea quality. Later on when we talk about comparing milk-first and tea-first ratings to get an estimate of the experimental effect, we could consider putting a prior on tea <em>discrimination</em> (e.g., the experimental effect).</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-estimation-bayes-curves-moredata" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/estimation/bayes-curves-moredata.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;5.9: Bayesian inference about tea ratings with a a strong prior on low values and more data.</figcaption>
+<div class="no-row-height column-margin column-container"><div id="fig-estimation-bayes-curves-moredata" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-estimation-bayes-curves-moredata-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/estimation/bayes-curves-moredata.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-estimation-bayes-curves-moredata-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.9: Bayesian inference about tea ratings with a strong prior on low values and more data.
+</figcaption>
 </figure>
-</div></div><p>Priors aren’t usually as strong as the one shown above. <a href="#fig-estimation-bayes-curves-weak">Figure&nbsp;<span>5.8</span></a> shows how the picture shifts when we have a weaker prior reflecting a flatter, more widely spread belief about the distribution of ratings. Now the posterior mean (purple) is closer to the maximum likelihood mean (red). This situation is more common – the prior encodes a weak assumption that ratings won’t cluster around the ends of the scale.</p>
-<p>The effect of the prior is also decreased when you have more data. Take a look at <a href="#fig-estimation-bayes-curves-moredata">Figure&nbsp;<span>5.9</span></a>. The prior is the same as in <a href="#fig-estimation-bayes-curves">Figure&nbsp;<span>5.7</span></a>, but we have more data. As a result, the posterior distribution is much more peaked and also much closer to the data – the prior makes much less difference.</p>
-<p>Bayesian estimation is most important when you have strong beliefs and not a lot of data. That can be a case where you have just a few participants in your experiment, but it’s also good – and perhaps more common – to use Bayesian methods when you have a lot of data, but maybe not that much data about particular units that you care about. For example, you might have a large dataset about the effects of an educational intervention but not that much data about how it affects a particular subgroup. Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior (a prior that makes any value equally likely) or as the amount of data goes to infinity.</p>
+</div></div><p>Priors aren’t usually as strong as the one shown above. <a href="#fig-estimation-bayes-curves-weak" class="quarto-xref">Figure&nbsp;<span>5.8</span></a> shows how the picture shifts when we have a weaker prior reflecting a flatter, more widely spread belief about the distribution of ratings. Now the posterior mean (purple) is closer to the maximum likelihood mean (red). This situation is more common—the prior encodes a weak assumption that ratings won’t cluster around the ends of the scale.</p>
+<p>The effect of the prior is also decreased when you have more data. Take a look at <a href="#fig-estimation-bayes-curves-moredata" class="quarto-xref">figure&nbsp;<span>5.9</span></a>. The prior is the same as in <a href="#fig-estimation-bayes-curves" class="quarto-xref">figure&nbsp;<span>5.7</span></a>, but we have more data. As a result, the posterior distribution is much more peaked and also much closer to the data—the prior makes much less difference.</p>
+<p>Bayesian estimation is most important when you have strong beliefs and not a lot of data. That can be a case where you have just a few participants in your experiment, but it’s also good—and perhaps more common—to use Bayesian methods when you have a lot of data, but maybe not that much data about particular units that you care about. For example, you might have a large dataset about the effects of an educational intervention but not that much data about how it affects a particular subgroup. Bayesian estimates and maximum likelihood estimates will exactly coincide either under a flat prior (a prior that makes any value equally likely) or as the amount of data goes to infinity.</p>
 </section>
 </section>
 <section id="estimating-and-comparing-effects" class="level2 page-columns page-full" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="estimating-and-comparing-effects"><span class="header-section-number">5.2</span> Estimating and comparing effects</h2>
-<div class="page-columns page-full"><p>We’ve now covered estimating a single parameter (the mean for people who had milk-first tea) using both frequentist and Bayesian methods. But recall that what we really wanted to do was to estimate the <em>causal effect</em> we were interested in, namely the milk-first vs.&nbsp;tea-first effect. In this section, we’ll discuss how to estimate the effect, and then how to use <strong>effect size</strong> measures to compare effects across experiments (as well as some of the pros and cons of doing so).<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn7"><p><sup>7</sup>&nbsp;This method doesn’t have to be used only with a causal effect, it can be any between-group difference. In the current example, we can say with certainty that this effect is a causal because our experiment uses random assignment.</p></li></div></div>
-<section id="estimating-the-treatment-effect" class="level3 page-columns page-full" data-number="5.2.1">
+<p>We’ve now covered estimating a single parameter (the mean for people who had milk-first tea) using both frequentist and Bayesian methods. But recall that what we really wanted to do was to estimate the <em>causal effect</em> we were interested in, namely the milk-first vs.&nbsp;tea-first effect. In this section, we’ll discuss how to estimate the effect, and then how to use <strong>effect size</strong> measures to compare effects across experiments (as well as some of the pros and cons of doing so).<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a></p>
+<div class="no-row-height column-margin column-container"><div id="fn7"><p><sup>7</sup>&nbsp;This method doesn’t have to be used only with a causal effect, it can be any between-group difference. In the current example, we can say with certainty that this effect is a causal because our experiment uses random assignment.</p></div></div><section id="estimating-the-treatment-effect" class="level3 page-columns page-full" data-number="5.2.1">
 <h3 data-number="5.2.1" class="anchored" data-anchor-id="estimating-the-treatment-effect"><span class="header-section-number">5.2.1</span> Estimating the treatment effect</h3>
-<div class="page-columns page-full"><p>Let’s refer to the causal effect we care about as our <strong>treatment effect</strong>.<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a> In practice, estimating <span class="math inline">\(\beta\)</span> (a parameter describing the treatment effect) is going to be a pretty straightforward extension to what we did before.</p><div class="no-row-height column-margin column-container"><li id="fn8"><p><sup>8</sup>&nbsp;This is the effect of our manipulation – what we sometimes call an “intervention” as well. “Treatment” is a term that comes from medical statistics but is used more broadly in statistics now.</p></li></div></div>
-
-<div class="no-row-height column-margin column-container"><div id="fig-estimation-data-difference" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/estimation/data-difference.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;5.10: Estimating the average treatment effect from the tea-tasting data.</figcaption>
+<p>Let’s refer to the causal effect we care about as our <strong>treatment effect</strong>.<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a> In practice, estimating <span class="math inline">\(\beta\)</span> (a parameter describing the treatment effect) is going to be a pretty straightforward extension to what we did before.</p>
+<div class="no-row-height column-margin column-container"><div id="fn8"><p><sup>8</sup>&nbsp;This is the effect of our manipulation—what we sometimes call an “intervention” as well. “Treatment” is a term that comes from medical statistics but is used more broadly in statistics now.</p></div><div id="fig-estimation-data-difference" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-estimation-data-difference-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/estimation/data-difference.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-estimation-data-difference-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.10: Estimating the average treatment effect from the tea-tasting data.
+</figcaption>
 </figure>
-</div></div><div class="page-columns page-full"><p>In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution, but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let’s term the parameters for the tea-first group <span class="math inline">\(\theta_{\textrm{T}}\)</span> (the mean) and <span class="math inline">\(\sigma\)</span> (the standard deviation). To estimate the treatment effect, we are positing a <strong>model</strong> in which the milk-first ratings are normally distributed with mean <span class="math inline">\(\theta_{\textrm{M}} = \theta_{\textrm{T}} + \beta\)</span> and with standard deviation <span class="math inline">\(\sigma\)</span>.<a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a> This equation says that milk-first ratings have the same distribution as tea-first ratings, except that their average is shifted by <span class="math inline">\(\beta\)</span>. Setting our model up this way then lets us compute <span class="math inline">\(\hat{\beta}\)</span>, our estimate of the treatment effect in our sample.</p><div class="no-row-height column-margin column-container"><li id="fn9"><p><sup>9</sup>&nbsp;For simplicity, we’re assuming that the standard deviations in each tea group are equal.</p></li></div></div>
-<p>As in the one-sample case (i.e., estimating the mean of just the milk-first group), maximum likelihood estimation would then proceed by finding the value of <span class="math inline">\(\beta\)</span> that makes the data most likely under the assumed model. As you’d probably expect, this estimate <span class="math inline">\(\widehat{\beta}\)</span> turns out to be simply the difference in sample means, <span class="math inline">\(\widehat{\theta}_{\textrm{M}} - \widehat{\theta}_{\textrm{T}}\)</span>. You can see this difference pictured in <a href="#fig-estimation-data-difference">Figure&nbsp;<span>5.10</span></a>.</p>
-<div class="page-columns page-full"><p>In the Bayesian framework, we would again specify a prior <span class="math inline">\(p(\beta)\)</span> that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could specify a flat prior, <span class="math inline">\(p(\beta) \propto 1\)</span>.<a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a>. If we believe the treatment effect is likely to favor milk-first pouring (<span class="math inline">\(\beta&gt;0\)</span>), we could specify the prior is a normal distribution centered at some positive value (e.g., <span class="math inline">\(\beta=0.5\)</span>); the standard deviation of this prior would encode how certain we are about our prior beliefs. And if we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at 0, which has the effect of “shrinking” the estimates closer to 0.<a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn10"><p><sup>10</sup>&nbsp;This equation says that the probability of any value of <span class="math inline">\(\beta\)</span> is “proportional to” 1, meaning that it’s constant (“flat”) regardless of what value <span class="math inline">\(\beta\)</span> takes.</p></li><li id="fn11"><p><sup>11</sup>&nbsp;The measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Statistical uncertainty is only one kind of uncertainty, though. A more holistic view of the overall credibility of an estimate should also account for other things outside of the model, like study design issues and bias.</p></li></div></div>
-<p>As in our example above, maximum likelihood estimates and Bayesian estimates are going to be pretty similar if we have a lot of data or weak priors. They will only diverge when we have strong priors or relatively little data. The reason we are setting up these two different frameworks, however, is that they provide very different inferential tools, as we’ll see in the next chapter.</p>
+</div><div id="fn9"><p><sup>9</sup>&nbsp;For simplicity, we’re assuming that the standard deviations in each tea group are equal.</p></div></div>
+<p>In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution, but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let’s term the parameters for the tea-first group <span class="math inline">\(\theta_{\textrm{T}}\)</span> (the mean) and <span class="math inline">\(\sigma\)</span> (the standard deviation). To estimate the treatment effect, we are positing a <strong>model</strong> in which the milk-first ratings are normally distributed with mean <span class="math inline">\(\theta_{\textrm{M}} = \theta_{\textrm{T}} + \beta\)</span> and with standard deviation <span class="math inline">\(\sigma\)</span>.<a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a> This equation says that milk-first ratings have the same distribution as tea-first ratings, except that their average is shifted by <span class="math inline">\(\beta\)</span>. Setting our model up this way then lets us compute <span class="math inline">\(\hat{\beta}\)</span>, our estimate of the treatment effect in our sample.</p>
+<p>As in the one-sample case (i.e., estimating the mean of just the milk-first group), maximum likelihood estimation would then proceed by finding the value of <span class="math inline">\(\beta\)</span> that makes the data most likely under the assumed model. As you’d probably expect, this estimate <span class="math inline">\(\widehat{\beta}\)</span> turns out to be simply the difference in sample means, <span class="math inline">\(\widehat{\theta}_{\textrm{M}} - \widehat{\theta}_{\textrm{T}}\)</span>. You can see this difference pictured in <a href="#fig-estimation-data-difference" class="quarto-xref">figure&nbsp;<span>5.10</span></a>.</p>
+<p>In the Bayesian framework, we would again specify a prior <span class="math inline">\(p(\beta)\)</span> that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could specify a flat prior, <span class="math inline">\(p(\beta) \propto 1\)</span>.<a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a>. If we believe the treatment effect is likely to favor milk-first pouring (<span class="math inline">\(\beta&gt;0\)</span>), we could specify the prior is a normal distribution centered at some positive value (e.g., <span class="math inline">\(\beta=0.5\)</span>); the standard deviation of this prior would encode how certain we are about our prior beliefs. And if we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at 0, which has the effect of “shrinking” the estimates closer to 0.<a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a></p>
+<div class="no-row-height column-margin column-container"><div id="fn10"><p><sup>10</sup>&nbsp;This equation says that the probability of any value of <span class="math inline">\(\beta\)</span> is “proportional to” 1, meaning that it’s constant (“flat”) regardless of what value <span class="math inline">\(\beta\)</span> takes.</p></div><div id="fn11"><p><sup>11</sup>&nbsp;The measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Statistical uncertainty is only one kind of uncertainty, though. A more holistic view of the overall credibility of an estimate should also account for other things outside of the model, like study design issues and bias.</p></div></div><p>As in our example above, maximum likelihood estimates and Bayesian estimates are going to be pretty similar if we have a lot of data or weak priors. They will only diverge when we have strong priors or relatively little data. The reason we are setting up these two different frameworks, however, is that they provide very different inferential tools, as we’ll see in the next chapter.</p>
 </section>
 <section id="measures-of-effect-size" class="level3 page-columns page-full" data-number="5.2.2">
 <h3 data-number="5.2.2" class="anchored" data-anchor-id="measures-of-effect-size"><span class="header-section-number">5.2.2</span> Measures of effect size</h3>
@@ -545,58 +622,70 @@ case study
 <p><span class="math display">\[
 d = \frac{\theta_{\textrm{M}} - \theta_{\textrm{T}}}{\sigma_{\text{pooled}}}
 \]</span></p>
-<p>where the difference between means (<span class="math inline">\(\theta_{\textrm{T}}\)</span> and <span class="math inline">\(\theta_{\textrm{M}}\)</span>) is divided by the pooled standard deviation <span class="math inline">\(\sigma_{\text{pooled}}\)</span>. Intuitively, what you’re doing is taking the study effect (<span class="math inline">\(\beta\)</span>) and dividing it – scaling it – by the variation we saw between individuals in the study.</p>
-<div id="fig-estimation-es-calc" class="quarto-figure quarto-figure-center anchored page-columns page-full">
-<figure class="figure page-columns page-full">
-<p><img src="images/estimation/es-calc.png" class="img-fluid figure-img" style="width:80.0%"></p>
-<figcaption class="figure-caption margin-caption">Figure&nbsp;5.11: Schematic effect size computation.</figcaption>
+<p>where the difference between means (<span class="math inline">\(\theta_{\textrm{T}}\)</span> and <span class="math inline">\(\theta_{\textrm{M}}\)</span>) is divided by the pooled standard deviation <span class="math inline">\(\sigma_{\text{pooled}}\)</span>. Intuitively, what you’re doing is taking the study effect (<span class="math inline">\(\beta\)</span>) and dividing it—scaling it—by the variation we saw between individuals in the study.</p>
+<div id="fig-estimation-es-calc" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full">
+<figure class="quarto-float quarto-float-fig figure page-columns page-full">
+<div aria-describedby="fig-estimation-es-calc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/estimation/es-calc.png" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig margin-caption" id="fig-estimation-es-calc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.11: Schematic effect size computation.
+</figcaption>
 </figure>
 </div>
-<p>Let’s compute this measure for our tea-drinking study. We can just plug in the estimates we see in <a href="#fig-estimation-data-difference">Figure&nbsp;<span>5.10</span></a> and compute the standard deviation of our observed data:</p>
-<div class="page-columns page-full"><p><span class="math display">\[\widehat{d} = \frac{\widehat{\theta}_{\textrm{M}} - \widehat{\theta}_{\textrm{T}}}{\widehat{\sigma}_{\text{pooled}}} = \frac{4.5- 3.5}{1.25} = \frac{1}{1.25} = 0.80\]</span> In other words, the effect size of the difference between the two conditions is .8 standard deviations. This process is shown graphically in <a href="#fig-estimation-es-calc">Figure&nbsp;<span>5.11</span></a>.<a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn12"><p><sup>12</sup>&nbsp;Cohen’s <span class="math inline">\(d\)</span>, also referred to as a <strong>standardized mean difference</strong> (SMD), can be tricky to apply to more complex experimental designs, such as when you have within-participant designs and multiple measurements of each participant. For some guidance on this topic, see <span class="citation" data-cites="lakens2013">Lakens (<a href="#ref-lakens2013" role="doc-biblioref">2013</a>)</span>.</p></li></div></div>
-<p>We previously said that people who drank milk-first tea had quality ratings that were, on average, 1 point higher on a 7-point scale (<span class="math inline">\(\beta = 1\)</span> point). Cohen’s <em>d</em> translates the arbitrary units of our rating scale into a <strong>unit-less</strong> effect size that is measured in terms of the variation in the data. You may find yourself wondering: “why would I ever describe things in terms of standard deviations?” The key benefit is that it allows us to compare the size of the effect between studies that use different measures.</p>
+<p>Let’s compute this measure for our tea-drinking study. We can just plug in the estimates we see in <a href="#fig-estimation-data-difference" class="quarto-xref">figure&nbsp;<span>5.10</span></a> and compute the standard deviation of our observed data:</p>
+<p><span class="math display">\[\widehat{d} = \frac{\widehat{\theta}_{\textrm{M}} - \widehat{\theta}_{\textrm{T}}}{\widehat{\sigma}_{\text{pooled}}} = \frac{4.5- 3.5}{1.25} = \frac{1}{1.25} = 0.80\]</span> In other words, the effect size of the difference between the two conditions is .8 standard deviations. This process is shown graphically in <a href="#fig-estimation-es-calc" class="quarto-xref">figure&nbsp;<span>5.11</span></a>.<a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a></p>
+<div class="no-row-height column-margin column-container"><div id="fn12"><p><sup>12</sup>&nbsp;Cohen’s <span class="math inline">\(d\)</span>, also referred to as a <strong>standardized mean difference</strong> (SMD), can be tricky to apply to more complex experimental designs, such as when you have within-participant designs and multiple measurements of each participant. For some guidance on this topic, see <span class="citation" data-cites="lakens2013">Lakens (<a href="#ref-lakens2013" role="doc-biblioref">2013</a>)</span>.</p></div></div><p>We previously said that people who drank milk-first tea had quality ratings that were, on average, 1 point higher on a 7-point scale (<span class="math inline">\(\beta = 1\)</span> point). Cohen’s <em>d</em> translates the arbitrary units of our rating scale into a <strong>unit-less</strong> effect size that is measured in terms of the variation in the data. You may find yourself wondering: “why would I ever describe things in terms of standard deviations?” The key benefit is that it allows us to compare the size of the effect between studies that use different measures.</p>
 <p>Let’s say that we ran a replication of our tea study with two changes: (1) we studied patrons in a US cafe instead of a UK cafe, and (2) we used a 100-point quality rating scale instead of a 7-point scale. Imagine that, just as we found that participants in the UK rated the milk-first tea 1-point higher on a 7-point quality scale, US participants rated the milk-first tea 1-point higher on a <em>100-point</em> quality scale. It seems clear that these effects are different because of the difference in scale. But how different?</p>
 <p>It might at first seem reasonable just to normalize by the length of the scale. So maybe the UK experimental participants showed a 1/7 rating effect and the US participants showed a 1/100 rating effect. The trouble with this move is that it presupposes that participants from two different populations are using two different scales in exactly the same way! For example, maybe US participants made very clumpy judgments that were mostly centered around 50 (perhaps because of a lack of milk tea experience). Standardized effect sizes get around this kind of issue by scaling according to the variability of the data.</p>
 <p>Let’s compute the effect size for the cross-cultural replication. We’ll imagine that participants who drank milk-first tea gave an average rating of 50/100 and participants who drank tea-first tea rated it 49 on average. But if their variability was also relatively lower, perhaps the standard deviation of their ratings was only 5. Using the formula above, we find</p>
 <p><span class="math display">\[\widehat{d}_{US} = \frac{\widehat{\theta}_{\textrm{M}} - \widehat{\theta}_{\textrm{T}}}{\widehat{\sigma}_{\text{pooled}}} = \frac{50 - 49}{5} = \frac{1}{5}=  0.2\]</span></p>
 <p>A Cohen’s <em>d</em> of .2 means that US cafe patrons rated their tea .2 standard deviations higher when it was milk-first, much smaller than the .8 standard deviation difference in the UK patrons.</p>
 <p>There are no hard and fast rules for interpreting what makes a big effect or a small effect, but people often refer back to a standard suggested by <span class="citation" data-cites="cohen1992">Cohen (<a href="#ref-cohen1992" role="doc-biblioref">1992</a>)</span>. On those standards, <span class="math inline">\(d = 0.8\)</span> is a “large effect”, and <span class="math inline">\(d = 0.2\)</span> is a “small effect.” But these effect size interpretation norms are somewhat arbitrary. The key point here was that US and UK patrons had the same raw score change in quality ratings (<span class="math inline">\(\widehat{\beta} = 1\)</span>) and standardizing the differences allowed us to communicate that the difference was larger among the UK patrons.</p>
-<div class="page-columns page-full"><p>Cohen’s <em>d</em> is one of many standardized effect sizes that researchers can use. Just as Cohen’s <em>d</em> standardizes differences in group means, there are also generalizations that allow for continuous treatment variables or covariate adjustment (e.g., Pearson’s <em>r</em>, as we discuss below; <span class="math inline">\(r^2\)</span>; or <span class="math inline">\(\eta^2\)</span>). And there is a whole other set of effect-size measures for relationships between binary variables (e.g., odds ratio). We’ll be using effect sizes throughout the book, but we’ll be using Cohen’s <em>d</em> as our example.<a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn13"><p><sup>13</sup>&nbsp;If you’d like to learn more about other varieties of effect size, take a look at <span class="citation" data-cites="fritz2012">Fritz, Morris, and Richler (<a href="#ref-fritz2012" role="doc-biblioref">2012</a>)</span> and <span class="citation" data-cites="lakens2013">Lakens (<a href="#ref-lakens2013" role="doc-biblioref">2013</a>)</span>.</p></li></div></div>
-</section>
+<p>Cohen’s <em>d</em> is one of many standardized effect sizes that researchers can use. Just as Cohen’s <em>d</em> standardizes differences in group means, there are also generalizations that allow for continuous treatment variables or covariate adjustment (e.g., Pearson’s <em>r</em>, as we discuss below; <span class="math inline">\(r^2\)</span>; or <span class="math inline">\(\eta^2\)</span>). And there is a whole other set of effect-size measures for relationships between binary variables (e.g., odds ratio). We’ll be using effect sizes throughout the book, but we’ll be using Cohen’s <em>d</em> as our example.<a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a></p>
+<div class="no-row-height column-margin column-container"><div id="fn13"><p><sup>13</sup>&nbsp;If you’d like to learn more about other varieties of effect size, take a look at <span class="citation" data-cites="fritz2012">Fritz, Morris, and Richler (<a href="#ref-fritz2012" role="doc-biblioref">2012</a>)</span> and <span class="citation" data-cites="lakens2013">Lakens (<a href="#ref-lakens2013" role="doc-biblioref">2013</a>)</span>.</p></div></div></section>
 <section id="pros-and-cons-of-standardizing-effect-sizes" class="level3" data-number="5.2.3">
 <h3 data-number="5.2.3" class="anchored" data-anchor-id="pros-and-cons-of-standardizing-effect-sizes"><span class="header-section-number">5.2.3</span> Pros and cons of standardizing effect sizes</h3>
 <p>Standardizing effect size helps communicate that a 1-point change on a 7-point scale is not the same as a 1-point change on a 100-point scale. But is it any better to say that the first change represents a 0.80 standard deviation difference and the second a 0.08 standard deviation difference?</p>
 <p>Effect sizes allow us to compare results across studies more easily. Across studies, researchers use different measures, different study designs, and different populations. Standardization gives us a “common language” to describe estimated relationships in these varied contexts. This language is helpful when we want to aggregate and compare effects across studies via meta-analysis. And it is also helpful when planning new studies. When trying to figure out how many participants to run in a study, almost all techniques for sample size planning use standardized effect sizes to determine how much data would be needed to reliably detect an effect.</p>
-<p>Standardizing effect sizes has limitations, though. For example, if two interventions produce the same absolute change in the same outcome measure, but are studied in different populations in which the variability on the outcome differs substantially, the interventions would produce different standardized mean differences <span class="citation" data-cites="baguley2009">(<a href="#ref-baguley2009" role="doc-biblioref">Baguley 2009</a>)</span> (see the Depth box “Reliability paradoxes!” in <a href="008-measurement.html"><span>Chapter&nbsp;8</span></a>).</p>
+<p>Standardizing effect sizes has limitations, though. For example, if two interventions produce the same absolute change in the same outcome measure, but are studied in different populations in which the variability on the outcome differs substantially, the interventions would produce different standardized mean differences <span class="citation" data-cites="baguley2009">(<a href="#ref-baguley2009" role="doc-biblioref">Baguley 2009</a>)</span> (see the Depth box “Reliability paradoxes!” in <a href="008-measurement.html" class="quarto-xref"><span>chapter 8</span></a>).</p>
 <p>Imagine we conducted our tea experiment again, but this time with (decaf) tea, and focusing on children. Maybe milk-first tea tastes the same amount better than tea-first tea for kids and for adults. But kids are, as a rule, more variable in their responding than adults. This higher level of variability would lead us to observe a smaller effect size in kids vs.&nbsp;adults. Recall that our UK adult SD was 1.25, and our effect size was <span class="math inline">\(d = .8\)</span>. Imagine that children’s SD is 2.5. In this scenario, even if tea led to the same 1-point absolute change in ratings among adults and children, the standardized effect size for kids would look half as big:</p>
 <p><span class="math display">\[\widehat{d}_{kids} = \frac{\widehat{\theta}_{\textrm{M}} - \widehat{\theta}_{\textrm{T}}}{\widehat{\sigma}_{\text{pooled}}} = \frac{5- 4}{2.5} = \frac{1}{2.5} =  .4\]</span></p>
 <p>This example highlights some of the challenges with standardization. If we focused on the fact that both adults and children show a 1-point change in ratings levels (<span class="math inline">\(\widehat{\beta} = 1\)</span>), we would conclude that milk-first tea ordering is as much better for adults as kids. If we focused on the standardized effect sizes, however, we would conclude that the milk ordering effect is twice as big for adults.</p>
-<p>So which is better: describing raw measures or standardized effect sizes? In general our response is “Why not both?” But if you wanted to pick one or the other, we recommend considering what type of measurement you are using. With measures that yield common measurement units that are likely to be reported in many studies already, use raw scores <span class="citation" data-cites="baguley2009">(<a href="#ref-baguley2009" role="doc-biblioref">Baguley 2009</a>)</span>. For example, if your study uses physical units such as milliseconds (e.g., for reaction times) or counts (e.g., for a study tracking an outcome like number of words), these measurements can be quite useful to compare across studies. Reporting raw measurements also can allow you to check whether your measurements make sense – for example, a reaction time of 70 milliseconds is inhumanly fast, while a reaction time of 10 seconds might be extremely slow (at least, for many speeded tasks).</p>
+<p>So which is better: describing raw measures or standardized effect sizes? In general our response is “Why not both?” But if you wanted to pick one or the other, we recommend considering what type of measurement you are using. With measures that yield common measurement units that are likely to be reported in many studies already, use raw scores <span class="citation" data-cites="baguley2009">(<a href="#ref-baguley2009" role="doc-biblioref">Baguley 2009</a>)</span>. For example, if your study uses physical units such as milliseconds (e.g., for reaction times) or counts (e.g., for a study tracking an outcome like number of words), these measurements can be quite useful to compare across studies. Reporting raw measurements also can allow you to check whether your measurements make sense—for example, a reaction time of 70 milliseconds is inhumanly fast, while a reaction time of 10 seconds might be extremely slow (at least, for many speeded tasks).</p>
 <p>In contrast, we recommend using standardized effect sizes for cases where the measurement is relatively unlikely to be comparable with other studies in its original form, or unlikely to be meaningful on its own. For example, reporting the effect of an intervention on raw math test scores is only meaningful if the reader knows how many items are on the test, how difficult it is, and so forth. In such a case where there it is hard for a reader to be “calibrated” to the specific measurement units you are using, standardized effect sizes may be the best way to report your finding <span class="citation" data-cites="kelley2012">(<a href="#ref-kelley2012" role="doc-biblioref">Kelley and Preacher 2012</a>)</span>.</p>
 </section>
 </section>
 <section id="estimating-the-relationship-between-variables" class="level2 page-columns page-full" data-number="5.3">
 <h2 data-number="5.3" class="anchored" data-anchor-id="estimating-the-relationship-between-variables"><span class="header-section-number">5.3</span> Estimating the relationship between variables</h2>
 
-<div class="no-row-height column-margin column-container"><div id="fig-estimation-corr" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/estimation/corr1.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;5.12: The relationship between age and milk-first tea rating.</figcaption>
+<div class="no-row-height column-margin column-container"><div id="fig-estimation-corr" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-estimation-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/estimation/corr1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-estimation-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.12: The relationship between age and milk-first tea rating.
+</figcaption>
 </figure>
-</div></div><div class="page-columns page-full"><p>Our focus up until now has been in estimating individual effects, but sometimes we also want to estimate the relationship between two different variables. Extending our example, <a href="#fig-estimation-corr">Figure&nbsp;<span>5.12</span></a> shows the relationship between the age of the tea taster and their rating of milk-first tea. It seems that younger people overall like tea less than older people.<a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a> How could we quantify this result?</p><div class="no-row-height column-margin column-container"><li id="fn14"><p><sup>14</sup>&nbsp;Remember, this is a correlational relationship, and there’s no causal inference possible here.</p></li></div></div>
+</div><div id="fn14"><p><sup>14</sup>&nbsp;Remember, this is a correlational relationship, and there’s no causal inference possible here.</p></div></div><p>Our focus up until now has been in estimating individual effects, but sometimes we also want to estimate the relationship between two different variables. Extending our example, <a href="#fig-estimation-corr" class="quarto-xref">figure&nbsp;<span>5.12</span></a> shows the relationship between the age of the tea taster and their rating of milk-first tea. It seems that younger people overall like tea less than older people.<a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a> How could we quantify this result?</p>
 <p>The first concept we need is <strong>covariance</strong>. Covariance captures the degree to which we expect two variables to deviate from their means in the same direction. We’re looking at milk-first tea ratings <span class="math inline">\(M\)</span> and participant ages <span class="math inline">\(A\)</span>. We can write the covariance between these two variables as</p>
 <p><span class="math display">\[Cov(M, A) = E[(M - \theta_M) (A - \theta_A)]\]</span></p>
-<div class="page-columns page-full"><p>This formula expresses the expected product of how much each observation differs from its expectation (mean) along each variable. <a href="#fig-estimation-corr2">Figure&nbsp;<span>5.13</span></a> shows these differences, which are multiplied together for each point to get the covariation.<a href="#fn15" class="footnote-ref" id="fnref15" role="doc-noteref"><sup>15</sup></a></p><div class="no-row-height column-margin column-container"><li id="fn15"><p><sup>15</sup>&nbsp;This looks a little tricky, but it’s actually very related to the basic concepts we’ve already seen. Remember when we introduced the standard deviation, we described it as the expected distance between new samples from a distribution and the mean of that distribution. The covariance is very related: the standard deviation is just <span class="math inline">\(\sqrt{Cov(X,X)}\)</span>, in other words, the square root of the covariance of a variable with itself.</p></li></div></div>
-
-<div class="no-row-height column-margin column-container"><div id="fig-estimation-corr2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/estimation/corr2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;5.13: Estimating the covariation between age and milk-first tea rating.</figcaption>
+<p>This formula expresses the expected product of how much each observation differs from its expectation (mean) along each variable. <a href="#fig-estimation-corr2" class="quarto-xref">Figure&nbsp;<span>5.13</span></a> shows these differences, which are multiplied together for each point to get the covariation.<a href="#fn15" class="footnote-ref" id="fnref15" role="doc-noteref"><sup>15</sup></a></p>
+<div class="no-row-height column-margin column-container"><div id="fn15"><p><sup>15</sup>&nbsp;This looks a little tricky, but it’s actually very related to the basic concepts we’ve already seen. Remember when we introduced the standard deviation, we described it as the expected distance between new samples from a distribution and the mean of that distribution. The covariance is very related: the standard deviation is just <span class="math inline">\(\sqrt{Cov(X,X)}\)</span>, in other words, the square root of the covariance of a variable with itself.</p></div><div id="fig-estimation-corr2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-estimation-corr2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/estimation/corr2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-estimation-corr2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.13: Estimating the covariation between age and milk-first tea rating.
+</figcaption>
 </figure>
-</div></div><p>This covariance number gives us an estimate of how much age and ratings covary, but its units are a bit funny: it’s hard to know what to make of an expected deviation of 1 point-year. We can do a simple trick to standardize its units and make it into a wonderful form of effect size called the <strong>correlation coefficient</strong> (denoted <span class="math inline">\(r\)</span>). Remember that to create effect sizes above, we divided by the standard deviation of the variable. Here all we have to do is divide by the standard deviation of both variables.</p>
+</div></div>
+<p>This covariance number gives us an estimate of how much age and ratings covary, but its units are a bit funny: it’s hard to know what to make of an expected deviation of 1 point-year. We can do a simple trick to standardize its units and make it into a wonderful form of effect size called the <strong>correlation coefficient</strong> (denoted <span class="math inline">\(r\)</span>). Remember that to create effect sizes above, we divided by the standard deviation of the variable. Here all we have to do is divide by the standard deviation of both variables.</p>
 <p><span class="math display">\[r_{M,A} = \frac{Cov(M,A)}{\sigma_M \sigma_A}\]</span> In other words, the correlation between two variables is the standardized covariation.</p>
 <p>The correlation coefficient is the most ubiquitous measure of association between variables. It ranges between -1, where two variables covary in exactly the opposite direction, to 1, when two variables covary perfectly. A correlation means that there is no association between two variables. A correlation of -1 or 1 doesn’t mean that these two variables have the same scale, however: it just means that they “move together.”</p>
-<div class="page-columns page-full"><p></p><div class="no-row-height column-margin column-container"><span class="">This section has described one way of looking at a correlation coefficient: as standardized covariation. For a great discussion of all the different ways of thinking about correlations, see <span class="citation" data-cites="lee-rodgers1988">Lee Rodgers and Nicewander (<a href="#ref-lee-rodgers1988" role="doc-biblioref">1988</a>)</span>.</span></div></div>
+<div class="page-columns page-full"><p></p><div class="no-row-height column-margin column-container"><span class="margin-aside">This section has described one way of looking at a correlation coefficient: as standardized covariation. For a great discussion of all the different ways of thinking about correlations, see <span class="citation" data-cites="lee-rodgers1988">Lee Rodgers and Nicewander (<a href="#ref-lee-rodgers1988" role="doc-biblioref">1988</a>)</span>.</span></div></div>
 <p>Critically, a correlation is an effect size. Correlations can be compared across different measures and different studies (including both experimental and observational studies), making it a very valuable scale-free comparison tool.</p>
 </section>
 <section id="chapter-summary-estimation" class="level2" data-number="5.4">
@@ -635,7 +724,7 @@ readings
 <div class="callout-body-container callout-body">
 <ul>
 <li><p>A great narrative introduction to the history and practice of statistics: Salsburg, D. (2001). <em>The lady tasting tea: How statistics revolutionized science in the twentieth century</em>. Macmillan.</p></li>
-<li><p>An open source statistics textbook that follows a similar approach as Chapters <a href="#sec-estimation"><span>5</span></a> – <a href="007-models.html"><span>7</span></a>: Poldrack, R. (2022). <em>Statistical thinking for the 21st century</em>. Available free online at <a href="https://statsthinking21.org" class="uri">https://statsthinking21.org</a>.</p></li>
+<li><p>An open source statistics textbook that follows a similar approach as Chapters <a href="#sec-estimation" class="quarto-xref"><span>5</span></a>—<a href="007-models.html" class="quarto-xref"><span>7</span></a>: Poldrack, R. (2022). <em>Statistical thinking for the 21st century</em>. Available free online at <a href="https://statsthinking21.org" class="uri">https://statsthinking21.org</a>.</p></li>
 </ul>
 </div>
 </div>
@@ -646,7 +735,7 @@ readings
 </section>
 <section id="bibliography" class="level1 unnumbered">
 <h1 class="unnumbered">References</h1>
-<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-baguley2009" class="csl-entry" role="listitem">
 Baguley, Thom. 2009. <span>“Standardized or Simple Effect Size: What Should Be Reported?”</span> <em>British Journal of Psychology</em> 100 (3): 603–17.
 </div>
@@ -725,6 +814,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
   }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
   const toggleColorMode = (alternate) => {
     // Switch the stylesheets
     const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
@@ -791,13 +907,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'default';
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -832,18 +950,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -875,11 +982,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -889,8 +1035,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -902,7 +1057,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -946,6 +1224,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -971,6 +1250,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1032,12 +1337,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./004-ethics.html" class="pagination-link">
+      <a href="./004-ethics.html" class="pagination-link" aria-label="Ethics">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ethics</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./006-inference.html" class="pagination-link">
+      <a href="./006-inference.html" class="pagination-link" aria-label="Inference">
         <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Inference</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -1046,4 +1351,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-</body></html>
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/langcog/experimentology/blob/main/005-estimation.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/langcog/experimentology/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
