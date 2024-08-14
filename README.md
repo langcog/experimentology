@@ -11,3 +11,5 @@ Book manuscript is not final and text is expected to change (mostly in minor way
 To build locally (this is uncommon):
 * Make sure Quarto is up to date (we use HomeBrew)
 * Restore dependencies using `renv::restore()`
+
+Note that Experimentology is licensed CC-BY-NC 4.0: [https://creativecommons.org/licenses/by-nc/4.0/]()
