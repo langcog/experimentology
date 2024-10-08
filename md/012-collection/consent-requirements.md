@@ -2,11 +2,11 @@
 |----|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 1  | A statement that the study involves research                                                                                                                            |
 | 2  | An explanation of the purposes of the research                                                                                                                          |
-| 3  | The expected duration of the subject’s participation                                                                                                                    |
+| 3  | The expected duration of the subject's participation                                                                                                                    |
 | 4  | A description of the procedures to be followed                                                                                                                          |
-| 5  | Identification of any procedures which are experimental                                                                                                                 |
+| 5  | Identification of any procedures that are experimental                                                                                                                 |
 | 6  | A description of any reasonably foreseeable risks or discomforts to the subject                                                                                         |
-| 7  | A description of any benefits to the subject or to others which may reasonably be expected from the research                                                            |
+| 7  | A description of any benefits to the subject or to others that may reasonably be expected from the research                                                            |
 | 8  | A disclosure of appropriate alternative procedures or courses of treatment, if any, that might be advantageous to the subject                                           |
 | 9  | A statement describing the extent, if any, to which confidentiality of records identifying the subject will be maintained                                               |
 | 10 | For research involving more than minimal risk, an explanation as to whether any compensation or medical treatments are available if injury occurs                       |

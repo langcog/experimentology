@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0" demote-non-dropping-particle="display-and-sort" page-range-format="chicago">
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0" demote-non-dropping-particle="display-and-sort">
   <info>
     <title>Chicago Manual of Style 17th edition (author-date, no em-dash in bibliography)</title>
     <id>http://www.zotero.org/styles/chicago-author-date-no-em-dash</id>
@@ -141,7 +141,7 @@
   <macro name="contributors">
     <group delimiter=". ">
       <names variable="author">
-        <name and="text" name-as-sort-order="first" sort-separator=", " delimiter=", " delimiter-precedes-last="always"/>
+        <name and="text" name-as-sort-order="first" sort-separator=", " delimiter=", " delimiter-precedes-last="always" initialize="false" initialize-with=". "/>
         <label form="short" prefix=", "/>
         <substitute>
           <names variable="editor"/>
@@ -414,32 +414,16 @@
     <choose>
       <if variable="locator">
         <choose>
-          <if locator="page" match="none">
-            <choose>
-              <if type="bill book graphic legal_case legislation motion_picture report song" match="any">
-                <choose>
-                  <if variable="volume">
-                    <group>
-                      <text term="volume" form="short" suffix=" "/>
-                      <number variable="volume" form="numeric"/>
-                      <label variable="locator" form="short" prefix=", " suffix=" "/>
-                    </group>
-                  </if>
-                  <else>
-                    <label variable="locator" form="short" suffix=" "/>
-                  </else>
-                </choose>
-              </if>
-              <else>
-                <label variable="locator" form="short" suffix=" "/>
-              </else>
-            </choose>
+          <if locator="page">
+            <text variable="locator" prefix="p. "/>
           </if>
-          <else-if type="bill book graphic legal_case legislation motion_picture report song" match="any">
-            <number variable="volume" form="numeric" suffix=":"/>
+          <else-if locator="chapter">
+            <text variable="locator" prefix="Chapter "/>
           </else-if>
+          <else>
+            <text variable="locator"/>
+          </else>
         </choose>
-        <text variable="locator"/>
       </if>
     </choose>
   </macro>
