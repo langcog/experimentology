@@ -27,7 +27,7 @@ The move to "go test for significance" before visualizing your data and trying t
 
 In this chapter, we will describe NHST, the conventional method that many students still learn (and many scientists still use) as their primary method for engaging with data. All practicing experimentalists need to understand NHST, both to read the literature and also to apply this method in appropriate situations. For example, NHST may be a reasonable tool for testing whether an intervention leads to a difference between a treatment condition and an appropriate control. But we will also try to contextualize NHST as a very special case of a broader set of statistical inference strategies. Further, we will continue to flesh out our account of how some of the pathologies of NHST have been a driver of the replication crisis.
 
-![Clarifying the distinctions between Bayesian and Frequentist paradigms and the tools they offer for measurement and hypothesis testing. For many settings, we think the measurement mindset is more useful. Adapted from @kruschke2018.](images/inference/krushke.png){#fig-inference-krushke .column-margin}
+![Clarifying the distinctions between Bayesian and Frequentist paradigms and the tools they offer for measurement and hypothesis testing. For many settings, we think the measurement mindset is more useful. Adapted from @kruschke2018.](images/inference/krushke.png){#fig-inference-krushke .column-margin fig-alt="A table with measurement: frequentist = confidence interval, Bayesian = credible interval; hypothesis: p-value, Bayes factor."}
 
 If NHST approaches have so many issues, what should replace them? @Fig-inference-krushke shows one way of organizing different inferential approaches. There has been a recent move toward the use of Bayes Factors to quantify the evidence in support of different candidate hypotheses. Bayes Factors can help answer questions like (2). We introduce these tools and we believe that they have broader applicability than the NHST framework and should be known by students. On the other hand, Bayes Factors are not a panacea. They have many of the same problems as NHST when they are applied dichotomously.
 
@@ -41,7 +41,7 @@ In @sec-estimation, we introduced Fisher's tea-tasting experiment and discussed 
 
 [^inference-7]: As in the previous chapter, we're only capturing *statistical* uncertainty. A holistic view of a particular estimate's credibility also include everything else you know about the study design.
 
-![Sampling distribution for the treatment effect in the tea-tasting experiment, given many different repetitions of the same experiment, each with n = 9 per group. Circles represent average treatment effects from different individual experiments, while the thick line represents the form of the underlying distribution.](images/inference/sampling-small.png){#fig-inference-sampling-small .column-margin}
+![Sampling distribution for the treatment effect in the tea-tasting experiment, given many different repetitions of the same experiment, each with n = 9 per group. Circles represent average treatment effects from different individual experiments, while the thick line represents the form of the underlying distribution.](images/inference/sampling-small.png){#fig-inference-sampling-small .column-margin fig-alt="A plot with a bell curve distribution of treatment effects and points under it."}
 
 ### Standard errors
 
@@ -60,7 +60,7 @@ tea_data <- make_tea_data(n_total = 18)
 :::
 
 \clearpage
-![Comparing sampling distributions for the treatment effect with smaller and larger size samples.](images/inference/sampling-big.png){#fig-inference-sampling-big .column-margin}
+![Comparing sampling distributions for the treatment effect with smaller and larger size samples.](images/inference/sampling-big.png){#fig-inference-sampling-big .column-margin fig-alt="A plot with two panels: small sample size (same as 6.2); big sample size (more points, narrower curve)."}
 
 Now imagine we also did thousands of repetitions of the experiment with $n = 200$ per group instead of $n = 9$ per group. [Figure @fig-inference-sampling-big] shows what the sampling distribution might look like in that case. Notice how much narrower the sampling distribution becomes when we increase the sample size, showing our decreased uncertainty. More formally, the standard deviation of the sampling distribution itself, called the **standard error**, decreases as the sample size increases.
 
@@ -96,9 +96,9 @@ We talked in the last chapter about the normal distribution, a convenient and ub
 
 \clearpage
 
-![Sampling distribution of samples from a biased coin (n = 2 flips per sample). Bar height is the proportion of flips resulting in a particular mean.](images/inference/cl-2.png){#fig-inference-coin-2 .column-margin width=80%}
+![Sampling distribution of samples from a biased coin (n = 2 flips per sample). Bar height is the proportion of flips resulting in a particular mean.](images/inference/cl-2.png){#fig-inference-coin-2 .column-margin width=80% fig-alt="A plot with 3 vertical bars at horizontal positions 0, 0.5, 1."}
 
-![Sampling distribution for 2, 8, 32, and 128 flips.](images/inference/cl-ns.png){#fig-inference-coin-ns .column-margin}
+![Sampling distribution for 2, 8, 32, and 128 flips.](images/inference/cl-ns.png){#fig-inference-coin-ns .column-margin fig-alt="A plot with 4 panels with varying numbers of vertical bars (2, 8, 32, 128), increasingly approximating a normal distribution."}
 
 For example, say we are flipping a coin and we want to estimate the probability that it lands heads ($p_H$). If we draw samples each consisting of only $n = 2$ coin flips, @fig-inference-coin-2 is the sampling distribution of the estimates ($\widehat{p}_H$). This sampling distribution doesn't look normally distributed at all---it doesn't have the characteristic "bell curve" shape! In a sample of only two coin flips, $\widehat{p}_H$ can only take on the values 0, 0.5, or 1. 
 
@@ -160,14 +160,14 @@ null_model_summary <- null_model |>
 ```
 :::
 
-![One example of the distribution of treatment effects under the null model (with n = 9 per group). The red regions indicate the part of the distribution in  which less than 5% of observations should fall.](images/inference/p-region.png){#fig-inference-null-model .margin-caption width=70%}
+![One example of the distribution of treatment effects under the null model (with n = 9 per group). The red regions indicate the part of the distribution in  which less than 5% of observations should fall.](images/inference/p-region.png){#fig-inference-null-model .margin-caption width=70% fig-alt="A plot the same as 6.2 with regions below 2.5% and above 97.5% shaded."}
 
 @Fig-inference-null-model captures the logic of NHST: if the observed data fall in the region that has a probability of less than 0.05 under the null model, then we reject the null. So, then when we observe some particular treatment effect $\hat{\beta}$ in a single (real) instance of our experiment, we can compute the probability of these data or any data more extreme than ours under the null model.^[The "more extreme" part deserves a little explanation. Any individual outcome is relatively unlikely by itself, just because it's surprising that the estimate is that exact value (we're simplifying here, it gets a bit trickier when you are talking about real numbers). What we care about instead is a *group* of values. The ones that are in the middle of the distribution are, considered as a group, quite likely; the ones on the tails are, as a group, less likely. We want to know if the probability of the group of datapoints that includes our observation and anything even further out on the tails is collectively less than 0.05.] This probability is our $p$-value, and if it is small, it gives us license to conclude that the null is false.
 
 As we saw before, the larger the sample size, the smaller the standard error. That's true for the null model too! @fig-inference-null-model2 shows the expected null distribution for a bigger experiment. 
 
 \clearpage
-![Example distribution of treatment effects under the null model for a larger experiment.](images/inference/p-region-bigger.png){#fig-inference-null-model2 .column-margin}
+![Example distribution of treatment effects under the null model for a larger experiment.](images/inference/p-region-bigger.png){#fig-inference-null-model2 .column-margin fig-alt="A plot the same as 6.2 but with more points and a narrower curve."}
 
 The more participants in the experiment, the tighter the null distribution becomes, and hence the smaller the region in which we should expect a null treatment effect to fall. Because our expectation based on the null becomes more precise, we will be able to reject the null based on smaller treatment effects. In this type of hypothesis testing, as with estimation, our goals matter. If we're merely testing a hypothesis out of curiosity, perhaps we don't want to measure too many cups of tea. But if we were designing the tea strategy for a major cafe chain, the stakes would be higher; in that case, maybe we'd want to do a more extensive experiment!
 
@@ -221,7 +221,7 @@ By defining a $p$-value, we got one procedure for giving this answer. If $p < 0.
 
 Bayes Factors are a method for quantifying the support for one hypothesis over another, based on an observed dataset. They don't tell you the probability that a particular hypothesis is right, but they let you compare two different ones. 
 
-![The Bayes Factor (BF).](images/inference/bf.png){#fig-inference-bf .column-margin}
+![The Bayes Factor (BF).](images/inference/bf.png){#fig-inference-bf .column-margin fig-alt="An equation of Bayes Factor: numerator likelihood under difference hypothesis, denominator likelihood under null hypothesis."}
 
 Informally, we've now discussed two different distinct hypotheses about the tea situation: our participants could have *no* tea discrimination ability---leading to chance performance. We call this $H_0$. Or they could have some nonzero ability---leading to greater than chance performance. We call this $H_1$. The Bayes Factor is simply the likelihood of the data (in the technical sense used above) under $H_1$ vs. under $H_0$ (@fig-inference-bf). The Bayes Factor is a ratio, so if it is greater than 1, the data are more likely under $H_1$ than they are under $H_0$---and vice versa for values between 1 and 0. A BF of 3 means there is three times as much evidence for $H_1$ than $H_0$, or equivalently 1/3 as much evidence for $H_0$ as $H_1$.[^inference-10] 
 
@@ -339,7 +339,7 @@ The critical thing about $p$-values, though, is not just that they are a kind of
 
 The main problem with $p$-values from a scientific perspective is that researchers are usually interested in not just rejecting the null hypothesis but also in the evidence for the alternative (the one we are interested in). The Bayes Factor is one approach to quantifying positive evidence *for* the alternative hypothesis in a Bayesian framework. This issue with the Fisher approach to $p$-values has been known for a long time, though, and so there is an alternative frequentist approach as well. 
 
-![Standard decision matrix for the Neyman-Pearson approach to statistical inference.](images/inference/power-alpha.png){#fig-inference-power-alpha .column-margin}
+![Standard decision matrix for the Neyman-Pearson approach to statistical inference.](images/inference/power-alpha.png){#fig-inference-power-alpha .column-margin fig-alt="A table of inference (reject/fail) vs reality (true/false): false positive, correct rejection, true positive, false negative."}
 
 ### The Neyman-Pearson approach {#sec-neyman-pearson}
 
@@ -357,7 +357,7 @@ As we saw in @fig-inference-null-model, the larger the sample, the better your c
 
 Hypothesis testing requires knowing the null distribution. In the examples above, it was easy to use statistical theory to work out the null distribution using knowledge of the binomial or normal distribution. But sometimes we don't know what the null distribution would look like. What if the ratings data from our tea-tasting experiment were very skewed, such that there were many low ratings and a few very high ratings (as in @fig-inference-permutation)?
 
-![A small tea-tasting experiment with a skewed distribution of ratings.](images/inference/skewed.png){#fig-inference-permutation width=40%}
+![A small tea-tasting experiment with a skewed distribution of ratings.](images/inference/skewed.png){#fig-inference-permutation width=40% fig-alt="A plot with points for tea-first and milk-first varying along rating; distributions have more points lower in rating."}
 
 With skewed data like these, we couldn't proceed with a $t$-test in good conscience because, with only $n = 18$, we can't necessarily trust that the central limit theorem has "kicked in" sufficiently for the test to work despite the skewness. Put another way, we can't be sure that the null distribution is normal (Gaussian) in this case.
 
@@ -477,7 +477,7 @@ Confidence intervals (CIs) are constructed by estimating the middle 95% of the s
 
 Confidence intervals are like betting on the inferences drawn from your sample. The sample you drew is like one pull of a slot machine that will pay off (i.e., have the confidence interval contain the true parameter) 95% of the time. Put more concisely: 95% of 95% confidence intervals contain the true value of the population parameter.
 
-![Confidence intervals on each of the two condition estimates, as well as on the difference between conditions.](images/inference/cis.png){#fig-inference-condition-cis .margin-caption width=60%}
+![Confidence intervals on each of the two condition estimates, as well as on the difference between conditions.](images/inference/cis.png){#fig-inference-condition-cis .margin-caption width=60% fig-alt="A plot with the same points as 6.10 overlaid with confidence intervals and a rating difference confidence interval."}
 
 ::: {.callout-note title="code"}
 Computing confidence intervals analytically is pretty easy. Here we first compute the standard error for the difference between conditions. The only tricky bit here is that we need to compute a pooled standard deviation.

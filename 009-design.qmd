@@ -27,6 +27,7 @@ The experimental design investigated two factors: whether the participant believ
 
 ```{r fig-design-kovacs-original}
 #| fig-cap: Original data from @kovacs2010. Error bars show 95% confidence intervals. Based on @phillips2015.
+#| fig-alt: A plot with means and CIs of reaction time over participant's belief; slope of agent's belief absent is steeper than present.
 #| fig-width: 5
 #| fig-height: 3
 #| out-width: 45%
@@ -49,6 +50,7 @@ Both the original experiments and the replication that Desmond ran showed a sign
 
 ```{r fig-design-kovacs-replication}
 #| fig-cap: Data from a series of replications of @kovacs2010, including versions on the web (experiments 1a and 1b) and in lab (experiment 1c), as well as several variations on the format of responding (experiments 2 and 3; 2AFC = two alternative forced choice) and an experiment where a large wall kept the agent from seeing the ball at all (experiment 4). "Hits" and "CRs" panels refer to different subsets of trials where participants responded "present" when the ball was present and "absent" when the ball was absent. Error bars are 95% confidence intervals. Based on @phillips2015.
+#| fig-alt: A plot with 9 panels, each of which has the same structure as 9.1; the lines cross in each panel.
 #| fig-width: 7.5
 #| fig-height: 5.5
 #| out-width: 90%
@@ -84,8 +86,7 @@ The classical "design of experiments" framework has as its goal to separate obse
 
 Different experimental designs will allow us to estimate specific effects more and less effectively. Recall in @sec-estimation, we estimated the effect of our tea/milk order manipulation by a simple subtraction: $\beta = \theta_{T} - \theta_{C}$ (where $\beta$ is the effect estimate, and $\theta$s indicate the estimates for each condition, treatment $T$ and control $C$; we called them $\theta_T$ and $\theta_M$ in that chapter to denote tea- and milk-first conditions). This logic works just fine also if there are two distinct treatments in a three-condition experiment: each treatment can be compared to control separately.  For treatment 1, $\beta_{T_1} = \theta_{T_1} - \theta_{C}$ and $\beta_{T_2} = \theta_{T_2} - \theta_{C}$.
 
-
-![The 2 x 2 crossed design used in @young2007](images/design/young2007-design.png){#fig-design-young-design .column-margin}
+![The 2 x 2 crossed design used in @young2007](images/design/young2007-design.png){#fig-design-young-design .column-margin fig-alt="A 2x2 table of outcome (negative/neutral) vs. belief (negative/neutral) with example sentences for each."}
 
 This logic is going to get more complicated if we have more than one distinct factor of interest, though. Let's look at an example. 
 
@@ -112,7 +113,7 @@ ggplot(young, aes(x = outcome, y = mean, fill = belief)) +
   labs(x = "", y = "← Forbidden         Permissible →", fill = "")
 ```
 
-![Moral permissibility as a function of belief and outcome. Results from @young2007, annotated with the estimated effects. Simple effects measure differences between the individual conditions and the neutral belief, neutral outcome condition. The interaction measures the difference between the predicted sum of the two simple effects and the actual observed data for the negative belief, negative outcome condition.](images/design/young2007-data.png){#fig-design-young-data .margin-caption width=80%}
+![Moral permissibility as a function of belief and outcome. Results from @young2007, annotated with the estimated effects. Simple effects measure differences between the individual conditions and the neutral belief, neutral outcome condition. The interaction measures the difference between the predicted sum of the two simple effects and the actual observed data for the negative belief, negative outcome condition.](images/design/young2007-data.png){#fig-design-young-data .margin-caption width=80% fig-alt="A bar plot of rating for neutral/negative outcome by neutral/negative belief, annotated with simple effects and interactions."}
 
 Young et al.'s design has two factors---belief and outcome---each with two levels (neutral and negative, noted as $B$ and $-B$ for belief and $O$ and $-O$ for outcome).^[Neither of these is necessarily a "control" condition: the goal is simply to compare these two levels of the factor---negative and neutral---to estimate the effect due to the factor.] These factors are **fully crossed**: each level of each factor is combined with each level of each other. 
 
@@ -168,11 +169,11 @@ There are also fancier methods available. For example, the literature on **optim
 
 ### Between- vs within-participant designs
 
-![A between-participants design.](images/design/between.png){#fig-design-between .column-margin}
+![A between-participants design.](images/design/between.png){#fig-design-between .column-margin fig-alt="A diagram where 2 participants flow to control then measure, 2 participants flow to treatment then measure."}
 
 Once you know what factor(s) you would like to manipulate in your experiment, the next step is to consider how these will be presented to participants, and how that presentation will interact with your measurements. The biggest decision to be made is whether each participant will experience one level of a factor---a **between-participants** design---or whether they will experience multiple levels---a **within-participants** design. [Figure @fig-design-between] shows a simple example of between-participants design with four participants (two assigned to each condition), while @fig-design-within shows a within-participants version of the same design.
 
-![A within-participants design, counterbalanced for order (discussion of counterbalancing below).](images/design/within.png){#fig-design-within .margin-caption width=70%}
+![A within-participants design, counterbalanced for order (discussion of counterbalancing below).](images/design/within.png){#fig-design-within .margin-caption width=70% fig-alt="A diagram starting with the structure of 9.5, then participants swap treatment/control assignments, flow to measure."}
 
 Because people are very variable, the decision whether to measure a particular factor between- or within-participants is consequential. Imagine we're estimating our treatment effect as before, simply by computing $\widehat{\beta} = \widehat{\theta}_{T} - \widehat{\theta}_{C}$ with each of these estimates from different populations of participants. In this scenario, our estimate $\widehat{\beta}$ contains three components: (1) the true differences between $\theta_{T}$ and $\theta_{C}$, (2) sampling-related variation in which participants from the population ended up in the samples for the two conditions, and (3) measurement error. Component 2 is present because any two samples of participants from a population will differ in their average on a measure---this is precisely the kind of sampling variation we saw in the null distributions in @sec-inference. 
 
@@ -192,7 +193,7 @@ An alternative approach is to acknowledge the possibility of carryover type effe
 
 We summarize the state of affairs from our perspective in @fig-design-between-within. We think that within-participant designs should be preferred whenever possible. This conclusion is also consistent with meta-research we've done on replications from our course: across 176 student replications, the use of a within-subjects design was the strongest correlate of a successful replication [@boyce2023].^[Caveat: this study used an observational design, so no causal inference is possible.] 
 
-![Pros and cons of between- vs within-participant designs. We recommend within-participant designs when possible.](images/design/between-within.png){#fig-design-between-within .margin-caption width=60%}
+![Pros and cons of between- vs within-participant designs. We recommend within-participant designs when possible.](images/design/between-within.png){#fig-design-between-within .margin-caption width=60% fig-alt="A list of between design disadvantages (many participants, variability); within design disadvantages (carryover effects)."}
 
 ### Repeated measures and experimental items
 
@@ -200,7 +201,7 @@ We just discussed decision-making about whether to administer multiple *manipula
 
 You can create a between-participants design where you administer your manipulation and then measure multiple times. This scenario is pictured in @fig-design-rm-between). Sometimes this works quite well. For example, imagine a transcranial magnetic stimulation (TMS) experiment: participants receive neural stimulation for a period of time, targeted at a particular region. Then they perform some measurement task repeatedly until it wears off. The more times they perform the measurement task, the better the estimate of whatever effect (when compared to a control of TMS to another region, say).
 
-![A between-participants, repeated-measures design.](images/design/rm-between.png){#fig-design-rm-between .margin-caption width=70%}
+![A between-participants, repeated-measures design.](images/design/rm-between.png){#fig-design-rm-between .margin-caption width=70% fig-alt="A diagram starting with the structure of 9.5, then participants each flow to measure two more times."}
 
 Sometimes this design is called a **repeated measures** design, but terminology here is tricky again. The term "repeated measures" refers to any experiment where each participant is measured more than once, including both between-participants *and* within-participants designs.^[We're talking about multiple trials with the same measure, not multiple distinct measures. As we discussed in @sec-measurement, we tend to be against measuring lots of different things in a single experiment---in part because of the concerns that we're articulating in this chapter: if you have time, it's better to make more precise measures of what you care about most. Measuring one thing well is hard enough. Much better to measure one thing well than many things badly.] Our advice is *both* to use within-participants designs *and* to get multiple measurements from each participant.
 
@@ -212,7 +213,7 @@ There are problems with repeating the same measure many times, however. Some mea
 
 Using multiple items for measurement is good for two reasons. First, it reduces measurement error by allowing responses to be combined across items. But second, it increases the generalizability of the measurement. An effect that is consistent across many different items is more likely to be an effect that can be generalized to a whole class of stimuli---in precisely the same way that the use of multiple participants can license generalizations across a population of people [@clark1973]. 
 
-![A between-participants, pre-post design.](images/design/pre-post.png){#fig-design-pre-post .margin-caption width=55%}
+![A between-participants, pre-post design.](images/design/pre-post.png){#fig-design-pre-post .margin-caption width=55% fig-alt="A diagram where 2 participants flow to measure to control to measure, 2 participants flow to measure to treatment to measure."}
 
 One variation on the repeated measures, between-participants design is a specific version where the measure is administered both before (pre-) and after (post-) intervention, as in @fig-design-pre-post. This design is sometimes known as a **pre-post** design. It is extremely common in cases where the intervention is larger scale and harder to give within-participants, such as in a field experiment where a policy or curriculum is given to one sample and not to another. The premeasurements can be used to subtract out participant-level variability and recover a more precise estimate of the treatment effect. Recall that our treatment effect in a pure between-participants design is $\beta = \theta_{T} - \theta_{C}$. In a pre-post design, we can do better by computing $\beta = (\theta_{T_{post}} - \theta_{T_{pre}}) - (\theta_{C_{post}} - \theta_{C_{pre}})$. This equation says, "How much more did the treatment group go up than the control group?^[This estimate is sometimes called a "difference in differences." The basic idea is widely used in the field of econometrics, both in experimental and quasi-experimental cases [@cunningham2021]. In practice, though, we recommend using the pre-treatment measurements as a covariate in a model-based analysis, not just doing the simple subtraction.]
 
@@ -243,7 +244,7 @@ The implication of these examples is clear: experimenters need to take care in b
 
 Most experimental designs in psychology use discrete condition manipulations: treatment vs control. In our view, this decision often leads to a lost opportunity relative to a more continuous manipulation of the strength of the treatment. The goal of an experiment is to estimate a causal effect; ideally, this estimate can be generalized to other contexts and used as a basis for theory. Measuring not just one effect but instead a **dose-response** relationship---how the measure changes as the strength of the manipulation is changed---has a number of benefits in helping to achieve this goal. 
 
-![Three schematic designs. (left) Control and treatment are two levels of a nominal variable. (middle) Control is compared to ordered levels of a treatment. (right) Treatment level is an interval or ratio variable such that points can be connected and a parametric curve can be extrapolated.](images/design/dose-response.png){#fig-design-dose-schema .margin-caption width=80%}
+![Three schematic designs. (left) Control and treatment are two levels of a nominal variable. (middle) Control is compared to ordered levels of a treatment. (right) Treatment level is an interval or ratio variable such that points can be connected and a parametric curve can be extrapolated.](images/design/dose-response.png){#fig-design-dose-schema .margin-caption width=80% fig-alt="A plot with 3 panels: points for control/treatment; points for control, T1, T2; connected points over continuous dosage."}
 
 Many manipulations can be **titrated**---that is, their strength can be varied continuously---with a little creativity on the part of an experimenter. A curriculum intervention can be applied at different levels of intensity, perhaps by changing the number of sessions in which it is taught. For a priming manipulation, the frequency or duration of prime stimuli can be varied. Two stimuli can be morphed continuously so that categorization boundaries can be examined.^[These methods are extremely common in perception and psychophysics research, in part because the dimensions being studied are often continuous in nature. It would be basically impossible to estimate a participant's visual contrast sensitivity *without* continuously manipulating the contrast of the stimulus!] 
 
@@ -258,6 +259,7 @@ Their findings are plotted in @fig-design-dose-ex: the youngest infants preferre
 
 ```{r fig-design-dose-ex}
 #| fig-cap: Infants' looking time, plotted by stimulus complexity and infant age. Data from @brennan1966.
+#| fig-alt: "A plot of fixation time at 3 age points by stimulus complexity: 2x2 decreases, 8x8 increases then decreases, 24x24 increases."
 #| out-width: 55%
 
 library(directlabels)
@@ -316,13 +318,13 @@ Let's go back to our discussion of causal inference in @sec-experiments. Our goa
 
 Suppose you were designing an experiment of this sort and you wanted to follow our advice and use a within-participants design. You could measure happiness, give participants \$100, wait a month and measure happiness again, give participants \$1,000, wait a month, and then measure happiness for the third time. The trouble is, this design has an obvious experimental confound (@fig-design-money1): the order of the monetary gifts. Maybe happiness just went up more over time, irrespective of getting the second gift. 
 
-![Confounding order and condition assignment means that you can't make an inference about the link between money and happiness.](images/design/money1.png){#fig-design-money1 .column-margin}
+![Confounding order and condition assignment means that you can't make an inference about the link between money and happiness.](images/design/money1.png){#fig-design-money1 .column-margin fig-alt="A DAG with condition assignment pointing to more money and later time, both of which point to happiness."}
 
 If you think your experimental design might have a confound, you should think about ways to remove it. A first option is **elimination**, which we described above: basically, matching a particular variable across different conditions. This should be our first option for most confounds. Unfortunately, in our within-participants money-happiness study, order is confounded with condition so if we match orders we have eliminated our condition manipulation entirely. 
 
 A second option is **counterbalancing**, in which we vary a confounding factor systematically across participants so its average effect is zero across the whole experiment. In the case of our example, counterbalancing order across participants is a very safe choice. Some participants get \$100 first and others get \$1,000 first. That way, you are guaranteed that the order of conditions will have no effect of the confound on your average effect. The effect of this counterbalancing is that it "snips" the causal dependency between condition assignment and later time. We notate this on our causal diagram with a scissors icon (@fig-design-money2).^[In practice, counterbalancing is like adding an additional factor to your factorial design! But because the factor is a **nuisance factor**---basically, one we don't care about---we don't discuss it as a true condition manipulation. Despite that, it's a good practice to check for effects of these sorts of nuisance factors in your preliminary analysis. Even though your average effect won't be biased by it, it introduces variation that you might want to understand to interpret other effects and plan new studies.] Time can still have an effect on happiness, but the effect is independent from the effect of condition and, hence, your experiment can still yield an unbiased estimate of the condition effect. 
 
-![Confounding between a specific condition and the time at which it's administered can be removed by counterbalancing or randomization of order.](images/design/money2.png){#fig-design-money2 .column-margin}
+![Confounding between a specific condition and the time at which it's administered can be removed by counterbalancing or randomization of order.](images/design/money2.png){#fig-design-money2 .column-margin fig-alt="A DAG with the same structure as 9.12 but with the arrow from condition assignment to later time cut."}
 
 Counterbalancing gets trickier when you have too many levels on a variable or multiple confounding variables. In that case, it may not be possible to do a full counterbalance so that all combinations of these factors are seen by equal numbers of participants. You may have to rely on partial counterbalancing schemes or Latin square designs (see the [Depth]{.smallcaps} box above; in this case, the Latin squares are used to create orderings of stimuli such that the position of each treatment in the order is controlled across two other confounding variables). 
 
@@ -347,6 +349,7 @@ The finding from this study excited a tremendous amount of interest because they
 
 ```{r fig-design-jaeggi}
 #| fig-cap: The primary outcome graph for data from @jaeggi2008.
+#| fig-alt: A plot with means and CIs of performance, increasing from pre to post training, more steeply for dual n-back than control.
 #| fig-width: 5.5
 #| fig-height: 3
 #| out-width: 50%
@@ -375,6 +378,7 @@ Careful readers of the original paper noticed signs of analytic flexibility (as 
 ```{r fig-design-jaeggi-disagg}
 #| dependson: fig-design-jaeggi
 #| fig-cap: "The four subexperiments of @jaeggi2008, now disaggregated. Panels show 8-, 12-, 17-, and 19-session studies. Note the different measures: RAPM = Raven's Advanced Progressive Matrices; BOMAT = Bochumer Matrizentest. Based on @redick2013."
+#| fig-alt: A plot the same as 9.14 but with 4 panels identified by number of sessions and measure; difference between slopes varies.
 #| fig-width: 8
 #| fig-height: 5
 #| out-width: 80%
