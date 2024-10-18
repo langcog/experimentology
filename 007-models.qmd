@@ -368,7 +368,7 @@ repo <- "https://raw.githubusercontent.com/langcog/experimentology/main"
 sgf <- read_csv(file.path(repo, "data/tidyverse/stiller_scales_data.csv")) |>
   mutate(age_group = cut(age, 2:5, include.lowest = TRUE), 
          condition = condition |>
-           fct_recode("Experimental" = "Label", "Control" = "No Label"))
+           fct_recode("Control" = "No Label", "Experimental" = "Label"))
 ```
 :::
 
@@ -408,7 +408,7 @@ ggplot(sgf_group_means, aes(x = age_group, y = mean_correct,
 
 This experimental design looks a lot like some versions of our tea-tasting experiment. We have one primary condition manipulation (the puppet provides information versus does not), presented between participants so that some participants are in the experimental condition\index{experimental condition} and others are in the control condition.\index{control condition} Our measurements are repeated within participants across different experimental stimuli. Finally, we have one important, preplanned covariate: children's age. The experimental data are plotted in @fig-models-sgf-plot.^[Our sampling plan for this experiment was actually **stratified**\index{stratification} across age, meaning that we intentionally recruited the same number of participants for each one-year age group---because we anticipated that age was highly correlated with children's ability to succeed in this task. We'll describe this kind of sampling in more detail in @sec-sampling.]
 
-How should we go about making our default model for this dataset?^[This experiment was not preregistered, but the paper includes a separate replication dataset with the same analysis.] We simply include each of these design factors in a mixed effects model; we use a logistic link function for our mixed effects model (a **generalized linear mixed effects model**\index{generalized linear mixed effects model}) because we would like to predict correct performance on each trial, which is a binary variable. So that gives us an effect of condition and age as a covariate. We further add an interaction between condition and age in case the condition effect varies meaningfully across groups. Finally, we add random effects of participant, $\gamma_i$, and experimental item, $\gamma_t$.^[As discussed above, this is a tricky decision point; we could very reasonably have added random slopes as well.]
+How should we go about making our default model for this dataset?^[This experiment was not preregistered, but the paper includes a separate replication dataset with the same analysis.] We simply include each of these design factors in a mixed effects model; we use a logistic link function for our mixed effects model (a **generalized linear mixed effects model**\index{generalized linear mixed effects model}) because we would like to predict correct performance on each trial, which is a binary variable. So that gives us an effect of condition and age as a covariate. We further add an interaction between condition and age in case the condition effect varies meaningfully across groups. Finally, we add random effects of participant, $\gamma_i$, and experimental item, $\delta_t$.^[As discussed above, this is a tricky decision point; we could very reasonably have added random slopes as well.]
 
 The resulting model looks like this:
 $$
@@ -423,10 +423,11 @@ Let's break this complex equation down from left to right:
 * $\beta_2 X_{i2}$ is the age predictor. $\beta_2$ represents the difference in log-odds associated with one additional year of age for participants in the control condition^[The age coefficient is a **simple effect**\index{simple effect}, meaning it is the effect of age in the control condition only. That's because we have dummy coded\index{dummy coding} the condition predictor. If we wanted the average age effect (the **main effect**\index{main effect}) then we would need to use contrast coding,\index{contrast coding} per the note in the "Interactions" section above.] and $X_{i2}$ is the age for each participant.^[We have **centered**\index{centering} our age predictor in this example so that all estimates from our model are for the average age of our participants. Centering is a good practice for modeling continuous predictors because it increases the interpretability of other parts of the model. For example, because age is centered in this model, the intercept $\beta_0$ can be interpreted as the predicted odds of a correct trial for a participant in the control condition at the average age.]
 * $\beta_3 X_{i1} * X_{i2}$ is the interaction between experimental condition\index{experimental condition} and age. $\beta_3$ represents the difference in log odds (i.e., the log of the odds ratio) that is associated with being one year older *and* in the experimental condition versus the control condition. This term is multiplied by both each child's age *and* the condition indicator $X_i$. 
 * $\gamma_i$ is the random intercept for participant $i$, capturing individual variation in the odds of success across trials. 
-* $\gamma_t$ is the random intercept for stimulus $t$, capturing variation in the odds of success across the four different stimuli. 
+* $\delta_t$ is the random intercept for stimulus $t$, capturing variation in the odds of success across the four different stimuli. 
 
 ```{r models-sgf-model}
 sgf$age_centered <- scale(sgf$age, center = TRUE, scale = FALSE)
+sgf$condition <- fct_relevel(sgf$condition, "Control")
 mod <- lme4::glmer(correct ~ age_centered * condition + (1|subid) + (1|item), 
                    family = "binomial",
                    data = sgf)
@@ -451,10 +452,11 @@ apa_tab
 \normalsize
 
 ::: {.callout-note title="code"}
-To fit the model described above, the first step is to prepare your predictors. In this case, we center the `age` predictor. 
+To fit the model described above, the first step is to prepare your predictors. In this case, we center the `age` predictor and we set the control condition to be the reference level. 
 
 ```{r, opts.label='code'}
 sgf$age_centered <- scale(sgf$age, center = TRUE, scale = FALSE)
+sgf$condition <- fct_relevel(sgf$condition, "Control")
 ```
 
 Again we use the `lme4` package, this time with the `glmer()` function. Again we have to specify our link function, just like in a standard GLM, by choosing the distribution family. 
@@ -469,13 +471,13 @@ You can see a summary of the fitted model using `summary(mod)` as before. The on
 
 Let's estimate this model and see how it looks. We'll focus here on interpretation of the so-called **fixed effects**\index{fixed effect} (the main predictors), as opposed to the participant and item random effects.^[Participant means are estimated to have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[1],2)` (in log-odds), while items have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[2],2)`. These indicate that both of our random effects capture meaningful variation.] @Tbl-models-sgf-model-print shows the coefficients. Again, let's walk through each:
 
-* The *intercept**\index{intercept} (control condition\index{control condition} estimate) is `r apa_mod$full_result$Intercept |> add_lead_zero()`. This estimate reflects that the log-odds of a correct response for an average-age participant in the control condition is `r round(lme4::fixef(mod)[1],2)`, which corresponds to a probability of `r round(boot::inv.logit(lme4::fixef(mod)[1]), 2)`. If we look at @fig-models-sgf-plot, that estimate makes sense: `r round(boot::inv.logit(lme4::fixef(mod)[1]), 2)` seems close to the average for the control condition. 
+* The **intercept**\index{intercept} (control condition\index{control condition} estimate) is `r apa_mod$full_result$Intercept |> add_lead_zero()`. This estimate reflects that the log-odds of a correct response for an average-age participant in the control condition is `r round(lme4::fixef(mod)[1],2)`, which corresponds to a probability of `r round(boot::inv.logit(lme4::fixef(mod)[1]), 2)`. If we look at @fig-models-sgf-plot, that estimate makes sense: `r round(boot::inv.logit(lme4::fixef(mod)[1]), 2)` seems close to the average for the control condition. 
 
 * The *age effect* estimate is `r apa_mod$full_result$age_centered |> add_lead_zero()`. This means there is a slight decrease in the log-odds of a correct response for older children in the control condition.\index{control condition} Again, looking at @fig-models-sgf-plot, this estimate is interpretable: we see a small decline in the probability of a correct response for the oldest age group. 
 
-* The key experimental condition estimate\index{experimental condition} then is `r apa_mod$full_result$conditionControl |> add_lead_zero()`. This estimate means that the log-odds of a correct response for an average-age participant in the experimental condition is the sum of the estimates for the control (intercept) and the experimental conditions: `r round(lme4::fixef(mod)[1],2)` +  `r round(lme4::fixef(mod)[3],2)`, which corresponds to a probability of `r round(boot::inv.logit(lme4::fixef(mod)[1] + lme4::fixef(mod)[3]), 2)`. Grounding our interpretation in @fig-models-sgf-plot, this estimate corresponds to the average value for the experimental condition.\index{experimental condition}
+* The key experimental condition estimate\index{experimental condition} then is `r apa_mod$full_result$conditionExperimental |> add_lead_zero()`. This estimate means that the log-odds of a correct response for an average-age participant in the experimental condition is the sum of the estimates for the control (intercept) and the experimental conditions: `r round(lme4::fixef(mod)[1],2)` +  `r round(lme4::fixef(mod)[3],2)`, which corresponds to a probability of `r round(boot::inv.logit(lme4::fixef(mod)[1] + lme4::fixef(mod)[3]), 2)`. Grounding our interpretation in @fig-models-sgf-plot, this estimate corresponds to the average value for the experimental condition.\index{experimental condition}
 
-* Finally, the *interaction* of age and condition is `r apa_mod$full_result$age_centered_conditionControl |> add_lead_zero()`. This positive coefficient reflects that with every year of age, the difference between control and experimental conditions\index{experimental condition} grows. 
+* Finally, the *interaction* of age and condition is `r apa_mod$full_result$age_centered_conditionExperimental |> add_lead_zero()`. This positive coefficient reflects that with every year of age, the difference between control and experimental conditions\index{experimental condition} grows. 
 
 In sum, this model suggests that there was a substantial difference in performance between experimental and control conditions,\index{control condition} in turn supporting the hypothesis that children in the sampled age group can perform pragmatic inferences above chance. 
 
