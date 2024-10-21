@@ -17,7 +17,7 @@ Good visualizations aim to deliberately harness this power and put it to work at
 
 
 Yet, our powerful pattern detectors can also be a liability; if we're not careful, we can easily be fooled into seeing patterns that are unreliable or even misleading.
-As psychology moves into an era of bigger data and more complex behaviors, we become increasingly reliant on **data visualization literacy**\index{data visualization literacy} [@borner2019data] to make sense of what is going on. Further, as a researcher reporting about your data, creating appropriate visualizations that are aligned with your analyses (as well as your design and preregistration\index{preregistration}) is an important part of [transparency]{.smallcaps}\index{transparency} and [bias reduction]{.smallcaps}\index{bias reduction} in your reporting. 
+As psychology moves into an era of bigger data and more complex behaviors, we become increasingly reliant on **data visualization literacy**\index{data visualization literacy} [@borner2019data] to make sense of what is going on. Further, as a researcher reporting about your data, creating appropriate visualizations that are aligned with your analyses (as well as your design and preregistration) is an important part of [transparency]{.smallcaps}\index{transparency} and [bias reduction]{.smallcaps}\index{bias reduction} in your reporting. 
 
 ::: {.callout-note title="case study"}
 ### Mapping a pandemic {-}
@@ -62,9 +62,9 @@ In this chapter, we will explore how to use visualizations to communicate the re
 In this section, we begin by introducing a few simple guidelines to keep in mind when making informative visualizations in the context of experimental psychology.^[For the purposes of understanding the examples in this chapter, it should be sufficient to work through the tutorials on data manipulation and visualization in @sec-tidyverse and @sec-ggplot.]
 Remember that our needs may be distinct from other fields, such as journalism or public policy.
 You may have seen beautiful and engaging full-page graphics with small print and a wealth of information.
-The art of designing and producing these graphics is typically known as **infoviz**\index{infoviz} and should be distinguished from what we call **statistical visualization**\index{statistical visualization} [@gelman2013].
+The art of designing and producing these graphics is typically known as **infoviz**\index{infoviz} and should be distinguished from what we call **statistical visualization** [@gelman2013].
 
-Roughly, infoviz aims to construct rich and immersive worlds to visually explore: a reader can spend hours pouring over the most intricate graphics and continue to find new and intriguing patterns.
+Roughly, infoviz\index{infoviz} aims to construct rich and immersive worlds to visually explore: a reader can spend hours pouring over the most intricate graphics and continue to find new and intriguing patterns.
 Statistical visualization, on the other hand, aims to crisply convey the logic of a specific inference at a glance.
 These visualizations are the production-ready figures that anchor the results section of a paper and accompany the key, preregistered analyses of interest.
 In this section, we review several basic principles of making statistical visualizations.
@@ -220,10 +220,10 @@ To accomplish this, we use the `position = "dodge"` argument:
 :::
 
 This plot is slightly better: it's easier to compare the heights of bars than the "blueness" of squares, and mapping age to color draws our eye to those contrasts.
-However, we can do even better by noticing that our experiment was designed to test an *interaction*.
+However, we can do even better by noticing that our experiment was designed to test an *interaction*.\index{interaction effect}
 That statistic of interest is a difference of differences.
 To what extent does the developmental change in performance on the experimental condition\index{experimental condition} differ from developmental change in performance on the control condition?
-Some researchers have gotten proficient at reading off interactions from bar plots, but they also require a complex set of eye movements. 
+Some researchers have gotten proficient at reading off interactions\index{interaction effect} from bar plots, but they also require a complex set of eye movements. 
 We have to look at the pattern across the bars on the left, and then jump over to the bars on the right, and implicitly judge one difference against the other: the actual statistic isn't explicitly shown anywhere!
 What could help facilitate this comparison?
 Consider the line plot in @fig-viz-prepost5. 
@@ -247,7 +247,7 @@ Using a combination of `geom_point()` and `geom_line()`:
 ```
 :::
 
-The interaction contrast we want to interpret is highlighted visually in this plot.
+The interaction\index{interaction effect} contrast we want to interpret is highlighted visually in this plot.
 It is much easier to compare slopes of lines than mentally compute a difference of differences between bars.
 Here are a few corollaries of this principle (adapted from [a presentation by Karl Broman](https://www.biostat.wisc.edu/~kbroman/presentations/IowaState2013/graphs_combined.pdf)).
 
@@ -261,7 +261,7 @@ Here are a few corollaries of this principle (adapted from [a presentation by Ka
 
 * When making bar plots, be very careful about the vertical y-axis. A classic "misleading visualization" mistake is to cut off the bottom of the bars by placing the endpoint of the y-axis at some arbitrary value near the smallest data point. This is misleading because people interpret bar plots in terms of the relative *area* of the bars (i.e., the amount of ink taken up by the bar), not just their absolute y-values. 
 
-* If a key variable from your design is mapped to color, choose the color scale carefully. For example, if the variable is binary or categorical, choose visually distinct colors to maximize contrast (e.g., black, blue, and orange). If the variable is ordinal or continuous, use a color gradient. If there is a natural midpoint (e.g., if some values are negative and some are positive), consider using a diverging scale (e.g., different colors at each extreme). Remember also that a portion of your audience may be colorblind.^[Palettes like `viridis` have been designed to be colorblind-friendly and also perceptually uniform (i.e., the perceived difference between 0.1 and 0.2 is approximately the same as the difference between 0.8 and 0.9).] 
+* If a key variable from your design is mapped to color, choose the color scale carefully. For example, if the variable is binary or categorical, choose visually distinct colors to maximize contrast (e.g., black, blue, and orange). If the variable is ordinal\index{ordinal scale} or continuous, use a color gradient. If there is a natural midpoint (e.g., if some values are negative and some are positive), consider using a diverging scale (e.g., different colors at each extreme). Remember also that a portion of your audience may be colorblind.^[Palettes like `viridis` have been designed to be colorblind-friendly and also perceptually uniform (i.e., the perceived difference between 0.1 and 0.2 is approximately the same as the difference between 0.8 and 0.9).] 
 
 <!-- Finally, if the same manipulation or variable appears across multiple figures in your paper, keep the color mapping consistent: it is confusing if "red" means something different from figure to figure.  -->
 
@@ -436,9 +436,9 @@ This raincloud plot requires two additional plotting packages: `ggridges` [@wilk
 One common misconception is that error bars are a measure of variance *in the data*, like the standard deviation of the response variable.
 Instead, they typically represent a measure of precision extracted from the statistical model.
 In older papers, for example, it was common to use the standard error of the mean (SEM; see @sec-inference).
-Remember that this is not the standard deviation of the data distribution but of the *sampling distribution* of the mean that is being estimated. 
+Remember that this is not the standard deviation of the data distribution but of the *sampling distribution*\index{sampling distribution} of the mean that is being estimated. 
 Given the central limit theorem,\index{central limit theorem} which tells us that this sampling distribution is asymptotically normal, it was straightforward to estimate the standard error analytically using the empirical standard deviation of the data divided by the square root of the sample size: `sd(x) / sqrt(length(x))`.
-Error bars based on the SEM often looked misleadingly small, as they only represent a 68% interval of the sampling distribution and go to zero quickly as a function of sample size.
+Error bars based on the SEM often looked misleadingly small, as they only represent a 68% interval of the sampling distribution\index{sampling distribution} and go to zero quickly as a function of sample size.
 As a result, it became more common to show the 95\% confidence interval\index{confidence interval (CI)} instead: [-1.96 $\times$ SEM, 1.96 $\times$ SEM].
 
 While these analytic equations remain common, an increasingly popular alternative is to *bootstrap* confidence intervals (see the [Depth]{.smallcaps} box in @sec-inference for more on bootstrapping).
@@ -611,7 +611,7 @@ The most famous example is known as "Anscombe's quartet," a set of four datasets
 They have the same means, the same variances, the same correlation, the same regression line, and the same $R^2$ value. 
 Yet, when they are plotted, they reveal striking structural differences. 
 The first looks like a noisy linear relationship---the kind of idealized relationship we imagine when we imagine a regression line.
-But the second is a perfect quadratic arc, the third is a perfectly noiseless line with a single outlier, and the fourth is nearly categorical: every observation except one shares exactly the same x-value.
+But the second is a perfect quadratic arc,\index{quadratic effect} the third is a perfectly noiseless line with a single outlier, and the fourth is nearly categorical: every observation except one shares exactly the same x-value.
 
 ```{r fig-viz-anscombe}
 #| fig-cap: Anscombe's quartet [@anscombe1973graphs].
@@ -972,7 +972,7 @@ This histogram is very similar to the ones above; however, we now use `count()` 
 There's some variation here: most participants completed 17 trials, but some participants completed 8 trials, and a small number of participants have 14 or 15.
 Given the logistical complexity of large multi-site studies, it is common to have some changes in experimental protocol across data collection.
 Indeed, looking at the supplement for the study, we see that while India and Peru had 12 trials, additional trials were added at the other sites.
-In a design where the number of trials was carefully controlled, seeing unexpected numbers here (like the 14 or 15 trial bins) are clues that something else may be going on in the data. In this case, it was a small number of trials with missing data. 
+In a design where the number of trials was carefully controlled, seeing unexpected numbers here (like the 14 or 15 trial bins) are clues that something else may be going on in the data. In this case, it was a small number of trials with missing data.\index{missing data}
 More generally, seeing this kind of signal in a visualization of our own data typically leads us to look up the participant IDs in these bins and manually inspect their data to see what might be going on.
 
 <!-- You can also learn a lot from looking at *pairwise* relationships in datasets with multiple continuous predictors. -->
@@ -1025,9 +1025,9 @@ Here, we are using `geom_smooth()` to overlay regression trends over the raw dat
 `geom_smooth()` takes a number of different options corresponding to different smoothing techniques.
 Nonparametric smoothing can be a good choice for exploratory visualizations if you have a lot of data and want to make minimal assumptions about the form of the trend.
 
-Here, however, we show the linear regression trend, `geom_smooth(method = "lm")`, which better corresponds to the predictions of the study and the statistical model being used (see @sec-models).
+Here, however, we show the linear regression\index{linear regression} trend, `geom_smooth(method = "lm")`, which better corresponds to the predictions of the study and the statistical model being used (see @sec-models).
 Other regression forms can be specified with the `formula` argument.
-For example, we could show quadratic smoothing with `geom_smooth(method = "lm", formula = y ~ poly(x, 2))`.
+For example, we could show quadratic\index{quadratic effect} smoothing with `geom_smooth(method = "lm", formula = y ~ poly(x, 2))`.
 The form of smoothing you use may differ across exploratory and confirmatory visualizations. 
 In a confirmatory visualization---if you are going to include a smoothing curve---it is typically best to use the one specified by your statistical model, as the slopes will correspond to the inferences being testing.
 
