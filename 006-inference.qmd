@@ -240,27 +240,26 @@ tea_bf <- ttestBF(x = filter(tea_data, condition == "milk first")$rating,
 ```
 :::
 
-There are a couple of things to notice about the Bayes Factor.\index{Bayes Factor (BF)} The first is that, like a $p$-value, it is inherently a continuous measure. You can artificially dichotomize decisions based on the Bayes Factor by declaring a cutoff (say, BF \> 3 or BF \> 10), but there is no intrinsic threshold at which you would say the evidence is "significant." Some guidelines for interpretation [from @goodman1999] are shown in @tbl-inference-jeffreys.^[Some like the guidelines provided by @jeffreys1998, which include categories such as "barely worth mentioning" (1 > BF > 3).] On the other hand, cutoffs like BF > 5 or $p < 0.05$ are not very informative. So, although we provide this table to guide interpretation, we caution that you should always report and interpret the actual Bayes Factor, not whether it is above or below some cutoff.
+There are a couple of things to notice about the Bayes Factor.\index{Bayes Factor (BF)} The first is that, like a $p$-value, it is inherently a continuous measure. You can artificially dichotomize decisions based on the Bayes Factor by declaring a cutoff (say, BF \> 3 or BF \> 10), but there is no intrinsic threshold at which you would say the evidence is "significant." Some guidelines for interpretation [from @goodman1999] are shown in @tbl-inference-goodman.^[Some like the guidelines provided by @jeffreys1998, which include categories such as "barely worth mentioning" (1 > BF > 3).] On the other hand, cutoffs like BF > 5 or $p < 0.05$ are not very informative. So, although we provide this table to guide interpretation, we caution that you should always report and interpret the actual Bayes Factor, not whether it is above or below some cutoff.
+
+<!-- {{< include md/006-inference/goodman.md >}} -->
 
 ::: {.column-margin}
+```{r}
+#| label: tbl-inference-goodman
+#| tbl-cap: "@goodman1999 interpretation guidelines for Bayes Factors."
 
-| BF range | Interpretation                     |
-|----------|------------------------------------|
-| < 1      | Negative (supports $H_0$)          |
-| 1--5     | Weak                               |
-| 5--10    | Moderate                           |
-| 10--20   | Moderate to strong                 |
-| 20--100  | Strong to very strong              |
+bf <- tribble(
+  ~bf,     ~interpretation,
+  "< 1"    , "Negative (supports $H_0$)",
+  "1--5"   , "Weak"                     ,
+  "5--10"  , "Moderate"                 ,
+  "10--20" , "Moderate to strong"       ,
+  "20--100", "Strong to very strong"              
+)
 
-: @goodman1999 interpretation guidelines for Bayes Factors.
-
-:::
-
-
-::: {.column-margin}
-
-{{< include md/006-inference/jeffreys.md >}}
-
+kable(bf, col.names = c("BF Range", "Interpretation"))
+```
 :::
 
 The second thing to notice about the Bayes Factor\index{Bayes Factor (BF)} is that it doesn't depend on our prior probability of $H_1$ vs. $H_0$. We might think of $H_1$ as very implausible. But the BF is independent of that prior belief. So that means it's a measure of how much the evidence should shift our beliefs away from our prior. One nice way to think about this is that the Bayes Factor computes how much our beliefs---whatever they are---should be changed by the data [@morey2011].

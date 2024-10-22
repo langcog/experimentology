@@ -6,4 +6,4 @@
 | 10--20   | Moderate to strong                 |
 | 20--100  | Strong to very strong              |
 
-: @goodman1999 interpretation guidelines for Bayes Factors. {#tbl-inference-jeffreys}
+: @goodman1999 interpretation guidelines for Bayes Factors. {#tbl-inference-goodman}
