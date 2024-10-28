@@ -11,6 +11,6 @@
 |  9 | "$p$ = 0.05 means that if you reject the null hypothesis, the probability of a false positive error is only 5%."                              |
 | 10 | "With a $p$ = 0.05 threshold for significance, the chance of a false positive error will be 5%."                                              |
 | 11 | "You should use a one-sided $p$-value when you don't care about a result in one direction, or a difference in that direction is impossible." |
-| 12 | "A scientific conclusion or treatment policy should be based on whether or not the $p$ value is significant."                                |
+| 12 | "A scientific conclusion or treatment policy should be based on whether or not the $p$-value is significant."                                |
 
-: A "dirty dozen" $p$-value misconceptions. Adapted from @goodman2008. {#tbl-dirty-dozen .margin-caption}
+: A "dirty dozen" $p$-value misconceptions. Adapted from @goodman2008. {#tbl-dirty-dozen tbl-cap-location=bottom}

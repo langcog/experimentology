@@ -6,4 +6,4 @@
 | Precision analysis               | Stop at N that provides some known degree of precision in measure                                   | Experimental measurement to compare with predictions of cognitive models     |
 | Sequential analysis              | Stop when a known inferential criterion is reached                                                  | Intervention trial designed to accept or reject null with maximal efficiency |
 
-: Types of data collection stopping rules. {#tbl-stopping-rules}
+: Types of data collection stopping rules, along with examples of appropriate contexts for them. {#tbl-stopping-rules}

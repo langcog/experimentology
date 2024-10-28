@@ -13,7 +13,7 @@
 
 In the previous two chapters, we introduced concepts surrounding estimation of an experimental effect and inference about its relationship to the effect in the population. The tools we introduced there are for fairly specific research questions, and so are limited in their applicability. Once you get beyond the world of two-condition experiments in which each participant contributes one data point from a continuous measure, the simple $t$-test\index{t-test} is not sufficient.  
 
-In some statistics textbooks, the next step would be to present a whole host of other statistical tests that are designed for other special cases. We could even show a decision-tree: You have repeated measures?\index{repeated measures} Use Test X! Or categorical data? Use Text Y! Or three conditions? Use Test Z! But this isn't a statistics book, and even if it were, we don't advocate that approach. The idea of finding a specific narrowly tailored test for your situation is part and parcel of the dichotomous NHST\index{null hypothesis significance testing (NHST)} approach that we tried to talk you out of in the last chapter. If all you want is your $p<0.05$, then it makes sense to look up the test that can allow you to compute a $p$ value in your specific case. But we prefer an approach that is more focused on getting a good estimate of the magnitude of the causal effect.
+In some statistics textbooks, the next step would be to present a whole host of other statistical tests that are designed for other special cases. We could even show a decision-tree: You have repeated measures?\index{repeated measures} Use Test X! Or categorical data? Use Text Y! Or three conditions? Use Test Z! But this isn't a statistics book, and even if it were, we don't advocate that approach. The idea of finding a specific narrowly tailored test for your situation is part and parcel of the dichotomous NHST\index{null hypothesis significance testing (NHST)} approach that we tried to talk you out of in the last chapter. If all you want is your $p<0.05$, then it makes sense to look up the test that can allow you to compute a $p$-value in your specific case. But we prefer an approach that is more focused on getting a good estimate of the magnitude of the causal effect.
 
 In this chapter, we begin to explore how to select an appropriate **statistical model** to clearly and flexibly reason about these effects. A statistical model is a way of writing down a set of assumptions about how particular data are generated, the **data generating process**\index{data generating process}. Statistical models are the bread and butter tools for estimating particular **parameters** of interest from empirical data---like the magnitude of a causal effect associated with an experimental manipulation. They can also quantify [measurement precision]{.smallcaps}.
 
@@ -50,16 +50,15 @@ $$
 \clearpage
 
 ::: {.column-margin}
-\footnotesize
 ```{r models-datatable}
 #| label: tbl-models-datatable
-#| tbl-cap: Example tea tasting data.
+#| tbl-cap: "Example tea tasting data (first three observations from each condition)."
 
 small_tea_data |> 
   mutate(id = 1:n(), X = if_else(condition == "tea first", 1, 0)) |>
-  select(id, condition, X, `rating (Y)` = rating)
+  select(id, condition, X, `rating (Y)` = rating) |>
+  kable(align = "rlrr")
 ```
-\normalsize
 :::
 
 The term $\beta_0 + \beta_1 X_i$ is called the **linear predictor**\index{linear predictor}, and it describes the expected value\index{expected value} of an individual's tea rating, $Y_i$, given that participant's treatment group $X_i$ (the single independent variable in this model). That is, for a participant in the control group ($X_i=0$), the linear predictor is just equal to $\beta_0$, which is indeed the mean for the control group that we specified above. On the other hand, for a participant in the treatment group, the linear predictor is equal to $\beta_0 + \beta_1$, which is the mean for the treatment group that we specified. In regression jargon, $\beta_0$ and $\beta_1$ are **regression coefficients**, where $\beta_1$ represents the association of the independent variable $X$ with the outcome $Y$.
@@ -255,7 +254,7 @@ tea_mod <- lm(rating ~ condition, data = tea_data)
 
 Non-independence of datapoints may seem at first glance like a small issue, but it can present a deep problem for making inferences. Take the tea-tasting data we looked at above, where we had 24 observations in each condition. If we fit an OLS model, we observe a highly significant tea-first effect. Here is the estimate and confidence interval\index{confidence interval (CI)} for that coefficient: `r papaja::apa_print(tea_mod)$estimate$conditiontea_first`. Based on what we talked about in the previous chapter, it seems like we'd be licensed in rejecting the null hypothesis that this effect is due to sampling variation and interpret this instead as evidence for a generalizable difference in tea preference in our sampled population.
 
-But suppose we told you that all of those 48 total observations (24 in each condition) were from one individual named George. That would change the picture considerably. Now we'd have no idea whether the big effect we observed reflected a difference in the population, but we would have a very good sense of what George's preference is!^[We discuss the strengths and weaknesses of repeated-measures designs like this in @sec-design and the statistical trade-offs of having many people with a small number of observations per person vs a small number of people with many observations per person in @sec-sampling.] The confidence intervals\index{confidence interval (CI)} and p-values from our OLS\index{ordinary least squares (OLS)} model would be wrong now because all of the error terms\index{error term} would be highly correlated---they would all reflect George's preferences.
+But suppose we told you that all of those 48 total observations (24 in each condition) were from one individual named George. That would change the picture considerably. Now we'd have no idea whether the big effect we observed reflected a difference in the population, but we would have a very good sense of what George's preference is!^[We discuss the strengths and weaknesses of repeated-measures designs like this in @sec-design and the statistical trade-offs of having many people with a small number of observations per person vs a small number of people with many observations per person in @sec-sampling.] The confidence intervals\index{confidence interval (CI)} and $p$-values from our OLS\index{ordinary least squares (OLS)} model would be wrong now because all of the error terms\index{error term} would be highly correlated---they would all reflect George's preferences.
 
 How can we make models that deal with clustered data? There are a number of widely used approaches for solving this problem including **linear mixed effects models**\index{linear mixed effects model (LMM)}, **generalized estimating equations**\index{generalized estimating equations (GEE)}, and **clustered standard errors**\index{clustered standard errors} (often used in economics). Here we will illustrate how the problem gets solved in linear mixed models, which are an extension of OLS\index{ordinary least squares (OLS)} models that are fast becoming a standard in many areas of psychology [@bates2015].
 
@@ -407,7 +406,7 @@ ggplot(sgf_group_means, aes(x = age_group, y = mean_correct,
 
 This experimental design looks a lot like some versions of our tea-tasting experiment. We have one primary condition manipulation (the puppet provides information versus does not), presented between participants so that some participants are in the experimental condition\index{experimental condition} and others are in the control condition.\index{control condition} Our measurements are repeated within participants across different experimental stimuli. Finally, we have one important, preplanned covariate: children's age. The experimental data are plotted in @fig-models-sgf-plot.^[Our sampling plan for this experiment was actually **stratified**\index{stratification} across age, meaning that we intentionally recruited the same number of participants for each one-year age group---because we anticipated that age was highly correlated with children's ability to succeed in this task. We'll describe this kind of sampling in more detail in @sec-sampling.]
 
-How should we go about making our default model for this dataset?^[This experiment was not preregistered, but the paper includes a separate replication dataset with the same analysis.] We simply include each of these design factors in a mixed effects model; we use a logistic link function\index{link function} for our mixed effects model (a **generalized linear mixed effects model**\index{generalized linear mixed effects model (GLMM)}) because we would like to predict correct performance on each trial, which is a binary variable. So that gives us an effect of condition and age as a covariate. We further add an interaction\index{interaction effect} between condition and age in case the condition effect varies meaningfully across groups. Finally, we add random effects of participant, $\gamma_i$, and experimental item, $\delta_t$.^[As discussed above, this is a tricky decision point; we could very reasonably have added random slopes as well.]
+How should we go about making our default model for this dataset?^[This experiment wasn't preregistered, but the paper includes a separate replication dataset with the same analysis.] We simply include each of these design factors in a mixed effects model; we use a logistic link function\index{link function} for our mixed effects model (a **generalized linear mixed effects model**\index{generalized linear mixed effects model (GLMM)}) because we would like to predict correct performance on each trial, which is a binary variable. So that gives us an effect of condition and age as a covariate. We further add an interaction\index{interaction effect} between condition and age in case the condition effect varies meaningfully across groups. Finally, we add random effects of participant, $\gamma_i$, and experimental item, $\delta_t$.^[As discussed above, this is a tricky decision point; we could very reasonably have added random slopes as well.]
 
 The resulting model looks like this:
 $$
@@ -432,24 +431,6 @@ mod <- lme4::glmer(correct ~ age_centered * condition + (1|subid) + (1|item),
                    data = sgf)
 ```
 
-\vspace{0.5em}
-\footnotesize
-```{r models-sgf-model2}
-#| label: tbl-models-sgf-model-print
-#| tbl-cap: "Estimated effects for our generalized linear mixed effects model on data from Stiller, Goodman, and Frank (2015)."
-
-apa_mod <- papaja::apa_print(mod)
-apa_tab <- apa_mod$table
-apa_tab$term[1] <- "Control condition"
-apa_tab$term[2] <- "Age (years)"
-apa_tab$term[3] <- "Expt condition"
-apa_tab$term[4] <- "Age (years) * Expt condition"
-# papaja::apa_table(apa_tab)
-
-apa_tab
-```
-\normalsize
-
 ::: {.callout-note title="code"}
 To fit the model described above, the first step is to prepare your predictors. In this case, we center the `age` predictor and we set the control condition to be the reference level. 
 
@@ -466,6 +447,24 @@ mod <- glmer(correct ~ age_centered * condition + (1|subid) + (1|item),
 ```
 
 You can see a summary of the fitted model using `summary(mod)` as before. The only big difference from `lm()` is that here you can extract both fixed and random effects (with `fixef(mod)` and `ranef(mod)`, respectively). 
+:::
+
+::: {.margin-caption}
+\vspace{-1em}
+\footnotesize
+```{r models-sgf-model2}
+#| label: tbl-models-sgf-model-print
+#| tbl-cap: "Estimated effects for our generalized linear mixed effects model on data from @stiller2015."
+
+apa_mod <- papaja::apa_print(mod)
+apa_tab <- apa_mod$table
+apa_tab$term <- c("Control condition", "Age (years)", "Expt condition", "Age (years) * Expt condition")
+# papaja::apa_table(apa_tab)
+kable(apa_tab, align = "lrrrr",
+      col.names = c("term", "$\\hat{\\beta}$", "95\\% CI", "$z$", "$p$"))
+```
+\normalsize
+\vspace{-.5em}
 :::
 
 Let's estimate this model and see how it looks. We'll focus here on interpretation of the so-called **fixed effects**\index{fixed effect} (the main predictors), as opposed to the participant and item random effects.^[Participant means are estimated to have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[1],2)` (in log-odds), while items have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[2],2)`. These indicate that both of our random effects capture meaningful variation.] @Tbl-models-sgf-model-print shows the coefficients. Again, let's walk through each:
