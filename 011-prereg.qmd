@@ -34,7 +34,7 @@ Educational apps for children are a huge market, but relatively few randomized t
 #| fig-alt: A plot showing that families who used the math app frequently showed greater gains in math than the control group.
 #| fig-width: 4
 #| fig-height: 3.25
-#| out-width: 35%
+#| out-width: 30%
 berkowitz <- tribble(
   ~usage,    ~group, ~value,
    "low",    "math",   0.69,
@@ -61,7 +61,7 @@ ggplot(berkowitz, aes(x = usage, y = value, colour = group)) +
 
 The key result is shown in @fig-prereg-berkowitz. Families who used the math app frequently showed greater gains in math than the control group. Although this finding appeared striking, the figure didn't directly visualize the primary causal effect of interest, namely the size of the effect of study condition on math scores. Instead the data were presented as estimated effects for specific levels of app usage.
 
-Because the authors made their data openly available, it was possible for @frank2016 to do a simple analysis to examine the causal effect of interest. When not splitting the data by usage and adjusting by covariates, there was no significant main effect\index{main effect} of the intervention on math performance [@fig-prereg-frank-berkowitz]. Since this analysis was not favorable to the primary intervention---and because it was not reported in the paper---it could have been the case that the authors had analyzed the data several ways and chosen to present an analysis that was more favorable to their hypotheses of interest.
+Because the authors made their data openly available, it was possible for @frank2016 to do a simple analysis to examine the causal effect of interest. When not splitting the data by usage and adjusting by covariates, there was no significant main effect\index{main effect} of the intervention on math performance (@fig-prereg-frank-berkowitz). Since this analysis was not favorable to the primary intervention---and because it was not reported in the paper---it could be the case that the authors analyzed the data in several ways and chose to present an analysis that was favorable to their hypotheses of interest.
 <!-- ^[The authors responded that their analyses were chosen *a priori* (before observing the data) and based on prior research; they argued that the disagreement about how the data should be analyzed was a question of different approaches [@berkowitz2016; for a longitudinal followup using a similar approach see @schaeffer2018].] -->
 
 ```{r fig-prereg-frank-berkowitz}
@@ -69,7 +69,7 @@ Because the authors made their data openly available, it was possible for @frank
 #| fig-alt: A plot showing that when not splitting by app usage, there was no significant effect of the intervention on math performance.
 #| fig-width: 3.5
 #| fig-height: 3.5
-#| out-width: 35%
+#| out-width: 30%
 
 # from https://github.com/mcfrank/berkowitz/blob/master/berkowitz.Rmd
 berk_frank <- tribble(
@@ -88,14 +88,14 @@ ggplot(berk_frank, aes(x = group, y = mean, colour = group)) +
   theme(axis.title.x = element_blank())
 ```
 
-As is true for many papers prior to the rise of preregistration, it's not possible to know definitively whether the reported analysis in @berkowitz2015 was influenced by the authors' desired result. As we'll see below, such data-dependent analyses can lead to substantial bias in reported effects. This uncertainty about a paper's analytic strategy can be avoided by the use of preregistration. In this case, preregistration would have convinced readers that the analyses decisions were not influenced by the data, thereby increasing the value of this otherwise high-quality study.
+\vspace{-1em}
+As is true for many papers prior to the rise of preregistration, it's not possible to know definitively whether the reported analysis in @berkowitz2015 was influenced by the authors' desired result. As we'll see below, such data-dependent analyses can lead to substantial bias in reported effects. This uncertainty about a paper's analytic strategy can be avoided by the use of preregistration. In this case, preregistration would have convinced readers that the analyses decisions were not influenced by the data, increasing the value of this otherwise high-quality study.
 :::
 
 ## Lost in a garden of forking paths
 
 One way to visualize researcher degrees of freedom\index{researcher degrees of freedom} is as a vast decision tree or "garden of forking paths" (@fig-forking-paths). Each node represents a decision point, and each branch represents a justifiable choice. Each unique pathway through the garden terminates in an individual research outcome. 
 
-\clearpage
 ![The garden of forking paths: many justifiable but different analytic choices are possible for an individual dataset.](images/prereg/forking-paths.png){#fig-forking-paths .column-margin fig-alt="A diagram illustrating the garden of forking paths as a flowchart bifurcating at each analytic decision."}
 
 Because scientific observations typically consist of both noise (random variation unique to this sample) and signal (regularities that will reoccur in other samples), some of these pathways will inevitably lead to results that are misleading (e.g., inflated effect sizes, exaggerated evidence, or false positives\index{false positive}). The more potential paths in the garden that you might explore, the higher the chance of encountering misleading results.
@@ -124,6 +124,7 @@ cold <- iconf("snowflake", "blue")
 
 You could think of this a bit like playing a game of "hot (`r hot`) or cold (`r cold`)," where `r hot` indicates that the choice will move the researcher closer to a desirable overall result and `r cold` indicates that the choice will move them further away. Each time the researcher reaches a decision point, they try one of the branches and get feedback on how that choice affects the results. If the feedback is `r hot` then they take that branch. If the answer is `r cold`, they try a different branch. If they reach the end of a complete pathway, and the result is `r cold`, maybe they even retrace their steps and try some different branches earlier in the pathway. This strategy creates a risk of bias because it systematically skews results toward the researcher's preferences [@hardwicke2022].^[We say "risk of bias" rather than just "bias" because in most scientific contexts, we do not have a known ground truth to compare the results to. So in any specific situation, we do not know the extent to which data-dependent decisions have actually biased the results.]
 
+\clearpage
 ::: {.callout-note title="depth"}
 ### Only human: Cognitive biases and skewed incentives {-}
 
@@ -148,7 +149,7 @@ In sum, scientists' human flaws---and the scientific ecosystem's flawed incentiv
 :::
 
 \clearpage
-In the most egregious cases, a researcher may try multiple pathways until they obtain a desirable result and then **selectively report**\index{selective reporting} that result, neglecting to mention that they have tried several other analysis strategies (also known as $p$-hacking,\index{p-hacking} a practice we've discussed throughout the book).^["If you torture the data long enough, it will confess" [@good1972].] You may remember an example of this practice in @sec-replication, where participants apparently became younger when they listened to "When I'm 64" by The Beatles. Another example of how damaging the garden of forking paths can be comes from the "discovery" of brain activity in a dead Atlantic Salmon [@bennett2009]! Researchers deliberately exploited flexibility in the fMRI analysis pipeline\index{analysis pipeline} and avoided multiple comparisons\index{multiple comparisons} corrections, allowing them to find brain activity where there was only dead fish (@fig-salmon).
+In the most egregious cases, a researcher may try multiple pathways until they obtain a desirable result and then **selectively report**\index{selective reporting} that result, neglecting to mention that they have tried several other analysis strategies (also known as $p$-hacking,\index{p-hacking} a practice we've discussed throughout the book).^["If you torture the data long enough, it will confess" [@good1972 p. 14, quoting Ronald H. Coase].] You may remember an example of this practice in @sec-replication, where participants apparently became younger when they listened to "When I'm 64" by The Beatles. Another example of how damaging the garden of forking paths can be comes from the "discovery" of brain activity in a dead Atlantic Salmon [@bennett2009]! Researchers deliberately exploited flexibility in the fMRI analysis pipeline\index{analysis pipeline} and avoided multiple comparisons\index{multiple comparisons} corrections, allowing them to find brain activity where there was only dead fish (@fig-salmon).
 
 ![By deliberately exploiting analytic flexibility\index{analytic flexibility} in the processing pipeline of fMRI data, @bennett2009 were able to identify "brain activity" in a dead Atlantic Salmon. From @bennett2009 [licensed under CC BY].](images/prereg/salmon.png){#fig-salmon .column-margin fig-alt="An fMRI scan apparently indicating brain activity in a dead salmon."}
 
@@ -156,9 +157,11 @@ In the most egregious cases, a researcher may try multiple pathways until they o
 
 In addition to degrees of freedom\index{researcher degrees of freedom} in experimental design and analysis, there is additional flexibility in how researchers *interpret* research results. As we discussed in @sec-theories, theories can accommodate even conflicting results in many different ways---for example, by positing auxiliary hypotheses that explain why a particular datapoint is special. 
 
-The practice of selecting or developing your hypothesis after observing the data has been called "hypothesizing after the results are known," or "HARKing" [@kerr1998]. HARKing\index{HARKing (hypothesizing after the results are known)} is potentially problematic because it expands the garden of forking paths and helps to justify the use of various additional design and analysis decisions (@fig-grid). For example, you may come up with an explanation for why an intervention is effective in men but not in women in order to justify a post hoc subgroup analysis based on sex (see the [Case study]{.smallcaps} box). The extent to which HARKing is problematic is contested [for discussion see @hardwicke2022]. But at the very least, it's important to be honest about whether hypotheses were developed before or after observing the data.
+The practice of selecting or developing your hypothesis after observing the data has been called "hypothesizing after the results are known," or "HARKing" [@kerr1998]. HARKing\index{HARKing (hypothesizing after the results are known)} is potentially problematic because it expands the garden of forking paths and helps to justify the use of various additional design and analysis decisions (@fig-grid). For example, you may come up with an explanation for why an intervention is effective in men but not in women in order to justify a post hoc subgroup analysis based on sex (see the [Case study]{.smallcaps} box).
 
 ![A grid of individual research results. The horizontal axis provides a simplified illustration of the many justifiable design and analysis choices that a scientist can use to generate the evidence. The vertical axis illustrates that there are often several potential hypotheses that could be constructed or selected when interpreting the evidence. An unconstrained scientist can simultaneously fit evidence to hypotheses and fit hypotheses to evidence in order to obtain their preferred overall result.](images/prereg/grid.png){#fig-grid .margin-caption width=70% fig-alt="A diagram of a grid with axes degrees of freedom to fit \"evidence to hypotheses\" and \"hypotheses to evidence\"."}
+
+The extent to which HARKing is problematic is contested [see @hardwicke2022]. At the very least, it's important to be honest about whether hypotheses were developed before or after observing the data.
 
 But hang on a minute! Isn't it a good thing to seek out interesting results if they are there in the data? Shouldn't we "let the data speak"? The answer is yes! But it's crucial to understand the distinction between **exploratory** and **confirmatory** modes of research.^[In practice, an individual study may contain both exploratory and confirmatory aspects, which is why we describe them as different "modes."] Confirmation involves making research decisions *before* you've seen the data whereas exploration involves making research decisions *after* you've seen data.
 
@@ -170,13 +173,15 @@ You can counter the problem of researcher degrees of freedom\index{researcher de
 
 **Preregistration** is the process of declaring your research decisions in a public registry before you analyze (and often before you collect) the data. Preregistration ensures that your research decisions are data-independent, which reduces risk of bias arising from the issues described above. Preregistration also transparently conveys to others what you planned, helping them to determine the risk of bias and calibrate their confidence in the research results. In other words, preregistration can dissuade researchers from engaging in questionable research practices\index{questionable research practices} like $p$-hacking\index{p-hacking} and HARKing,\index{HARKing (hypothesizing after the results are known)} because they can be held accountable to their original plan while also providing the context needed to properly evaluate and interpret research.
 
-![Preregistration clarifies where research activities fall on the continuum of prespecification. When the preregistration provides little constraint over researcher degrees of freedom (i.e., more exploratory research), decisions are more likely to be data-dependent, and consequently there is a higher risk of bias. When preregistration provides strong constraint over researcher degrees of freedom (i.e., more confirmatory research), decisions are less likely to be data dependent, and consequently there is a lower risk of bias. Exploratory research activities are more sensitive to serendipitous discovery but also have a higher risk of bias relative to confirmatory research activities. Preregistration transparently communicates where particular results are located along the continuum, helping readers to appropriately calibrate their confidence.](images/prereg/continuum.png){#fig-continuum .margin-caption width=70% fig-alt="A diagram where as prespecification increases, risk of bias & sensitivity to serendipitous discovery go down, confidence up."}
+\clearpage
+![Preregistration clarifies where research activities fall on the continuum of prespecification. When the preregistration provides little constraint over researcher degrees of freedom (more exploratory research), decisions are more likely to be data-dependent, and consequently there is a higher risk of bias. When preregistration provides strong constraint over researcher degrees of freedom (more confirmatory research), decisions are less likely to be data dependent, and consequently there is a lower risk of bias. Exploratory research activities are more sensitive to serendipitous discovery but also have a higher risk of bias relative to confirmatory research activities. Preregistration transparently communicates where particular results are located along the continuum, helping readers to appropriately calibrate their confidence.](images/prereg/continuum.png){#fig-continuum .column-margin fig-alt="A diagram where as prespecification increases, risk of bias & sensitivity to serendipitous discovery go down, confidence up."}
 
 Preregistration does not require that you specify all research decisions in advance, only that you are transparent about what was planned, and what was not planned. This transparency helps to make a distinction between which aspects of the research were exploratory and which were confirmatory (@fig-continuum). All else being equal, we should have more confidence in confirmatory results, because there is a lower risk of bias. Exploratory results have a higher risk of bias, but they are also more **sensitive** to serendipitous (unexpected) discoveries. So the confirmatory mode is best suited to testing hypotheses, and the exploratory mode is best suited to generating them. Therefore, exploratory and confirmatory research are both valuable activities---it is just important to differentiate them [@tukey1980]! Preregistration offers the best of both worlds by clearly separating one from the other.
 
 In addition to the benefits described above, preregistration may improve the quality of research by encouraging closer attention to study planning. We've found that the process of writing a preregistration really helps facilitate communication between collaborators, and can catch addressable problems before time and resources are wasted on a poorly designed study. Detailed advanced planning can also create opportunities for useful community feedback, particularly in the context of registered reports\index{registered report} (see the [Depth]{.smallcaps} box below), where dedicated peer reviewers will evaluate your study before it has even begun.
 
-\clearpage
+\vspace{2em}
+<!-- \clearpage -->
 ::: {.callout-note title="depth"}
 ### Preregistration and friends: A toolbox to address researcher degrees of freedom {-}
 
@@ -196,10 +201,9 @@ Some have argued that these large-scale robustness checks\index{robustness check
 
 **Open lab notebooks**. Maintaining a lab notebook can be a useful way to keep a record of your decisions as a research project unfolds. Preregistration is a bit like taking a snapshot of your lab notebook at the start of the project, when all you have written down is your research plan. Making your lab notebook publicly available is a great way to transparently document your research and departures from the preregistered plan.
 
-![Registered reports\index{registered report} (from <https://www.cos.io/initiatives/registered-reports>, licensed under CC BY 4.0).](images/prereg/registered-reports.png){#fig-reg-reports width="70%" fig-alt="A diagram illustrating stages of a Registered Report: studies undergo peer review before & after results have been collected."}
-
 **Registered reports**.\index{registered report} Registered reports (@fig-reg-reports) are a type of article format that embeds preregistration directly into the publication pipeline [@chambers2020]. The idea is that you submit your preregistered protocol to a journal and it is peer reviewed before you've even started your study. If the study is approved, the journal agrees to publish it, regardless of the results. This is a radical departure from traditional publication models where peer reviewers and journals evaluate your study *after* its been completed and the results are known. Because the study is accepted for publication independently of the results, registered reports can offer the benefits of preregistration with additional protection against publication bias.\index{publication bias} They also provide a great opportunity to obtain feedback on your study design while you can still change it!
 
+![Registered reports\index{registered report} involve an article undergoing peer review both before and after results have been collected (from <https://www.cos.io/initiatives/registered-reports>, licensed under CC BY 4.0).](images/prereg/registered-reports.png){#fig-reg-reports width="70%" fig-alt="A diagram illustrating stages of a Registered Report: studies undergo peer review before & after results have been collected."}
 :::
 
 ## How to preregister
@@ -208,10 +212,11 @@ High-stakes studies such as medical trials must be preregistered [@dickersin2012
 
 We recommend using the Open Science Framework (OSF)\index{Open Science Framework (OSF)} as your registry. OSF is one of the most popular registries in psychology, and you can do lots of other useful things on the platform to make your research transparent, like sharing data, materials, analysis scripts, and preprints. On OSF, it's possible to "register" any file you have uploaded. When you register a file, it creates a time-stamped, read-only copy, with a dedicated link. You can add this link to articles reporting your research.
 
-\clearpage
+<!-- \clearpage -->
 \footnotesize
 {{< include md/011-prereg/template.md >}}
 \normalsize
+\vspace{-.5em}
 
 One approach to preregistration is to write a protocol document that specifies the study rationale, aims or hypotheses, methods, and analysis plan, and register that document.^[You can think of a study protocol as a bit like a research paper without a results and discussion section (here's an example from one of our own studies: <https://osf.io/2cnkq>).] Open Science Framework also has a collection of dedicated preregistration templates that you can use if you prefer. An outline of such a template is shown in @tbl-prereg-template. These templates are often tailored to the needs of particular types of research. For example, there are templates for general quantitative psychology research ["PRP-QUANT"\; @bosnjak2021], cognitive modeling [@cruwell2021], and secondary data analysis [@akker2019]. The OSF\index{Open Science Framework (OSF)} interface may change, but currently [this guide](https://help.osf.io/article/158-create-a-preregistration) provides a set of steps to create a preregistration.
 
@@ -219,14 +224,14 @@ Once you've preregistered your plan, you just go off and run the study and repor
 
 Don't worry though---remember that a key goal of preregistration is transparency to enable others to evaluate and interpret research results. If you decide to depart from your original plan and conduct data-dependent analyses, then this decision may increase the risk of bias. But if you communicate this decision transparently to your readers, they can appropriately calibrate their confidence in the results. You may even be able to run both the planned and unplanned analyses as a robustness check\index{robustness check} (see the [Depth]{.smallcaps} box) to evaluate the extent to which this particular choice impacts the results.
 
-When you report your study, it is important to distinguish between what was planned and what was not. If you ran a lot of data-dependent analyses, then it might be worth having separate exploratory and confirmatory results sections. On the other hand, if you mainly stuck to your original plan, with only minor departures, then you could include a table (perhaps in an appendix) that outlines these changes (for example, see Supplementary Information A of [this article](https://doi.org/10.31222/osf.io/wt5ny)).
+When you report your study, it is important to distinguish between what was planned and what was not. If you ran a lot of data-dependent analyses, then it might be worth having separate exploratory and confirmatory results sections. On the other hand, if you mainly stuck to your original plan, with only minor departures, then you could include a table (perhaps in an appendix) that outlines these changes [for example, see Supplementary Information A of @hardwicke2021citation].
 
 ## Chapter summary: Preregistration
 
 We've advocated here for preregistering your study plan. This practice helps to reduce the risk of bias caused by data-dependent analysis (the "garden of forking paths" that we described) and transparently communicate the risk of bias to other scientists. Importantly, preregistration is a "[plan, not a prison](https://www.cos.io/blog/preregistration-plan-not-prison)": in most cases, preregistered, confirmatory analyses coexist with exploratory analyses. Both are an important part of good research---the key is to disclose which is which!
 
 ::: {.callout-note title="discussion questions"}
-1. _P_-hack your way to scientific glory! To get a feel for how data-dependent analyses might work in practice, have a play around with this app: <https://projects.fivethirtyeight.com/p-hacking>. Do you think preregistration would affect your confidence in claims made about this dataset?
+1. $P$-hack your way to scientific glory! To get a feel for how data-dependent analyses might work in practice, have a play around with this app: <https://projects.fivethirtyeight.com/p-hacking>. Do you think preregistration would affect your confidence in claims made about this dataset?
 
 2. Preregister your next experiment! The best way to get started with preregistration is to have a go with your next study. Head over to <https://osf.io/registries/osf/new> and register your study protocol or complete one of the templates. What aspects of preregistration did you find most difficult, and what benefits did it bring?
 :::

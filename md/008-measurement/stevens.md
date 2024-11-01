@@ -6,4 +6,4 @@
 | Ratio    | Numerical & zero    | Equality of ratios        | Coefficient of variation |
 
 
-: Scale types and their associated operations and statistics [@stevens1946]. {#tbl-stevens}
+: Measurement scale types and their associated operations and statistics [@stevens1946]. {#tbl-stevens}

@@ -11,7 +11,7 @@
 
 > Your closest collaborator is you six months ago, but you don't reply to emails.
 >
-> ---Karl Broman (2015), quoting [\@gonuke](https://twitter.com/gonuke)
+> ---Karl Broman (2015), quoting \@gonuke on Twitter
 
 Have you ever returned to an old project folder to find a chaotic mess of files with names like `analysis-FINAL`, `analysis-FINAL-COPY`, and `analysis-FINAL-COPY-v2`? Which file is actually the final version!? Or perhaps you've spent hours searching for a data file to send to your advisor, only to realize with horror that it was *only* stored on your old laptop---the one that experienced a catastrophic hard drive failure when you spilled coffee all over it one sleepy Sunday morning. These experiences may make you sympathetic to Karl Broman's quip above. Good project management practices not only make it easier to share your research with others, they also make for a more efficient and less error-prone workflow that will avoid giving your future self a headache. This chapter is about the process of managing all of the products of your research workflow---methodological protocols, materials,^[We use the term "materials" here to cover a range of things another researcher might need in order to repeat your study---for example, stimuli, survey instruments, and code for computer-based experiments.] data, and analysis scripts. We focus especially on managing projects in ways that maximize their value to you and to the broader research community by aligning with open science\index{open science} practices (maximizing [transparency]{.smallcaps}).
 
@@ -133,21 +133,32 @@ Data come in many forms, but chances are that at some point during your project 
 
 ![Examples of non-rectangular spreadsheet formats that are likely to cause problems in analysis. Adapted from @broman2018.](images/management/broman.png){#fig-management-broman-nonrect .margin-caption fig-alt="4 spreadsheets that are non-rectangular due to having empty rows, variables broken across rows, etc."}
 
-2. *Choose good names for your variables*. No one convention for name formatting is best, but it's important to be consistent. We tend to follow the [tidyverse style guide](https://style.tidyverse.org) and use lowercase words separated by underscores (`_`). It's also helpful to give units where these are available---for example, whether reaction times are in seconds or milliseconds. [Table @tbl-broman-ex] gives some examples of good and bad variable names. 
+2. *Choose good names for your variables*. No one convention for name formatting is best, but it's important to be consistent. We tend to follow the [tidyverse style guide](https://style.tidyverse.org) and use lowercase words separated by underscores (`_`). It's also helpful to give units where these are available---for example, whether reaction times are in seconds or milliseconds. [Table @tbl-broman-ex] gives some examples of good and bad variable names.
+\vspace{-1.5em}
 
-| Good name  | Good alternative | Avoid                     |
-|------------|------------------|---------------------------|
-| subject_id | SubID            | subject #                 |
-| sex        | female           | M/F                       |
-| rt_msec    | reaction_time_ms | reaction time (millisec.) |
+::: {.column-margin}
+\scriptsize
+```{r}
+#| label: tbl-broman-ex
+#| tbl-cap: "Examples of good and bad variable names. Adapted from @broman2018."
 
-: Examples of good and bad variable names. Adapted from @broman2018. {#tbl-broman-ex}
+broman <- tribble(
+  ~good       , ~alternative.  , ~avoid          ,
+  "subject_id", "SubID"        , "subject #"     ,
+  "sex"       , "female"       , "M/F"           ,
+  "rt_ms"     , "reaction_time", "rt (millisec.)"
+)
+
+kable(broman, col.names = c("Good name", "Good alternative", "Avoid"))
+```
+\normalsize
+:::
 
 3. *Be consistent with your cell formatting*. Each column should have one *kind* of thing in it. For example, if you have a column of numerical values, don't all of a sudden introduce text data like "missing" into one of the cells. This kind of mixing of data types can cause havoc down the road. Mixed or multiple entries also don't work, so don't write "0 (missing)" as the value of a cell. Leaving cells blank is also risky because it is ambiguous. Most software packages have a standard value for missing data\index{missing data} (e.g., `NA` is what R uses). If you are writing dates, please be sure to use the "global standard" (ISO 8601), which is YYYY-MM-DD. Anything else can be misinterpreted easily.^[Dates in Excel deserve special mention as a source of terribleness. Excel has an unfortunate habit of interpreting information that has nothing to do with dates as dates, destroying the original content in the process. Excel's issue with dates has caused unending horror in the genetics literature, where gene names are automatically converted to dates, sometimes without the researchers noticing [@ziemann2016]. In fact, some gene names have had to be changed in order to avoid this issue!]
 
 4. *Decoration isn't data*. Decorating your data with bold headings or highlighting may seem useful for humans, but it isn't uniformly interpreted or even recognized by analysis software (e.g., reading an Excel spreadsheet into R will scrub all your beautiful highlighting and artistic fonts), so do not rely on it.
 
-5. *Save data in plain text files*. The CSV (comma-delimited) file format is a common standard for data that is uniformly understood by most analysis software (it is an "interoperable" file format).^[Be aware of some interesting differences in how these files are output by European vs American versions of Microsoft Excel! You might find semicolons instead of commas in some datasets.] The advantage of CSVs is that they are not proprietary to Microsoft or another tech company and can be inspected in a text editor, but be careful: they do not preserve Excel formulas or formatting! 
+5. *Save data in plain text files*. The CSV (comma-delimited) file format is a common standard for data that is uniformly understood by most analysis software (it is an "interoperable" file format).^[Be aware of some interesting differences in how these files are output by European vs American versions of Microsoft Excel! You might find semicolons instead of commas in some datasets.] The advantage of CSVs is that they are not proprietary to Microsoft or another company and can be inspected in a text editor, but be careful: they do not preserve Excel formulas or formatting! 
 
 Given the points above, we recommend that you avoid analyzing your data in Excel. If it is necessary to analyze your data in a spreadsheet program, we urge you to save the raw data as a separate CSV and then create a distinct analysis spreadsheet so as to be sure to retain the raw data unaltered by your (or Excel's) manipulations.
 
@@ -162,6 +173,8 @@ That said, if your platform *does* allow you to control what comes out, you can 
 
 In our methods class, students often try to reproduce the original analyses from a published study before attempting to replicate the results in a new sample of participants. When Kengthsagn Louis looked at the code for the study she was interested in, she noticed that the variables in the analysis code were named horribly (presumably because they were output this way by the survey software). For example, one piece of Stata code looked like this:
 
+\vspace{-1em}
+\footnotesize
 ```{verbatim=TRUE}
 gen recall1=.
 replace recall1=0 if Q21==1 
@@ -172,10 +185,12 @@ replace recall1=1 if Q69==3 | Q69==5 | Q69==6
 replace recall1=2 if Q69==2 | Q69==4 | Q69==7 | Q69==8
 ta recall1
 ```
+\normalsize
+\vspace{-1em}
 
 In the process of translating this code into R in order to reproduce the analyses, Kengthsagn and a course teaching assistant, Andrew Lampinen, noticed that some participant responses had been assigned to the wrong variables. Because the variable names were not human-readable, this error was almost impossible to detect. Since the problem affected some of the inferential conclusions of the article, the article's author---to their credit---issued an immediate correction [@petersen2019].
 
-The moral of the story: obscure variable names can hide existing errors and create opportunities for further error! Sometimes you can adjust these within your experimental software, avoiding the issue. If not, make sure to create a "key" and translate the names immediately, double checking after you are done.
+The moral of the story: obscure variable names can hide existing errors and create opportunities for further error! Sometimes you can adjust these in your experimental software, avoiding the issue. If not, make sure to create a "key" and translate the names immediately, double checking after you are done.
 :::
 
 ### Document the format of your data
@@ -186,7 +201,7 @@ Even the best-organized tabular data are not always easy to understand by other 
 
 ![Codebook for trial-level data (see above) from the ManyBabies (2020) case study.](images/management/mb-codebook.png){#fig-management-mb-codebook .margin-caption fig-alt="A spreadsheet with columns Variable Name, Type, Possible Values, Explanation."}
 
-Creating a codebook\index{codebook} need not require a lot of work. Almost any documentation is better than nothing! There are also several R packages that can automatically generate a codebook for you, for example `codebook` [@arslan2019], `dataspice` [@boettiger2021], and `dataMaid` [@petersen2019data]. Adding a codebook can substantially increase the reuse value of the data and prevent hours of frustration as future you and others try to decode your variable names and assumptions.
+Creating a codebook\index{codebook} need not require a lot of work. Almost any documentation is better than nothing! There are also several R packages that can automatically generate a codebook for you, for example `codebook` [@arslan2019], `dataspice` [@boettiger2021], and `dataMaid` [@petersen2019data]. Adding a codebook can substantially increase the reuse value of data and prevent hours of frustration as future you and others try to decode your variable names and assumptions.
 
 ## Sharing Research Products
 
@@ -205,6 +220,8 @@ Under both frameworks, **anonymization**\index{anonymization} (or equivalently *
 
 The EU's GDPR\index{GDPR (General Data Protection Regulation)} also allows fully anonymized data sharing, with one big complication. Putting anonymous identifiers in a data file and removing identifiable fields does not itself suffice for GDPR anonymization\index{anonymization} if the data are still *in principle reidentifiable* because you have maintained documentation linking IDs to identifiable data like names or email addresses. Only when the key linking identifiers to data has been destroyed are the data truly de-identified according to this standard. 
 
+De-identification\index{de-identification} is not always enough. As datasets get richer, statistical reidentification risks go up substantially such that, with a little bit of outside information, data can be matched with a unique individual. These risks are especially high with linguistic, physiological, and geospatial data, but they can be present even for simple behavioral experiments. In one influential demonstration, knowing a person's location on two occasions was often enough to identify their data uniquely in a huge database of credit card transactions [@de-montjoye2015].^[For an example closer to home, many of the contributing labs in the ManyBabies project logged the date of test for each participant. This useful and seemingly innocuous piece of information is unlikely to identify any particular participant---but alongside a social media post about a lab visit or a dataset about travel records, it could easily reveal a particular participant's identity.] Thus, simply removing fields from the data is a good starting point---but if you are collecting richer data about participants' behavior you may need to consult an expert.
+
 ::: {.callout-note title="accident report"}
 ### Really anonymous? {-}
 
@@ -214,8 +231,6 @@ First, we discovered that MTurk IDs were in some cases linked to study participa
 
 Then, a little later we received an irate email from an MTurk participant who had discovered their data on GitHub via a search for their MTurk ID. Although they were not identified in this dataset, it convinced us that at least some participants would not like this ID shared. After another consultation with the IRB,\index{institutional review board (IRB)} we apologized to this individual and removed their and others' IDs from our GitHub commit histories across that and other repositories. Prior to posting data, we now take care to anonymize IDs by creating a secret mapping between the IDs we post and the actual MTurk IDs. 
 :::
-
-De-identification\index{de-identification} is not always enough. As datasets get richer, statistical reidentification risks go up substantially such that, with a little bit of outside information, data can be matched with a unique individual. These risks are especially high with linguistic, physiological, and geospatial data, but they can be present even for simple behavioral experiments. In one influential demonstration, knowing a person's location on two occasions was often enough to identify their data uniquely in a huge database of credit card transactions [@de-montjoye2015].^[For an example closer to home, many of the contributing labs in the ManyBabies project logged the date of test for each participant. This useful and seemingly innocuous piece of information is unlikely to identify any particular participant---but alongside a social media post about a lab visit or a dataset about travel records, it could easily reveal a particular participant's identity.] Thus, simply removing fields from the data is a good starting point---but if you are collecting richer data about participants' behavior you may need to consult an expert. 
 
 Privacy issues are ubiquitous in data sharing, and almost every experimental research project will need to solve them before sharing data. For simple projects, often these are the only issues that preclude data sharing. However, in more complex projects, other concerns can arise. Funders may have specific mandates regarding where your data should be shared. Data use agreements or collaborator preferences may restrict where and when you can share. And certain data types require much more sensitivity since they are more consequential than, say, the reaction times on a Stroop task. We include here a set of questions to walk through to plan your sharing (@fig-management-sharing-chart). When in doubt, it's often a good idea to consult with the relevant local authority---for example, your ethics board for ethical issues or your research management office for regulatory issues.
 
@@ -240,8 +255,8 @@ If you've followed the guidance in the rest of this chapter, then you will alrea
 Fortunately, there are many repositories that help you conform to FAIR standards\index{FAIR (findable, accessible, interoperable, and reusable)}. Zenodo, Figshare, the Open Science Framework (OSF),\index{Open Science Framework (OSF)} and the various Dataverse sites are designed for this purpose, though there are many other domain-specific repositories that are particularly relevant for different research fields. We often use the OSF as it makes it easy to share all research products connected to a project in one place. Open Science Framework is FAIR\index{FAIR (findable, accessible, interoperable, and reusable)} compatible and allows users to assign DOIs\index{digital object identifier (DOI)} to their data and provide appropriate metadata.\index{metadata}
 
 We recommend you attach a license to your research products. Academic culture is (usually) unburdened by discussion of intellectual property and legal rights and instead relies on scholarly norms about citation and attribution. The basic expectation is that if you rely on someone else's research, you explicitly acknowledge the relevant journal article through a citation. Although norms are still evolving, using research products created by others generally adheres to the same scholarly principle. Research products can also be useful in nonacademic contexts, however. Perhaps you created software that a company would like to use. Maybe a pediatrician would like to use a research instrument you've been working on to assess their patients. These applications (and many other reuses of the data) require a legal license. In practice, there are a number of simple, open-source licenses that permit reuse. We tend to favor [Creative Commons](https://creativecommons.org) licenses, which come in a variety of flavors such as
-[CC0](https://creativecommons.org/share-your-work/public-domain/cc0) (which allows all reuse), 
-[CC-BY](https://creativecommons.org/licenses/by/4.0) (which allows reuse as long as there is attribution), and [CC-BY-NC](https://creativecommons.org/licenses/by/4.0) (which only allows attributed, noncommercial reuse).^[@klein2018 recommend the CC0 license, which puts no limits on what can be done with your data. At first glance, it may seem like a license that requires attribution is useful. But academic norms, rather than the threat of litigation, lead to good citation practices. In addition, more restrictive licenses can mean that some legitimate uses of your data or research can be blocked.] Regardless of what license you choose, having a license means that your products won't be in a "not sure what I'm allowed to do with this" limbo for others who are interested in reusing them. 
+[CC0](https://creativecommons.org/public-domain/cc0) (which allows all reuse), 
+[CC-BY](https://creativecommons.org/licenses/by/4.0) (which allows reuse as long as there is attribution), and [CC-BY-NC](https://creativecommons.org/licenses/by-nc/4.0) (which only allows attributed, noncommercial reuse).^[@klein2018 recommend the CC0 license, which puts no limits on what can be done with your data. At first glance, it may seem like a license that requires attribution is useful. But academic norms, rather than the threat of litigation, lead to good citation practices. In addition, more restrictive licenses can mean that some legitimate uses of your data or research can be blocked.] Regardless of what license you choose, having a license means that your products won't be in a "not sure what I'm allowed to do with this" limbo for others who are interested in reusing them. 
 
 As we have discussed, you may want to consider storing your work in a public repository from the outset of the project. If you are using GitHub to manage your project, you can link the Git\index{Git} repository to the Open Science Framework\index{Open Science Framework (OSF)} so it automatically syncs. This provides a valuable incentive to organize your work properly throughout your project and makes sharing super easy, because you've already done it! On the other hand, this way of working can feel exposed for some researchers, and it does carry some risks, however small, of "scooping" or preemption by other groups working in the same space. Fortunately you can set up the same Git-OSF workflow and keep it private until you're ready to make it public later on. 
 

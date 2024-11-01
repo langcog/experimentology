@@ -13,4 +13,4 @@
 | 11 | An explanation of whom to contact for answers to pertinent questions about the research and research subjects’ rights                                                   |
 | 12 | A statement that participation is voluntary, refusal to participate will involve no penalty, and that subject may discontinue participation at any time without penalty |
 
-: US Office of Human Research Protections requirements for a consent form (edited for length). {#tbl-consent-requirements}
+: US Office of Human Research Protections (OHRP) requirements for a consent form (edited for length). {#tbl-consent-requirements}

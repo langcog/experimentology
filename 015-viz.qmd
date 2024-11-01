@@ -24,7 +24,7 @@ As psychology moves into an era of bigger data and more complex behaviors, we be
 
 In 1854, a deadly outbreak of cholera\index{cholera} was sweeping through London.
 The scientific consensus at the time was that diseases like cholera\index{cholera} spread through breathing poisonous and foul-smelling vapors, an idea known as the "miasma theory" [@halliday2001death].
-An obstetrician and anesthesiologist named John Snow,\index{Snow, John} however, had proposed an alternative theory: rather than spreading through foul air, he thought that cholera\index{cholera} was spreading through a polluted water supply [@snow1855mode].\index{Snow, John}
+An obstetrician and anesthesiologist named John Snow\index{Snow, John} proposed an alternative theory: rather than spreading through foul air, he thought that cholera\index{cholera} was spreading through a polluted water supply [@snow1855mode].\index{Snow, John}
 To make a public case for this idea, he started counting cholera deaths.
 He marked each case on a map of the area and indicated the locations of the water pumps for reference.
 Furthermore, a line could be drawn representing the region that was closest to each water pump, a technique that is now known as a Voronoi diagram (<https://en.wikipedia.org/wiki/Voronoi_diagram>).\index{Voronoi diagram}
@@ -33,7 +33,7 @@ Although the precise causal role of these maps in Snow's own thinking is dispute
 
 ![Mapping out a cholera epidemic [@snow1854report]. The dotted line shows the region for which Broad Street pump is nearest.](images/viz/snow_cholera_voronoi.png){#fig-viz-cholera width="45%" fig-alt="An old map of Broad Street, with bars for number of cases at each address and dotted line around the area of most bars."}
 
-Nearly two centuries later, as the COVID-19 pandemic\index{COVID-19 pandemic} swept through the world, governmental agencies like the Centers for Disease Control and Prevention (CDC)\index{Centers for Disease Control and Prevention (CDC)} produced maps of the outbreak that became much more familiar (@fig-viz-covid). 
+Nearly two centuries later, as the COVID-19 pandemic\index{COVID-19 pandemic} swept through the world, governmental agencies like the Centers for Disease Control and Prevention (CDC)\index{Centers for Disease Control and Prevention (CDC)} produced maps of the outbreak that became much more familiar (@fig-viz-covid).
 
 ![A map showing the counts of COVID\index{COVID-19 pandemic} hospitalizations by state since August 2020 as of January 2024 (from the CDC\index{Centers for Disease Control and Prevention (CDC)} COVID Data Tracker, <https://covid.cdc.gov/covid-data-tracker>). _Usage does not constitute endorsement or recommendation by the US Government, Department of Health and Human Services, or Centers for Disease Control and Prevention._](images/viz/cdc-covid-map.png){#fig-viz-covid width="55%" fig-alt="A map of the US with each state's color indicating number of COVID hospitalizations. TX, FL, CA, NY have darkest colors."}
 
@@ -170,7 +170,7 @@ For example, in @barnett2022, a heatmap was used to show a specific range of par
 ![A heatmap showing a specific range of continuous parameters where an effect emerged. @barnett2022, Figure 3 (licensed under CC BY 4.0).](images/viz/viz_heatmap_example.png){#fig-viz-heatmap width="35%" fig-alt="A heatmap of stick length against agent bias; there is a bright spot in the bottom right-hand corner."}
 :::
 
-Or we could plot the accuracy of each age group as sizes/areas (@fig-viz-prepost3).
+Or we could plot the accuracies as sizes/areas (@fig-viz-prepost3).
 
 ```{r fig-viz-prepost3}
 #| fig-cap: Iterating on the Stiller data using size.
@@ -185,7 +185,7 @@ ggplot(sgf_cond_means, aes(x = age_group, y = condition, size = rating)) +
 
 \clearpage
 ::: {.callout-note title="code"}
-To make this (bad) visualization, we mapped the rating DV to the `size` element in our `aes()` call.
+To make this (bad) visualization, we mapped the rating to the `size` aesthetic in our `aes()` call.
 
 ```{r fig-viz-prepost3, opts.label='code'}
 ```
@@ -219,6 +219,7 @@ To accomplish this, we use the `position = "dodge"` argument:
 ```
 :::
 
+\clearpage
 This plot is slightly better: it's easier to compare the heights of bars than the "blueness" of squares, and mapping age to color draws our eye to those contrasts.
 However, we can do even better by noticing that our experiment was designed to test an *interaction*.\index{interaction effect}
 That statistic of interest is a difference of differences.
@@ -275,10 +276,11 @@ It hides real variation in the data, making a noisy effect based on a few data p
 Additionally, it collapses the *distribution* of the data, making a multimodal distribution look the same as a unimodal one. 
 The third principle of modern statistical visualization is to *show the data* and visualize variability in some form.
 
+\clearpage
 The most minimal form of this principle is to *always include error bars*.^[And be sure to tell the reader what the error bars represent---a 95% confidence interval?\index{confidence interval (CI)} A standard error of the mean?---without this information, error bars are hard to interpret (see the [Depth]{.smallcaps} box below).]
 Error bars turn a purely descriptive visualization into an inferential one. 
 They represent a minimal form of uncertainty about the possible statistics that might have been observed, not just the one that was actually observed. 
-@fig-viz-show-data1 shows the data with (bootstrapped) error bars. 
+@Fig-viz-show-data1 shows the data with (bootstrapped) error bars. 
 <!-- As such, they allow the viewer to interpret the means as *estimates*.  -->
 
 ```{r fig-viz-show-data1}
@@ -307,7 +309,7 @@ geom_col(position = "dodge") +
 geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), position = "dodge")
 ```
 
-But this doesn't work! The rationale is kind of technical, but the width of the error bars is much narrower than the width of the bars, so we need to manually specify how much to dodge the error bars with the `position_dodge()` function:
+But this doesn't work! The rationale is kind of technical, but the width of the error bars is much narrower than the width of the bars, so we need to manually specify how much to dodge the error bars with `position_dodge()`:
 
 ```{r, opts.label='code'}
 geom_col(position = position_dodge()) +
@@ -329,9 +331,11 @@ To show such variation, we aggregate to calculate an accuracy score for each par
 
 There are many ways of showing the resulting distribution of participant-level data.
 For example, a boxplot shows the median (a horizontal line) in the center of a box extending from the lower quartile (25%) to the upper quartile (75%).
-Lines then extend out to the biggest and smallest values (excluding outliers, which are shown as dots). [Figure @fig-viz-show-data2] gives the boxplots for the Stiller data, which don't look that informative---perhaps because of the coarseness of individual participant averages due to the small number of trials. 
+Lines then extend out to the biggest and smallest values (excluding outliers, which are shown as dots).
 
-\vspace{4em}
+@Fig-viz-show-data2 gives the boxplots for the Stiller data, which don't look that informative---perhaps because of the coarseness of individual participant averages due to the small number of trials. 
+
+\vspace{2em}
 
 ```{r fig-viz-show-data2}
 #| fig-cap: A boxplot of the Stiller data.
@@ -361,7 +365,7 @@ If you have discrete levels of a numeric variable (e.g., age groups), make sure 
 Otherwise, if it's still coded as `numeric`, `ggplot` will collapse all of the levels together!
 :::
 
-\clearpage
+<!-- \clearpage -->
 It is also common to show the raw data as jittered values with low transparency.
 In @fig-viz-show-data4, we jitter the points because many participants have the same numbers (e.g., 50%), and if they overlap it is hard to see how many points there are.
 
@@ -399,6 +403,7 @@ To plot both *condition* means and *participant* means, we need to create two di
 The most noteworthy aspect of this code is that the `geom_jitter()` function doesn't just take a different aesthetic; it also takes a different dataframe altogether! Mixing dataframes can be an important tool for creating complex plots.
 :::
 
+\clearpage
 Perhaps the format that takes this principle the furthest is the so-called raincloud plot [@allen2019raincloud] shown in @fig-viz-raincloud.
 A raincloud plot combines the raw data ("rain") with a smoothed density ("cloud") and a boxplot giving the median and quartiles of the distribution. 
 
@@ -520,7 +525,7 @@ Simply put, we should try to use the simplest possible presentation of the maxim
 To calculate the amount of information shown, @tufte2001visual suggests a measure called the "data density index," the "numbers plotted per square inch."
 The worst offenders have a very low density while also using a lot of excess ink (e.g., @fig-viz-bad and @fig-viz-bad2)
 
-![This figure uses complicated 3D ribbons to compare distributions across four countries [from @roeder1994dna]. How could the same data have been presented more legibly?](images/viz/roeder_badviz.png){#fig-viz-bad2 .column-margin width="90%" fig-alt="2 plots showing binned frequency data for 4 countries in using 3D ribbons in slightly different shades of gray."}
+![This figure uses complicated 3D ribbons to compare distributions across four countries [from @roeder1994dna]. How could the same data have been presented more legibly?](images/viz/roeder_badviz.png){#fig-viz-bad2 .margin-caption fig-alt="2 plots showing binned frequency data for 4 countries in using 3D ribbons in slightly different shades of gray."}
 
 The defaults in modern visualization libraries like `ggplot` prevent some of the worst offenses but are still often suboptimal.
 For example: consider whether the visual complexity introduced by the default grey background and grid lines in @fig-viz-themes0 is justified, or whether a more minimal theme would be sufficient.^[See the `ggthemes` package [@arnold2023] for a good collection of themes.]
@@ -529,6 +534,7 @@ For example: consider whether the visual complexity introduced by the default gr
 #| label: fig-viz-themes0
 #| fig-cap: Standard "gray"-themed Stiller figure.
 #| fig-alt: A plot same as 15.13 but with a grey background and vertical/horizontal guidelines; color legend on the right.
+#| cap-location: margin
 #| out-width: 85%
 
 ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition)) +
@@ -588,7 +594,7 @@ Here are a few final tips for making good confirmatory visualizations:
 
 * Fix the axis labels! A common mistake is to keep the default shorthand you used to name variables in your plotting software instead of more descriptive labels (e.g., "RT" instead of "Reaction Time"). Use consistent terminology for different manipulations and measures in the main text and figures. If anything might be unclear in the figure, explain it in the caption. 
 
-* Different audiences may require different levels of detail. Sometimes it is better to collapse over secondary variables (even if they are included in your statistical models) in order to control the density of the figure and draw attention to the key question of interest. 
+* Different audiences may require different levels of detail. Sometimes it is better to collapse over secondary variables (even if they are included in your statistical models) to control the density of the figure and draw attention to the key question of interest. 
 
 ## Exploratory visualization
 
@@ -649,26 +655,33 @@ Good visualizations force us to zoom out and take in the bigger picture.
 #| fig-alt: A scatterplot that looks like a dinosaur; a grid of 12 plots looking like many different shapes including star and circle.
 #| fig-width: 8
 #| fig-height: 8
+#| out-width: 80%
 #| cap-location: margin
 
 dino <- ggplot(datasauRus::datasaurus_dozen |> filter(dataset == "dino"),
                aes(x = x, y = y)) +
   coord_equal(ratio = 0.7) +
   geom_point(size = 0.7) +
-  theme_void()
+  theme_void() +
+  theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
 
 not_dino <- ggplot(datasauRus::datasaurus_dozen |> filter(dataset != "dino"),
                    aes(x = x, y = y)) +
   facet_wrap(vars(dataset), ncol = 4) +
   coord_equal(ratio = 0.7) +
   geom_point(size = 0.7) +
-  theme(strip.text = element_blank())
+  theme(strip.text = element_blank(),
+        plot.margin = unit(c(0, 0, 0, 0), "cm"))
 
 cowplot::plot_grid(dino, not_dino, nrow = 2, rel_heights = c(1, 3))
 ```
 
+\vspace{-2em}
+
+::: {.margin-caption}
+\footnotesize
 ```{r tbl-datasaurus}
-#| tbl-cap: Summary statistics for each dataset in the Datasaurus Dozen\index{Datasaurus} (Matejka 2017).
+#| tbl-cap: Summary statistics (means, standard deviations, and correlations) for each dataset in the Datasaurus Dozen\index{Datasaurus} (Matejka 2017).
 
 datasauRus::datasaurus_dozen |>
   group_by(dataset) |>
@@ -679,8 +692,8 @@ datasauRus::datasaurus_dozen |>
                 \(x) round(x, 1)),
          cor_xy = round(cor_xy, 3))
 ```
-
-\clearpage
+\normalsize
+:::
 
 ::: {.callout-note title="accident report"}
 ### [Distributional] gorillas in our midst. {-}
@@ -713,17 +726,18 @@ ggplot(go, aes(x = steps, y = bmi, colour = group)) +
 ::: {#fig-viz-gorilla}
 
 ::: {.content-visible when-format="html"}
-![](015-viz_files/figure-html/fig-viz-gorilla-1.png){width=50% fig-alt="A scatterplot of Body Mass Index against Steps with different colors corresponding to Male and Female; looks like a gorilla."}
+![](015-viz_files/figure-html/fig-viz-gorilla-1.png){width=35% fig-alt="A scatterplot of Body Mass Index against Steps with different colors corresponding to Male and Female; looks like a gorilla."}
 :::
 
 ::: {.content-visible when-format="pdf"}
-![](015-viz_files/figure-pdf/fig-viz-gorilla-1.png){width=50%}
+![](015-viz_files/figure-pdf/fig-viz-gorilla-1.png){width=35%}
 :::
 
 A dataset constructed by @yanai2020 that revealed a picture of a gorilla when the raw data were plotted.
 
 :::
 
+\vspace{-0.5em}
 While it may not be surprising that a group of students would take the shortest path to completing their assignment, similar concerns have been raised in much more serious cases concerning how experienced researchers could fail to notice obviously fraudulent data.
 For example, when the Datacolada bloggers [-@datacolada] made a simple histogram of the car mileage data reported in @shu2012signing [released publicly by @kristal2020signing], they were immediately able to observe that it followed a perfectly uniform distribution, truncated at exactly 50,000 miles (@fig-viz-uniform).
 Given a little thought, this pattern should be extremely puzzling.
@@ -749,17 +763,18 @@ ggplot(driving_diffs, aes(x = miles)) +
 ::: {#fig-viz-uniform}
 
 ::: {.content-visible when-format="html"}
-![](015-viz_files/figure-html/fig-viz-uniform-1.png){width="70%" fig-alt="A histogram showing counts of implied miles driven; there are no bars above 50000 implied miles driven."}
+![](015-viz_files/figure-html/fig-viz-uniform-1.png){width="50%" fig-alt="A histogram showing counts of implied miles driven; there are no bars above 50000 implied miles driven."}
 :::
 
 ::: {.content-visible when-format="pdf"}
-![](015-viz_files/figure-pdf/fig-viz-uniform-1.png){width="70%"}
+![](015-viz_files/figure-pdf/fig-viz-uniform-1.png){width="50%"}
 :::
 
-A suspiciously uniform distribution abruptly cutting off at 50K miles. Ring the alarm!
+A suspiciously uniform distribution abruptly cutting off at 50K miles. Ring the alarm! Adapted from @datacolada.
 
 :::
 
+\vspace{-0.5em}
 Our data are always messier than we expect.
 There might be a bug in our coding scheme, a column might be mislabeled, or it might contain a range of values that we didn't expect. 
 Maybe our design wasn't perfectly balanced, or something went wrong with a particular participant's keyboard presses. Most of the time, it's not tractable to manually scroll through our raw data looking for such problems. Visualization is our first line of defense for the all-important process of running "data diagnostics." If there is a weird artifact in our data, it will pop out if we just make the right visualizations.
@@ -767,14 +782,13 @@ Maybe our design wasn't perfectly balanced, or something went wrong with a parti
 
 ### Data diagnostics
 
-So, which visualizations should we start with? The best practice is to always start by making histograms of the raw data. As an example, let's consider the rich and interesting dataset shared by Blake, McAuliffe, and colleagues [-@blake2015ontogeny] in their article "Ontogeny of Fairness in Seven Societies." This article studies the emergence of children's reasoning about fairness---both when it benefits them and when it harms them---across cultures.
+So, which visualizations should we start with? The best practice is to always start by making histograms of the raw data. As an example, let's consider the rich and interesting dataset shared by @blake2015ontogeny in their article "Ontogeny of Fairness in Seven Societies." This study examines the emergence of children's reasoning about fairness---both when it benefits them and when it harms them---across cultures.
 
-\clearpage
 ::: {.callout-note title="code"}
 If you want to follow along with this example at home, you can load the data from our repository!
 
 ```{r viz-blake1, echo=TRUE}
-repo <- "https://raw.githubusercontent.com/langcog/experimentology/main"
+repo <- "https://github.com/langcog/experimentology/raw/main/"
 fairness_raw <- read_csv(file.path(repo, "data/viz/ontogeny_of_fairness.csv"))
 
 fairness <- fairness_raw |>
@@ -981,6 +995,7 @@ More generally, seeing this kind of signal in a visualization of our own data ty
 <!-- Reporting a single correlation and claiming a relationship might therefore be misleading. -->
 <!-- Instead, we would want to be careful to break this relationship out by other variables and try to understand why there are two separate clouds. -->
 
+\clearpage
 ### Hypothesis-driven exploration
 
 Finally, we can make a few versions of the design plot\index{design plot} that are broken out by different variables.
@@ -1044,7 +1059,7 @@ Then we can create the visualization:
 We often find it convenient to filter the summary dataset in the plotting call, so that we can reuse it again. 
 :::
 
-Now let's rebin the data into two-year age groups so that individual point estimates are a bit more reliable, and add the other countries back in.^[Binning data is a trick that we often use for reducing complexity in a plot when data are noisy. It should be used with care, however, since different binning decisions can sometimes lead to different conclusions. Here we tried several binning intervals and decided that two-year age bins showed the underlying trends pretty well.]
+Now let's rebin the data into two-year age groups so that individual point estimates are a bit more reliable, and add in the other countries.^[Binning data is a trick that we often use for reducing complexity in a plot when data are noisy. It should be used with care, however, since different binning decisions can sometimes lead to different conclusions. Here we tried several binning intervals and decided that two-year age bins showed the underlying trends pretty well.]
 
 \clearpage
 

@@ -165,7 +165,7 @@ null_model_summary <- null_model |>
 
 @Fig-inference-null-model captures the logic of NHST:\index{null hypothesis significance testing (NHST)} if the observed data fall in the region that has a probability of less than 0.05 under the null model,\index{null model} then we reject the null. So, then when we observe some particular treatment effect $\hat{\beta}$ in a single (real) instance of our experiment, we can compute the probability of these data or any data more extreme than ours under the null model.^[The "more extreme" part deserves a little explanation. Any individual outcome is relatively unlikely by itself, just because it's surprising that the estimate is that exact value (we're simplifying here, it gets a bit trickier when you are talking about real numbers). What we care about instead is a *group* of values. The ones that are in the middle of the distribution are, considered as a group, quite likely; the ones on the tails are, as a group, less likely. We want to know if the probability of the group of datapoints that includes our observation and anything even further out on the tails is collectively less than 0.05.] This probability is our $p$-value, and if it is small, it gives us license to conclude that the null is false.
 
-As we saw before, the larger the sample size, the smaller the standard error. That's true for the null model\index{null model} too! @fig-inference-null-model2 shows the expected null distribution for a bigger experiment. 
+As we saw before, the larger the sample size, the smaller the standard error. That's true for the null model\index{null model} too! @Fig-inference-null-model2 shows the expected null distribution for a bigger experiment. 
 
 \clearpage
 ![Distribution of treatment effects under the null model for a larger experiment.](images/inference/p-region-bigger.png){#fig-inference-null-model2 .column-margin fig-alt="A plot the same as 6.2 but with more points and a narrower curve."}
@@ -210,7 +210,8 @@ ggplot(null_model_summary_multi_n, aes(x = delta)) +
 ```
 :::
 
-One last note: You might notice an interesting parallel between the NHST\index{null hypothesis significance testing (NHST)} paradigm and Popper's\index{Popper, Karl} falsificationist\index{falsificationism} philosophy (introduced in @sec-theories). In both cases, you never get to *accept* the actual hypothesis of interest. The only thing you can do is observe evidence that is inconsistent with the null hypothesis. The added limitation of NHST is that the only hypothesis you can falsify is the null!^[A historical note: what we describe here as NHST is not what either Fisher's\index{Fisher, Ronald} method *or* the Neyman-Pearson method that we introduce below. It's what @gigerenzer1989 called "the silent hybrid solution," in which the more continuous approach to $p$-values that Fisher advocated for got rolled into the hypothesis testing approach of Neyman and Pearson. This hybrid---which neither Fisher nor Neyman and Pearson would have liked---is what we now mostly take for granted as the received NHST approach.]
+\clearpage
+One last note: You might notice an interesting parallel between the NHST\index{null hypothesis significance testing (NHST)} paradigm and Popper's\index{Popper, Karl} falsificationist\index{falsificationism} philosophy (introduced in @sec-theories). In both cases, you never get to *accept* the actual hypothesis of interest. The only thing you can do is observe evidence that is inconsistent with the null hypothesis. The added limitation of NHST is that the only hypothesis you can falsify is the null!^[A historical note: what we describe here as NHST is neither Fisher's\index{Fisher, Ronald} method *or* the Neyman-Pearson method that we introduce below. It's what @gigerenzer1989 called "the silent hybrid solution," in which the more continuous approach to $p$-values that Fisher advocated for got rolled into the hypothesis testing approach of Neyman and Pearson. This hybrid---which neither Fisher nor Neyman and Pearson would have liked---is what we now mostly take for granted as the received NHST approach.]
 
 ## Making inferences
 
@@ -350,7 +351,9 @@ The expression `r papaja::apa_print(tea_t)$statistic |> add_lead_zero()` is the 
 
 Let's compare $p$-values and Bayes Factors\index{Bayes Factor (BF)} (computed using the default setup in the `BayesFactor` R package). In @tbl-p-bf-comparison, the rows represent simulated experiments with varying total numbers of participants (N) and varying average treatment effects. Both $p$ and BF go up with more participants and larger effects. In general, BFs tend to be a bit more conservative than $p$-values, such that $p<0.05$ can sometimes translate to a BF of less than 3 [@benjamin2018]. For example, take a look at the row with 48 participants and an effect size of 1: the $p$-value is less than 0.05, but the Bayes Factor is only 2.0.
 
-The critical thing about $p$-values, though, is not just that they are a kind of data likelihoods. It is that they are used in a *specific inferential procedure*. The logic of NHST\index{null hypothesis significance testing (NHST)} is that we make a binary decision about the presence of an effect. If $p < 0.05$, the null hypothesis is rejected; otherwise not. As @fisher1949 [p. 19] wrote,
+The critical thing about $p$-values, though, is not just that they are a kind of data likelihoods. It is that they are used in a *specific inferential procedure*. The logic of NHST\index{null hypothesis significance testing (NHST)} is that we make a binary decision about the presence of an effect. If $p < 0.05$, the null hypothesis is rejected; otherwise not.
+\clearpage
+As @fisher1949 [p. 19] wrote,
 
 > It should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis.
 
@@ -374,7 +377,9 @@ As we saw in @fig-inference-null-model, the larger the sample, the better your c
 
 Hypothesis testing requires knowing the null distribution. In the examples above, it was easy to use statistical theory to work out the null distribution using knowledge of the binomial or normal distribution.\index{normal distribution} But sometimes we don't know what the null distribution would look like. What if the ratings data from our tea-tasting experiment were very skewed, such that there were many low ratings and a few very high ratings (as in @fig-inference-permutation)?
 
-![A small tea-tasting experiment with a skewed distribution of ratings.](images/inference/skewed.png){#fig-inference-permutation width=40% fig-alt="A plot with points for tea-first and milk-first varying along rating; distributions have more points lower in rating."}
+![Schematic data from a small tea-tasting experiment with a skewed distribution of ratings (many low and a few very high).](images/inference/skewed.png){#fig-inference-permutation width=40% fig-alt="A plot with points for tea-first and milk-first varying along rating; distributions have more points lower in rating."}
+
+\vspace{-.5em}
 
 With skewed data like these, we couldn't proceed with a $t$-test\index{t-test} in good conscience because, with only $n = 18$, we can't necessarily trust that the central limit\index{central limit theorem} theorem has "kicked in" sufficiently for the test to work despite the skewness. Put another way, we can't be sure that the null distribution is normal (Gaussian) in this case.
 
@@ -407,13 +412,13 @@ These are not the only issues with $p$-values. In fact, people have so much trou
 
 Let's take a look at just a few. Misconception 1 is that, if $p=0.05$, the null has a 5% chance of being true. This misconception is a result of confusing $p(H_0 | \text{data})$ (the posterior) and $p(\text{data} | H_0)$ (the likelihood---also known as the $p$-value). Misconception 2---that $p > 0.05$ allows us to *accept* the null---also stems from this reversal of posterior and likelihood. And misconception 3 is a misinterpretation of the $p$-value as an effect size (which we learned about in the last chapter): a large effect is likely to be clinically important, but with a large enough sample size, you can get a small $p$-value even for a very small effect. We won't go through all the misconceptions here, but we encourage you to challenge yourself to work through them (as in the exercise below). 
 
-::: {.margin-caption}
-\vspace{-1em}
+<!-- ::: {.margin-caption} -->
+<!-- \vspace{.5em} -->
 \footnotesize
 {{< include md/006-inference/dirty-dozen.md >}}
 \normalsize
-\vspace{-.5em}
-:::
+\vspace{-1em}
+<!-- ::: -->
 
 Beyond these misconceptions, there's another problem. The $p$-value is a probability of a certain set of events happening (corresponding to the observed data or any "more extreme" data---that is to say, data further from the null). Since $p$-values are probabilities, we can combine them together across different events. If we run a "null experiment"---an experiment where the true effect is zero---the probability of a dataset with $p < 0.05$ is of course 0.05. But if we run two such experiments, we can get $p < 0.05$ with probability `r round(2*0.05 - 0.05*0.05,2)`. By the time we run 20 experiments, we have an `r round(1 - .95^20,2)` chance of getting a positive result.
 
@@ -453,9 +458,9 @@ These cognitive science findings help to explain some of the problems that peopl
 
 ### What framework to use?
 
-The problem with binary inferences is that they enable behaviors that can introduce bias into the scientific ecosystem. By the logic of statistical significance, either an experiment "worked" or it didn't. Because everyone would usually rather have an experiment that worked than one that didn't, inference criteria like $p$-values often become a target for selection, as we discussed in @sec-replication.^[More generally, this pattern is probably an example of Goodhart's law, which states that when a measure becomes a target, it ceases to be a good measure [@strathern1997]. Once the outcomes of statistical inference procedures become targets for publication, they are subject to selection biases---$p$-hacking,\index{p-hacking} for example---that make them less meaningful.]
+The problem with binary inferences is that they enable behaviors that can introduce bias into the scientific ecosystem. By the logic of statistical significance, either an experiment "worked" or it didn't. Because everyone would usually rather have an experiment that worked than one that didn't, inference criteria like $p$-values often become a target for selection, as we discussed in @sec-replication.^[More generally, this pattern is probably an example of Goodhart's law, which says that when a measure becomes a target, it's no longer a good measure [@strathern1997]. Once the outcomes of statistical inference procedures become targets for publication, they are subject to selection biases---e.g., $p$-hacking\index{p-hacking}---that make them less meaningful.]
 
-If you want to quantify evidence for or against a hypothesis, it's worth considering whether Bayes Factors\index{Bayes Factor (BF)} address your question better than $p$-values. In practice, $p$-values are hard to understand and many people misuse them---though to be fair, BFs are misused plenty too. These issues may be rooted in basic facts about how human beings reason about probability.
+If you want to quantify evidence for or against a hypothesis, it's worth considering whether Bayes Factors\index{Bayes Factor (BF)} address your question better than $p$-values. In practice, $p$-values are hard to understand and often misused---though to be fair, BFs are misused plenty too. These issues may be rooted in basic facts about how humans reason about probability.
 
 Despite the reasons to be worried about $p$-values, for many practicing scientists (at least at time of writing), there is no one right answer about whether to use them or not. Even if we'd like to be Bayesian all the time, there are a number of obstacles. First, though new computational tools make fitting Bayesian models and extracting Bayes Factors\index{Bayes Factor (BF)} much easier than before, it's still on average quite a bit harder to fit a Bayesian model than it is a frequentist one. Second, because Bayesian analyses are less familiar, it may be an uphill battle to convince advisors, reviewers, and funders to use them. 
 
@@ -467,7 +472,7 @@ Our last section presented an argument against using $p$-values for making *dich
 
 ### Confidence intervals
 
-One alternative to binary hypothesis testing is to ask about the precision of our estiamates, in particular how similar an estimate from a particular sample is to the population parameter\index{population parameter} of interest. For example, how close is our tea-tasting effect estimate to the true effect in the population? We don't know what the true effect is, but our knowledge of sampling distributions\index{sampling distribution} lets us make some guesses about how precise our estimate is. 
+One alternative to binary hypothesis testing is to ask about the precision of our estimates---how similar an estimate from a particular sample is to the population parameter\index{population parameter} of interest. For example, how close is our tea-tasting effect estimate to the true effect in the population? We don't know what the true effect is, but knowledge of sampling distributions\index{sampling distribution} lets us make some guesses about how precise our estimate is. 
 
 The **confidence interval**\index{confidence interval (CI)} is a convenient frequentist way to summarize the variability of the sampling distribution\index{sampling distribution}---and hence how precise our point estimate is. The confidence interval represents the range of possible values for the parameter of interest that are plausible given the data. More formally, a 95% confidence interval for some estimate (call it $\widehat{\beta}$, as in our example) is defined as a range of possible values for $\beta$ such that, if we did repeated sampling,\index{repeated sampling} 95% of the intervals generated by those samples would contain the true parameter, $\beta$. 
 
@@ -496,7 +501,9 @@ Confidence intervals (CIs)\index{confidence interval (CI)} are constructed by es
 
 Confidence intervals\index{confidence interval (CI)} are like betting on the inferences drawn from your sample. The sample you drew is like one pull of a slot machine that will pay off (i.e., have the confidence interval contain the true parameter) 95% of the time. Put more concisely: 95% of 95% confidence intervals contain the true value of the population parameter.\index{population parameter}
 
-![Confidence intervals on each of the two condition estimates, as well as on the difference between conditions.](images/inference/cis.png){#fig-inference-condition-cis .margin-caption width=60% fig-alt="A plot with the same points as 6.10 overlaid with confidence intervals and a rating difference confidence interval."}
+![Confidence intervals on each of the two condition estimates, as well as on the difference between conditions.](images/inference/cis.png){#fig-inference-condition-cis .margin-caption width=70% fig-alt="A plot with the same points as 6.10 overlaid with confidence intervals and a rating difference confidence interval."}
+
+For visualization, we can show the confidence intervals\index{confidence interval (CI)} on individual estimates (left side of @fig-inference-condition-cis). These tell us about the precision of our estimates of each quantity relative to the population estimate. But we've been talking primarily about the CI on the treatment effect $\widehat{\beta}$ (right side of @fig-inference-condition-cis). This CI allows us to make an inference about whether or not it overlaps with zero---which is actually equivalent in this case to whether or not the $t$-test\index{t-test} is statistically significant. 
 
 ::: {.callout-note title="code"}
 Computing confidence intervals\index{confidence interval (CI)} analytically is pretty easy. Here we first compute the standard error for the difference between conditions. The only tricky bit here is that we need to compute a pooled standard deviation.
@@ -528,20 +535,17 @@ tea_ci_upper <- delta_hat + tea_se * qnorm(0.975)
 ```
 :::
 
-
-For visualization purposes, we can show the confidence intervals\index{confidence interval (CI)} on individual estimates (left side of @fig-inference-condition-cis). These tell us about the precision of our estimates of each quantity relative to the population estimate. But we've been talking primarily about the CI on the treatment effect $\widehat{\beta}$ (right side of @fig-inference-condition-cis). This CI allows us to make an inference about whether or not it overlaps with zero---which is actually equivalent in this case to whether or not the $t$-test\index{t-test} is statistically significant. 
-
 ### Confidence in confidence intervals? 
 
 Confidence intervals\index{confidence interval (CI)} are often misinterpreted by students and researchers alike [@hoekstra2014]. Imagine a researcher conducts an experiment and reports that "the 95% confidence interval for the mean ranges from 0.1 to 0.4." All of the statements in @tbl-inference-ci-false, though tempting to make about this situation, are *technically false*.
 
-::: {.margin-caption}
-\vspace{-1em}
+<!-- ::: {.margin-caption} -->
+<!-- \vspace{.5em} -->
 \footnotesize
 {{< include md/006-inference/inference-ci-false.md >}}
 \normalsize
-\vspace{-.5em}
-:::
+\vspace{-1em}
+<!-- ::: -->
 
 The problem with all of these statements is that, in the frequentist framework,  there is only one true value of the population parameter,\index{population parameter} and the variability captured in confidence intervals\index{confidence interval (CI)} is about the *samples*, not the parameter itself.[^inference-9] For this reason, we can't make any statements about the probability of the value of the parameter or of our confidence in specific numbers. To reiterate, what we *can* say is: if we were to repeat the procedure of conducting the experiment and calculating a confidence interval many times, in the long run, 95% of those confidence intervals would contain the true parameter. 
 
