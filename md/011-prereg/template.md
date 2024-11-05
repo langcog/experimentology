@@ -9,4 +9,4 @@
 | 7 | Sample Size. How many observations will be collected, or what will determine sample size? No need to justify decision, but be precise about exactly how the number will be determined. |   |   |
 | 8 | Other. Anything else you would like to preregister (e.g., secondary analyses, variables collected for exploratory purposes, unusual analyses planned).                               |   |   |
 
-: Preregistration template outline. {#tbl-prereg-template}
+: Preregistration template outline, covering key aspects of your experiment and analysis. {#tbl-prereg-template}

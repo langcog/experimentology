@@ -23,12 +23,12 @@ By combining information from multiple studies, meta-analysis\ often provides mo
 
 Imagine you are staying in a hotel and you have just taken a shower. Do you throw the towels on the floor or hang them back up again? In a widely cited study on the power of social norms, @goldstein2008room manipulated whether a sign encouraging guests to reuse towels focused on environmental impacts (e.g., "help reduce water use") or social norms (e.g., "most guests reuse their towels"). Across two studies, they found that guests were significantly more likely to reuse their towels after receiving the social norm message (Study 1: odds ratio [OR] = 1.46, 95% CI [1.00, 2.16], $p = 0.05$; Study 2: OR = 1.35, 95% CI [1.04, 1.77], $p = 0.03$). 
 
-However, five subsequent studies by other researchers did not find significant evidence that social norm messaging increased towel reuse. (ORs ranged from 0.22 to 1.34, and no hypothesis-consistent $p$-value was less than 0.05). This caused many researchers to wonder if there is any effect at all. To examine this question, @scheibehenne2016 statistically combined evidence across the studies via meta-analysis.\ This meta-analysis indicated that using social norm messages did significantly increase hotel towel reuse, on average (OR = 1.26, 95% CI [1.07, 1.46], $p < 0.005$). This case study demonstrates an important strength of meta-analysis: by pooling evidence from multiple studies, meta-analysis can generate more powerful insights than any one study alone. We will also see how meta-analysis can be used to assess variability in effects across studies.
+However, five subsequent studies by other researchers did not find significant evidence that social norm messaging increased towel reuse. (ORs ranged from 0.22 to 1.34, and no hypothesis-consistent $p$-value was less than 0.05). This caused many researchers to wonder if there is any effect at all. To examine this question, @scheibehenne2016 statistically combined evidence across the studies via meta-analysis.\ This meta-analysis indicated that using social norm messages did significantly increase hotel towel reuse, on average (OR = 1.26, 95% CI [1.07, 1.46], $p < 0.005$). This [case study]{.smallcaps} demonstrates an important strength of meta-analysis: by pooling evidence from multiple studies, meta-analysis can generate more powerful insights than any one study alone. We will also see how meta-analysis can be used to assess variability in effects across studies.
 :::
 
 <!-- All ES's come from Wagenmakers et al. SI -->
 
-Meta-analysis\ often teaches us something about a body of evidence that we do not intuitively grasp when we casually read through a bunch of articles. In the above case study, merely reading the individual studies might give the impression that social norm messages do not increase hotel towel reuse. But meta-analysis indicated that the average effect is beneficial, although there might be substantial variation in effect sizes across studies.^[Given the billions of hotel bookings worldwide every year, even a small effect might have lead to a substantial environmental impact!]
+Meta-analysis\ often teaches us something about a body of evidence that we do not intuitively grasp when we casually read through a bunch of articles. In the above [case study]{.smallcaps}, merely reading the individual studies might give the impression that social norm messages do not increase hotel towel reuse. But meta-analysis indicated that the average effect is beneficial, although there might be substantial variation in effect sizes across studies.^[Given the billions of hotel bookings worldwide every year, even a small effect might have lead to a substantial environmental impact!]
 
 ## The basics of evidence synthesis
 
@@ -40,18 +40,20 @@ Using a systematic literature search, @paluck2019contact searched for all papers
 
 Following best practices for meta-analysis (where there are almost never privacy concerns to worry about), @paluck2019contact shared their data openly. The first few lines are shown in @tbl-meta-dataset. We'll use these data as our running example throughout. 
 
-\vspace{1em}
+<!-- \vspace{1em} -->
+\footnotesize
 ```{r meta-dataset}
 #| label: tbl-meta-dataset
-#| tbl-cap: "The first few lines of extracted effect sizes (d) and their variances (var\\_d) in the Paluck, Green, and Green (2019) meta-analysis."
+#| tbl-cap: "The first few lines of extracted effect sizes (d) and their variances (var\\_d) in the @paluck2019contact meta-analysis."
 
 head(df) |>
   select(name = name_short, pub_date, target = target_spelled_out, n_total, d, var_d)
 ```
+\normalsize
+\vspace{-1em}
 
-As we've seen throughout this book, visualizing data before and after analysis helps benchmark and check our intuitions about the formal statistical results. In a meta-analysis,\ a common way to plot effect sizes is the **forest plot**\index{forest plot}, which depicts individual studies' estimates and confidence intervals\index{confidence interval (CI)}. In the forest plot\index{forest plot} in @fig-meta-forest,^[You can ignore for now the final line, "RE Model"; we will return to this later.] the larger squares correspond to more precise studies; notice how much narrower their confidence intervals are than the confidence intervals of less precise studies.
+As we've seen throughout this book, visualizing data before and after analysis helps benchmark and check our intuitions about the formal statistical results. In a meta-analysis,\ a common way to plot effect sizes is the **forest plot**\index{forest plot}, which depicts individual studies' estimates and confidence intervals\index{confidence interval (CI)}. In the forest plot\index{forest plot} in @fig-meta-forest,^[You can ignore for now the final line, "RE Model"; we will return to this later.] the larger squares correspond to more precise studies; notice how much narrower their confidence intervals are than those of less precise studies.
 
-\clearpage
 ```{r meta-forest}
 #| label: fig-meta-forest
 #| fig-cap: "A forest plot\\index{forest plot} for @paluck2019contact meta-analysis. Studies are ordered from smallest to largest standard error."
@@ -95,6 +97,7 @@ where $k$ is the number of studies, $\widehat{\theta}_i$ is the point estimate o
 <!-- $$\widehat{\mu} = \frac{ \frac{\widehat{\theta}_{study1}}{\widehat{\sigma}^2_{study1}} + \frac{\widehat{\theta}_{study2}}{\widehat{\sigma}^2_{study2}} + \cdots}{ \frac{1}{\widehat{\sigma}^2_{study1}} + \frac{1}{\widehat{\sigma}^2_{study2}} + \cdots } = -->
 <!-- \frac{ \frac{0.03}{0.08^2} + \frac{0.30}{0.08^2} + \cdots }{ \frac{1}{0.08^2} + \frac{1}{0.08^2} + \cdots }$$ -->
 
+\clearpage
 Using the fixed-effects formula, we can estimate that the overall effect size in Paluck et al.'s meta-analysis\ is a standardized mean difference of $\widehat{\mu}$ = `r round(as.numeric(fe_model$b), 2)`; 95% confidence interval [`r paste0(round(fe_model$ci.lb, 2), ", ", round(fe_model$ci.ub, 2))`]; $p < 0.001$. Because Cohen's $d$\index{Cohen's $d$} is our effect size index, this estimate would suggest that intergroup contact decreased prejudice by `r round(as.numeric(fe_model$b), 2)` standard deviations.
 
 ::: {.callout-note title="code"}
@@ -180,8 +183,9 @@ Single-paper meta-analyses come with many of the same strengths and weaknesses w
 
 As an alternative, you can also pool the actual data from the three studies, as opposed to just pooling summary statistics. For example, if you have data from 10 participants in each of the three experiments, you could pool them into a single dataset with 30 participants and include random effects of your condition manipulation across experiments (as described in @sec-models). This strategy is often referred to as **pooled**\index{pooled data analysis} or **integrative** data analysis (and occasionally as "mega-analysis," which sounds cool).\index{mega-analysis|see{pooled data analysis}}
 
-![Meta-analysis vs pooled data analysis.](images/meta/meta_v_ipd.png){#fig-meta-v-ipd width=90% fig-alt="Spreadsheets where: 3 studies each have 10 rows of data; pooled analysis has all 30 rows; meta-analysis has a row per study."}
+![Example data from three individual studies (left) can be pooled into one data analysis (middle) or meta-analyzed as three effect sizes (right).](images/meta/meta_v_ipd.png){#fig-meta-v-ipd width=90% fig-alt="Spreadsheets where: 3 studies each have 10 rows of data; pooled analysis has all 30 rows; meta-analysis has a row per study."}
 
+\vspace{-1em}
 One of the benefits of pooled data analysis\index{pooled data analysis} is that it can give you more power to detect moderators.\index{moderator} For instance, imagine that the effect of an intergroup contact treatment is moderated by age. If we performed a traditional meta-analysis, we would only have three observations in our data set, yielding very low power. However, we have many more observations (and much more variation in the moderator) in the pooled data analysis, which can lead to higher power (@fig-meta-v-ipd).
 
 Pooled data analysis\index{pooled data analysis} is not without its own limitations [@cooper2009relative]. And, of course, sometimes it doesn,t make as much sense to pool datasets (e.g., when measures are different from one another). Nonetheless, we believe that pooled data analysis and meta-analysis\ are both useful tools to keep in mind in a paper reporting multiple experiments!
@@ -279,10 +283,10 @@ As implied by the "funnel" moniker,\index{funnel plot} our plot looks a little l
 
 meta_p <- metafor::rma(yi = yi, vi = vi, data = dp, method = "REML", knha = TRUE)
 
-metafor::funnel(meta_all, xlab = "Standardized mean difference", fonts = .font)
+metafor::funnel(meta_all, xlab = "Standardized mean difference", family = .font)
 ```
 
-Not all funnel plots\index{funnel plot} are symmetric! @Fig-meta-funnel-biased is what happens to our hypothetical meta-analysis if all studies with $p<0.05$ and positive estimates are published, but only 10% of studies with $p \ge 0.05$ or with negative estimates are published. The introduction of publication bias\index{publication bias} dramatically inflates the pooled estimate from `r round(meta_all$b, digits)` to `r round(meta_p$b, digits)`. Also, there appears to be a correlation between studies' estimates and their standard errors, such that smaller studies tend to have larger estimates than do larger studies. This correlation is often called funnel plot asymmetry because the funnel plot starts to look like a right triangle rather than a funnel. Funnel plot\index{funnel plot} asymmetry *can* be a diagnostic for publication bias, though it isn't always a perfect indicator, as we'll see in the next subsection.
+Not all funnel plots\index{funnel plot} are symmetric! @Fig-meta-funnel-biased is what happens to our hypothetical meta-analysis if all studies with $p<0.05$ and positive estimates are published, but only 10% of studies with $p \ge 0.05$ or negative estimates are published. The introduction of publication bias\index{publication bias} dramatically inflates the pooled estimate from `r round(meta_all$b, digits)` to `r round(meta_p$b, digits)`. Also, there appears to be a correlation between studies' estimates and their standard errors, such that smaller studies tend to have larger estimates than do larger studies. This correlation is often called funnel plot asymmetry because the funnel plot starts to look like a right triangle rather than a funnel. Funnel plot\index{funnel plot} asymmetry *can* be a diagnostic for publication bias, though it isn't always a perfect indicator, as we'll see in the next subsection.
 
 ```{r meta-funnel-biased}
 #| label: fig-meta-funnel-biased

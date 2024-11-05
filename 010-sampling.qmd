@@ -33,7 +33,7 @@ So, would it be a good generalization about human beings---all people---that olf
 #| fig-alt: A plot with means and error bars of codability by language; higher for color than odor in English but close in Jahai.
 #| fig-width: 5
 #| fig-height: 3
-#| out-width: 60%
+#| out-width: 55%
 # data extracted using https://apps.automeris.io/wpd/
 majid <- tribble(
   ~language, ~condition,  ~stat, ~value,
@@ -58,9 +58,12 @@ ggplot(aes(x = condition, y = mean, colour = condition)) +
   geom_pointrange(aes(ymin = cil, ymax = ciu)) +
   guides(color = "none") +
   labs(x = "", y = "Codability\n(Simpson's diversity index)") +
-  theme(strip.placement = "outside")
+  theme(strip.placement = "outside",
+        # strip.text.x.bottom = element_text(margin = margin(b = 0)),
+        plot.margin = margin())
 ```
 
+\vspace{-1em}
 But these inferences about the universal lack of olfactory vocabulary are likely based on choosing nonrepresentative samples! Multiple hunter-gatherer groups appear to have large vocabularies for consistent smell description. For example, the Jahai, a hunter-gatherer group on the Malay Peninsula, have a vocabulary that includes at least twelve words for distinct odors, for example /cŋ$\symup{\varepsilon}$s/, which names odors with a "stinging smell" like gasoline, smoke, or bat droppings. When Jahai speakers are asked to name odors, they produce shorter and much more consistent descriptions than English speakers---in fact, their smell descriptions were as consistent as their color descriptions (@fig-sampling-majid2014). Further studies implicate the hunter-gatherer lifestyle as a factor: while several hunter-gatherer groups show good odor naming, nearby horticulturalist groups don't [@majid2018].
 
 Generalizations about humans are tricky. If you want to estimate the average odor naming ability, you could take a random sample of humans and evaluate their odor naming. Most of the individuals in the sample would likely speak English, Mandarin, Hindi, or Spanish. Almost certainly, none of them would speak Jahai, which is spoken by only a little more than a thousand people and is listed as "endangered" by Ethnologue (<https://www.ethnologue.com/language/jhi>). Your estimate of low odor naming stability might be a good guess for the *majority* of the world's population, but would tell you little about the Jahai. 
@@ -76,10 +79,11 @@ Unfortunately, we very rarely do sampling of this sort in psychological research
 
 Instead, the vast majority of psychology research has been conducted with **convenience samples**\index{convenience sample}: non-probability samples that feature individuals who can be recruited easily, such as college undergraduates or workers on crowdsourcing platforms like Amazon Mechanical Turk\index{Amazon Mechanical Turk} or Prolific Academic\index{Prolific Academic} (see @sec-collection). We'll turn to these below. 
 
-For survey research, on the other hand---think of election polling---there are many sophisticated techniques for dealing with sampling; although this field is still imperfect, it has advanced considerably in trying to predict complex and dynamic behaviors. One of the basic ideas is the construction of **representative samples**\index{representative sample}: samples that resemble the population in their representation of one or several sociodemographic characteristics like gender, income, race and ethnicity, age, or political orientation.  
+For survey research, on the other hand---think of election polling---there are many sophisticated techniques for dealing with sampling; although this field is still imperfect, it has advanced considerably in trying to predict complex and dynamic behaviors. One of the basic ideas is the construction of **representative samples**\index{representative sample}: samples that match the population in their representation of one or more sociodemographic characteristics like gender, income, race and ethnicity, age, or political orientation.  
 
 Representative samples\index{representative sample} can be constructed by probability sampling,\index{probability sampling} but they can also be constructed through non-probability methods like recruiting quotas of individuals from different groups via various different convenience methods. These methods are critical for much social science research, but they have been used less frequently in experimental psychology research and aren't necessarily a critical part of the beginning experimentalist's toolkit.^[Readers can come up with counter-examples of recent studies that focus on representative sampling, but our guess is that they will prove the rule more generally. For example, a recent study tested the generality of growth mindset interventions for US high school students using a national sample [@yeager2019]. This large-scale study sampled more than 100 high schools from a sampling frame\index{sampling frame} of all registered high schools in the US, then randomly assigned students within schools that agreed to participate. They then checked that the schools that agreed to participate were representative of the broader population of schools. This study is great stuff, but we hope you agree that if you find yourself in this kind of situation---planning a multi-investigator five-year consortium study on a national sample---you might want to consult with a statistician and not use an introductory book like this one.] 
 
+\clearpage
 ::: {.callout-note title="depth"}
 ### Representative samples\index{representative sample} and stratified sampling\index{stratified sampling} {-}
 
@@ -89,6 +93,7 @@ A simple random sample from this heterogeneous population *will* yield statistic
 
 ![An illustration of stratified sampling.\index{stratified sampling} The left panel shows the sampling frame. The upper frames show the sampling frame stratified by a participant characteristic and a stratified sample. The lower frame shows a simple random sample, which happens to omit one group completely by chance.](images/sampling/stratified-sample.png){#fig-sampling-stratified width="75%" fig-alt="A diagram where box with 50 points of 3 colors goes to stratified sampling frame and sample (upper) or random sample (lower)."}
 
+\vspace{-1em}
 But, if you know the proportion of frequent, infrequent, or non-coffee drinkers in the population, you can perform stratified sampling\index{stratified sampling} within those subpopulations to ensure that your sample is representative along this dimension [@neyman1992]. This situation is pictured in @fig-sampling-stratified, which shows how a particular sampling frame\index{sampling frame} can be broken up into groups for stratified sampling. The result is a sample that matches the population proportions on a particular characteristic. In contrast, a simple random sample can over- or under-sample the subgroups by chance.
 
 Stratified sampling\index{stratified sampling} can lead to substantial gains in the precision of your estimate. These gains are most prominent when either the groups differ a lot in their mean or when they differ a lot in their variance. There are several important refinements of stratified sampling in case you think these methods are important for your problem. In particular, **optimal sampling**\index{optimal sampling} can help you figure out how to over-sample groups with higher variance. On the other hand, if the characteristic on which you stratify participants doesn't relate to your outcome at all, then estimates from stratified sampling\index{stratified sampling} converge just as fast as random sampling (though it's a bit more of a pain to implement). 
@@ -144,6 +149,7 @@ ggplot(sims, aes(x = n_total, y = mean)) +
   labs(x = "Total sample size (N)", y = "Mean")
 ```
 
+\vspace{-1em}
 Stratification\index{stratification} is everywhere, and it's useful even in convenience samples.\index{convenience sample} For example, researchers who are interested in development typically stratify their samples across ages (e.g., recruiting equal numbers of two- and three-year-olds for a study of preschoolers). You can estimate developmental change in a pure random sample, but you are guaranteed good coverage of the range of interest when you stratify. 
 
 If you have an outcome that you think varies with a particular characteristic, it's not a bad idea to consider stratification.\index{stratification} But don't go overboard---you can drive yourself to distraction finding the last left-handed nonbinary coffee drinker to complete your sample. Focus on stratifying when you know the measure varies with the characteristic of interest. 
@@ -221,11 +227,13 @@ But how do you decide $N$? It's going to be dependent on the effect that you wan
 
 Classical power analysis\index{power analysis} is not the only way to plan your sample size. There are a number of other useful strategies, some of which rely on the same kinds of computations as power analysis (@tbl-stopping-rules). Each of these can provide a valid justification for a particular sample size, but they are useful in different situations. 
 
+\clearpage
 \footnotesize
 \renewcommand{\arraystretch}{1.5}
 {{< include md/010-sampling/stopping-rules.md >}}
 \renewcommand{\arraystretch}{1}
 \normalsize
+\vspace{-1em}
 
 ### Power analysis\index{power analysis}
 
@@ -237,11 +245,11 @@ But what if $H_0$ is actually false and the alternative $H_1$ is true? Not all e
 
 Let's try to quantify our willingness to *miss* the effect---the false negative rate.\index{false negative} We'll denote this probability with $\beta$. If $\beta$ is the probability of missing an effect (failing to reject the null when it's really false), then $1-\beta$ is the probability that we *correctly reject the null when it is false*. That's what we call the **statistical power**\index{statistical power} of the experiment. 
 
-We can only compute power if we know the effect size for the alternative hypothesis. If the alternative hypothesis is a small effect, then the probability of rejecting the null will typically be low (unless the sample size is very large). In contrast, if the alternative hypothesis is a large effect, then the probability of rejecting the null will be higher. 
-
 ![An illustration of how larger sample sizes lead to greater power.](images/sampling/power.png){#fig-sampling-power .margin-caption fig-alt="A plot of distributions under H_0/H_1; larger sample has lower significance threshold, greater proportion significant events."}
 
-The same dynamic holds with sample size: the same effect size will be easier to detect with a larger sample size than with a small one. [Figure @fig-sampling-power] shows how this relationship works. A large sample size creates a tighter null distribution (right side) by reducing sampling error. A tighter null distribution means you can reject the null more of the time based on the variation in a true effect. If your sample size is too small to detect your effect much of the time, we call this being **underpowered**.^[You can also refer to a design as **overpowered**, though we object slightly to this characterization, since the value of large datasets is typically not just to reject the null but also to measure an effect with high precision and to investigate how it is moderated by other characteristics of the sample.]
+We can only compute power if we know the effect size for the alternative hypothesis. If the alternative hypothesis is a small effect, then the probability of rejecting the null will typically be low (unless the sample size is very large). In contrast, if the alternative hypothesis is a large effect, then the probability of rejecting the null will be higher. 
+
+The same dynamic holds with sample size: the same effect size will be easier to detect with a larger sample size than a smaller one. [Figure @fig-sampling-power] shows how this relationship works. A large sample size creates a tighter null distribution (right side) by reducing sampling error. A tighter null distribution means you can reject the null more of the time based on the variation in a true effect. If your sample size is too small to detect your effect much of the time, we call this being **underpowered**.^[You can also refer to a design as **overpowered**, though we object slightly to this characterization, since the value of large datasets is typically not just to reject the null but also to measure an effect with high precision and to investigate how it is moderated by other characteristics of the sample.]
 
 Classical power analysis\index{power analysis} involves computing the sample size $N$ that's necessary in order to achieve some level of power, given $\alpha$ and a known effect size.^[Our focus here is on giving you a conceptual introduction to power analysis, but we refer you to @cohen1992 for a more detailed introduction.] The mathematics of the relationship between $\alpha$, $\beta$, $N$, and effect size have been worked out for a variety of different statistical tests [@cohen2013] and codified in software like G*Power [@faul2007] and the `pwr` package for R [@champely2020]. For other cases (including mixed effects models), you may have to conduct a simulation in which you generate many simulated experimental runs under known assumptions and compute how many of these lead to a significant effect; luckily, R packages exist for this purpose as well, including the `simr` package [@green2016]. 
 
@@ -276,17 +284,17 @@ pwr.t.test(d = .5,
            alternative = "two.sided")
 ```
 
-But it is also possible to use this same function to compute the power achieved at a combination of $n$ and $d$, for example. 
+But it is also possible to use this same function to compute the power achieved at a combination of `n` and `d`, for example. 
 :::
 
+\clearpage
 There's a second issue, however. The *second fundamental problem of power analysis*\index{power analysis} is that the real effect size for an experiment may be zero. And in that case, *no* sample size will let you correctly reject the null. Going back to our discussion in @sec-inference, the null hypothesis significance testing\index{null hypothesis significance testing (NHST)} framework is just not set up to let you *accept* the null hypothesis. If you are interested in a bidirectional approach to hypothesis testing in which you can accept *and* reject the null, you may need to consider Bayes Factor\index{Bayes Factor (BF)} or **equivalence testing**\index{equivalence testing} approaches [@lakens2018], which don't fit the assumptions of classical power analysis.
-
 
 ### Alternative approaches to sample size planning
 
 Let's now consider some alternatives to classic power analysis\index{power analysis} that can still yield reasonable sample size justifications. 
 
-1. **Resource constraint**. In some cases, there are fundamental resource constraints that limit data collection. For example, if you are doing fieldwork, sometimes the right stopping criterion for data collection is "when the field visit is over," since every additional datapoint is valuable. When prespecified, these kinds of sample size justifications can be quite reasonable, although they do not preclude being underpowered to test a particular hypothesis.
+1. **Resource constraint**. In some cases, there are fundamental resource constraints that limit data collection. For example, if you are doing fieldwork, sometimes the right stopping criterion for data collection is "when the field visit is over," since every additional datapoint is valuable. When prespecified, these kinds of sample size justifications can be quite reasonable, though they do not preclude being underpowered to test a particular hypothesis.
 
 2. **Smallest effect size of interest (SESOI)**. SESOI\index{smallest effect size of interest (SESOI)} analysis is a variant on power analysis that includes some resource constraint planning. Instead of trying to intuit how big your target effect is, you instead choose a level below which you might not be interested in detecting the effect. This choice can be informed by theory (what is predicted), applied concerns (what sort of effect might be useful in a particular context), or resource constraints (how expensive or time-consuming it might be to run an experiment). In practice, SESOI analysis is simply a classic power analysis\index{power analysis} with a particular small effect as the target. 
   
@@ -302,6 +310,7 @@ In sum, there are many different ways of justifying your sample size or your sto
 \renewcommand{\arraystretch}{1}
 \normalsize
 
+\clearpage
 ::: {.callout-note title="depth"}
 ### Sample sizes for replication studies {-}
 

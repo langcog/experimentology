@@ -12,4 +12,4 @@
 | _Unweighted mean_        | 0.74 | 0.35 |                                                                        |
 | _Median_                 | 0.70 | 0.33 |                                                                        |
 
-: Magnitudes of expectancy effects. Based on @rosenthal1994. {#tbl-rosenthal}
+: Magnitudes of expectancy effects in various domains. Based on @rosenthal1994. {#tbl-rosenthal}

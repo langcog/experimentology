@@ -118,7 +118,7 @@ mod <- lm(rating ~ condition, data = tea_data)
 
 Formulas in R are a special kind of terse notation for regression equations where you write the outcome, `~` (distributed as), and the predictors. R assumes that you want an intercept by default, and there are also a number of other handy defaults that make R formulas a nice easy way to specify relatively complex regression models, as we'll see below. 
 
-Once you've fit the model and assigned it to a variable, you can call `summary()` to see a summary of the parameters of the model:
+Once you've fit the model and assigned it to a variable, you can call `summary()` to see a summary of its parameters:
 
 ```{r, opts.label='code'}
 summary(mod)
@@ -330,7 +330,7 @@ The price paid for these nice safeguards against model misspecification is that,
 
 Our approach to statistical modeling is to start with a "default model" that is known in the literature as a **saturated model**\index{saturated model}. The saturated model of an experiment includes the full design of the experiment---all main effects\index{main effect} and interactions\index{interaction effect}---and nothing else. If you are manipulating a variable, include it in your model. If you are manipulating two, include them both and their interaction. If your design includes repeated measurements for participants, include a random effect of participant; if it includes experimental items for which repeated measurements are made, include random effect of stimulus.^[As discussed above, you can also include the "maximal" random effect structure [@barr2013], which involves random slopes as well as intercepts---but recognize that you cannot always fit such models.]
 
-Don't include lots of other stuff in your default model. You are doing a randomized experiment, and the strength of randomized experiments is that you don't have to worry about confounding based on the population (see @sec-experiments). So don't put a lot of covariates in your default model---usually don't put in any!^[One corollary to having this kind of default perspective on data analysis: When you see an analysis that deviates substantially from the default, these deviations should provoke some questions. If someone drops a manipulation from their analysis, adds a covariate or two, or fails to control for some clustering in the data, did they deviate because of different norms in their subfield, or was there some other rationale? This line of reasoning sometimes leads to questions about the extent to which particular analytic decisions are post hoc and driven by the data (in other words, $p$-hacked). For an example, see the case study in @sec-prereg.] 
+Don't include lots of other stuff in your default model. You are doing a randomized experiment, and the strength of randomized experiments is that you don't have to worry about confounding based on the population (see @sec-experiments). So don't put a lot of covariates in your default model---usually don't put in any!^[One corollary to having this kind of default perspective on data analysis: When you see an analysis that deviates substantially from the default, these deviations should provoke some questions. If someone drops a manipulation from their analysis, adds a covariate or two, or fails to control for some clustering in the data, did they deviate because of different norms in their subfield, or was there some other rationale? This line of reasoning sometimes leads to questions about the extent to which particular analytic decisions are post hoc and driven by the data (in other words, $p$-hacked). For an example, see the [case study]{.smallcaps} in @sec-prereg.] 
 
 This default saturated model\index{saturated model} then represents a simple summary of your experimental results. Its coefficients can be interpreted as estimates of the effects of interest, and it can be used as the basis for inferences about the relation of the experimental effect to the population using either frequentist or Bayesian tools. 
 
@@ -450,7 +450,7 @@ You can see a summary of the fitted model using `summary(mod)` as before. The on
 :::
 
 <!-- ::: {.margin-caption} -->
-\vspace{.5em}
+<!-- \vspace{.5em} -->
 \footnotesize
 ```{r models-sgf-model2}
 #| label: tbl-models-sgf-model-print
@@ -464,7 +464,7 @@ kable(apa_tab, align = "lrrrr",
       col.names = c("term", "$\\hat{\\beta}$", "95\\% CI", "$z$", "$p$"))
 ```
 \normalsize
-\vspace{-.5em}
+\vspace{-1em}
 <!-- ::: -->
 
 Let's estimate this model and see how it looks. We'll focus here on interpretation of the so-called **fixed effects**\index{fixed effect} (the main predictors), as opposed to the participant and item random effects.^[Participant means are estimated to have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[1],2)` (in log-odds), while items have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[2],2)`. These indicate that both of our random effects capture meaningful variation.] @Tbl-models-sgf-model-print shows the coefficients. Again, let's walk through each:
@@ -555,7 +555,7 @@ Decreases in estimation error due to adjusting for covariates, plotted by the N 
 
 :::
 
-\vspace{-.5em}
+\vspace{-1em}
 
 That said, there are quite a few reasons not to include covariates. These  motivate our recommendation to skip them in your default model unless you have very strong theory-based expectations for either (A) a correlation with the outcome or (B) a strong moderation relationship.
 
