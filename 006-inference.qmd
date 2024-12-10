@@ -200,11 +200,11 @@ Here is the plotting code to produce a comparable figure to our illustration:
 ggplot(null_model_summary_multi_n, aes(x = delta)) + 
   facet_wrap(vars(n), nrow = 1, labeller = label_both) +
   geom_histogram(binwidth = .25) +
-  geom_vline(xintercept = 0, color = pal$grey, linetype = "dotted") + 
+  geom_vline(xintercept = 0, color = "grey", linetype = "dotted") + 
   geom_vline(data = null_model_quantiles_multi_n, 
-             aes(xintercept = q_025), color = pal$red, linetype = "dotted") + 
+             aes(xintercept = q_025), color = "red", linetype = "dotted") + 
   geom_vline(data = null_model_quantiles_multi_n, 
-             aes(xintercept = q_975), color = pal$red, linetype = "dotted") + 
+             aes(xintercept = q_975), color = "red", linetype = "dotted") + 
   xlim(-2.5, 2.5) + 
   labs(x = "Difference in rating", y = "Frequency")
 ```
@@ -267,7 +267,7 @@ The second thing to notice about the Bayes Factor\index{Bayes Factor (BF)} is th
 
 In practice, the thing that is both tricky and good about Bayes Factors\index{Bayes Factor (BF)} is that you need to define an actual model of what $H_0$ and $H_1$ are. That process involves making some assumptions explicit. We won't go into how to make these models here---this is a big topic that is covered extensively in books on Bayesian data analysis.[^inference-12] The goal here is just to give a general sense of what Bayes Factors are.
 
-[^inference-12]: Two good ones beyond the McElreath book mentioned above are @gelman1995, which is a bit more statistical, and @kruschke2014, which is a bit more focused on psychological data analysis. An in-prep web-book by @nicenboim2024 also looks great (<https://vasishth.github.io/bayescogsci/book>).
+[^inference-12]: Two good ones beyond the McElreath book mentioned above are @gelman1995, which is a bit more statistical, and @kruschke2014, which is a bit more focused on psychological data analysis. An in-prep web-book by @nicenboim2024 also looks great (<https://bruno.nicenboim.me/bayescogsci>).
 
 <!-- That's the Bayes Factor.  -->
 
@@ -329,19 +329,25 @@ Imagine we conduct a tea-tasting experiment with $n = 48$ and perform a $t$-test
 set.seed(11)
 # options(scipen = 999) # remove scientific notation here
 
-bf_comp <- expand_grid(n = c(12, 24, 48, 96), d = c(.5, 1, 1.5)) |>
+get_p <- \(x, y) t.test(x = x, y = y, paired = FALSE, var.equal = TRUE)$p.value
+get_bf <- \(x, y) BayesFactor::extractBF(
+  BayesFactor::ttestBF(x = x, y = y, paired = FALSE))$bf
+
+k <- 100
+bf_vals <- expand_grid(i = 1:k, n = c(12, 24, 48, 96), d = c(.5, 1, 1.5)) |>
   mutate(data = map2(n, d, \(n_i, d_i) make_tea_data(n_total = n_i, delta = d_i))) |>
   unnest(cols = data) |>
+  group_by(i, n, d) |>
+  summarise(p = get_p(rating[condition == "milk first"],
+                      rating[condition == "tea first"]),
+            bf = get_bf(rating[condition == "milk first"],
+                        rating[condition == "tea first"]))
+
+bf_comp <- bf_vals |>
   group_by(n, d) |>
-  summarize(p = papaja::printp(
-    t.test(x = rating[condition == "milk first"],
-           y = rating[condition == "tea first"], 
-           paired = FALSE, 
-           var.equal = TRUE)$p.value),
-    BF = round(BayesFactor::extractBF(
-      BayesFactor::ttestBF(x = rating[condition == "milk first"],
-                           y = rating[condition == "tea first"], 
-                           paired = FALSE))$bf, 1))
+  summarise(p = median(p), bf = median(bf)) |>
+  ungroup() |>
+  mutate(p = papaja::printp(p), bf = round(bf, 1))
 
 kable(bf_comp, align = "rrrr", col.names = c("N", "Effect size", "p-value", "BF"))
 ```
