@@ -17,7 +17,7 @@ Good visualizations aim to deliberately harness this power and put it to work at
 
 
 Yet, our powerful pattern detectors can also be a liability; if we're not careful, we can easily be fooled into seeing patterns that are unreliable or even misleading.
-As psychology moves into an era of bigger data and more complex behaviors, we become increasingly reliant on **data visualization literacy**\index{data visualization literacy} [@borner2019data] to make sense of what is going on. Further, as a researcher reporting about your data, creating appropriate visualizations that are aligned with your analyses (as well as your design and preregistration) is an important part of [transparency]{.smallcaps} and [bias reduction]{.smallcaps} in your reporting. 
+As psychology moves into an era of bigger data and more complex behaviors, we become increasingly reliant on **data visualization literacy**\index{data visualization literacy} [@borner2019data] to make sense of what is going on. Further, as a researcher reporting about your data, creating appropriate visualizations that are aligned with your analyses (as well as your design and preregistration) is an important part of [transparency]{.smallcaps} and [bias reduction]{.smallcaps} in your reporting.
 
 ::: {.callout-note title="case study"}
 ### Mapping a pandemic {-}
@@ -94,7 +94,7 @@ It can sometimes be a challenge to represent the full pattern of manipulations f
 There are strong (unwritten) conventions about how your confirmatory analysis is expected to map onto graphical elements, and following these conventions can minimize confusion.
 Start with the variables you manipulate, and make sure they are clearly visible.
 Conventionally, the primary manipulation of interest (e.g., condition) goes on the x-axis, and the primary measurement of interest (e.g., responses) goes on the y-axis.
-Other critical variables of interest (e.g., secondary manipulations and demographics) are then assigned to "visual variables" (e.g., color, shape, or size).
+Other critical variables of interest (e.g., secondary manipulations and demographics) are then assigned to other "visual variables" (e.g., color, shape, or size).
 
 ::: {.callout-note title="code"}
 The visualization library `ggplot` (see @sec-ggplot) makes the mapping of variables in the data to visual data. Part of a ggplot call is an `aes()` (short for aesthetics) mapping:
@@ -468,7 +468,7 @@ As long as you can write a code snippet to compute a value from a dataset, you c
 ```{r fig-viz-boot}
 #| output: false
 #| fig-height: 2.25
-#| fig-width: 7
+#| fig-width: 6.3
 
 boot <- sgf |> 
   group_by(condition, age_group, subid) |>
@@ -499,7 +499,8 @@ bind_rows(boot, ci_sem, ci_ci) |>
     geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
     geom_line(aes(group = condition)) +
     facet_wrap(~ method) +
-    labs(x = "Age group", y = "Mean accuracy", color = "Condition")
+    labs(x = "Age group", y = "Mean accuracy", color = "Condition") +
+    theme(strip.text = element_text(size = rel(0.7)))
 ```
 
 ::: {#fig-viz-boot}
@@ -709,7 +710,7 @@ datasauRus::datasaurus_dozen |>
 <!-- ::: -->
 
 ::: {.callout-note title="accident report"}
-### [Distributional] gorillas in our midst. {-}
+### [Distributional] gorillas in our midst {-}
 
 Many data scientists don't bother checking what their data looks like before proceeding to test specific hypotheses.
 @yanai2020 cleverly designed an artificial dataset for their students to test for such oversight.
@@ -872,7 +873,6 @@ ggplot(fairness_by_age, aes(x = age)) +
   labs(x = "Age (years)", y = "Count")
 ```
 
-Histograms are intended by `ggplot` to be for continuous data, however, and so they don't give the discrete bars that our earlier workflow did. 
 :::
 
 \clearpage
