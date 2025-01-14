@@ -13,18 +13,16 @@ local boxes = {
 	[ 'readings'               ] = {color = '.magenta', icon = '\\faBook',                collapse = true},
 }
 
--- TODO: shrink learning goals boxes
--- local bonus = {
---   [ 'learning goals' ] = 
--- }
+-- tcolorbox options to add to every box
+local globalOpts = 'toggle enlargement,grow to right by=\\marginparsep+\\marginparwidth'
 
 -- generate tcolorbox options for a given box title
-local function boxOpts(title)
+local function boxOpts(title, extraOpts)
   --local color = boxes[title]['color']
   local color = '.grey'
   local icon = boxes[title]['icon']
   local Title = title:gsub("^%l", string.upper)
-  local opts = 'colframe=' .. color .. ', title=' .. icon .. ' \\enspace ' .. Title
+  local opts = extraOpts .. ', colframe=' .. color .. ', title=' .. icon .. ' \\enspace ' .. Title
   return opts
 end
 
@@ -46,7 +44,7 @@ function Callout(callout)
 
   if quarto.doc.is_format('pdf') then
     -- generate tcolorbox options for this box title
-    local opts = boxOpts(pandoc.utils.stringify(callout.title))
+    local opts = boxOpts(pandoc.utils.stringify(callout.title), globalOpts)
     -- wrap content in tcolorbox environment with these options
     return wrapEnv(callout.content, "tcolorbox", opts)
 

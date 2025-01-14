@@ -64,16 +64,20 @@
 
 % headers/footers
 \usepackage{scrlayer-scrpage}
+\pagestyle{scrheadings}
 \KOMAoptions{headwidth=textwithmarginpar} % make header full width
 \automark{chapter}
 \clearpairofpagestyles
 \renewcommand{\chaptermark}[1]{\markboth{#1}{}} % prevent chaptermark from uppercasing
-\ihead{%
-  \ifnum\value{chapter}>0 \thechapter\hspace{3pt} \fi % include chapter number if not 0
-  \textsc{\leftmark} % then chapter name
-}
+% \ihead{%
+%   \ifnum\value{chapter}>0 \thechapter\hspace{3pt} \fi % include chapter number if not 0
+%   \textsc{\leftmark} % then chapter name
+% }
+
+% \iehead{\ifnum\value{chapter}>0 \thechapter\hspace{3pt} \fi} % include chapter number if not 0
+% \iohead{\textsc{\leftmark}} % then chapter name
+\ihead{\ifthispageodd{\textsc{\leftmark}}{\ifnum\value{chapter}>0 \thechapter\hspace{3pt} \fi}}
 \ohead{\pagemark}
-\pagestyle{scrheadings}
 
 % table of contents
 \usepackage[titles]{tocloft}
