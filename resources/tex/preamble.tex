@@ -10,8 +10,8 @@
   papersize={8in,10in},                  % size specified by MIT Press
   centering,                             % split margins equally
   margin=.6in,                           % margins (must all be at least .5in)
-  includemp, includehead                % include sidenotes & header in body
-  % showframe                              % show page structure (for debugging)
+  includemp, includehead,                % include sidenotes & header in body
+  showframe                              % show page structure (for debugging)
 }
 
 % set fonts
@@ -61,6 +61,14 @@
 
 % only part number on part title pages
 \renewcommand{\partformat}{\thepart}
+
+% custom geometry on part title pages for centering
+\AddtoDoHook{heading/postinit/part}{\partgeometry}
+\newcommand*\partgeometry[1]
+  {\newgeometry{marginparwidth=0cm,marginparsep=0cm,showframe,inner=0cm,outer=0cm}}
+\let\originalpartheademptypage\partheademptypage
+\renewcommand\partheademptypage
+  {\originalpartheademptypage\restoregeometry}
 
 % headers/footers
 \usepackage{scrlayer-scrpage}
