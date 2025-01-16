@@ -457,9 +457,11 @@ You can see a summary of the fitted model using `summary(mod)` as before. The on
 #| tbl-cap: "Estimated effects for our generalized linear mixed effects model on data from @stiller2015."
 
 apa_mod <- papaja::apa_print(mod)
-apa_tab <- apa_mod$table
+apa_tab <- apa_mod$table |>
+  mutate(across(everything(), \(s) str_replace_all(s, "-", "−")))
 apa_tab$term <- c("Control condition", "Age (years)", "Expt condition", "Age (years) * Expt condition")
 # papaja::apa_table(apa_tab)
+
 kable(apa_tab, align = "lrrrr",
       col.names = c("Term", "$\\hat{\\beta}$", "95\\% CI", "$z$", "$p$"))
 ```
