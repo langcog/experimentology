@@ -54,10 +54,12 @@ $$
 #| label: tbl-models-datatable
 #| tbl-cap: "Example tea tasting data (first three observations from each condition)."
 
-small_tea_data |> 
+tea_table <- small_tea_data |> 
   mutate(id = 1:n(), X = if_else(condition == "tea first", 1, 0)) |>
-  select(id, condition, X, `rating (Y)` = rating) |>
-  kable(align = "rlrr")
+  select(id, condition, X, `rating (Y)` = rating)
+  # kable(align = "rlrr")
+  
+rlang::exec(kable, tea_table, align = "rlrr", !!!kargs)
 ```
 :::
 

@@ -139,28 +139,28 @@ $(A, B, O)$, $(A, B, -O)$, $(A, -B, O)$, $(A, -B, -O)$, $(-A, B, O)$, $(-A, B, -
 These conditions would in turn allow us to estimate both two-way and three-way interactions,\indexC{interaction effect} enumerated in @tbl-three-way.
 
 ::: {.column-margin}
-\scriptsize
+<!-- \scriptsize -->
 ```{r}
 #| label: tbl-three-way
 #| tbl-cap: "Effects in a 2 x 2 x 2 design with affect, belief, and outcome as factors"
 
 threeway <- tribble(
-  ~effect,                     ~term,
-  "Affect"                   , "Main effect",
-  "Belief"                   , "Main effect",
-  "Outcome"                  , "Main effect",
-  "Affect x Belief"          , "2-way interaction",
-  "Affect x Outcome"         , "2-way interaction",
-  "Belief x Outcome"         , "2-way interaction",
-  "Affect x Belief x Outcome", "3-way interaction"
+  ~effect,       ~term,
+  "Affect (A)" , "Main effect",
+  "Belief (B)" , "Main effect",
+  "Outcome (O)", "Main effect",
+  "A x B"      , "2-way interaction",
+  "A x O"      , "2-way interaction",
+  "B x O"      , "2-way interaction",
+  "A x B x O"  , "3-way interaction"
 )
 
-kable(threeway, col.names = c("Effect", "Term type"))
+rlang::exec(kable, threeway, col.names = c("Effect", "Term type"), !!!kargs)
 ```
-\normalsize
+<!-- \normalsize -->
 :::
 
-Three-way interactions\indexC{interaction effect} are hard to think about! The affect X belief X outcome interaction tells you about the difference in moral permissibility that's due to all three factors being present as opposed to what you'd predict on the basis of your estimates of the two-way interactions. In addition to being hard to think about, higher-order interactions tend to be hard to estimate, because estimating them accurately requires you to have a stable estimate of all of the lower-order interactions [@mcclelland1993]. For this reason, we recommend against experimental designs that rely on higher-order interactions unless you are in a situation where you both have strong predictions about these interactions and are confident in your ability to estimate them appropriately.
+Three-way interactions\indexC{interaction effect} are hard to think about! The affect x belief x outcome interaction tells you about the difference in moral permissibility that's due to all three factors being present as opposed to what you'd predict on the basis of your estimates of the two-way interactions. In addition to being hard to think about, higher-order interactions tend to be hard to estimate, because estimating them accurately requires you to have a stable estimate of all of the lower-order interactions [@mcclelland1993]. For this reason, we recommend against experimental designs that rely on higher-order interactions unless you are in a situation where you both have strong predictions about these interactions and are confident in your ability to estimate them appropriately.
 
 Things can get even more complicated. If you have three factors with two levels each, as in the example above (@tbl-three-way), you can estimate seven total effects of interest. But if you have *four* factors with two levels each, you get 15. Four factors with *three* levels each gets you a horrifying 80 different effects!^[The general formula for $N$ factors with $M$ levels each is $M^N-1$.] This way lies madness, at least from the perspective of estimating and interpreting individual effects in a reasonable sample size. Again, we suggest starting with one- and two-factor designs. There is a lot to be learned from simple designs that follow good measurement and sampling practices. 
 
