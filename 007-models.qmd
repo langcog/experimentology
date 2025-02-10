@@ -131,7 +131,7 @@ You can also extract the coefficient values using `coef(mod)` and put them in a 
 
 ### Adding predictors
 
-The regression model we just wrote down is the same model that underlies the $t$-test from @sec-inference. But the beauty of regression modeling is that much more complex estimation problems can also be written as regression models that extend the model we made above. For example, we might want to add another predictor variable, such as the age of the participant.^[The ability to estimate multiple coefficients at once is a huge strength of regression modeling, so much so that sometimes people use the label **multiple regression**\indexC{multiple regression} to denote that there is more than one predictor + coefficient pair.]
+The regression model we just wrote down is the same model that underlies the $t$-test from @sec-inference. But the beauty of regression modeling is that much more complex estimation problems can also be written as regression models that extend the model we made above. For example, we might want to add another predictor variable, such as the age of the participant.^[The ability to estimate multiple coefficients at once is a huge strength of regression modeling, so much so that people sometimes use the label **multiple regression**\indexC{multiple regression} to denote that there is more than one predictor + coefficient pair.]
 
 Let's add this new independent variable and a corresponding regression coefficient to our model:
 $$
@@ -145,7 +145,7 @@ We would get the same result if Alice and Bob were instead 50 and 51 years old, 
 
 > The regression coefficient represents the expected difference in outcome when comparing any two participants who differ by 1 unit of the relevant independent variable, and who do not differ on any other independent variables in the model.
 
-Here, the coefficient compares participants who differ by one year of age. In "Practical modeling considerations" below, we discuss whether and when to "control for" additional variables (i.e., when to add them to your model).
+Here, the coefficient compares participants who differ by one year of age. In @sec-models-practical, we discuss whether and when to "control for" additional variables (i.e., when to add them to your model).
 
 ### Interactions\indexC{interaction effect}
 
@@ -175,6 +175,8 @@ Linear regression modeling with OLS\indexC{ordinary least squares (OLS)} is an i
 
 <!-- [Suggested Figure. Violin plots, or similar, showing residuals for different subjects. The residuals exhibit non-independence.] -->
 
+\clearpage
+
 3. **Errors must be normally distributed and unrelated to the predictor.** Imagine older people have very consistent tea-ordering preferences while younger people do not. In that case, the models' error term\indexC{error term} would be less variable for older participants than younger ones. This issue is called **heteroskedasticity**\indexC{heteroskedasticity}. It is a good idea to plot each independent variable versus the residuals\indexC{residuals} to see if the residuals are more variable for certain values of the independent variable than for others. 
  
  <!-- This is often the case for highly skewed outcome variables. For example, if we regressed participants' incomes on their years of education, we will find that higher education is associated with higher income. However, because income is highly right-skewed in many samples (some people have extremely high incomes), income will typically be more variable for individuals with more education than for those with less education. For this reason, if we predicted incomes for individuals with 16 years of education (i.e., they completed 4-year college and then stopped) and also for individuals with 8 years (i.e., they completed middle school and then stopped), the errors in the former predictions will probably be more variable than the errors in the latter predictions.  -->
@@ -187,7 +189,7 @@ If any of these three conditions are violated, it can undermine the estimates an
 
 So far we have considered continuous outcome measures, like tea ratings. What if we instead had a binary outcome, such as whether a participant liked or didn't like the tea, or a count outcome, such as the number of cups a participant chose to drink? These and other noncontinuous outcomes often violate the assumptions of OLS,\indexC{ordinary least squares (OLS)} in particular because they often induce heteroskedastic\indexC{heteroskedasticity} errors. 
 
-Binary outcomes inherently produce heteroskedastic\indexC{heteroskedasticity} errors because the variance of a binary variable depends directly on the outcome probability. Errors will be more variable when the outcome probability is closer to 0.50, and much less variable for when the probability is closer to 0 or 1.^[Specifically, the variance of a binary variable with probability $p$ is simply $p(1-p)$, which is largest when $p=0.50$.] This heteroskedasticity in turn means that inferences from the model (e.g., $p$-values) can be incorrect, sometimes just a little bit off but sometimes dramatically incorrect.^[Ordinary least squares can also be used with binary outcomes, in which case the coefficients represent differences in probabilities. However, the usual model-based standard errors will be incorrect.]
+Binary outcomes inherently produce heteroskedastic\indexC{heteroskedasticity} errors because the variance of a binary variable depends directly on the outcome probability. Errors will be more variable when the outcome probability is closer to 0.50, and much less variable for when the probability is closer to 0 or 1.^[Specifically, the variance of a binary variable with one outcome's probability being $p$ is simply $p(1-p)$, which is largest when $p=0.50$.] This heteroskedasticity in turn means that inferences from the model (e.g., $p$-values) can be incorrect, sometimes just a little bit off but sometimes dramatically incorrect.^[Ordinary least squares can also be used with binary outcomes, in which case the coefficients represent differences in probabilities. However, the usual model-based standard errors will be incorrect.]
 
 Happily, **generalized linear models** (GLMs)\indexC{generalized linear model (GLM)} are regression models closely related to OLS\indexC{ordinary least squares (OLS)} that can handle noncontinuous outcomes. These models are called "generalized" because OLS is one of many members of this large class of models. To see the connection, let's first write an OLS model more generally in terms of what it says about the expected value\indexC{expected value} of the outcome, which we notate as $E[Y_i]$:
 $$
@@ -211,7 +213,7 @@ Exponentiating the coefficients (i.e., $e^{\beta}$) would yield **odds ratios**\
 
 ```{r models-logistic-ex, fig.width = 6.5}
 #| label: fig-models-logistic-ex
-#| fig-cap: "An example of how logistic regression transforms a change in the mean-centered predictor X into a change in the expected outcome Y. The same absolute change in X is associated in a large difference in the probability of the outcome when X is near its mean (blue) vs a small change in the outcome when X is large (red) or small."
+#| fig-cap: "An example of how logistic regression transforms a change in the mean-centered predictor $X$ into a change in the expected outcome $Y$. The same absolute change in $X$ is associated in a large difference in the probability of the outcome when $X$ is near its mean (blue) vs a small change in the outcome when $X$ is large (red) or small."
 #| fig-alt: A plot with probability of outcome Y vs. independent variable X. Section of the curve near X = 0 is steeper than at larger X.
 #| fig-width: 4
 #| fig-height: 3
@@ -254,7 +256,7 @@ Experimental data often contain multiple measurements for each participant (so-c
 tea_mod <- lm(rating ~ condition, data = tea_data)
 ```
 
-Non-independence of datapoints may seem at first glance like a small issue, but it can present a deep problem for making inferences. Take the tea-tasting data we looked at above, where we had 24 observations in each condition. If we fit an OLS model, we observe a highly significant tea-first effect. Here is the estimate and confidence interval\indexC{confidence interval (CI)} for that coefficient: `r papaja::apa_print(tea_mod)$estimate$conditiontea_first`. Based on what we talked about in the previous chapter, it seems like we'd be licensed in rejecting the null hypothesis that this effect is due to sampling variation and interpret this instead as evidence for a generalizable difference in tea preference in our sampled population.
+Non-independence of datapoints may seem at first glance like a small issue, but it can present a deep problem for making inferences. Take the tea-tasting data we looked at above, where we had 24 observations in each condition. If we fit an OLS model, we observe a highly significant tea-first effect. Here is the estimate and confidence interval\indexC{confidence interval (CI)} for that coefficient: `r papaja::apa_print(tea_mod, est_name = "$\\hat{\\beta}$")$estimate$conditiontea_first`. Based on what we talked about in the previous chapter, it seems like we'd be licensed in rejecting the null hypothesis that this effect is due to sampling variation and interpret this instead as evidence for a generalizable difference in tea preference in our sampled population.
 
 But suppose we told you that all of those 48 total observations (24 in each condition) were from one individual named George. That would change the picture considerably. Now we'd have no idea whether the big effect we observed reflected a difference in the population, but we would have a very good sense of what George's preference is!^[We discuss the strengths and weaknesses of repeated-measures designs like this in @sec-design and the statistical trade-offs of having many people with a small number of observations per person vs a small number of people with many observations per person in @sec-sampling.] The confidence intervals\indexC{confidence interval (CI)} and $p$-values from our OLS\indexC{ordinary least squares (OLS)} model would be wrong now because all of the error terms\indexC{error term} would be highly correlated---they would all reflect George's preferences.
 
@@ -268,7 +270,7 @@ Y_{it} = \beta_0 + \beta_1 X_{it} + \gamma_i + \epsilon_{it}
 $$
 where $Y_{it}$ is participant $i$'s rating in trial $t$ and $X_{it}$ is the participant's assigned treatment in trial $t$ (i.e., milk-first or tea-first).
 
-If you compare this equation to the OLS\indexC{ordinary least squares (OLS)} equation above, you will notice that we added two things. First, we've added subscripts that distinguish trials from participants. But the big one is that we added $\gamma_i$, a separate intercept value for each participant. We call this a **random intercept** because it varies across participants (who are randomly selected from the population).^[Formally, we'd notate this random variation by saying that $\gamma_i \sim N(0, \tau^2)$---in other words, that participants' random intercepts are sampled from a normal distribution\indexC{normal distribution} around the shared intercept $\beta_0$ with standard deviation $\tau$.]
+If you compare this equation to the OLS\indexC{ordinary least squares (OLS)} equation above, you will notice that we added two things. First, we've added subscripts that distinguish trials from participants. But the big one is that we added $\gamma_i$, a separate intercept value for each participant. We call this a **random intercept** because it varies across participants (who are randomly selected from the population).^[Formally, we'd notate this random variation with $\gamma_i \sim N(0, \tau^2)$---in other words, that participants' random intercepts are sampled from a normal distribution\indexC{normal distribution} around the shared intercept $\beta_0$ with standard deviation $\tau$.]
   
 The random intercept means that we have assumed that each participant has their own typical "baseline" tea rating---some participants overall just like tea more than others---and these baseline ratings are normally distributed across participants. Thus, ratings are correlated within participants because ratings cluster around each participant's *distinct* baseline tea rating. This model is better able to block misleading inferences. For example, suppose we only had one participant in each condition (say, George provided 24 milk-first ratings and Alice provided 24 tea-first ratings). If we found higher ratings in one condition, we would be able to attribute this difference to participant-level variation rather than to the treatment.^[Of course, this would be a terrible experiment! Ideally, we would address this problem upstream in our experiment design; see @sec-design.]
 
@@ -297,7 +299,7 @@ Just like the random intercepts, these random slopes will be assumed to vary acr
 This model now describes random variation in both overall how much someone likes tea *and* how strong their ordering preference is. Both of these likely do vary in the population, and so it seems like a good thing to put these in your model. Indeed, under some circumstances, adding random slopes is argued to be very important for making appropriate inferences.^[There's lots of debate in the literature about the best random effect structure for mixed effects models. This is a very tricky and technical subject. In brief, some folks argue for so-called **maximal** models\indexC{maximal model}, in which you include every random effect that is justified by the design [@barr2013]. Here that would mean including random slopes for each participant. The problem is that these models can get very complex and can be very hard to fit using standard software. We won't weigh in on this topic, but as you start to use these models on more complex experimental designs, it might be worth reading up on.] 
 
 On the other hand, the model is much more complicated. When we had a simple OLS\indexC{ordinary least squares (OLS)} model above, we had only two parameters to fit ($\beta_0$ and $\beta_1$), but now we have those two plus two more, representing the standard deviations of the individual participant intercepts and slopes, plus parameters for each participant and for the condition effect for each participant. So we went from two parameters to 24!^[Though we should note that these parameters aren't technically all independent from one another due to the structure of the mixed effects model.] 
-This complexity can lead to problems in fitting the models, especially with very small datasets (where these parameters are not very well constrained by the data) or very large datasets (where computing all these parameters can be tricky).^[Many R users may be familiar with the widely used `lme4` package for fitting mixed effects models using frequentist tools related to maximum likelihood. Such models can also be fit using Bayesian inference\indexC{Bayesian inference} with the `brms` package [@burkner2021], which provides many powerful methods for specifying complex models.]
+This complexity can lead to problems in fitting the models, especially with very small datasets (where these parameters are not very well constrained by the data) or very large datasets (where computing all these parameters can be tricky).^[Many R users may be familiar with the widely used `lme4` package [@bates2015] for fitting mixed effects models using frequentist tools related to maximum likelihood. Such models can also be fit using Bayesian inference\indexC{Bayesian inference} with the `brms` package [@burkner2021], which provides many powerful methods for specifying complex models.]
 
 ::: {.callout-note title="code"}
 Specifying random slopes in the `lme4` package is also relatively straightforward:
@@ -308,10 +310,11 @@ lmer(rating ~ condition + (condition | id), data = tea_data)
 
 Here, `(condition | id)` means "a separate random slope for `condition` should be fit for each level of `id`." Of course, specifying such a model is easier than fitting it correctly. 
 :::
+\vfill
 
 More generally, linear mixed effects models\indexC{linear mixed effects model (LMM)} are very flexible, and they have become quite common in psychology. But they do have significant limitations. As we discussed, they can be tricky to fit in standard software packages. Further, the accuracy of these models relies on our ability to specify the structure of the random effects correctly.^[One particularly problematic situation is when the correlation structure of the errors is mis-specified, for example if observations within a participant are more correlated for participants in the treatment group than in the control group; in such cases, mixed model estimates can be substantially biased [@bie2021fitting].] If we specify an incorrect model, our inferences will be wrong! But it is sometimes difficult to know how to check whether your model is reasonable, especially with a small number of clusters or observations.
 
-## How do you use models to analyze data? 
+## How do you use models to analyze data? {#sec-models-practical}
 
 In the prior parts of this chapter, we've described a suite of regression-based techniques---standard OLS,\indexC{ordinary least squares (OLS)} the generalized linear model,\indexC{generalized linear model (GLM)} and linear mixed effects models\indexC{linear mixed effects model (LMM)}---that can be used to model the data resulting from randomized experiments (as well as many other kinds of data). The advantage of regression models over the simpler estimation and inference methods we described in the prior two chapters is that these models can more effectively take into account a range of different kinds of variation, including covariates, multiple manipulations, and clustered structure. Further, when used appropriately to analyze a well-designed randomized experiment, regression models can give an unbiased estimate of a causal effect of interest, our main goal in doing experiments.
 
@@ -330,7 +333,7 @@ The price paid for these nice safeguards against model misspecification is that,
 
 ### Modeling rules of thumb
 
-Our approach to statistical modeling is to start with a "default model" that is known in the literature as a **saturated model**\indexC{saturated model}. The saturated model of an experiment includes the full design of the experiment---all main effects\indexC{main effect} and interactions\indexC{interaction effect}---and nothing else. If you are manipulating a variable, include it in your model. If you are manipulating two, include them both and their interaction. If your design includes repeated measurements for participants, include a random effect of participant; if it includes experimental items for which repeated measurements are made, include random effect of stimulus.^[As discussed above, you can also include the "maximal" random effect structure [@barr2013], which involves random slopes as well as intercepts---but recognize that you cannot always fit such models.]
+Our approach to statistical modeling is to start with a "default model" that is known in the literature as a **saturated model**\indexC{saturated model}. The saturated model of an experiment includes the full design of the experiment---all main effects\indexC{main effect} and interactions\indexC{interaction effect}---and nothing else. If you are manipulating a variable, include it in your model. If you are manipulating two, include them both and their interaction. If your design includes repeated measurements for participants, include a random effect of participant; if it includes experimental items for which repeated measurements are made, include random effect of stimulus.^[As discussed above, you can also include the maximal random effect structure [@barr2013], which involves random slopes as well as intercepts---but recognize that you cannot always fit such models.]
 
 Don't include lots of other stuff in your default model. You are doing a randomized experiment, and the strength of randomized experiments is that you don't have to worry about confounding based on the population (see @sec-experiments). So don't put a lot of covariates in your default model---usually don't put in any!^[One corollary to having this kind of default perspective on data analysis: When you see an analysis that deviates substantially from the default, these deviations should provoke some questions. If someone drops a manipulation from their analysis, adds a covariate or two, or fails to control for some clustering in the data, did they deviate because of different norms in their subfield, or was there some other rationale? This line of reasoning sometimes leads to questions about the extent to which particular analytic decisions are post hoc and driven by the data (in other words, $p$-hacked). For an example, see the [case study]{.smallcaps} in @sec-prereg.] 
 
@@ -374,11 +377,11 @@ sgf <- read_csv(file.path(repo, "data/tidyverse/stiller_scales_data.csv")) |>
 
 ```{r models-sgf-plot}
 #| label: fig-models-sgf-plot
-#| fig-cap: "Data for @stiller2015. Each point shows a single participant's proportion correct trials (out of four experimental stimuli) plotted by age group, jittered slightly to avoid overplotting. Larger points and associated confidence intervals show mean and 95% confidence intervals for each condition."
+#| fig-cap: "Data for @stiller2015. Each point shows a single participant's proportion correct trials (out of four experimental stimuli) plotted by age group, jittered slightly to avoid overlap. Larger points and associated confidence intervals show mean and 95% confidence intervals for each condition."
 #| fig-alt: A plot with data points, means, and confidence intervals for proportion correct over age group, for experimental and control.
 #| fig-width: 6.5
 #| cap-location: margin
-#| out.width: 70%
+#| out.width: 85%
 
 library(directlabels)
 
@@ -461,7 +464,7 @@ You can see a summary of the fitted model using `summary(mod)` as before. The on
 apa_mod <- papaja::apa_print(mod)
 apa_tab <- apa_mod$table |>
   mutate(across(everything(), \(s) str_replace_all(s, "-", "−")))
-apa_tab$term <- c("Control condition", "Age (years)", "Expt condition", "Age (years) * Expt condition")
+apa_tab$term <- c("Control condition", "Age (years)", "Experiment condition", "Age (years) * Experiment condition")
 # papaja::apa_table(apa_tab)
 
 kable(apa_tab, align = "lrrrr",
@@ -471,7 +474,9 @@ kable(apa_tab, align = "lrrrr",
 \vspace{-1em}
 <!-- ::: -->
 
-Let's estimate this model and see how it looks. We'll focus here on interpretation of the so-called **fixed effects**\indexC{fixed effect} (the main predictors), as opposed to the participant and item random effects.^[Participant means are estimated to have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[1],2)` (in log-odds), while items have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[2],2)`. These indicate that both of our random effects capture meaningful variation.] @Tbl-models-sgf-model-print shows the coefficients. Again, let's walk through each:
+Let's estimate this model and see how it looks. We'll focus here on interpretation of the so-called **fixed effects**\indexC{fixed effect} (the main predictors), as opposed to the participant and item random effects.^[Participant means are estimated to have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[1],2)` (in log-odds), while items have a standard deviation of `r round(as.data.frame(lme4::VarCorr(mod))$sdcor[2],2)`. These indicate that both of our random effects capture meaningful variation.] @Tbl-models-sgf-model-print shows the coefficients.
+
+Again, let's walk through each term:
 
 * The **intercept** (control condition\indexC{control condition} estimate) is `r apa_mod$full_result$Intercept |> add_lead_zero()`. This estimate reflects that the log-odds of a correct response for an average-age participant in the control condition is $`r round(lme4::fixef(mod)[1],2)`$, which corresponds to a probability of $`r round(boot::inv.logit(lme4::fixef(mod)[1]), 2)`$. If we look at @fig-models-sgf-plot, that estimate makes sense: $`r round(boot::inv.logit(lme4::fixef(mod)[1]), 2)`$ seems close to the average for the control condition. 
 
@@ -485,6 +490,7 @@ In sum, this model suggests that there was a substantial difference in performan
 
 This example illustrates the "default saturated model"\indexC{saturated model} framework that we recommend---the idea that a single regression model corresponding to the design of the experiment can yield an interpretable estimate of the causal effect of interest, even in the presence of other sources of variation.
 
+\vfill
 ::: {.callout-note title="depth"}
 ### When does it makes sense to include covariates in a model? {-}
 
@@ -555,7 +561,7 @@ ggplot(d, aes(x = half_n, y = rmse, color = factor(rho))) +
 ![](007-models_files/figure-pdf/models-precision-1.png){width=60%}
 :::
 
-Decreases in estimation error due to adjusting for covariates, plotted by the N participants in each group and the correlation between the outcome (X) and the covariate (Z).
+Decreases in estimation error due to adjusting for covariates, plotted by the number ($N$) of participants in each group and the correlation between the outcome ($X$) and the covariate ($Z$).
 
 :::
 

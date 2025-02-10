@@ -47,6 +47,7 @@ In @sec-estimation, we introduced Fisher's tea-tasting experiment and discussed 
 
 To characterize the uncertainty in an estimate, it helps to picture its **sampling distribution**\indexC{sampling distribution}, which is the distribution of the estimate across different, hypothetical, samples. That is, let's imagine that we conducted the tea experiment not just once but dozens, hundreds, or even thousands of times. This idea is often called **repeated sampling**\indexC{repeated sampling} as a shorthand. For each hypothetical sample, we use similar recruitment methods to recruit a new sample of participants, and we compute $\widehat{\beta}$ for that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability (noise). If we plotted these estimates, $\widehat{\beta}$, we would get the sampling distribution in @fig-inference-sampling-small. 
 
+\vfill
 ::: {.callout-note title="code"}
 In this chapter and the subsequent statistics and visualization chapters of the book, we'll try to facilitate understanding and illustrate how to use these concepts in practice by giving the R code we use in constructing our examples in these [**code**]{.smallcaps} boxes. We'll assume that you have some knowledge of base R and the Tidyverse---to get started with these, go ahead and take a look at @sec-tidyverse if you haven't already. Although our figures are often drawn by hand, even the hand-drawn ones are based on actual simulation results!
 
@@ -104,7 +105,7 @@ For example, say we are flipping a coin and we want to estimate the probability 
 
 But look what happens as we draw increasingly larger samples in @fig-inference-coin-ns: we get a normal distribution!\indexC{normal distribution} This tendency of sampling distributions\indexC{sampling distribution} to become normal as $n$ becomes very large reflects a deep and elegant mathematical law called the **central limit theorem**\indexC{central limit theorem}.
 
-The practical upshot is that the central limit theorem\indexC{central limit theorem} directly helps us characterize the uncertainty of sample estimates\indexC{sample estimate}. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\widehat{SE} = \sigma/\sqrt{n}$. The sampling distribution\indexC{sampling distribution} becomes narrower as the sample size increases because we are dividing by the square root of the number of observations.
+The practical upshot is that the central limit theorem\indexC{central limit theorem} directly helps us characterize the uncertainty of sample estimates\indexC{sample estimate}. For example, when the sample size is reasonably large (approximately $n>30$ in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately $\widehat{\text{SE}} = \sigma/\sqrt{n}$. The sampling distribution\indexC{sampling distribution} becomes narrower as the sample size increases because we are dividing by the square root of the number of observations.
 
 <!-- \vspace{2em} -->
 \vfill
@@ -161,7 +162,7 @@ null_model_summary <- null_model |>
 ```
 :::
 
-![One example of the distribution of treatment effects under the null model (with n = 9 per group). The red regions indicate the part of the distribution in  which less than 5% of observations should fall.](images/inference/p-region.png){#fig-inference-null-model .margin-caption width=70% fig-alt="A plot the same as 6.2 with regions below 2.5% and above 97.5% shaded."}
+![One example of the distribution of treatment effects under the null model (with $n = 9$ per group). The red regions indicate the part of the distribution in  which less than 5% of observations should fall.](images/inference/p-region.png){#fig-inference-null-model .margin-caption width=75% fig-alt="A plot the same as 6.2 with regions below 2.5% and above 97.5% shaded."}
 
 @Fig-inference-null-model captures the logic of NHST:\indexC{null hypothesis significance testing (NHST)} if the observed data fall in the region that has a probability of less than 0.05 under the null model,\indexC{null model} then we reject the null. So, then when we observe some particular treatment effect $\hat{\beta}$ in a single (real) instance of our experiment, we can compute the probability of these data or any data more extreme than ours under the null model.^[The "more extreme" part deserves a little explanation. Any individual outcome is relatively unlikely by itself, just because it's surprising that the estimate is that exact value (we're simplifying here, it gets a bit trickier when you are talking about real numbers). What we care about instead is a *group* of values. The ones that are in the middle of the distribution are, considered as a group, quite likely; the ones on the tails are, as a group, less likely. We want to know if the probability of the group of datapoints that includes our observation and anything even further out on the tails is collectively less than 0.05.] This probability is our $p$-value, and if it is small, it gives us license to conclude that the null is false.
 
@@ -227,7 +228,7 @@ Bayes Factors\indexC{Bayes Factor (BF)} are a method for quantifying the support
 
 Informally, we've now discussed two different distinct hypotheses about the tea situation: our participants could have *no* tea discrimination ability---leading to chance performance. We call this $H_0$. Or they could have some nonzero ability---leading to greater than chance performance. We call this $H_1$. The Bayes Factor\indexC{Bayes Factor (BF)} is simply the likelihood of the data (in the technical sense used above) under $H_1$ vs under $H_0$ (@fig-inference-bf). The Bayes Factor is a ratio, so if it is greater than 1, the data are more likely under $H_1$ than they are under $H_0$---and vice versa for values between 1 and 0. A BF of 3 means there is three times as much evidence for $H_1$ than $H_0$, or equivalently 1/3 as much evidence for $H_0$ as $H_1$.[^inference-10] 
 
-[^inference-10]: Sometimes people refer to the BF in favor of $H_1$ as the $BF_{10}$ and the BF in favor of $H_0$ as the $BF_{01}$. This notation is a bit confusing because the first of these looks like the number 10.
+[^inference-10]: Sometimes people refer to the BF in favor of $H_1$ as the $\text{BF}_{10}$ and the BF in favor of $H_0$ as the $\text{BF}_{01}$. This notation is a bit confusing because the first of these looks like the number 10.
 
 ::: {.callout-note title="code"}
 Bayes Factors\indexC{Bayes Factor (BF)} are delightfully easy to compute using the `BayesFactor` R package [@morey2023]. All we do is feed in the two sets of ratings to the `ttestBF()` function!
@@ -352,7 +353,8 @@ bf_comp <- bf_vals |>
   mutate(p = papaja::printp(p), bf = round(bf, 1))
 
 rlang::exec(kable, bf_comp, align = "rrrr",
-            col.names = c("N", "Effect size", "p-value", "BF"), !!!kargs)
+            col.names = c("N", "Effect size", "$p$-value", "BF"), !!!kargs,
+            escape = FALSE)
 # kable(bf_comp, align = "rrrr", col.names = c("N", "Effect size", "p-value", "BF"))
 ```
 :::
@@ -511,7 +513,7 @@ Confidence intervals (CIs)\indexC{confidence interval (CI)} are constructed by e
 
 Confidence intervals\indexC{confidence interval (CI)} are like betting on the inferences drawn from your sample. The sample you drew is like one pull of a slot machine that will pay off (i.e., have the confidence interval contain the true parameter) 95% of the time. Put more concisely: 95% of 95% confidence intervals contain the true value of the population parameter.\indexC{population parameter}
 
-![Confidence intervals on each of the two condition estimates, as well as on the difference between conditions.](images/inference/cis.png){#fig-inference-condition-cis .margin-caption width=70% fig-alt="A plot with the same points as 6.10 overlaid with confidence intervals and a rating difference confidence interval."}
+![Confidence intervals on each of the two condition estimates, as well as on the difference between conditions.](images/inference/cis.png){#fig-inference-condition-cis .margin-caption width=75% fig-alt="A plot with the same points as 6.10 overlaid with confidence intervals and a rating difference confidence interval."}
 
 For visualization, we can show the confidence intervals\indexC{confidence interval (CI)} on individual estimates (left side of @fig-inference-condition-cis). These tell us about the precision of our estimates of each quantity relative to the population estimate. But we've been talking primarily about the CI on the treatment effect $\widehat{\beta}$ (right side of @fig-inference-condition-cis). This CI allows us to make an inference about whether or not it overlaps with zero---which is actually equivalent in this case to whether or not the $t$-test\index{t-test} is statistically significant. 
 
@@ -570,6 +572,7 @@ Credible intervals\indexC{credible interval} are nice because they don't give ri
 
 Inference tools help you move from characteristics of the sample to characteristics of the population. This move is a critical part of generalization from research data. But we hope we've convinced you that inference doesn't have to mean making a binary decision about the presence or absence of an effect. A strategy that seeks to estimate an effect and its associated precision is often much more helpful as a building block for theory. As we move toward estimating causal effects in more complex experimental designs, the process will require more sophisticated models. Toward that goal, the next chapter provides some guidance for how to build such models.
 
+\vfill
 ::: {.callout-note title="discussion questions"}
 1. Can you write the definition of a $p$-value and a Bayes Factor\indexC{Bayes Factor (BF)} without looking them up? Try this out---what parts of the definitions did you get wrong?
 
