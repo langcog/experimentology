@@ -68,6 +68,7 @@ metafor::forest(re_model, header = TRUE, xlab = "Standardized mean difference",
                 fonts = .font)
 ```
 
+\vfill
 ::: {.callout-note title="code"}
 In this chapter, we use the wonderful `metafor` package [@viechtbauer2010]. With this package, you must first fit your meta-analytic model. But once you've fit your model `mod`, you can simply call `forest(mod)` to create a plot like the one above.
 :::
@@ -129,17 +130,7 @@ $$\widehat{\mu} = \frac{ \sum_{i=1}^k w_i \widehat{\theta}_i}{\sum_{i=1}^k w_i}$
 However, in random-effects meta-analysis, the inverse-variance weights now incorporate heterogeneity:\indexC{heterogeneity} $w_i = 1/\left(\widehat{\tau}^2 + \widehat{\sigma}^2_i \right)$. Where before we had one term in our weights, now we have two. That is because these weights represent the inverse of studies' *marginal* variances, taking into account both statistical error due to their finite sample sizes ($\widehat{\sigma}^2_i$ as before) and also genuine effect heterogeneity ($\widehat{\tau}^2$).
 <!--^[The estimate of $\widehat{\tau}^2$ is a bit more complicated, but is essentially a weighted average of studies' squared residuals, $\widehat{\theta_i} - \widehat{\mu}$, while subtracting away variation due to statistical error, $\widehat{\sigma}^2_i$ [@dersimonian1986meta; @brockwell2001comparison].]  -->
 
-Conducting a random-effects meta-analysis\indexC{meta-analysis!random-effects} of Paluck et al.'s dataset yields $\widehat{\mu}$ = `r round(as.numeric(re_model$b), 2)`; 95% confidence interval [`r paste0(round(re_model$ci.lb, 2), ", ", round(re_model$ci.ub, 2))`]; $p < 0.001$. That is,  *on average across studies*, intergroup contact was associated with a decrease in prejudice of `r round(as.numeric(re_model$b), 2)` standard deviations, substantially larger than the estimate from the fixed-effects model. This meta-analytic estimate is shown as the bottom line of @fig-meta-forest.
-
-::: {.callout-note title="code"}
-Fitting a random-effects model requires only a small change to the methods argument of `rma()`. (We also include the `knha` flag that adds a correction to the computation of standard errors and $p$-values.)
-
-```{r, opts.label='code'}
-re_model <- rma(yi = d, vi = var_d, data = paluck, method = "REML", knha = TRUE)
-```
-:::
-
-\clearpage
+<!-- \clearpage -->
 ```{r meta-densities}
 #| label: fig-meta-densities
 #| fig-cap: "Estimated distribution of population effects from random-effects meta-analysis of Paluck et. al's dataset (heavy red curve) and estimated density of studies' point estimates (thin black curve)."
@@ -169,12 +160,24 @@ ggplot(tibble(x = c(-2, 2)), aes(x = x)) +
   labs(x = "Standardized mean difference", y = "")
 ```
 
+Conducting a random-effects meta-analysis\indexC{meta-analysis!random-effects} of Paluck et al.'s dataset yields $\widehat{\mu}$ = `r round(as.numeric(re_model$b), 2)`; 95% confidence interval [`r paste0(round(re_model$ci.lb, 2), ", ", round(re_model$ci.ub, 2))`]; $p < 0.001$. That is,  *on average across studies*, intergroup contact was associated with a decrease in prejudice of `r round(as.numeric(re_model$b), 2)` standard deviations, substantially larger than the estimate from the fixed-effects model. This meta-analytic estimate is shown as the bottom line of @fig-meta-forest.
+
 Based on the random-effects model, intergroup contact effects appear to differ across studies. Paluck et al. estimated that the standard deviation of effects across studies was $\widehat{\tau}$ = `r tau_stats[1]` ; 95% confidence interval [`r tau_stats[2]`, `r tau_stats[3]`]. This estimate indicates a substantial amount of heterogeneity!\indexC{heterogeneity} To  visualize these results, we can plot the estimated density of the population effects, which is just a normal distribution\indexC{normal distribution} with mean $\widehat{\mu}$ and standard deviation $\widehat{\tau}$ (@fig-meta-densities).
+
+\vfill
+::: {.callout-note title="code"}
+Fitting a random-effects model requires only a small change to the methods argument of `rma()`. (We also include the `knha` flag that adds a correction to the computation of standard errors and $p$-values.)
+
+```{r, opts.label='code'}
+re_model <- rma(yi = d, vi = var_d, data = paluck, method = "REML", knha = TRUE)
+```
+:::
 
 This meta-analysis\ highlights an important point: that the overall effect size  estimate $\widehat{\mu}$ represents only the *mean* population effect across studies. It tells us nothing about how much the effects *vary* across studies. Thus, we recommend always reporting the heterogeneity\indexC{heterogeneity} estimate $\widehat{\tau}$, preferably along with other related metrics that help summarize the distribution of effect sizes across studies [@riley2011interpretation; @wang2019simple; @mathur_mam; @npphat]. Reporting the heterogeneity helps readers know how consistent or inconsistent the effects are across studies, which may point to the need to investigate *moderators*\indexC{moderator} of the effect (i.e., factors that are associated with larger or smaller effects, such as whether participants were adults or children).
 
 One common approach to investigating moderators in meta-analysis is meta-regression, in which moderators are included as covariates in a random-effects meta-analysis model\indexC{meta-analysis!random-effects} [@thompson2002should]. As in standard regression, coefficients can then be estimated for each moderator, representing the mean difference in population effect between studies with versus without the moderator.
 
+\vfill
 ::: {.callout-note title="depth"}
 ### Single-paper meta-analysis and pooled analysis {-}
 
@@ -184,12 +187,13 @@ Single-paper meta-analyses come with many of the same strengths and weaknesses w
 
 As an alternative, you can also pool the actual data from the three studies, as opposed to just pooling summary statistics. For example, if you have data from 10 participants in each of the three experiments, you could pool them into a single dataset with 30 participants and include random effects of your condition manipulation across experiments (as described in @sec-models). This strategy is often referred to as **pooled**\indexC{pooled data analysis} or **integrative** data analysis (and occasionally as "mega-analysis," which sounds cool).\indexC{mega-analysis|see{pooled data analysis}}
 
-![Example data from three individual studies (left) can be pooled into one data analysis (middle) or meta-analyzed as three effect sizes (right).](images/meta/meta_v_ipd.png){#fig-meta-v-ipd width=90% fig-alt="Spreadsheets where: 3 studies each have 10 rows of data; pooled analysis has all 30 rows; meta-analysis has a row per study."}
-
-\vspace{-1em}
 One of the benefits of pooled data analysis\indexC{pooled data analysis} is that it can give you more power to detect moderators.\indexC{moderator} For instance, imagine that the effect of an intergroup contact treatment is moderated by age. If we performed a traditional meta-analysis, we would only have three observations in our data set, yielding very low power. However, we have many more observations (and much more variation in the moderator) in the pooled data analysis, which can lead to higher power (@fig-meta-v-ipd).
 
-Pooled data analysis\indexC{pooled data analysis} is not without its own limitations [@cooper2009relative]. And, of course, sometimes it doesn't make as much sense to pool datasets (e.g., when measures are different from one another). Nonetheless, we believe that pooled data analysis and meta-analysis\ are both useful tools to keep in mind in a paper reporting multiple experiments!
+Pooled data analysis\indexC{pooled data analysis} is has its own limitations [@cooper2009relative]. And sometimes it doesn't make much sense to pool datasets (e.g., when measures are different from one another). Nonetheless, we believe that pooled data analysis and meta-analysis\ are both useful tools to keep in mind in a paper reporting multiple experiments!
+
+![Example data from three individual studies (left) can be pooled into one data analysis (middle) or meta-analyzed as three effect sizes (right).](images/meta/meta_v_ipd.png){#fig-meta-v-ipd width=95% fig-alt="Spreadsheets where: 3 studies each have 10 rows of data; pooled analysis has all 30 rows; meta-analysis has a row per study."}
+
+<!-- \vspace{-1em} -->
 :::
 
 
@@ -224,18 +228,20 @@ It's typically very hard to quantify publication bias\indexC{publication bias} b
 
 Time-sharing Experiments in the Social Sciences (TESS)\indexC{Time-sharing Experiments in the Social Sciences (TESS)} is an innovative project that lets researchers apply to run experiments on nationally representative samples\indexC{representative sample} in the US. In 2014, @franco2014 and colleagues took advantage of this application process by examining the entire population of 221 studies conducted through TESS. 
 
-Using this information, Franco and colleagues examined the records of these studies to determine whether the researchers found statistically significant results, a mixture of statistically significant and nonsignificant results, or only nonsignificant results. Then, they examined the likelihood that these results were published in the scientific literature.
+Using this information, Franco and colleagues examined the records of these studies to determine whether the researchers found statistically significant results, a mix of statistically significant and nonsignificant results, or only nonsignificant results. Then, they examined the likelihood that these results were published in the scientific literature.
 
 Over 60% of studies with statistically significant results were published, compared to a mere 25% of studies that produced only statistically nonsignificant results. This finding was important because it quantified how strong publication bias actually was, at least in one particular population of studies. This estimate may not be general: for example, perhaps TESS\indexC{Time-sharing Experiments in the Social Sciences (TESS)} studies were easier to put in the file drawer because they cost nothing for the researchers to run. But even a lower level of publication bias can have a substantial effect on a meta-analysis, meaning that it is crucial to check for---and potentially, correct for---publication bias.\indexC{publication bias}
 :::
 
 Like within-study biases,\indexC{within-study bias} meta-analysts often try to mitigate across-study biases\indexC{across-study bias} by being careful about what studies make it into the meta-analysis. Meta-analysts don't only want to capture high-profile, published studies on their effect of interest but also studies published in low-profile journals and the so-called gray literature [i.e., unpublished dissertations and theses\; @lefebvre2019searching].^[Evidence is mixed regarding whether including gray literature actually reduces across-study biases in meta-analysis [@tsuji2020addressing; @sapbe], but it is still common practice to try to include this literature.]
 
-There are also statistical methods to help assess how robust the results may be to across-study biases.\indexC{across-study bias} Among the most popular tools to assess and correct for publication bias is the **funnel plot**\indexC{funnel plot} [@duval2000trim; @egger1997bias]. A funnel plot shows the relationship between studies' effect estimates and their precision (usually their standard error). These plots are called "funnel plots" because, if there is no publication bias, then as precision increases, the effects "funnel" toward the meta-analytic estimate. As the precision is smaller, they spread out more because of greater measurement error.\indexC{measurement error} @Fig-meta-funnel-unbiased is an example of one type of funnel plot\indexC{funnel plot} [@sapb] for a simulated meta-analysis of 100 studies with no publication bias.\indexC{publication bias}
+There are also statistical methods to help assess how robust the results may be to across-study biases.\indexC{across-study bias} Among the most popular tools to assess and correct for publication bias is the **funnel plot**\indexC{funnel plot} [@duval2000trim; @egger1997bias]. A funnel plot shows the relationship between studies' effect estimates and their precision (usually their standard error). These plots are called "funnel plots" because, if there is no publication bias, then as precision increases, the effects "funnel" toward the meta-analytic estimate. As the precision is smaller, they spread out more because of greater measurement error.\indexC{measurement error}
+
+@Fig-meta-funnel-unbiased is an example of one type of funnel plot\indexC{funnel plot} [@sapb] for a simulated meta-analysis of 100 studies with no publication bias.\indexC{publication bias}
 
 ```{r meta-funnel-unbiased}
 #| label: fig-meta-funnel-unbiased
-#| fig-cap: "A significance funnel plot\\indexC{funnel plot}  for a meta-analysis simulated to have no publication bias. Orange points: studies with $p < 0.05$ and positive estimates. Grey points: studies with $p$ $\\ge$ $0.05$ or negative estimates. Black diamond: random-effects estimate of $\\widehat{\\mu}$."
+#| fig-cap: "A significance funnel plot\\indexC{funnel plot} for a meta-analysis simulated to have no publication bias. Orange points: studies with $p < 0.05$ and positive estimates. Grey points: studies with $p$ $\\ge$ $0.05$ or negative estimates. Black diamond: random-effects estimate of $\\widehat{\\mu}$."
 #| fig-alt: A plot showing a funnel-shaped distribution of observed effect sizes against their corresponding standard errors.
 #| cap-location: margin
 #| out.width: 80%
@@ -273,19 +279,20 @@ Because meta-analysis is such a well-established method, many of the relevant op
 
 As implied by the "funnel" moniker,\indexC{funnel plot} our plot looks a little like a funnel. Larger studies (those with smaller standard errors) cluster more closely around the mean of `r round(meta_all$b, digits)` than do smaller studies, but large and small studies alike have point estimates centered around the mean. That is, the funnel plot is symmetric.^[Classic funnel plots look more like @fig-meta-classic-funnel. Our version is different in a couple of ways. Most prominently, we don't have the vertical axis reversed (which we think is confusing). We also don't have the left boundary highlighted, because we think folks don't typically select for negative studies.]
 
-\clearpage
+<!-- \clearpage -->
 ```{r meta-classic-funnel}
 #| label: fig-meta-classic-funnel
+#| fig-column: margin
 #| fig-cap: "A classic funnel plot.\\indexC{funnel plot}"
 #| fig-alt: A plot showing an inverted funnel-shaped distribution of observed effect sizes against their corresponding standard errors.
-#| fig-height: 4
-#| fig-width: 6
-#| cap-location: margin
-#| out.width: 80%
+#| fig-height: 3
+#| fig-width: 3.75
+##| out.width: 80%
+##| cap-location: margin
 
 meta_p <- metafor::rma(yi = yi, vi = vi, data = dp, method = "REML", knha = TRUE)
 
-par(mar = c(4, 4, 1, 4))
+par(mar = c(4, 4, 0.1, 0.1))
 metafor::funnel(meta_all, xlab = "Standardized mean difference", family = .font)
 ```
 
@@ -293,7 +300,7 @@ Not all funnel plots\indexC{funnel plot} are symmetric! @Fig-meta-funnel-biased 
 
 ```{r meta-funnel-biased}
 #| label: fig-meta-funnel-biased
-#| fig-cap: "A significance funnel plot\\indexC{funnel plot} for the same simulated meta-analysis after publication bias has occurred. Orange points: studies with $p < 0.05$ and positive estimates. Grey points: studies with $p$ $\\ge$ $0.05$ or negative estimates. Black diamond: random-effects estimate of $\\widehat{\\mu}$."
+#| fig-cap: "A significance funnel plot\\indexC{funnel plot} for the same simulated meta-analysis after publication bias occurring. Orange points: studies with $p < 0.05$ and positive estimates. Grey points: studies with $p$ $\\ge$ $0.05$ or negative estimates. Black diamond: random-effects estimate of $\\widehat{\\mu}$."
 #| fig-alt: A plot showing a positively sloped linear distribution of observed effect sizes against their corresponding standard errors.
 #| cap-location: margin
 #| out.width: 80%
@@ -319,6 +326,7 @@ You may also have heard of "$p$-methods" to detect across-study biases\indexC{ac
 
 Going back to our running example, Paluck et al. used a regression-based approach to assess and correct for publication bias. This approach provided significant evidence of a relationship between the standard error and effect size (i.e., an asymmetric funnel plot\indexC{funnel plot}). Again, this asymmetry could reflect publication bias or other sources of correlation between studies' estimates and their standard errors. Paluck et al. also used this same regression-based approach to try to correct for potential publication bias.\indexC{publication bias} Results from this model indicated that the bias-corrected effect size estimate was close to zero. In other words, even though all studies estimated that intergroup contact decreased prejudice, it is still possible that there are unpublished studies that did not find this (or found that intergroup contact increased prejudice).
 
+\vfill
 ::: {.callout-note title="accident report"}
 ### Garbage in, garbage out? Meta-analyzing potentially problematic research {-}
 
@@ -339,6 +347,7 @@ Taken together, Paluck and colleagues' use of meta-analysis provided several imp
 
 Overall, meta-analysis is a key technique for aggregating evidence across studies. Meta-analysis allows researchers to move beyond the bias of naive techniques like vote counting and toward a more quantitative summary of an experimental effect. Unfortunately, a meta-analysis is only as good as the literature it's based on, so the aspiring meta-analyst must be aware of both within- and between-study biases! 
 
+\vfill
 ::: {.callout-note title="discussion questions"}
 1. Imagine that you read the following result in the abstract of a meta-analysis: "In 83 randomized studies of middle school children, replacing one hour of class time with mindfulness meditation significantly improved standardized test scores (standardized mean difference\indexC{standardized mean difference (SMD)} $\widehat{\mu} = 0.05$; 95% confidence interval: [$0.01, 0.09$]; $p<0.05$)." Why is this a problematic way to report on meta-analysis results? Suggest a better sentence to replace this one.
 
@@ -351,6 +360,7 @@ Overall, meta-analysis is a key technique for aggregating evidence across studie
 5. Why do you think small studies receive more weight in random-effects meta-analysis\indexC{meta-analysis!random-effects} than in fixed-effects meta-analysis?\indexC{meta-analysis!fixed-effects} Can you see why this is true mathematically based on the equations given above, and can you also explain the intuition in simple language?
 :::
 
+\clearpage
 ::: {.callout-note title="readings"}
 * A nice, free textbook with lots of good code examples: Harrer, Mathias, Pim Cuijpers, Furukawa Toshi A, and David D. Ebert [-@harrer2021]. *Doing Meta-Analysis with R: A Hands-On Guide*. Chapman & Hall/CRC Press. Available free online at <https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R>.
 :::

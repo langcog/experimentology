@@ -15,10 +15,10 @@ Simply put, data visualization is the act of "making the invisible visible."
 Our visual systems are remarkably powerful pattern detectors, and relationships that aren't at all clear when scanning through rows of raw data can immediately jump out at us when presented in an appropriate graphical form [@zacks2020designing].
 Good visualizations aim to deliberately harness this power and put it to work at every stage of the research process, from the quick sanity checks we run when first reading in our data to the publication-quality figures we design when we are ready to communicate our findings.
 
-
 Yet, our powerful pattern detectors can also be a liability; if we're not careful, we can easily be fooled into seeing patterns that are unreliable or even misleading.
 As psychology moves into an era of bigger data and more complex behaviors, we become increasingly reliant on **data visualization literacy**\indexC{data visualization literacy} [@borner2019data] to make sense of what is going on. Further, as a researcher reporting about your data, creating appropriate visualizations that are aligned with your analyses (as well as your design and preregistration) is an important part of [transparency]{.smallcaps} and [bias reduction]{.smallcaps} in your reporting.
 
+\vfill
 ::: {.callout-note title="case study"}
 ### Mapping a pandemic {-}
 
@@ -91,7 +91,7 @@ Analogous to the "default" or "saturated" model in @sec-models, the design plot\
 Critically, design plots\indexC{design plot} should neither omit particular manipulations because they didn't yield an effect or include extra covariates because they seemed interesting after looking at the data.
 Both of these steps are the visual analogue of $p$-hacking!\index{p-hacking} Instead, the design plot\indexC{design plot} is the "preregistered analysis" of your visualization: it illustrates a first look at the estimated causal effects from your experimental manipulations. In the words of @coppock2019, "Visualize as You Randomize"!
 
-It can sometimes be a challenge to represent the full pattern of manipulations from an experiment in a single plot. Below we give some tricks for maximizing the legible information in your plot. But if you have tried these and the design plot\indexC{design plot} still looks crowded and messy, that could indicate that your experiment is manipulating too many things at once!
+It can sometimes be a challenge to represent the full pattern of manipulations from an experiment in a single plot. Below we give some tricks for maximizing the legible information in your plot. But if you have tried these and the design plot\indexC{design plot} still looks crowded and messy, that may indicate that your experiment is manipulating too many things at once!
 
 There are strong (unwritten) conventions about how your confirmatory analysis is expected to map onto graphical elements, and following these conventions can minimize confusion.
 Start with the variables you manipulate, and make sure they are clearly visible.
@@ -99,15 +99,10 @@ Conventionally, the primary manipulation of interest (e.g., condition) goes on t
 Other critical variables of interest (e.g., secondary manipulations and demographics) are then assigned to other "visual variables" (e.g., color, shape, or size).
 
 ::: {.callout-note title="code"}
-The visualization library `ggplot` (see @sec-ggplot) makes the mapping of variables in the data to visual data. Part of a ggplot call is an `aes()` (short for aesthetics) mapping:
+The visualization library `ggplot2` (see @sec-ggplot) makes the mapping of variables in the data to visual data. Part of a `ggplot` call is an `aes()` (short for aesthetics) mapping:
 
 ```{r, opts.label='code'}
-aes(
-  x = ...,
-  y = ...,
-  color = ...,
-  linetype = ...,
-)
+aes(x = ..., y = ..., color = ..., linetype = ...)
 ```
 
 The aesthetics argument serves as a statement of how data are mapped to "marks" on the plot. This transparent mapping makes it very easy to explore different plot types by changing that `aes()` statement, as we'll see below. 
@@ -122,21 +117,19 @@ Now, we have two other variables that we might want to show: the condition (expe
 When we think about it, though, only condition is central to exposing the design.
 While we might be interested in whether some types of stimuli are systematically easier or harder than others, condition is more central for understanding the *logic* of the study.
 
-\clearpage
+<!-- \clearpage -->
+\vfill
 ::: {.callout-note title="code"}
 As a reminder, here's our code for loading the @stiller2015 data:
 
 ```{r viz-prepost1, echo=TRUE}
-repo <- "https://raw.githubusercontent.com/langcog/experimentology/main"
-
+repo <- "https://github.com/langcog/experimentology/raw/main"
 sgf <- read_csv(file.path(repo, "data/tidyverse/stiller_scales_data.csv")) |>
   mutate(age_group = cut(age, 2:5, include.lowest = TRUE), 
-         condition = condition |>
-           fct_recode("Experimental" = "Label", "Control" = "No Label"))
+         condition = fct_recode(condition,
+                                "Experimental" = "Label", "Control" = "No Label"))
 
-sgf_cond_means <- sgf |>
-  group_by(condition, age_group) |>
-  summarize(rating = mean(correct))
+sgf_means <- sgf |> group_by(condition, age_group) |> summarize(rating = mean(correct))
 ```
 :::
 
@@ -149,6 +142,7 @@ You might think: well, in principle, these assignments are all arbitrary anyway.
 As long as we clearly label our choices, it shouldn't matter whether we use lines, points, bars, colors, textures, or shapes.
 It's true that there are many ways to show the same data.
 But being thoughtful about our choices can make it much easier for readers to interpret our findings.
+
 The second principle of statistical visualizations is to *facilitate comparison* along the dimensions relevant to our scientific questions.
 It is easier for our visual system to accurately compare the location of elements (e.g., noticing that one point is a certain distance away from another) than to compare their areas or colors (e.g., noticing that one point is bigger or brighter than another).
 @Fig-viz-hierarchy shows an ordering of visual variables based on how accurate our visual system is in making comparisons.
@@ -159,45 +153,49 @@ For example, we *could* start by plotting the accuracy of each age group as colo
 #| fig-cap: A first visualization of the @stiller2015 data.
 #| fig-alt: A plot of condition (experimental/control) against age group (2-3, 3-4, 4-5); color of each cell corresponds to accuracy.
 #| cap-location: margin
-#| out-width: 65%
+#| out-width: 85%
+#| fig-height: 3
 
-ggplot(sgf_cond_means, aes(x = age_group, y = condition, fill = rating)) +
+ggplot(sgf_means, aes(x = age_group, y = condition, fill = rating)) +
   geom_tile() +
   labs(x = "Age group", y = "Condition", fill = "Rating")
 ```
 
-\clearpage
+<!-- \clearpage -->
+<!-- \vfill -->
 ::: {.callout-note title="code"}
 To make this (bad) visualization, we used a `ggplot` function called `geom_tile()`.
 
 ```{r fig-viz-prepost2, opts.label='code'}
 ```
 
-`geom_tile()` is commonly used to make heat maps (<https://en.wikipedia.org/wiki/Heat_map>): for each value of some pair of variables (x, y), it shows a color representing the magnitude of a third variable (z).
-While a heat map is a silly way to visualize the @stiller2015 data, consider using `geom_tile()` when you have a pair of continuous variables, each taking a large range of values.
-In these cases, bar plots and line plots tend to get extremely cluttered, making it hard to see the relationship between the variables.
-Heat maps help these relationships to pop out as clear "hot" and "cold" regions.
-For example, in @barnett2022, a heatmap was used to show a specific range of parameters where an effect of interest emerged (see @fig-viz-heatmap).
+<!-- `geom_tile()` is commonly used to make heat maps (<https://en.wikipedia.org/wiki/Heat_map>): for each value of some pair of variables (x, y), it shows a color representing the magnitude of a third variable (z). -->
+<!-- While a heat map is a silly way to visualize the @stiller2015 data, consider using `geom_tile()` when you have a pair of continuous variables, each taking a large range of values. -->
+<!-- In these cases, bar plots and line plots tend to get extremely cluttered, making it hard to see the relationship between the variables. -->
+<!-- Heat maps help these relationships to pop out as clear "hot" and "cold" regions. -->
+<!-- For example, in @barnett2022, a heatmap was used to show a specific range of parameters where an effect of interest emerged (see @fig-viz-heatmap). -->
 
-![A heatmap showing a specific range of continuous parameters where an effect emerged. @barnett2022, Figure 3 (licensed under CC BY 4.0).](images/viz/viz_heatmap_example.png){#fig-viz-heatmap width="35%" fig-alt="A heatmap of stick length against agent bias; there is a bright spot in the bottom right-hand corner."}
+<!-- ![A heatmap showing a specific range of continuous parameters where an effect emerged. @barnett2022, Figure 3 (licensed under CC BY 4.0).](images/viz/viz_heatmap_example.png){#fig-viz-heatmap width="35%" fig-alt="A heatmap of stick length against agent bias; there is a bright spot in the bottom right-hand corner."} -->
 :::
 
+\clearpage
 Or we could plot the accuracies as sizes/areas (@fig-viz-prepost3).
 
 ```{r fig-viz-prepost3}
 #| fig-cap: Iterating on the Stiller data using size.
 #| fig-alt: A plot the same as 15.6 but instead of 6 colored cells there are 6 dots of various sizes; it's difficult to compare values.
 #| cap-location: margin
-#| out-width: 65%
+#| out-width: 85%
+#| fig-height: 3
 
-ggplot(sgf_cond_means, aes(x = age_group, y = condition, size = rating)) +
+ggplot(sgf_means, aes(x = age_group, y = condition, size = rating)) +
   geom_point() +
   labs(x = "Age group", y = "Condition", size = "Rating")
 ```
 
-\clearpage
+<!-- \clearpage -->
 ::: {.callout-note title="code"}
-To make this (bad) visualization, we mapped the rating to the `size` aesthetic in our `aes()` call.
+To make this (also bad) visualization, we mapped the rating to the `size` aesthetic in our `aes()` call.
 
 ```{r fig-viz-prepost3, opts.label='code'}
 ```
@@ -207,23 +205,24 @@ These plots allow us to see that one condition is (qualitatively) bigger than ot
 Additionally, this way of plotting the data places equal emphasis on age and condition, but we may instead have in mind particular contrasts, like the *change* across ages and how that change differs across conditions.
 An alternative is to show six bars: three on the left showing the "experimental" phase and three on the right showing the "control" phase.
 Maybe the age groups then are represented as different colors, as in @fig-viz-prepost4.
+<!-- \clearpage -->
 
 ```{r fig-viz-prepost4}
 #| fig-cap: A bar graph of the Stiller data.
 #| fig-alt: A plot of Mean accuracy against Condition; Age groups represented by bars of different colors.
 #| cap-location: margin
-#| out-width: 80%
+#| out-width: 85%
 
-ggplot(sgf_cond_means, aes(x = condition, y = rating, fill = age_group)) +
+ggplot(sgf_means, aes(x = condition, y = rating, fill = age_group)) +
   geom_col(position = "dodge") +
   labs(x = "Condition", y = "Mean accuracy", fill = "Age group")
 ```
 
 ::: {.callout-note title="code"}
-We make bar plots using the `ggplot` function `geom_col()`.
+We make bar plots using `geom_col()`.
 By default, it creates "stacked" bar plots, where all values associated with the same x value (here, `condition`) get stacked up on top of one another.
 Stacked bar plots can be useful if, for example, you're plotting proportions that sum up to 1, or want to show how some big count is broken down into subcategories.
-It's also common to use `geom_area()` for this purpose, which connects adjacent regions.
+<!-- It's also common to use `geom_area()` for this purpose, which connects adjacent regions. -->
 But the more common bar plot used in psychology puts the bars next to one another, or "dodges" them.
 To accomplish this, we use the `position = "dodge"` argument:
 
@@ -231,7 +230,7 @@ To accomplish this, we use the `position = "dodge"` argument:
 ```
 :::
 
-\clearpage
+<!-- \clearpage -->
 This plot is slightly better: it's easier to compare the heights of bars than the "blueness" of squares, and mapping age to color draws our eye to those contrasts.
 However, we can do even better by noticing that our experiment was designed to test an *interaction*.\indexC{interaction effect}
 That statistic of interest is a difference of differences.
@@ -245,11 +244,11 @@ Consider the line plot in @fig-viz-prepost5.
 #| fig-cap: A line graph of the Stiller data promotes comparison.
 #| fig-alt: A plot of Mean Accuracy against Age group; there are two lines, corresponding to the two conditions.
 #| cap-location: margin
-#| out-width: 80%
+#| out-width: 85%
+#| fig-height: 3
 
-ggplot(sgf_cond_means, aes(x = age_group, y = rating, color = condition)) +
-  geom_point() +
-  geom_line(aes(group = condition)) +
+ggplot(sgf_means, aes(x = age_group, y = rating, color = condition)) +
+  geom_point() + geom_line(aes(group = condition)) +
   labs(x = "Age group", y = "Mean accuracy", color = "Condition")
 ```
 
@@ -278,7 +277,7 @@ Here are a few corollaries of this principle (adapted from [a presentation by Ka
 
 <!-- Finally, if the same manipulation or variable appears across multiple figures in your paper, keep the color mapping consistent: it is confusing if "red" means something different from figure to figure.  -->
 
-
+\clearpage
 ### Principle 3: Show the data
 
 Looking at older papers, you may be alarmed to notice how little information is contained in the graphs.
@@ -288,30 +287,45 @@ It hides real variation in the data, making a noisy effect based on a few data p
 Additionally, it collapses the *distribution* of the data, making a multimodal distribution look the same as a unimodal one. 
 The third principle of modern statistical visualization is to *show the data* and visualize variability in some form.
 
-\clearpage
 The most minimal form of this principle is to *always include error bars*.^[And be sure to tell the reader what the error bars represent---a 95% confidence interval?\indexC{confidence interval (CI)} A standard error of the mean?---without this information, error bars are hard to interpret (see the [Depth]{.smallcaps} box below).]
 Error bars turn a purely descriptive visualization into an inferential one. 
 They represent a minimal form of uncertainty about the possible statistics that might have been observed, not just the one that was actually observed. 
 @Fig-viz-show-data1 shows the data with (bootstrapped) error bars. 
 <!-- As such, they allow the viewer to interpret the means as *estimates*.  -->
+<!-- \clearpage -->
+
+```{r fig-viz-show-data-boot}
+sgf_boot <- sgf |>
+  group_by(condition, age_group) |>
+  tidyboot::tidyboot_mean(column = correct)
+```
 
 ```{r fig-viz-show-data1}
 #| fig-cap: Error bars (95% CIs) added to the Stiller data line graph.
 #| fig-alt: A plot the same as 15.10 but with error bars at each point.
 #| cap-location: margin
-#| out-width: 80%
+#| out-width: 85%
+#| fig-height: 3
 
-sgf_cond_boot <- sgf |>
-  group_by(condition, age_group) |>
-  tidyboot::tidyboot_mean(correct)
-
-ggplot(sgf_cond_boot, aes(x = age_group, y = empirical_stat, color = condition)) +
-  geom_point() +
-  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0) +
+ggplot(sgf_boot, aes(x = age_group, y = empirical_stat, color = condition)) +
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
   geom_line(aes(group = condition)) +
   labs(x = "Age group", y = "Mean accuracy", color = "Condition")
 ```
 
+::: {.callout-note title="code"}
+Confidence intervals can come from a variety of methods, as discussed in @sec-inference and @sec-models. Here we use bootstrapped CIs for illustration:
+
+```{r fig-viz-show-data-boot, opts.label='code'}
+```
+
+There are several geoms that can be used to show error bars, including `geom_errorbar()` and `geom_linerange()`. Here we use `geom_pointrange()` to compactly show both the points and associated error bars:
+
+```{r fig-viz-show-data1, opts.label='code'}
+```
+:::
+
+<!--
 ::: {.callout-note title="code"}
 A common problem arises when we want to add error bars to a dodged bar plot.
 Naively, we'd expect we could just dodge the error bars in the same way we dodged the bars themselves:
@@ -331,6 +345,7 @@ geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper),
 
 This does the trick!
 :::
+-->
 
 But we can do even better. 
 By overlaying the distribution of the actual data points on the same plot, we can give the reader information about not just the statistical inferences but also the underlying data supporting those inferences.
@@ -341,19 +356,20 @@ This question is closely related to our discussion of mixed-effects models in @s
 Here, a reader is likely to wonder how much variance was found across *different children* in a given age group.
 To show such variation, we aggregate to calculate an accuracy score for each participant.^[While participant-level variation is a good default, the relevant level of aggregation may differ across designs. For example, collective behavior studies may choose to show the data point for each *group*. This choice of unit is also important when generating error bars: if you have a small number of participants but many observations per participant, you are faced with a choice. You may either bootstrap over the flat list of all individual observations (yielding very small error bars), or you may first aggregate within participants (yielding larger error bars that account for the fact that repeated observations from the same participant are not independent).]
 
+<!-- \clearpage -->
 There are many ways of showing the resulting distribution of participant-level data.
 For example, a boxplot shows the median (a horizontal line) in the center of a box extending from the lower quartile (25%) to the upper quartile (75%).
 Lines then extend out to the biggest and smallest values (excluding outliers, which are shown as dots).
 
 @Fig-viz-show-data2 gives the boxplots for the Stiller data, which don't look that informative---perhaps because of the coarseness of individual participant averages due to the small number of trials. 
 
-\vspace{3.5em}
+\vspace{4.5em}
 
 ```{r fig-viz-show-data2}
 #| fig-cap: A boxplot of the Stiller data.
 #| fig-alt: A plot with same axes as 15.11 but instead of lines there are boxes with whiskers; color of boxes corresponds to condition.
 #| cap-location: margin
-#| out-width: 80%
+#| out-width: 90%
 
 sgf_subj_means <- sgf |>
   group_by(condition, age_group, subid) |>
@@ -362,14 +378,12 @@ sgf_subj_means <- sgf |>
 ggplot(sgf_subj_means, aes(x = age_group, y = rating, color = condition)) +
   geom_boxplot(alpha = 0.8) +
   labs(x = "Age group", y = "Mean accuracy", color = "Condition")
-
 ```
 
 ::: {.callout-note title="code"}
-In `ggplot`, we can make box plots using `geom_boxplot()`:
+First we compute participant-level accuracies, then we can make a box plot using `geom_boxplot()`:
 
-```{r, opts.label='code'}
-geom_boxplot(alpha = 0.8)
+```{r fig-viz-show-data2, opts.label='code'}
 ```
 
 A common problem to run into is that `geom_boxplot()` requires the variable assigned to `x` to be discrete.
@@ -377,15 +391,16 @@ If you have discrete levels of a numeric variable (e.g., age groups), make sure 
 Otherwise, if it's still coded as `numeric`, `ggplot` will collapse all of the levels together!
 :::
 
-\clearpage
+<!-- \clearpage -->
 It is also common to show the raw data as jittered values with low transparency.
 In @fig-viz-show-data4, we jitter the points because many participants have the same numbers (e.g., 50%), and if they overlap it is hard to see how many points there are.
 
+<!-- \clearpage -->
 ```{r fig-viz-show-data4}
 #| fig-cap: Jittered points representing the data distribution of the Stiller data.
 #| fig-alt: A plot the same as 15.10 but with clouds of points; points cluster around possible accuracy values for an individual.
 #| cap-location: margin
-#| out-width: 80%
+#| out-width: 90%
 
 sgf_subj_means <- sgf |> 
   group_by(condition, age_group, subid) |>
@@ -400,10 +415,11 @@ ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition)) +
   geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
   geom_line(aes(group = condition)) +
   geom_jitter(data = sgf_subj_means, alpha = 0.25, width = 0.1, height = .03) +
-  labs(x = "Age group", y = "Mean accuracy") 
+  labs(x = "Age group", y = "Mean accuracy", color = "Condition") 
 
 ```
 
+\vfill
 ::: {.callout-note title="code"}
 Adding the jittered points is simple using `geom_jitter()`, but we are starting to have a fairly complex plot, so maybe it's worth taking stock of how we get there. 
 
@@ -415,7 +431,7 @@ To plot both *condition* means and *participant* means, we need to create two di
 The most noteworthy aspect of this code is that `geom_jitter()` isn't just using a different aesthetic; it also takes a different dataframe altogether! Mixing dataframes can be an important tool for creating complex plots.
 :::
 
-\clearpage
+<!-- \clearpage -->
 Perhaps the format that takes this principle the furthest is the so-called raincloud plot [@allen2019raincloud] shown in @fig-viz-raincloud.
 A raincloud plot combines the raw data ("rain") with a smoothed density ("cloud") and a boxplot giving the median and quartiles of the distribution. 
 
@@ -424,16 +440,26 @@ A raincloud plot combines the raw data ("rain") with a smoothed density ("cloud"
 #| fig-alt: A plot with axes flipped to show densities as horizontal ridges with small boxplots underneath and clouds of jittered points.
 #| cap-location: margin
 #| fig-height: 6
-#| out-width: 80%
+#| out-width: 90%
 
 library(ggridges)
 library(ggstance)
+
 ggplot(sgf_subj_means, aes(y = age_group, x = rating, color = condition)) +
-  geom_density_ridges(aes(fill = condition), alpha = 0.2, scale = 0.7,
-                      jittered_points = TRUE, point_alpha = 0.7,
-                      position = position_raincloud(width = 0.05, height = 0.15,
-                                                    ygap = 0.1)) +
+  
+  geom_density_ridges(
+    # density plots ("clouds") staggered by condition
+    aes(fill = condition), alpha = 0.2, scale = 0.7,
+    # with jittered points ("rain")
+    jittered_points = TRUE, point_alpha = 0.7,
+    # position adjustments specifically for geom_density_ridges()
+    position = position_raincloud(width = 0.05, height = 0.15, ygap = 0.1)
+  ) +
+  
+  # horizontal boxplots (with outliers hidden)
   geom_boxploth(width = 0.1, alpha = 0.2, outlier.shape = NA, show.legend = FALSE) +
+  
+  # some customization for axes and legends
   scale_y_discrete(expand = expansion(mult = c(0.2, 0.4))) +
   guides(fill = "none", color = guide_legend(reverse = TRUE)) +
   labs(x = "Mean accuracy", y = "Age group", color = "Condition") +
@@ -447,6 +473,7 @@ This raincloud plot requires two additional plotting packages: `ggridges` [@wilk
 ```
 :::
 
+\clearpage
 ::: {.callout-note title="depth"}
 ### Visualizing uncertainty with error bars {-}
 
@@ -470,7 +497,7 @@ As long as you can write a code snippet to compute a value from a dataset, you c
 ```{r fig-viz-boot}
 #| output: false
 #| fig-height: 2.25
-#| fig-width: 6.3
+#| fig-width: 7
 
 boot <- sgf |> 
   group_by(condition, age_group, subid) |>
@@ -512,7 +539,7 @@ bind_rows(boot, ci_sem, ci_ci) |>
 :::
 
 ::: {.content-visible when-format="pdf"}
-![](015-viz_files/figure-pdf/fig-viz-boot-1.png){width="80%"}
+![](015-viz_files/figure-pdf/fig-viz-boot-1.png){width="85%"}
 :::
 
 Three different error bars for the Stiller data: bootstrapped 95% confidence intervals (left), standard error of the mean (middle), and analytically computed confidence intervals (right).
@@ -545,12 +572,13 @@ The worst offenders have a very low density while also using a lot of excess ink
 The defaults in modern visualization libraries like `ggplot` prevent some of the worst offenses but are still often suboptimal.
 For example: consider whether the visual complexity introduced by the default grey background and grid lines in @fig-viz-themes0 is justified, or whether a more minimal theme would be sufficient.
 
+\vfill
 ```{r viz-themes0}
 #| label: fig-viz-themes0
 #| fig-cap: Standard "gray"-themed Stiller figure.
 #| fig-alt: A plot same as 15.13 but with a grey background and vertical/horizontal guidelines; color legend on the right.
 #| cap-location: margin
-#| out-width: 85%
+#| out-width: 90%
 
 ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition)) +
   geom_line(aes(group = condition)) +
@@ -561,8 +589,8 @@ ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition)) +
   theme_gray()
 ```
 
-<!-- \clearpage -->
-@Fig-viz-themes shows a slightly more "styled" version of the same plot with labels directly on the plot and a lighter-weight theme.^[See the `ggthemes` package [@arnold2023] for a good collection of themes.]
+\clearpage
+@Fig-viz-themes shows a slightly more "styled" version of the same plot with labels directly on the plot and a lighter-weight theme.
 
 ```{r viz-themes}
 #| label: fig-viz-themes
@@ -570,14 +598,14 @@ ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition)) +
 #| fig-alt: A plot same as 15.18 but with no background/guidelines; lines directly labeled with their condition in corresponding colors.
 #| cap-location: margin
 #| fig-width: 5.5
-#| out-width: 85%
+#| out-width: 90%
 
 library(directlabels)
 
 ggplot(sgf_subj_ci, aes(x = age_group, y = rating, color = condition)) +
   geom_line(aes(group = condition)) +
   geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
-  geom_jitter(alpha = 0.25, width = 0.05, height=.03, data = sgf_subj_means) +
+  geom_jitter(alpha = 0.25, width = 0.05, height = .03, data = sgf_subj_means) +
   geom_dl(aes(label = condition),
           method = list("last.points", dl.trans(x = x + 0.5), fontfamily = .font)) +
   scale_x_discrete(expand = expansion(mult = c(0.1, 0.3))) +
@@ -590,7 +618,7 @@ To produce the plot in @fig-viz-themes, we've added a few styling elements inclu
 
 * The nice and minimal custom theme, with a larger font size.
 * A more accessible color palette (`scale_colour_ptol()`) from the `ggthemes` package [@arnold2023].
-* Direct labels using `geom_dl()` from the `directlabels` package [@hocking2023].
+* Direct labels using `geom_dl()` from the `directlabels` package [@hocking2023]:
 
 <!-- This last item is a bit trickier to implement. To do so, we select one set of points to label and feed these in as a filtered data frame. A few manual arguments customize the placement of the labels (you can spend hours tweaking this sort of thing by hand). -->
 
@@ -599,6 +627,7 @@ geom_dl(aes(label = condition), method = list("last.points", dl.trans(x = x + 0.
 ```
 :::
 
+\vfill
 Here are a few final tips for making good confirmatory visualizations:
 
 * Make sure the font size of all text in your figures is legible and no smaller than other text in your paper (e.g., 10 pt). This change may require, for example, making the axis breaks sparser, rotating text, or changing the aspect ratio of the figure. 
@@ -619,17 +648,17 @@ An equally important role is called *exploratory visualization*: the more routin
 This role is analogous to the sense of exploratory data analyses discussed in @sec-prereg.
 We typically do not preregister exploratory visualizations, and when we decide to include them in a paper they are typically in the service of a secondary argument (e.g., checking the robustness of an effect or validating that some assumption is satisfied).
 
-This kind of visualization plays a ubiquitous role in a researcher's day-to-day activities.
-While confirmatory visualization is primarily audience-driven and concerned with visual communication, exploratory visualization is first and foremost a "cognitive tool" for the researcher.
-The first time we load in a new dataset, we start up a new feedback loop---we ask ourselves questions and answer them by making visualizations. 
+This kind of visualization plays a ubiquitous role in a researcher's workflow.
+While confirmatory visualization is primarily audience-driven and concerned with visual communication, exploratory visualization is first and foremost a cognitive tool for the researcher.
+The first time we load in a new dataset, we start up a new feedback loop---we ask questions and answer them by making visualizations. 
 These visualizations then raise further questions and are often our best tool for debugging our code.
-In this section, we consider some best practices for exploratory visualization.
+Let's consider some best practices for exploratory visualization.
 
 ### Examining distributional information
 
 The primary advantage of exploratory visualization---the reason it is uniquely important for data science---is that it gives us access to holistic information about the distribution of the data that cannot be captured in any single summary statistic.
 The most famous example is known as "Anscombe's quartet," a set of four datasets with identical statistics (@fig-viz-anscombe).
-They have the same means, the same variances, the same correlation, the same regression line, and the same $R^2$ value. 
+They have the same means, the same variances, the same correlation, the same regression line, and the same $r^2$ value. 
 Yet, when they are plotted, they reveal striking structural differences. 
 The first looks like a noisy linear relationship---the kind of idealized relationship we imagine when we imagine a regression line.
 But the second is a perfect quadratic arc,\indexC{quadratic effect} the third is a perfectly noiseless line with a single outlier, and the fourth is nearly categorical: every observation except one shares exactly the same x-value.
@@ -637,8 +666,9 @@ But the second is a perfect quadratic arc,\indexC{quadratic effect} the third is
 ```{r fig-viz-anscombe}
 #| fig-cap: Anscombe's quartet [@anscombe1973graphs].
 #| fig-alt: "4 plots with same line of best fit but different points: scattered; quadratic; linear with 1 outlier; all but 1 same value."
-#| fig-width: 8
-#| fig-height: 2.5
+#| fig-width: 5
+#| fig-height: 4
+#| out-width: 80%
 #| cap-location: margin
 
 ans <- datasets::anscombe
@@ -648,7 +678,7 @@ ans_long <- ans |>
   pivot_wider()
 
 ggplot(ans_long, aes(x = x, y = y)) +
-  facet_wrap(vars(k), nrow = 1,
+  facet_wrap(vars(k), nrow = 2,
              labeller = as_labeller(c("1" = "I", "2" = "II",
                                       "3" = "III", "4" = "IV"))) +
   geom_smooth(method = "lm", se = FALSE, fullrange = TRUE, colour = pal$grey, linewidth = 0.5) +
@@ -711,6 +741,7 @@ datasauRus::datasaurus_dozen |>
 \vspace{-1em}
 <!-- ::: -->
 
+\vfill
 ::: {.callout-note title="accident report"}
 ### [Distributional] gorillas in our midst {-}
 
@@ -800,6 +831,18 @@ Maybe our design wasn't perfectly balanced, or something went wrong with a parti
 
 So, which visualizations should we start with? The best practice is to always start by making histograms of the raw data. As an example, let's consider the rich and interesting dataset shared by @blake2015ontogeny in their article "Ontogeny of Fairness in Seven Societies." This study examines the emergence of children's reasoning about fairness---both when it benefits them and when it harms them---across cultures.
 
+In this study, pairs of children played the "inequity game": they sat across from one another and were given a particular allocation of snacks.
+On some trials, each participant was allocated the same amount ("equal" trials) and on some trials they were allocated different amounts ("unequal" trials).
+One participant was chosen to be the "actor" and got to choose whether to accept or reject the allocation: in the case of rejection, neither participant got anything.
+The critical manipulation was between two forms of inequity.
+Some pairs were assigned to the "disadvantageous" condition, where the actor was allocated less than their partner on unequal trials (e.g., one vs four).
+Others were assigned to the "advantageous" condition, where they were allocated more (e.g., four vs one).
+
+The confirmatory **design plot**\indexC{design plot} for this study would focus on contrasting developmental trajectories for advantageous vs disadvantageous inequality.
+However, this is a complex, multivariate dataset, including 866 pairs from different age groups and different testing sites across the world which used subtly different protocols.
+How might we go about the process of exploratory visualization for this dataset?
+
+\vfill
 ::: {.callout-note title="code"}
 If you want to follow along with this example at home, you can load the data from our repository!
 
@@ -818,17 +861,6 @@ fairness <- fairness_raw |>
   arrange(country, condition, subj_id, trial_num)
 ```
 :::
-
-In this study, pairs of children played the "inequity game": they sat across from one another and were given a particular allocation of snacks.
-On some trials, each participant was allocated the same amount ("equal" trials) and on some trials they were allocated different amounts ("unequal" trials).
-One participant was chosen to be the "actor" and got to choose whether to accept or reject the allocation: in the case of rejection, neither participant got anything.
-The critical manipulation was between two forms of inequity.
-Some pairs were assigned to the "disadvantageous" condition, where the actor was allocated less than their partner on unequal trials (e.g., one vs four).
-Others were assigned to the "advantageous" condition, where they were allocated more (e.g., four vs one).
-
-The confirmatory **design plot**\indexC{design plot} for this study would focus on contrasting developmental trajectories for advantageous vs disadvantageous inequality.
-However, this is a complex, multivariate dataset, including 866 pairs from different age groups and different testing sites across the world which used subtly different protocols.
-How might we go about the process of exploratory visualization for this dataset?
 
 ### Plot data collection details
 
@@ -1076,8 +1108,6 @@ We often find it convenient to filter the summary dataset in the plotting call, 
 
 Now let's rebin the data into two-year age groups so that individual point estimates are a bit more reliable, and add in the other countries.^[Binning data is a trick that we often use for reducing complexity in a plot when data are noisy. It should be used with care, however, since different binning decisions can sometimes lead to different conclusions. Here we tried several binning intervals and decided that two-year age bins showed the underlying trends pretty well.]
 
-\clearpage
-
 ```{r fig-viz-blake10}
 #| fig-cap: Rejection rates by age for all data in the Blake dataset.
 #| fig-alt: A grid of scatterplots analogous to those in 15.29 but separated by country x [un]equal; color indicates [dis]advantageous.
@@ -1118,6 +1148,7 @@ Despite the difference between the plot above and this one, the code to produce 
 ```
 :::
 
+\clearpage
 ### Visualization as debugging
 
 The point of exploratory visualization is to converge toward a better understanding of what's going on in your data.
@@ -1137,12 +1168,14 @@ We particularly focused on the need to make visualization part of the experiment
 Picking up the idea of a "default model" from @sec-models, we discussed a default "design plot" that reflects the key choices made in the experimental design.
 Within this framework, we then discussed different visualizations of distribution and variability that better align our graphics with the principles of measurement and attention to raw data that we have been advocating throughout.
 
+\vfill
 ::: {.callout-note title="discussion questions"}
 1. Choose a recent piece of research that you've heard about and try to sketch the "design plot"\indexC{design plot|)} with pencil and paper. What does and doesn't work? How does your sketch differ from the visualizations in the paper?
 
 2. The "design plot"\indexC{design plot} idea that we've discussed here can run into problems when an experimental design is too complex to show on a single plot. Imagine you had data from a trial of attention deficit hyperactivity disorder (ADHD) treatment that manipulated both whether a medication was given and whether patients received therapy in a crossed design. The researchers measured two different outcomes: parent report symptom severity and teacher report symptom severity in four different time-points (baseline, three months, six months, and nine months). How could you show the data from such an experiment in a transparent way?
 :::
 
+\clearpage
 
 ::: {.callout-note title="readings"}
 There are many good introductions to data visualization. Here are two social-science focused books whose advice we agree with and that also contain a lot of practical information and helpful R code for the same packages we use here.  

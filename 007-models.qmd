@@ -354,9 +354,11 @@ That said, there are some contexts in which it does make sense to depart from th
 ![Example stimulus materials analogous to those used in @stiller2015.](images/models/sgf.png){#fig-models-sgf-stim .column-margin fig-alt="An illustration of three cartoon faces: one with hat and glasses, one with glasses, and one with neither hat nor glasses."}
 
 ```{r models-sgf-data}
-sgf <- read_csv("https://raw.githubusercontent.com/langcog/experimentology/main/data/tidyverse/stiller_scales_data.csv") |>
+repo <- "https://github.com/langcog/experimentology/raw/main"
+sgf <- read_csv(file.path(repo, "data/tidyverse/stiller_scales_data.csv")) |>
   mutate(age_group = cut(age, 2:5, include.lowest = TRUE), 
-         condition = fct_recode(condition, "Experimental" = "Label", "Control" = "No Label"))
+         condition = fct_recode(condition,
+                                "Experimental" = "Label", "Control" = "No Label"))
 ```
 
 All this advice may seem abstract, so let's put it into practice on a simple example. For a change, let's look at an experiment that's not about tea tasting. Here we'll consider data from an experiment testing preschool children's language comprehension [@stiller2015]. In this experiment, two- to five-year-old children saw displays like the one in @fig-models-sgf-stim. In the experimental condition,\indexC{experimental condition} a puppet might say, for example, "My friend has glasses! Which one is my friend?" The goal was to measure how many children made the "pragmatic inference" that the puppet's friend was the face with glasses and *no* hat. 
@@ -367,11 +369,11 @@ To estimate the effect, participants were randomly assigned to either the experi
 If you want to follow along with this example, you'll have to load the example data and do a little bit of preprocessing (also covered in @sec-tidyverse):
 
 ```{r, opts.label='code'}
-repo <- "https://raw.githubusercontent.com/langcog/experimentology/main"
+repo <- "https://github.com/langcog/experimentology/raw/main"
 sgf <- read_csv(file.path(repo, "data/tidyverse/stiller_scales_data.csv")) |>
   mutate(age_group = cut(age, 2:5, include.lowest = TRUE), 
-         condition = condition |>
-           fct_recode("Control" = "No Label", "Experimental" = "Label"))
+         condition = fct_recode(condition,
+                                "Experimental" = "Label", "Control" = "No Label"))
 ```
 :::
 
