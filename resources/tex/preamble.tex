@@ -80,24 +80,31 @@
 \KOMAoptions{headwidth=textwithmarginpar} % make header full width
 \automark{chapter}
 \clearpairofpagestyles
-\renewcommand{\chaptermark}[1]{\markboth{#1}{}} % prevent chaptermark from uppercasing
-% inner head: recto chapter number (except preface), verso chapter title
-\ihead{\Ifthispageodd{\textsc{\leftmark}}{\ifnum\value{chapter}>0 \thechapter\hspace{3pt} \fi}}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}} % prevent chaptermark from having page number
+
+% inner head
+\ihead{
+  \Ifthispageodd{\textsc{\leftmark}}  % odd (recto) pages: chapter title
+                % even (verso) pages: "Chapter" + chapter number (except just title for preface)
+                {\ifnum\value{chapter}>0 \textsc{\chaptername\ \thechapter} \else \textsc{\leftmark} \fi}}
 % outer head: page number
 \ohead{\pagemark}
 
 % toc -- fonts
-\usepackage[titles]{tocloft}
+% \usepackage[titles]{tocloft}
+\usepackage{tocloft}
 \renewcommand{\cftpartfont}{\sffamily\scshape\Large}     % part title
 \renewcommand{\cftpartpagefont}{\sffamily\scshape\large} % part page number
 \renewcommand{\cftchapfont}{\sffamily\scshape\large}     % chapter title
 \renewcommand{\cftchappagefont}{\sffamily\scshape\large} % chapter page number
+\renewcommand{\cfttoctitlefont}{\sffamily\scshape\huge}  % TOC title
 
 % toc -- vertical spacing
 \def\bigskip{1em}
 \def\smallskip{.05em}
 \setlength{\cftbeforepartskip}{\bigskip}      % part vspace before
 \setlength{\cftbeforechapskip}{\smallskip}    % chapter vspace before
+\setlength{\cftbeforetoctitleskip}{0em}       % TOC title vspace before
 
 % toc -- part entries customization
 \newlength{\mylenprt}
@@ -155,18 +162,6 @@
 
 % space above and below equations
 \usepackage[nodisplayskipstretch]{setspace}
-% \usepackage{xpatch}
-% \xapptocmd\normalsize{%
-%  \abovedisplayskip=6.5pt plus 3.5pt minus 3pt
-%  \belowdisplayskip=6.5pt plus 3.5pt minus 3pt
-%  \abovedisplayshortskip=0pt
-%  \belowdisplayshortskip=6.5pt plus 3.5pt minus 3pt
-% }{}{}
-
-% 11.0pt plus 3.0pt minus 6.0pt
-% 11.0pt plus 3.0pt minus 6.0pt
-% 0.0pt plus 3.0pt
-% 6.5pt plus 3.5pt minus 3.0pt
 
 % override quarto box settings for code boxes
 \ifdefined\Shaded\renewenvironment{Shaded}
@@ -177,6 +172,11 @@
 % index
 \usepackage{imakeidx}
 \makeindex[intoc=true]
+
+% capitalization for see / seealso
+% \renewcommand\seename{See}
+% \renewcommand\alsoname{See also}
+
 % custom index command to capitalize first letter of entries
 \ExplSyntaxOn
 \NewDocumentCommand{\indexC}{m}
