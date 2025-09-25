@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.56">
+<meta name="generator" content="quarto-1.8.24">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -52,17 +52,21 @@ div.csl-indent {
 <meta name="quarto:offset" content="./">
 <link href="./006-inference.html" rel="next">
 <link href="./004-ethics.html" rel="prev">
-<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-31c05e6bce3cfe91938cb3b7813f7d74.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-e343f61154b2a21dc751129c8b7c1acd.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-31c05e6bce3cfe91938cb3b7813f7d74.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -114,7 +118,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -132,7 +136,169 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-sidebar docked slimcontent">
+<body class="nav-sidebar docked slimcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -154,7 +320,9 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Experimentology</a> 
         <div class="sidebar-tools-main tools-wide">
@@ -358,7 +526,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./102-rmarkdown.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">R Markdown and Quarto</span></span></a>
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Quarto (and R Markdown)</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -407,6 +575,7 @@ window.Quarto = {
 <!-- main -->
 <main class="content page-columns page-full" id="quarto-document-content">
 
+
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./005-estimation.html">Statistics</a></li><li class="breadcrumb-item"><a href="./005-estimation.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Estimation</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-estimation" class="quarto-section-identifier"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Estimation</span></span></h1>
@@ -432,7 +601,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-learning goals
+<span class="screen-reader-only">Note</span>learning goals
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -459,7 +628,7 @@ learning goals
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-case study
+<span class="screen-reader-only">Note</span>case study
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -474,18 +643,18 @@ case study
 </div>
 <section id="estimating-a-quantity" class="level2 page-columns page-full" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="estimating-a-quantity"><span class="header-section-number">5.1</span> Estimating a quantity</h2>
+<p>If experiments are about estimating effects, how do we actually use our experimental data to make these estimates? For our example we’ll design a more modern version of Fisher’s<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> experiment (<a href="#fig-estimation-expt" class="quarto-xref">figure&nbsp;<span>5.1</span></a>).</p>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were strong proponents of eugenics. Fisher was the founding chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed Social Darwinist who believed fervently in eugenic legislation. Irrespective of their scientific content (which was often incorrect), these views are morally repugnant.</p></div></div><p>Our causal theory is that the tea quality is affected by milk-tea ordering, so we’ll test that by rating tea quality both milk-first and tea-first, represented by a DAG like the one in <a href="#fig-estimation-dag" class="quarto-xref">figure&nbsp;<span>5.2</span></a>. Our intended population to generalize to is the set of all tea drinkers, and toward that goal we sample a set of tea drinkers. In practice, we might do a field trial in a cafe in which we approach patrons and ask them to participate in our experiment in exchange for a free cup of tea. Although this sample size is almost certainly too small to get precise estimates, for the purpose of this example, we’ll sample 18 tea drinkers—nine in each condition.</p>
 <div id="fig-estimation-expt" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" alt="A DAG with sample of tea drinkers within all tea drinkers pointing to milk first / tea first then to tea quality rating.">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-estimation-expt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="images/estimation/tea-expt.png" class="img-fluid figure-img" style="width:50.0%" alt="A DAG with sample of tea drinkers within all tea drinkers pointing to milk first / tea first then to tea quality rating.">
+<img src="images/estimation/tea-expt.png" class="img-fluid figure-img" style="width:58.0%" alt="A DAG with sample of tea drinkers within all tea drinkers pointing to milk first / tea first then to tea quality rating.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig margin-caption" id="fig-estimation-expt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5.1: The structure of our tea experiment.
 </figcaption>
 </figure>
 </div>
-<p>If experiments are about estimating effects, how do we actually use our experimental data to make these estimates? For our example we’ll design a more modern version of Fisher’s<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> experiment (<a href="#fig-estimation-expt" class="quarto-xref">figure&nbsp;<span>5.1</span></a>).</p>
-<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;An important piece of context for the work of Ronald Fisher, Karl Pearson, and other early pioneers of statistical inference is that they were all strong proponents of eugenics. Fisher was the founding chairman of the Cambridge Eugenics Society. Pearson was perhaps even worse, an avowed Social Darwinist who believed fervently in eugenic legislation. Irrespective of their scientific content (which was often incorrect), these views are morally repugnant.</p></div></div><p>Our causal theory is that the tea quality is affected by milk-tea ordering, so we’ll test that by rating tea quality both milk-first and tea-first, represented by a DAG like the one in <a href="#fig-estimation-dag" class="quarto-xref">figure&nbsp;<span>5.2</span></a>. Our intended population to generalize to is the set of all tea drinkers, and toward that goal we sample a set of tea drinkers. In practice, we might do a field trial in a cafe in which we approach patrons and ask them to participate in our experiment in exchange for a free cup of tea. Although this sample size is almost certainly too small to get precise estimates, for the purpose of this example, we’ll sample 18 tea drinkers—nine in each condition.</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-estimation-dag" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A DAG with milk ordering pointing to tea quality.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -508,12 +677,12 @@ Figure&nbsp;5.3: Schematic data from the tea-tasting experiment.
 </figcaption>
 </figure>
 </div></div><p>An example dataset from our experiment is shown in <a href="#fig-estimation-data" class="quarto-xref">figure&nbsp;<span>5.3</span></a>. Eventually, we’ll want to estimate the effect of milk-first preparation on quality ratings (our effect of interest). But for now, our goal will be to estimate the quality of the tea when it is milk-first <span class="citation" data-cites="kennedy2003">(which some data suggest is actually the better way, at least for British tea drinkers; <a href="#ref-kennedy2003" role="doc-biblioref">Kennedy 2003</a>)</span>. More formally, we want to use our sample of nine milk-first tea judgments to estimate a number that we can’t directly observe, namely the true perceived quality of all possible milk-first cups. We’ll call this number a <strong>population parameter</strong> for reasons that will become clear soon.</p>
-<p>We’ll try to go easy on notation, but some amount will hopefully make things clearer. We’ll use <span class="math inline">\(\theta_{\textrm{M}}\)</span> (“theta”) to denote the parameter we want to estimate (the population parameter) and <span class="math inline">\(\widehat{\theta}_{\textrm{M}}\)</span> for <strong>sample estimate</strong>.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
+<p>We’ll try to go easy on notation, but some amount will hopefully make things clearer. We’ll use <span class="math inline">\(\theta_{M}\)</span> (“theta”) to denote the parameter we want to estimate (the population parameter) and <span class="math inline">\(\widehat{\theta}_{M}\)</span> for <strong>sample estimate</strong>.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
 <div class="no-row-height column-margin column-container"><div id="fn4"><p><sup>4</sup>&nbsp;Statisticians use “hats” like this to denote estimates from a specific sample. One way to remember this is that the “person in the hat” is wearing a hat to dress up as the actual quantity.</p></div></div><section id="maximum-likelihood-estimation" class="level3 page-columns page-full" data-number="5.1.1">
 <h3 data-number="5.1.1" class="anchored" data-anchor-id="maximum-likelihood-estimation"><span class="header-section-number">5.1.1</span> Maximum likelihood estimation</h3>
-<p>Okay, you are probably saying, if we want our estimate of milk-first quality, shouldn’t we just take the average rating across the nine cups of milk-first tea? The answer is yes. But let’s unpack that choice: taking the sample mean as our estimate <span class="math inline">\(\widehat{\theta}_{\textrm{M}}\)</span> is an example of an estimation approach called <strong>maximum likelihood estimation</strong>. In general terms, maximum likelihood estimation is a two-step process.</p>
+<p>Okay, you are probably saying, if we want our estimate of milk-first quality, shouldn’t we just take the average rating across the nine cups of milk-first tea? The answer is yes. But let’s unpack that choice: taking the sample mean as our estimate <span class="math inline">\(\widehat{\theta}_{M}\)</span> is an example of an estimation approach called <strong>maximum likelihood estimation</strong>. In general terms, maximum likelihood estimation is a two-step process.</p>
 <p>First, we assume a model for how the data were generated.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> This model is specified in terms of certain population parameters. In our example, the model is as simple as they come: we just assume there is some average level of tea quality and that the measurements vary around it. Let’s take a look at the data from the milk-first condition, shown in <a href="#fig-estimation-ml" class="quarto-xref">figure&nbsp;<span>5.4</span></a>. Our observations are clustered around the mean, but they also show some variation. Some are higher and some are lower. Variation of this type is a feature of every data set. This variation can be summarized via a <strong>probability distribution</strong>, a mathematical entity that describes the properties of possible datasets.</p>
-<div class="no-row-height column-margin column-container"><div id="fn5"><p><sup>5</sup>&nbsp;This sense of “model” is actually a formal instantiation of the type of causal model we discussed in <a href="001-experiments.html" class="quarto-xref"><span>chapter 1</span></a>. As you get deeper into causal modeling, typically what you do is define a causal “story” for the statistical process that generated a dataset, using both DAGs and the kinds of probability distributions we define below.</p></div><div id="fig-estimation-ml" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A plot with a bell curve over rating with the mean labelled theta_M.">
+<div class="no-row-height column-margin column-container"><div id="fn5"><p><sup>5</sup>&nbsp;This sense of “model” is actually a formal instantiation of the type of causal model we discussed in <a href="001-experiments.html" class="quarto-xref"><span>chapter 1</span></a>. As you get deeper into causal modeling, typically what you do is define a causal “story” for the statistical process that generated a dataset, using both DAGs and the kinds of probability distributions we will define below.</p></div><div id="fig-estimation-ml" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A plot with a bell curve over rating with the mean labelled theta_M.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-estimation-ml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/estimation/maximum-likelihood.png" class="img-fluid figure-img" alt="A plot with a bell curve over rating with the mean labelled theta_M.">
@@ -536,14 +705,14 @@ Figure&nbsp;5.5: A comparison of the best-fitting normal distribution and a subs
 </figcaption>
 </figure>
 </div>
-<p>For example, if our sample mean is <span class="math inline">\(\widehat{\theta}_{\textrm{M}} = 4.5\)</span>, what underlying value of <span class="math inline">\(\theta_{\textrm{M}}\)</span> would make these data most likely to occur? Well, suppose the underlying parameter were <span class="math inline">\(\theta_{\textrm{M}}=2.5\)</span>. Then it would be pretty unlikely that our sample mean would be so much bigger. So, <span class="math inline">\(\widehat{\theta}_{\textrm{M}}=2.5\)</span> is a poor estimate of the population parameter based on these data (<a href="#fig-estimation-ml2" class="quarto-xref">figure&nbsp;<span>5.5</span></a>). Conversely, if the parameter were <span class="math inline">\(\theta_{\textrm{M}}=6.5\)</span>, it would be a bit unlikely that our sample mean would be so much <em>smaller</em>. The value of <span class="math inline">\(\widehat{\theta}_{\textrm{M}}\)</span> that makes these data most likely is 4.5 itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate.</p>
+<p>For example, if our sample mean is <span class="math inline">\(\widehat{\theta}_{M} = 4.5\)</span>, what underlying value of <span class="math inline">\(\theta_{M}\)</span> would make these data most likely to occur? Well, suppose the underlying parameter were <span class="math inline">\(\theta_{M}=2.5\)</span>. Then it would be pretty unlikely that our sample mean would be so much bigger. So, <span class="math inline">\(\widehat{\theta}_{M}=2.5\)</span> is a poor estimate of the population parameter based on these data (<a href="#fig-estimation-ml2" class="quarto-xref">figure&nbsp;<span>5.5</span></a>). Conversely, if the parameter were <span class="math inline">\(\theta_{M}=6.5\)</span>, it would be a bit unlikely that our sample mean would be so much <em>smaller</em>. The value of <span class="math inline">\(\widehat{\theta}_{M}\)</span> that makes these data most likely is <span class="math inline">\(4.5\)</span> itself: the sample mean! That is why the sample mean in this case is the maximum likelihood estimate.</p>
 <!-- The second parameter of the normal distribution is the standard deviation. The standard deviation is just exactly what its name says: the average absolute deviation between the mean and any given observation. We won't discuss how to estimate the standard deviation for your sample here; you can do this computation easily in any software package. What's important for now is just that the standard deviation gives us a way to describe the width of the normal distribution. Together, the mean and standard deviation fully describe a particular normal distribution, allowing us to summarise our knowledge about the data using just two parameters. -->
-<!-- Let's visualize our milk-first tea ratings. Since ratings on our scale are discrete, @fig-estimation-milk-first shows them as a histogram. Our estimate of the mean, $\widehat{\theta}_{\textrm{M}}$, is shown as a blue dashed line. -->
+<!-- Let's visualize our milk-first tea ratings. Since ratings on our scale are discrete, @fig-estimation-milk-first shows them as a histogram. Our estimate of the mean, $\widehat{\theta}_{M}$, is shown as a blue dashed line. -->
 </section>
 <section id="bayesian-estimation" class="level3 page-columns page-full" data-number="5.1.2">
 <h3 data-number="5.1.2" class="anchored" data-anchor-id="bayesian-estimation"><span class="header-section-number">5.1.2</span> Bayesian estimation</h3>
 <p>The maximum likelihood estimation example above represents a common approach to estimating parameters, where the researcher completely puts aside their prior expectations about what these values might be. This approach is an example of a <strong>frequentist</strong> statistical approach, an approach that focuses on the long-run performance of estimation procedures.</p>
-<p>Often this approach makes sense, especially when we have no prior expectations about the values we are estimating. But sometimes we <em>do</em> have relevant beliefs about the value. For example, before we perform our tea experiment, we don’t know exactly what <span class="math inline">\(\theta_{\textrm{M}}\)</span> will be, but it seems a bit unlikely that tea would be consistently rated as either horrible (1) or perfect (7). We have what you might call <em>weak prior expectations</em> about the kinds of ratings we’ll receive.</p>
+<p>Often this approach makes sense, especially when we have no prior expectations about the values we are estimating. But sometimes we <em>do</em> have relevant beliefs about the value. For example, before we perform our tea experiment, we don’t know exactly what <span class="math inline">\(\theta_{M}\)</span> will be, but it seems a bit unlikely that tea would be consistently rated as either horrible (1) or perfect (7). We have what you might call <em>weak prior expectations</em> about the kinds of ratings we’ll receive.</p>
 <p>These kind of expectations are most useful when we have a very small amount of data. Remember that our goal is to estimate a population parameter using the sample data, and small data sets can be rather noisy. Taking into account our prior expectations can help to temper the influence of noise. For example, if our very first participant in the experiment rated their tea as terrible, we wouldn’t want to jump to the conclusion that the tea was actually bad. Instead, we might speculate that the participant was having a bad day or had just brushed their teeth. On the other hand, if all of our participants gave bad ratings to their tea, the data would be more persuasive; in that case, we might want to tell the cafe that they are serving substandard tea. The extent to which our prior expectations should moderate our conclusions should vary with the amount of sample data; with only a little data, our prior expectations should have more influence, but as we gather more, we should put greater weight on the data.</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-estimation-bayes" class="quarto-float quarto-figure quarto-figure-center anchored" alt="An equation of Bayes rule with posterior (left-hand side), likelihood (numerator 1st term), prior (numerator 2nd term).">
@@ -555,9 +724,9 @@ Figure&nbsp;5.5: A comparison of the best-fitting normal distribution and a subs
 Figure&nbsp;5.6: Bayes’s rule, annotated.
 </figcaption>
 </figure>
-</div></div><p>How do we quantify this trade-off between our prior expectations and our current observations? We can do this via <strong>Bayesian estimation</strong> of <span class="math inline">\(\widehat{\theta}_{\textrm{M}}\)</span>. Bayesian estimation provides a principled framework for integrating prior beliefs and data. These estimation techniques can be very helpful in cases where data are sparse or prior beliefs are strong.</p>
-<p>In Bayesian estimation, we observe some data <span class="math inline">\(d\)</span>, consisting of the set of responses in the experiment. Now we can use <strong>Bayes’s rule</strong>, a tool from basic probability theory, to estimate this number (<a href="#fig-estimation-bayes" class="quarto-xref">figure&nbsp;<span>5.6</span></a>). Each part of this equation has a name, and it’s worth becoming familiar with them. The thing we want to compute, <span class="math inline">\(p(\theta_{\textrm{M}} |\text{data})\)</span>, is called the <strong>posterior probability</strong>—it tells us what we should believe about the population parameter on tea quality, given the data we observed.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></p>
-<div class="no-row-height column-margin column-container"><div id="fn6"><p><sup>6</sup>&nbsp;We’re making the posterior <span style="color: var(--violet);">purple</span> to indicate the combination of likelihood (<span style="color: var(--red);">red</span>) and prior (<span style="color: var(--blue);">blue</span>).</p></div><div id="fn7"><p><sup>7</sup>&nbsp;Speaking informally, <em>likelihood</em> is just a synonym for probability, but in Bayesian estimation, <em>likelihood</em> is a technical term specifically referring to probability of the data given our hypothesis. This ambiguity can get a bit confusing.</p></div></div><p>The first part of the numerator is <span class="math inline">\(p(\text{data}|\theta_{\textrm{M}})\)</span>, the probability of the data we observed given our hypothesis about the participant’s ability. This part is called the <strong>likelihood</strong>.<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a> This term tells us about the relationship between our hypothesis and the data we observed—so, if we think the tea is of high quality (say <span class="math inline">\(\theta_{\textrm{M}} = 6.5\)</span>), then the probability of observing a bunch of low-quality ratings will be fairly low.</p>
+</div></div><p>How do we quantify this trade-off between our prior expectations and our current observations? We can do this via <strong>Bayesian estimation</strong> of <span class="math inline">\(\widehat{\theta}_{M}\)</span>. Bayesian estimation provides a principled framework for integrating prior beliefs and data. These estimation techniques can be very helpful in cases where data are sparse or prior beliefs are strong.</p>
+<p>In Bayesian estimation, we observe some data <span class="math inline">\(d\)</span>, consisting of the set of responses in the experiment. Now we can use <strong>Bayes’s rule</strong>, a tool from basic probability theory, to estimate this number (<a href="#fig-estimation-bayes" class="quarto-xref">figure&nbsp;<span>5.6</span></a>). Each part of this equation has a name, and it’s worth becoming familiar with them. The thing we want to compute, <span class="math inline">\(p(\theta_{M} |\text{data})\)</span>, is called the <strong>posterior probability</strong>—it tells us what we should believe about the population parameter on tea quality, given the data we observed.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></p>
+<div class="no-row-height column-margin column-container"><div id="fn6"><p><sup>6</sup>&nbsp;We’re making the posterior <span style="color: var(--violet);">purple</span> to indicate the combination of likelihood (<span style="color: var(--red);">red</span>) and prior (<span style="color: var(--blue);">blue</span>).</p></div><div id="fn7"><p><sup>7</sup>&nbsp;Speaking informally, <em>likelihood</em> is just a synonym for probability, but in Bayesian estimation, <em>likelihood</em> is a technical term specifically referring to probability of the data given our hypothesis. This ambiguity can get a bit confusing.</p></div></div><p>The first part of the numerator is <span class="math inline">\(p(\text{data}|\theta_{M})\)</span>, the probability of the data we observed given our hypothesis about the participant’s ability. This part is called the <strong>likelihood</strong>.<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a> This term tells us about the relationship between our hypothesis and the data we observed—so, if we think the tea is of high quality (say <span class="math inline">\(\theta_{M} = 6.5\)</span>), then the probability of observing a bunch of low-quality ratings will be fairly low.</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-estimation-bayes-curves" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A plot with bell curves for prior (shifted left), likelihood (shifted right), posterior (middle), and rating points.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -568,7 +737,7 @@ Figure&nbsp;5.6: Bayes’s rule, annotated.
 Figure&nbsp;5.7: Bayesian inference about tea ratings with a strong prior on low values.
 </figcaption>
 </figure>
-</div></div><p>The second term in the numerator, <span class="math inline">\(p(\theta_{\textrm{M}} )\)</span>, is called the <strong>prior</strong>. This term encodes our beliefs about the likely distribution of tea quality. Intuitively, if we think that the tea is likely high quality, we should require more evidence to be convinced it’s bad. In contrast, if we think it’s probably bad, a few low ratings might serve to convince us.</p>
+</div></div><p>The second term in the numerator, <span class="math inline">\(p(\theta_{M} )\)</span>, is called the <strong>prior</strong>. This term encodes our beliefs about the likely distribution of tea quality. Intuitively, if we think that the tea is likely high quality, we should require more evidence to be convinced it’s bad. In contrast, if we think it’s probably bad, a few low ratings might serve to convince us.</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-estimation-bayes-curves-weak" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A plot the same as 5.7 but prior curve is flatter.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -611,10 +780,10 @@ Figure&nbsp;5.10: Estimating the average treatment effect from the tea-tasting d
 </figcaption>
 </figure>
 </div><div id="fn10"><p><sup>10</sup>&nbsp;For simplicity, we’re assuming that the standard deviations in each tea group are equal.</p></div></div>
-<p>In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let’s term the parameters for the tea-first group <span class="math inline">\(\theta_{\textrm{T}}\)</span> (the mean) and <span class="math inline">\(\sigma\)</span> (the standard deviation). To estimate the treatment effect, we are positing a model in which the milk-first ratings are normally distributed with mean <span class="math inline">\(\theta_{\textrm{M}} = \theta_{\textrm{T}} + \beta\)</span> and with standard deviation <span class="math inline">\(\sigma\)</span>.<a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a> This equation says that milk-first ratings have the same distribution as tea-first ratings, except that their average is shifted by <span class="math inline">\(\beta\)</span>. Setting our model up this way then lets us compute <span class="math inline">\(\hat{\beta}\)</span>, our estimate of the treatment effect in our sample.</p>
-<p>As in the one-sample case (i.e., estimating the mean of just the milk-first group), maximum likelihood estimation would then proceed by finding the value of <span class="math inline">\(\beta\)</span> that makes the data most likely under the assumed model. As you’d probably expect, this estimate <span class="math inline">\(\widehat{\beta}\)</span> turns out to be simply the difference in sample means, <span class="math inline">\(\widehat{\theta}_{\textrm{M}} - \widehat{\theta}_{\textrm{T}}\)</span>. You can see this difference pictured in <a href="#fig-estimation-data-difference" class="quarto-xref">figure&nbsp;<span>5.10</span></a>.</p>
-<p>In the Bayesian framework, we would again specify a prior <span class="math inline">\(p(\beta)\)</span> that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could specify a flat prior, <span class="math inline">\(p(\beta) \propto 1\)</span>.<a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a> If we believe the treatment effect is likely to favor milk-first pouring (<span class="math inline">\(\beta&gt;0\)</span>), we could specify that the prior is a normal distribution centered at some positive value (e.g., <span class="math inline">\(\beta=0.5\)</span>); the standard deviation of this prior would encode how certain we are about our prior beliefs. And, if we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at 0, which has the effect of “shrinking” the estimates closer to 0.<a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a></p>
-<div class="no-row-height column-margin column-container"><div id="fn11"><p><sup>11</sup>&nbsp;This equation says that the probability of any value of <span class="math inline">\(\beta\)</span> is “proportional to” 1, meaning that it’s constant (“flat”) regardless of what value <span class="math inline">\(\beta\)</span> takes.</p></div><div id="fn12"><p><sup>12</sup>&nbsp;The measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Statistical uncertainty is only one kind of uncertainty, though. A more holistic view of the overall credibility of an estimate should also account for other things outside of the model, like study design issues and bias.</p></div></div><p>As in our example above, maximum likelihood estimates and Bayesian estimates are going to be pretty similar if we have a lot of data or weak priors. They will only diverge when we have strong priors or relatively little data. The reason we are setting up these two different frameworks, however, is that they provide very different inferential tools, as we’ll see in the next chapter.</p>
+<p>In the maximum likelihood framework, we could posit that ratings in each group (milk-first and tea-first) follow a normal distribution but that these normal distributions might have different means and standard deviations. Extending the notation introduced above, let’s term the parameters for the tea-first group <span class="math inline">\(\theta_{T}\)</span> (the mean) and <span class="math inline">\(\sigma\)</span> (the standard deviation). To estimate the treatment effect, we are positing a model in which the milk-first ratings are normally distributed with mean <span class="math inline">\(\theta_{M} = \theta_{T} + \beta\)</span> and with standard deviation <span class="math inline">\(\sigma\)</span>.<a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a> This equation says that milk-first ratings have the same distribution as tea-first ratings, except that their average is shifted by <span class="math inline">\(\beta\)</span>. Setting our model up this way then lets us compute <span class="math inline">\(\hat{\beta}\)</span>, our estimate of the treatment effect in our sample.</p>
+<p>As in the one-sample case (estimating the mean of just the milk-first group), maximum likelihood estimation would then proceed by finding the value of <span class="math inline">\(\beta\)</span> that makes the data most likely under the assumed model. As you might expect, this estimate <span class="math inline">\(\widehat{\beta}\)</span> turns out to be simply the difference in sample means, <span class="math inline">\(\widehat{\theta}_{M}-\widehat{\theta}_{T}\)</span>. This difference is pictured in <a href="#fig-estimation-data-difference" class="quarto-xref">figure&nbsp;<span>5.10</span></a>.</p>
+<p>In the Bayesian framework, we would again specify a prior <span class="math inline">\(p(\beta)\)</span> that encodes our prior beliefs about the size and direction of the treatment effect. If we have no prior beliefs at all, then we could specify a flat prior, <span class="math inline">\(p(\beta) \propto 1\)</span>.<a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a> If we believe the treatment effect is likely to favor milk-first pouring (<span class="math inline">\(\beta&gt;0\)</span>), we could specify that the prior is a normal distribution centered at some positive value (e.g., <span class="math inline">\(\beta=0.5\)</span>); the standard deviation of this prior would encode how certain we are about our prior beliefs. And, if we have no prior beliefs about the direction of the treatment effect, but we think it is unlikely to be very large, we could specify a normal prior centered at <span class="math inline">\(0\)</span>, which has the effect of “shrinking” the estimates closer to <span class="math inline">\(0\)</span>.<a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a></p>
+<div class="no-row-height column-margin column-container"><div id="fn11"><p><sup>11</sup>&nbsp;This equation says that the probability of any value of <span class="math inline">\(\beta\)</span> is “proportional to” <span class="math inline">\(1\)</span>, meaning that it’s constant (“flat”) regardless of what value <span class="math inline">\(\beta\)</span> takes.</p></div><div id="fn12"><p><sup>12</sup>&nbsp;The measures of variability that we discuss here account for statistical uncertainty reflecting the fact that we have only a finite sample size. If the sample size were infinite, there would be no uncertainty of this kind. Statistical uncertainty is only one kind of uncertainty, though. A more holistic view of the overall credibility of an estimate should also account for other things outside of the model, like study design issues and bias.</p></div></div><p>As in our example above, maximum likelihood estimates and Bayesian estimates are going to be pretty similar if we have a lot of data or weak priors. They will only diverge when we have strong priors or relatively little data. The reason we are setting up these two different frameworks, however, is that they provide very different inferential tools, as we’ll see in the next chapter.</p>
 </section>
 <section id="measures-of-effect-size" class="level3 page-columns page-full" data-number="5.2.2">
 <h3 data-number="5.2.2" class="anchored" data-anchor-id="measures-of-effect-size"><span class="header-section-number">5.2.2</span> Measures of effect size</h3>
@@ -622,37 +791,37 @@ Figure&nbsp;5.10: Estimating the average treatment effect from the tea-tasting d
 <p>But what about our participants’ ratings of tea quality, which were provided on an arbitrary 7-point rating scale that we devised? What does it mean to that participants who drank milk-first tea rated it 1 point higher than participants who drank tea-first tea (i.e., that <span class="math inline">\(\widehat{\beta} = 1\)</span> point)? And how is this difference comparable to, for instance, a 1-point change on a scale that has similar anchors (“terrible” and “delicious”) but uses a 100-point rating system?</p>
 <p>To provide a common language for describing these relationships, some researchers use <strong>standardized effect sizes</strong>. A common standardized effect size is Cohen’s <span class="math inline">\(d\)</span>, which provides a standardized estimate of the difference between two means. There are many different ways to calculate Cohen’s <span class="math inline">\(d\)</span> <span class="citation" data-cites="lakens2013">(<a href="#ref-lakens2013" role="doc-biblioref">Lakens 2013</a>)</span>, but all approaches are usually some variant of the following formula:</p>
 <p><span class="math display">\[
-d = \frac{\theta_{\textrm{M}} - \theta_{\textrm{T}}}{\sigma_{\text{pooled}}}
+d = \frac{\theta_{M} - \theta_{T}}{\sigma_{\text{pooled}}}
 \]</span></p>
-<p>where the difference between means (<span class="math inline">\(\theta_{\textrm{T}}\)</span> and <span class="math inline">\(\theta_{\textrm{M}}\)</span>) is divided by the pooled standard deviation <span class="math inline">\(\sigma_{\text{pooled}}\)</span>. Intuitively, what you’re doing is taking the study effect (<span class="math inline">\(\beta\)</span>) and dividing it—scaling it—by the variation we saw between individuals in the study.</p>
+<p>where the difference between means (<span class="math inline">\(\theta_{T}\)</span> and <span class="math inline">\(\theta_{M}\)</span>) is divided by the pooled standard deviation <span class="math inline">\(\sigma_{\text{pooled}}\)</span>. Intuitively, what you’re doing is taking the study effect (<span class="math inline">\(\beta\)</span>) and dividing it—scaling it—by the variation we saw between individuals in the study.<a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a></p>
+<div class="no-row-height column-margin column-container"><div id="fn13"><p><sup>13</sup>&nbsp;Cohen’s <span class="math inline">\(d\)</span>, also referred to as <strong>standardized mean difference</strong> (SMD), can be tricky to apply to more complex experimental designs, such as within-participant designs with multiple measurements of each participant. For some guidance on this topic, see <span class="citation" data-cites="lakens2013">Lakens (<a href="#ref-lakens2013" role="doc-biblioref">2013</a>)</span>.</p></div></div><p>Let’s compute this measure for our tea-drinking study. We can just plug in the estimates we see in <a href="#fig-estimation-data-difference" class="quarto-xref">figure&nbsp;<span>5.10</span></a> and compute the standard deviation of our observed data:</p>
+<p><span class="math display">\[\widehat{d} = \frac{\widehat{\theta}_{M} - \widehat{\theta}_{T}}{\widehat{\sigma}_{\text{pooled}}} = \frac{4.5- 3.5}{1.25} = \frac{1}{1.25} = 0.80\]</span> In other words, the effect size of the difference between the two conditions is <span class="math inline">\(0.8\)</span> standard deviations. This process is shown in <a href="#fig-estimation-es-calc" class="quarto-xref">figure&nbsp;<span>5.11</span></a>.</p>
 <div id="fig-estimation-es-calc" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" alt="A plot the same as 5.10 along with difference between means on rating scale and on standardized effect size scale.">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-estimation-es-calc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="images/estimation/es-calc.png" class="img-fluid figure-img" style="width:80.0%" alt="A plot the same as 5.10 along with difference between means on rating scale and on standardized effect size scale.">
+<img src="images/estimation/es-calc.png" class="img-fluid figure-img" style="width:85.0%" alt="A plot the same as 5.10 along with difference between means on rating scale and on standardized effect size scale.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig margin-caption" id="fig-estimation-es-calc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5.11: Schematic effect size computation.
 </figcaption>
 </figure>
 </div>
-<p>Let’s compute this measure for our tea-drinking study. We can just plug in the estimates we see in <a href="#fig-estimation-data-difference" class="quarto-xref">figure&nbsp;<span>5.10</span></a> and compute the standard deviation of our observed data:</p>
-<p><span class="math display">\[\widehat{d} = \frac{\widehat{\theta}_{\textrm{M}} - \widehat{\theta}_{\textrm{T}}}{\widehat{\sigma}_{\text{pooled}}} = \frac{4.5- 3.5}{1.25} = \frac{1}{1.25} = 0.80\]</span> In other words, the effect size of the difference between the two conditions is 0.8 standard deviations. This process is shown in <a href="#fig-estimation-es-calc" class="quarto-xref">figure&nbsp;<span>5.11</span></a>.<a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a></p>
-<div class="no-row-height column-margin column-container"><div id="fn13"><p><sup>13</sup>&nbsp;Cohen’s <span class="math inline">\(d\)</span>, also referred to as <strong>standardized mean difference</strong> (SMD), can be tricky to apply to more complex experimental designs, such as within-participant designs with multiple measurements of each participant. For guidance on this topic, see <span class="citation" data-cites="lakens2013">Lakens (<a href="#ref-lakens2013" role="doc-biblioref">2013</a>)</span>.</p></div></div><p>We previously said that people who drank milk-first tea had quality ratings that were, on average, 1 point higher on a 7-point scale (<span class="math inline">\(\beta = 1\)</span> point). Cohen’s <span class="math inline">\(d\)</span> translates the arbitrary units of our rating scale into a <strong>unitless</strong> that is measured in terms of the variation in the data. You may be wondering: “Why would I ever describe things in terms of standard deviations?” The key benefit is that it allows us to compare the size of the effect between studies that use different measures.</p>
+<p>We previously said that people who drank milk-first tea had quality ratings that were, on average, 1 point higher on a 7-point scale (<span class="math inline">\(\beta = 1\)</span> point). Cohen’s <span class="math inline">\(d\)</span> translates the arbitrary units of our rating scale into a <strong>unitless</strong> that is measured in terms of the variation in the data. You may be wondering: “Why would I ever describe things in terms of standard deviations?” The key benefit is that it allows us to compare the size of the effect between studies that use different measures.</p>
 <p>Let’s say that we ran a replication of our tea study with two changes: (1) we studied patrons in a US cafe instead of a UK cafe, and (2) we used a 100-point rating scale instead of a 7-point scale. Imagine that, just as we found that UK participants rated the milk-first tea 1 point higher on a 7-point quality scale, US participants rated the milk-first tea 1 point higher on a 100-point quality scale. It seems clear that these effects are different because of the difference in scale. But how different?</p>
 <p>It might at first seem reasonable just to normalize by the length of the scale. So, maybe the UK experimental participants showed a 1/7 rating effect and the US participants showed a 1/100 rating effect. The trouble with this move is that it presupposes that participants from two different populations are using two different scales in exactly the same way! For example, maybe US participants made very clumpy judgments that were mostly centered around 50 (perhaps because of a lack of milk tea experience). Standardized effect sizes get around this kind of issue by scaling according to the variability of the data.</p>
-<p>Let’s compute the effect size for the cross-cultural replication. We’ll imagine that participants who drank milk-first tea gave an average rating of 50/100 and participants who drank tea-first tea rated it 49 on average. But if their variability was also relatively lower, perhaps the standard deviation of their ratings was only 5. Using the formula above, we find:</p>
-<p><span class="math display">\[\widehat{d}_{US} = \frac{\widehat{\theta}_{\textrm{M}} - \widehat{\theta}_{\textrm{T}}}{\widehat{\sigma}_{\text{pooled}}} = \frac{50 - 49}{5} = \frac{1}{5}=  0.2\]</span></p>
-<p>A Cohen’s <span class="math inline">\(d\)</span> of 0.2 means that US cafe patrons rated their tea 0.2 standard deviations higher when it was milk-first, much smaller than the 0.8 standard deviation difference in the UK patrons.</p>
+<p>Let’s compute the effect size for the cross-cultural replication. We’ll imagine that participants who drank milk-first tea gave an average rating of 50/100 and participants who drank tea-first tea rated it 49 on average. But if their variability was also relatively lower, perhaps the standard deviation of their ratings was only 5. Using the formula above:</p>
+<p><span class="math display">\[\widehat{d}_{\text{US}} = \frac{\widehat{\theta}_{M} - \widehat{\theta}_{T}}{\widehat{\sigma}_{\text{pooled}}} = \frac{50 - 49}{5} = \frac{1}{5}=  0.2\]</span></p>
+<p>A Cohen’s <span class="math inline">\(d\)</span> of 0.2 means that US cafe patrons rated their tea <span class="math inline">\(0.2\)</span> standard deviations higher when it was milk-first, much smaller than the <span class="math inline">\(0.8\)</span> standard deviation difference in the UK patrons.</p>
 <p>There are no hard and fast rules for interpreting what makes a big effect or a small effect, but people often refer back to a standard suggested by <span class="citation" data-cites="cohen1992">Cohen (<a href="#ref-cohen1992" role="doc-biblioref">1992</a>)</span>. On those standards, <span class="math inline">\(d = 0.8\)</span> is a “large effect” and <span class="math inline">\(d = 0.2\)</span> is a “small effect.” But these effect size interpretation norms are somewhat arbitrary. The key point here was that US and UK patrons had the same raw score change in quality ratings (<span class="math inline">\(\widehat{\beta} = 1\)</span>), and standardizing the differences allowed us to communicate that the difference was larger among the UK patrons.</p>
 <p>Cohen’s <span class="math inline">\(d\)</span> is one of many standardized effect sizes that researchers can use. Just as Cohen’s <span class="math inline">\(d\)</span> standardizes differences in group means, there are also generalizations that allow for continuous treatment variables or covariate adjustment (e.g., Pearson’s <em>r</em>, as we discuss below; <span class="math inline">\(r^2\)</span>; or <span class="math inline">\(\eta^2\)</span>). And there is a whole other set of effect-size measures for relationships between binary variables (e.g., odds ratio). We’ll be using effect sizes throughout the book, but we’ll be using Cohen’s <span class="math inline">\(d\)</span> as our example.<a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a></p>
 <div class="no-row-height column-margin column-container"><div id="fn14"><p><sup>14</sup>&nbsp;If you’d like to learn more about other varieties of effect size, take a look at <span class="citation" data-cites="fritz2012">Fritz, Morris, and Richler (<a href="#ref-fritz2012" role="doc-biblioref">2012</a>)</span> and <span class="citation" data-cites="lakens2013">Lakens (<a href="#ref-lakens2013" role="doc-biblioref">2013</a>)</span>.</p></div></div></section>
 <section id="pros-and-cons-of-standardizing-effect-sizes" class="level3" data-number="5.2.3">
 <h3 data-number="5.2.3" class="anchored" data-anchor-id="pros-and-cons-of-standardizing-effect-sizes"><span class="header-section-number">5.2.3</span> Pros and cons of standardizing effect sizes</h3>
-<p>Standardizing effect size helps communicate that a 1-point change on a 7-point scale is not the same as a 1-point change on a 100-point scale. But is it any better to say that the first represents a 0.8 standard deviation difference and the second a 0.08 standard deviation difference?</p>
+<p>Standardizing effect size helps communicate that a 1-point change on a 7-point scale is not the same as a 1-point change on a 100-point scale. But is it any better to say that the first represents a <span class="math inline">\(0.8\)</span> standard deviation difference and the second a <span class="math inline">\(0.08\)</span> standard deviation difference?</p>
 <p>Effect sizes allow us to compare results across studies more easily. Across studies, researchers use different measures, different study designs, and different populations. Standardization gives us a “common language” to describe estimated relationships in these varied contexts. This language is helpful when we want to aggregate and compare effects across studies via meta-analysis.&nbsp;And it is also helpful when planning new studies. When trying to figure out how many participants to run in a study, almost all techniques for sample size planning use standardized effect sizes to determine how much data would be needed to reliably detect an effect.</p>
 <p>Standardizing effect sizes has limitations, though. For example, if two interventions produce the same absolute change in the same outcome measure, but are studied in different populations in which the variability on the outcome differs substantially, the interventions would produce different standardized mean differences <span class="citation" data-cites="baguley2009">(<a href="#ref-baguley2009" role="doc-biblioref">Baguley 2009</a>)</span> (see the <span class="smallcaps">Depth</span> box “Reliability paradoxes!” in <a href="008-measurement.html" class="quarto-xref"><span>chapter 8</span></a>).</p>
-<p>Imagine we conducted our tea experiment again, but this time with decaf tea and focusing on children. Maybe milk-first tea tastes the same amount better than tea-first tea for kids and for adults. But kids are, as a rule, more variable in their responding than adults. This higher level of variability would lead us to observe a smaller effect size in kids vs adults. Recall that our UK adult SD was 1.25 and our effect size was <span class="math inline">\(d = 0.8\)</span>. Imagine that children’s SD is 2.5. In this scenario, even if tea led to the same 1-point absolute change in ratings among adults and children, the standardized effect size for kids would look half as big:</p>
-<p><span class="math display">\[\widehat{d}_{kids} = \frac{\widehat{\theta}_{\textrm{M}} - \widehat{\theta}_{\textrm{T}}}{\widehat{\sigma}_{\text{pooled}}} = \frac{5- 4}{2.5} = \frac{1}{2.5} =  0.4\]</span></p>
+<p>Imagine we conducted our tea experiment again, but this time with decaf tea and focusing on children. Maybe milk-first tea tastes the same amount better than tea-first tea for kids and for adults. But kids are, as a rule, more variable in their responding than adults. This higher level of variability would lead us to observe a smaller effect size in kids vs adults. Recall that our UK adult SD was <span class="math inline">\(1.25\)</span> and our effect size was <span class="math inline">\(d = 0.8\)</span>. Imagine that children’s SD is <span class="math inline">\(2.5\)</span>. In this scenario, even if tea led to the same 1-point absolute change in ratings among adults and children, the standardized effect size for kids would look half as big:</p>
+<p><span class="math display">\[\widehat{d}_{\text{kids}} = \frac{\widehat{\theta}_{M} - \widehat{\theta}_{T}}{\widehat{\sigma}_{\text{pooled}}} = \frac{5- 4}{2.5} = \frac{1}{2.5} =  0.4\]</span></p>
 <p>This example highlights some of the challenges with standardization. If we focused on the fact that both adults and children show a 1-point change in ratings levels (<span class="math inline">\(\widehat{\beta} = 1\)</span>), we would conclude that milk-first tea ordering is as much better for adults as kids. If we focused on the standardized effect sizes, however, we would conclude that the milk ordering effect is twice as big for adults.</p>
 <p>So which is better: Describing raw measures or standardized effect sizes? In general, our response is “Why not both?” But if you were to pick only one, we recommend considering the type of measurement you are using. With measures that yield common measurement units that are likely to be reported in many studies already, use raw scores <span class="citation" data-cites="baguley2009">(<a href="#ref-baguley2009" role="doc-biblioref">Baguley 2009</a>)</span>. For example, if your study uses physical units such as milliseconds (e.g., for reaction times) or counts (e.g., for a study tracking an outcome like number of words), these measurements can be quite useful to compare across studies. Reporting raw measurements also can allow you to check whether your measurements make sense—for example, a reaction time of 70 milliseconds is inhumanly fast while a reaction time of 10 seconds might be extremely slow (at least, for many speeded tasks).</p>
 <p>In contrast, we recommend using standardized effect sizes for cases where the measurement is relatively unlikely to be comparable with other studies in its original form, or unlikely to be meaningful on its own. For example, reporting the effect of an intervention on raw math test scores is only meaningful if the reader knows how many items are on the test, how difficult it is, and so forth. In such a case where it is hard for a reader to be “calibrated” to the specific measurement units you are using, standardized effect sizes may be the best way to report your finding <span class="citation" data-cites="kelley2012">(<a href="#ref-kelley2012" role="doc-biblioref">Kelley and Preacher 2012</a>)</span>.</p>
@@ -685,20 +854,20 @@ Figure&nbsp;5.13: Estimating the covariation between age and milk-first tea rati
 </figure>
 </div></div>
 <p>This covariance number gives us an estimate of how much age and ratings covary, but its units are a bit funny: it’s hard to know what to make of an expected deviation of 1 point-year. We can do a simple trick to standardize its units and make it into a wonderful form of effect size—the <strong>correlation coefficient</strong> (denoted <span class="math inline">\(r\)</span>). Remember that to create effect sizes above, we divided by the standard deviation of the variable. Here all we have to do is divide by the standard deviation of both variables.</p>
-<p><span class="math display">\[r_{M,A} = \frac{Cov(M,A)}{\sigma_M \sigma_A}\]</span> In other words, the correlation between two variables is the standardized covariation.</p>
-<p>The correlation coefficient is the most ubiquitous measure of association between variables. It ranges between −1, where two variables covary in exactly the opposite direction, to 1, when two variables covary perfectly. A correlation means that there is no association between two variables. A correlation of −1 or 1 doesn’t mean that the variables have the same scale, however: it just means that they “move together.”</p>
+<p><span class="math display">\[r_{M,A} = \frac{\text{cov}(M,A)}{\sigma_M \sigma_A}\]</span> In other words, the correlation between two variables is the standardized covariation.</p>
+<p>The correlation coefficient is the most ubiquitous measure of association between variables. It ranges between <span class="math inline">\(-1\)</span>, where two variables covary in exactly the opposite direction, to <span class="math inline">\(1\)</span>, when two variables covary perfectly. A correlation means that there is no association between two variables. A correlation of <span class="math inline">\(-1\)</span> or <span class="math inline">\(1\)</span> doesn’t mean that the variables have the same scale, however: it just means that they “move together.”</p>
 <p>Critically, a correlation is an effect size. Correlations can be compared across different measures and different studies (including both experimental and observational studies), making it a very valuable scale-free comparison tool.<a href="#fn17" class="footnote-ref" id="fnref17" role="doc-noteref"><sup>17</sup></a></p>
 <div class="no-row-height column-margin column-container"><div id="fn17"><p><sup>17</sup>&nbsp;This section has described one way of looking at a correlation coefficient: as standardized covariation. For a great discussion of all the different ways of thinking about correlations, see <span class="citation" data-cites="lee-rodgers1988">Lee Rodgers and Nicewander (<a href="#ref-lee-rodgers1988" role="doc-biblioref">1988</a>)</span>.</p></div></div></section>
 <section id="chapter-summary-estimation" class="level2" data-number="5.4">
 <h2 data-number="5.4" class="anchored" data-anchor-id="chapter-summary-estimation"><span class="header-section-number">5.4</span> Chapter summary: Estimation</h2>
 <p>In this chapter, we introduced the idea of estimating both individual measurements and treatment effects from observed data. These ideas are simple but they lay the foundations for hypothesis testing and modeling (our next two chapters). Further, we set up the distinction between Bayesian and frequentist approaches, which we will expand in the next chapter since these traditions provide different inferential tools.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="discussion questions">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-discussion questions
+<span class="screen-reader-only">Note</span>discussion questions
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -712,12 +881,12 @@ discussion questions
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled" title="readings">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-readings
+<span class="screen-reader-only">Note</span>readings
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -778,383 +947,256 @@ Salsburg, David. 2002. <em>The Lady Tasting Tea: How Statistics Revolutionized S
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
     }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
         }
       }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
       return false;
     }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
       }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
     }
-    return false;
-  }
-  const onCopySuccess = function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
-      }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
       for (const childEl of codeEl.children) {
         if (isCodeAnnotation(childEl)) {
           childEl.remove();
         }
       }
       return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
-  });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
     });
-    clipboardModal.on('success', onCopySuccess);
-  }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
     }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start',
-    };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
           }
         }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
         }
-        return container.innerHTML
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
       } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
       }
     }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
           }
         } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
+            const note = htmlDoc.querySelector('main.content');
             if (note !== null) {
-              const html = processXRef(id, note);
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -1162,185 +1204,161 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            div.style.left = 0;
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+      }, function(instance) {
       });
     }
-  }
-});
-</script>
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./004-ethics.html" class="pagination-link" aria-label="Ethics">

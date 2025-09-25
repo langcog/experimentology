@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.56">
+<meta name="generator" content="quarto-1.8.24">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -21,8 +21,9 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -33,7 +34,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -86,17 +87,21 @@ div.csl-indent {
 <meta name="quarto:offset" content="./">
 <link href="./007-models.html" rel="next">
 <link href="./005-estimation.html" rel="prev">
-<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-31c05e6bce3cfe91938cb3b7813f7d74.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-e343f61154b2a21dc751129c8b7c1acd.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-31c05e6bce3cfe91938cb3b7813f7d74.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -148,7 +153,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -166,7 +171,169 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-sidebar docked slimcontent">
+<body class="nav-sidebar docked slimcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -188,7 +355,9 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Experimentology</a> 
         <div class="sidebar-tools-main tools-wide">
@@ -392,7 +561,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./102-rmarkdown.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">R Markdown and Quarto</span></span></a>
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Quarto (and R Markdown)</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -452,6 +621,7 @@ window.Quarto = {
 <!-- main -->
 <main class="content page-columns page-full" id="quarto-document-content">
 
+
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./005-estimation.html">Statistics</a></li><li class="breadcrumb-item"><a href="./006-inference.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Inference</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-inference" class="quarto-section-identifier"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Inference</span></span></h1>
@@ -477,7 +647,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-learning goals
+<span class="screen-reader-only">Note</span>learning goals
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -526,7 +696,7 @@ Figure&nbsp;6.1: Clarifying the distinctions between Bayesian and Frequentist pa
 <img src="images/inference/sampling-small.png" class="img-fluid figure-img" alt="A plot with a bell curve distribution of treatment effects and points under it.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-inference-sampling-small-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.2: Sampling distribution for the treatment effect in the tea-tasting experiment, given many different repetitions of the same experiment, each with n = 9 per group. Circles represent average treatment effects from different individual experiments, while the thick line represents the form of the underlying distribution.
+Figure&nbsp;6.2: Sampling distribution for the treatment effect in the tea-tasting experiment, given many different repetitions of the same experiment, each with <span class="math inline">\(n = 9\)</span> per group. Circles represent average treatment effects from different individual experiments, while the thick line represents the form of the underlying distribution.
 </figcaption>
 </figure>
 </div></div>
@@ -534,12 +704,12 @@ Figure&nbsp;6.2: Sampling distribution for the treatment effect in the tea-tasti
 <h3 data-number="6.1.1" class="anchored" data-anchor-id="standard-errors"><span class="header-section-number">6.1.1</span> Standard errors</h3>
 <p>To characterize the uncertainty in an estimate, it helps to picture its <strong>sampling distribution</strong>, which is the distribution of the estimate across different, hypothetical, samples. That is, let’s imagine that we conducted the tea experiment not just once but dozens, hundreds, or even thousands of times. This idea is often called <strong>repeated sampling</strong> as a shorthand. For each hypothetical sample, we use similar recruitment methods to recruit a new sample of participants, and we compute <span class="math inline">\(\widehat{\beta}\)</span> for that sample. Would we get exactly the same answer each time? No, simply because the samples will have some random variability (noise). If we plotted these estimates, <span class="math inline">\(\widehat{\beta}\)</span>, we would get the sampling distribution in <a href="#fig-inference-sampling-small" class="quarto-xref">figure&nbsp;<span>6.2</span></a>.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="code">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-code
+<span class="screen-reader-only">Note</span>code
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -548,7 +718,7 @@ code
 <p>In this chapter and the subsequent statistics and visualization chapters of the book, we’ll try to facilitate understanding and illustrate how to use these concepts in practice by giving the R code we use in constructing our examples in these <span class="smallcaps"><strong>code</strong></span> boxes. We’ll assume that you have some knowledge of base R and the Tidyverse—to get started with these, go ahead and take a look at <a href="103-tidyverse.html" class="quarto-xref"><span>appendix D</span></a> if you haven’t already. Although our figures are often drawn by hand, even the hand-drawn ones are based on actual simulation results!</p>
 <p>Since we’re going to be working with lots of data from the tea tasting example, we wrote a function called <code>make_tea_data()</code> that creates a <code>tibble</code> with some (made-up) data from our modern tea-tasting experiment. You can find the function on GitHub (<a href="https://github.com/langcog/experimentology/blob/main/helper/tea_helper.qmd" class="uri">https://github.com/langcog/experimentology/blob/main/helper/tea_helper.qmd</a>) if you want to follow along.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>tea_data <span class="ot">&lt;-</span> <span class="fu">make_tea_data</span>(<span class="at">n_total =</span> <span class="dv">18</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>tea_data <span class="ot">&lt;-</span> <span class="fu">make_tea_data</span>(<span class="at">n_total =</span> <span class="dv">18</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -566,12 +736,12 @@ Figure&nbsp;6.3: Comparing sampling distributions for the treatment effect by sa
 </div></div><p>Now imagine we also did thousands of repetitions of the experiment with <span class="math inline">\(n = 200\)</span> per group instead of <span class="math inline">\(n = 9\)</span> per group. <a href="#fig-inference-sampling-big" class="quarto-xref">Figure&nbsp;<span>6.3</span></a> shows what the sampling distribution might look like in that case. Notice how much narrower the sampling distribution becomes when we increase the sample size, showing our decreased uncertainty. More formally, the standard deviation of the sampling distribution itself, called the <strong>standard error</strong>, decreases as the sample size increases.</p>
 <p>The sampling distribution is not the same thing as the distribution of tea ratings in a single sample. Instead, it’s a distribution of <em>estimates across samples of a given size</em>. In essence, it tells us what the mean of a new experiment might be, if we ran it with a particular sample size.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="code">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-code
+<span class="screen-reader-only">Note</span>code
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -579,18 +749,18 @@ code
 <div class="callout-body-container callout-body">
 <p>To do simulations where we repeat the tea-tasting experiment over and over again, we’re using a special tidyverse function from the <code>purrr</code> library: <code>map()</code>. <code>map()</code> is an extremely powerful function that allows us to run another function (in this case, the <code>make_tea_data()</code> function that we introduced last chapter) many times with different inputs. Here we create a tibble made up of a set of 1,000 runs of the <code>make_tea_data()</code> function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>samps <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">sim =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>) <span class="sc">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>samps <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">sim =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>) <span class="sc">|&gt;</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">data =</span> <span class="fu">map</span>(sim, \(i) <span class="fu">make_tea_data</span>(<span class="at">n_total =</span> <span class="dv">18</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="at">cols =</span> data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="at">cols =</span> data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Next, we just use the <code>group_by()</code> and <code>summarize()</code> workflow from <a href="103-tidyverse.html" class="quarto-xref"><span>appendix D</span></a> to get the estimated treatment effect for each of these simulations.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>tea_summary <span class="ot">&lt;-</span> samps <span class="sc">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>tea_summary <span class="ot">&lt;-</span> samps <span class="sc">|&gt;</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim, condition) <span class="sc">|&gt;</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_rating =</span> <span class="fu">mean</span>(rating)) <span class="sc">|&gt;</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim) <span class="sc">|&gt;</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">delta =</span> mean_rating[condition <span class="sc">==</span> <span class="st">"milk first"</span>] <span class="sc">-</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>              mean_rating[condition <span class="sc">==</span> <span class="st">"tea first"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>              mean_rating[condition <span class="sc">==</span> <span class="st">"tea first"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>This tibble gives us what we would need to plot the sampling distributions above in <a href="#fig-inference-sampling-small" class="quarto-xref">figure&nbsp;<span>6.2</span></a> and <a href="#fig-inference-sampling-big" class="quarto-xref">figure&nbsp;<span>6.3</span></a>.</p>
 </div>
@@ -607,7 +777,7 @@ code
 <img src="images/inference/cl-2.png" class="img-fluid figure-img" style="width:80.0%" alt="A plot with 3 vertical bars at horizontal positions 0, 0.5, 1.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-inference-coin-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.4: Sampling distribution of samples from a biased coin (n = 2 flips per sample). Bar height is the proportion of flips resulting in a particular mean.
+Figure&nbsp;6.4: Sampling distribution of samples from a biased coin (<span class="math inline">\(n = 2\)</span> flips per sample). Bar height is the proportion of flips resulting in a particular mean.
 </figcaption>
 </figure>
 </div><div id="fig-inference-coin-ns" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A plot with 4 panels with varying numbers of vertical bars (2, 8, 32, 128), increasingly approximating a normal distribution.">
@@ -620,17 +790,17 @@ Figure&nbsp;6.5: Sampling distribution for 2, 8, 32, and 128 flips.
 </figcaption>
 </figure>
 </div></div>
-<p>For example, say we are flipping a coin and we want to estimate the probability that it lands heads (<span class="math inline">\(p_H\)</span>). If we draw samples each consisting of only <span class="math inline">\(n = 2\)</span> coin flips, <a href="#fig-inference-coin-2" class="quarto-xref">figure&nbsp;<span>6.4</span></a> is the sampling distribution of the estimates (<span class="math inline">\(\widehat{p}_H\)</span>). This sampling distribution doesn’t look normally distributed at all—it doesn’t have the characteristic “bell curve” shape! In a sample of two coin flips, <span class="math inline">\(\widehat{p}_H\)</span> can only take on the values 0, 0.5, or 1.</p>
+<p>For example, say we are flipping a coin and we want to estimate the probability that it lands heads (<span class="math inline">\(p_H\)</span>). If we draw samples each consisting of only <span class="math inline">\(n = 2\)</span> coin flips, <a href="#fig-inference-coin-2" class="quarto-xref">figure&nbsp;<span>6.4</span></a> is the sampling distribution of the estimates (<span class="math inline">\(\widehat{p}_H\)</span>). This sampling distribution doesn’t look normally distributed at all—it doesn’t have the characteristic “bell curve” shape! In a sample of two coin flips, <span class="math inline">\(\widehat{p}_H\)</span> can only take on the values <span class="math inline">\(0\)</span>, <span class="math inline">\(0.5\)</span>, or <span class="math inline">\(1\)</span>.</p>
 <p>But look what happens as we draw increasingly larger samples in <a href="#fig-inference-coin-ns" class="quarto-xref">figure&nbsp;<span>6.5</span></a>: we get a normal distribution! This tendency of sampling distributions to become normal as <span class="math inline">\(n\)</span> becomes very large reflects a deep and elegant mathematical law called the <strong>central limit theorem</strong>.</p>
-<p>The practical upshot is that the central limit theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately <span class="math inline">\(n&gt;30\)</span> in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately <span class="math inline">\(\widehat{SE} = \sigma/\sqrt{n}\)</span>. The sampling distribution becomes narrower as the sample size increases because we are dividing by the square root of the number of observations.</p>
+<p>The practical upshot is that the central limit theorem directly helps us characterize the uncertainty of sample estimates. For example, when the sample size is reasonably large (approximately <span class="math inline">\(n&gt;30\)</span> in the case of sample means) the standard error (i.e., the standard deviation of the sampling distribution) of a sample mean is approximately <span class="math inline">\(\widehat{\text{SE}} = \sigma/\sqrt{n}\)</span>. The sampling distribution becomes narrower as the sample size increases because we are dividing by the square root of the number of observations.</p>
 <!-- \vspace{2em} -->
 <div class="callout callout-style-default callout-note callout-titled" title="code">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-code
+<span class="screen-reader-only">Note</span>code
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -639,13 +809,13 @@ code
 <p>Even though our figures are hand-drawn, they’re based on real simulations. For our central limit theorem simulations, we again use the <code>map()</code> function. We set up a tibble with the different values we want to to try (which we call <code>n_flips</code>). Then we make use of the <code>map()</code> function to run <code>rbinom()</code> (random binomial samples) for each value of <code>n_flips</code>.</p>
 <p>One trick we make use of here is that <code>rbinom()</code> takes an extra argument that says how many of these random values you want to generate. Here we generate <code>nsamps = 1000</code> samples, giving us 1,000 independent replicates at each <code>n</code>. But returning an array of 1,000 values for a single value of <code>n_flips</code> results in something odd: the value for each element of <code>flips</code> is an array. To deal with that, we use the <code>unnest()</code> function, which expands the array back into a normal tibble.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>n_samps <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>n_samps <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>n_flips_list <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">8</span>, <span class="dv">32</span>, <span class="dv">128</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>sample_p <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">n_flips =</span> n_flips_list) <span class="sc">|&gt;</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">flips =</span> <span class="fu">map</span>(n_flips, \(f) <span class="fu">rbinom</span>(<span class="at">n =</span> n_samps, <span class="at">size =</span> f, <span class="at">prob =</span> .<span class="dv">7</span>))) <span class="sc">|&gt;</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="at">cols =</span> flips) <span class="sc">|&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p =</span> flips <span class="sc">/</span> n_flips)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p =</span> flips <span class="sc">/</span> n_flips)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -657,16 +827,16 @@ code
 <p>Let’s go back to Fisher’s tea-tasting experiment. The first innovation of that experiment was the use of randomization to recover an estimate of the causal effect of milk ordering. But there was more to Fisher’s analysis than we described.</p>
 <p>The second innovation of the tea-tasting experiment was the idea of creating a model of what might happen during the experiment. Specifically, Fisher described a hypothetical <strong>null model</strong> that would arise if the lady had chosen cups by chance rather than because of some tea sensitivity. In our tea-rating experiment, the null model describes what happens when there is no difference in ratings between tea-first and milk-first cups. Under the null model, the true treatment effect (<span class="math inline">\(\beta\)</span>) is zero.</p>
 <p>Even with an actual treatment effect of zero, across repeated sampling, we should see some variation in <span class="math inline">\(\widehat{\beta}\)</span>, our <em>estimate</em> of the treatment effect. Sometimes we’ll get a small positive effect, sometimes a small negative one. Occasionally just by chance we’ll get a big effect. This is just sampling variation as we described above.</p>
-<p>Fisher’s innovation was to quantify the probability of observing various values of <span class="math inline">\(\hat{\beta}\)</span>, given the null model. Then, if the observed data that were very low probability under the null model, we could declare that the null was rejected. How unlikely must the observed data be in order to reject the null? Fisher declared that it is “usual and convenient for experimenters to take 5% as a standard level of convenience,” establishing the 0.05 cutoff that has become gospel throughout the sciences.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
-<div class="no-row-height column-margin column-container"><div id="fn4"><p><sup>4</sup>&nbsp;Actually, right after establishing 0.05 as a cutoff, Fisher then writes that “in the statistical sense, we thereby admit that no isolated experiment, however significant in itself, can suffice for the experimental demonstration of any natural phenomenon … in order to assert that a natural phenomenon is experimentally demonstrable we need, not an isolated record, but a reliable method of procedure. In relation to the test of significance, we may say that a phenomenon is experimentally demonstrable when we know how to conduct an experiment which will rarely fail to give us a statistically significant result.” In other words, Fisher was all for replication!</p></div></div><p>Let’s take a look at what the null model might look like. We already tried out repeating our tea-tasting experiment thousands of times in our discussion of sampling above. Now in <a href="#fig-inference-null-model" class="quarto-xref">figure&nbsp;<span>6.6</span></a>, we do the same thing but we assume that the <strong>null hypothesis</strong> of no treatment effect is true. The plot shows the distribution of treatment effects <span class="math inline">\(\hat{\beta}\)</span> we observe: some a little negative, some a little positive, and a few substantially positive or negative, but mostly zero.</p>
+<p>Fisher’s innovation was to quantify the probability of observing various values of <span class="math inline">\(\hat{\beta}\)</span>, given the null model. Then, if the observed data that were very low probability under the null model, we could declare that the null was rejected. How unlikely must the observed data be in order to reject the null? Fisher declared that it is “usual and convenient for experimenters to take 5% as a standard level of convenience,” establishing the <span class="math inline">\(0.05\)</span> cutoff that has become gospel throughout the sciences.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
+<div class="no-row-height column-margin column-container"><div id="fn4"><p><sup>4</sup>&nbsp;Actually, right after establishing <span class="math inline">\(0.05\)</span> as a cutoff, Fisher then writes that “in the statistical sense, we thereby admit that no isolated experiment, however significant in itself, can suffice for the experimental demonstration of any natural phenomenon … in order to assert that a natural phenomenon is experimentally demonstrable we need, not an isolated record, but a reliable method of procedure. In relation to the test of significance, we may say that a phenomenon is experimentally demonstrable when we know how to conduct an experiment which will rarely fail to give us a statistically significant result.” In other words, Fisher was all for replication!</p></div></div><p>Let’s take a look at what the null model might look like. We already tried out repeating our tea-tasting experiment thousands of times in our discussion of sampling above. Now in <a href="#fig-inference-null-model" class="quarto-xref">figure&nbsp;<span>6.6</span></a>, we do the same thing but we assume that the <strong>null hypothesis</strong> of no treatment effect is true. The plot shows the distribution of treatment effects <span class="math inline">\(\hat{\beta}\)</span> we observe: some a little negative, some a little positive, and a few substantially positive or negative, but mostly zero.</p>
 <p>Let’s apply the <span class="math inline">\(p&lt;0.05\)</span> standard. If our observation has less than a 5% probability under the null model, then the null model is likely wrong. The red dashed lines on <a href="#fig-inference-null-model" class="quarto-xref">figure&nbsp;<span>6.6</span></a> show the point below which only 2.5% of the data are found and the point above which only 2.5% of the data are found. These are called the <strong>tails</strong> of the distribution. Because we’d be equally willing to accept milk-first tea or tea-first tea being better, we consider both positive and negative observations as possible.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
 <div class="no-row-height column-margin column-container"><div id="fn5"><p><sup>5</sup>&nbsp;Because we’re looking at both tails of the distribution, this is called a “two-tailed” test.</p></div></div><div class="callout callout-style-default callout-note callout-titled" title="code">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-code
+<span class="screen-reader-only">Note</span>code
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -674,19 +844,19 @@ code
 <div class="callout-body-container callout-body">
 <p>To simulate our null model, we can do the same kind of thing we did before, just specifying to our <code>make_tea_data()</code> function that the true difference in effects is zero!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>null_model <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">sim =</span> <span class="dv">1</span><span class="sc">:</span>n_sims, <span class="at">n =</span> <span class="dv">18</span>) <span class="sc">|&gt;</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">data =</span> <span class="fu">map</span>(sim, \(i) <span class="fu">make_tea_data</span>(<span class="at">n_total =</span> n, <span class="at">delta =</span> <span class="dv">0</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="at">cols =</span> data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="at">cols =</span> data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Again we use <code>group_by()</code> and <code>summarize()</code> to get the distribution of treatment effects under the null hypothesis.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>null_model_summary <span class="ot">&lt;-</span> null_model <span class="sc">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>null_model_summary <span class="ot">&lt;-</span> null_model <span class="sc">|&gt;</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim, condition) <span class="sc">|&gt;</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_rating =</span> <span class="fu">mean</span>(rating)) <span class="sc">|&gt;</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim) <span class="sc">|&gt;</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">delta =</span> mean_rating[condition <span class="sc">==</span> <span class="st">"milk first"</span>] <span class="sc">-</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>              mean_rating[condition <span class="sc">==</span> <span class="st">"tea first"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>              mean_rating[condition <span class="sc">==</span> <span class="st">"tea first"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -694,15 +864,15 @@ code
 <div id="fig-inference-null-model" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" alt="A plot the same as 6.2 with regions below 2.5% and above 97.5% shaded.">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-inference-null-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="images/inference/p-region.png" class="img-fluid figure-img" style="width:70.0%" alt="A plot the same as 6.2 with regions below 2.5% and above 97.5% shaded.">
+<img src="images/inference/p-region.png" class="img-fluid figure-img" style="width:75.0%" alt="A plot the same as 6.2 with regions below 2.5% and above 97.5% shaded.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig margin-caption" id="fig-inference-null-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.6: One example of the distribution of treatment effects under the null model (with n = 9 per group). The red regions indicate the part of the distribution in which less than 5% of observations should fall.
+Figure&nbsp;6.6: One example of the distribution of treatment effects under the null model (with <span class="math inline">\(n = 9\)</span> per group). The red regions indicate the part of the distribution in which less than 5% of observations should fall.
 </figcaption>
 </figure>
 </div>
-<p><a href="#fig-inference-null-model" class="quarto-xref">Figure&nbsp;<span>6.6</span></a> captures the logic of NHST: if the observed data fall in the region that has a probability of less than 0.05 under the null model, then we reject the null. So, then when we observe some particular treatment effect <span class="math inline">\(\hat{\beta}\)</span> in a single (real) instance of our experiment, we can compute the probability of these data or any data more extreme than ours under the null model.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> This probability is our <span class="math inline">\(p\)</span>-value, and if it is small, it gives us license to conclude that the null is false.</p>
-<div class="no-row-height column-margin column-container"><div id="fn6"><p><sup>6</sup>&nbsp;The “more extreme” part deserves a little explanation. Any individual outcome is relatively unlikely by itself, just because it’s surprising that the estimate is that exact value (we’re simplifying here, it gets a bit trickier when you are talking about real numbers). What we care about instead is a <em>group</em> of values. The ones that are in the middle of the distribution are, considered as a group, quite likely; the ones on the tails are, as a group, less likely. We want to know if the probability of the group of datapoints that includes our observation and anything even further out on the tails is collectively less than 0.05.</p></div></div><p>As we saw before, the larger the sample size, the smaller the standard error. That’s true for the null model too! <a href="#fig-inference-null-model2" class="quarto-xref">Figure&nbsp;<span>6.7</span></a> shows the expected null distribution for a bigger experiment.</p>
+<p><a href="#fig-inference-null-model" class="quarto-xref">Figure&nbsp;<span>6.6</span></a> captures the logic of NHST: if the observed data fall in the region that has a probability of less than <span class="math inline">\(0.05\)</span> under the null model, then we reject the null. So, then when we observe some particular treatment effect <span class="math inline">\(\hat{\beta}\)</span> in a single (real) instance of our experiment, we can compute the probability of these data or any data more extreme than ours under the null model.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> This probability is our <span class="math inline">\(p\)</span>-value, and if it is small, it gives us license to conclude that the null is false.</p>
+<div class="no-row-height column-margin column-container"><div id="fn6"><p><sup>6</sup>&nbsp;The “more extreme” part deserves a little explanation. Any individual outcome is relatively unlikely by itself, just because it’s surprising that the estimate is that exact value (we’re simplifying here, it gets a bit trickier when you are talking about real numbers). What we care about instead is a <em>group</em> of values. The ones that are in the middle of the distribution are, considered as a group, quite likely; the ones on the tails are, as a group, less likely. We want to know if the probability of the group of datapoints that includes our observation and anything even further out on the tails is collectively less than <span class="math inline">\(0.05\)</span>.</p></div></div><p>As we saw before, the larger the sample size, the smaller the standard error. That’s true for the null model too! <a href="#fig-inference-null-model2" class="quarto-xref">Figure&nbsp;<span>6.7</span></a> shows the expected null distribution for a bigger experiment.</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-inference-null-model2" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A plot the same as 6.2 but with more points and a narrower curve.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -715,12 +885,12 @@ Figure&nbsp;6.7: Distribution of treatment effects under the null model for a la
 </figure>
 </div></div><p>The more participants in the experiment, the tighter the null distribution becomes, and hence the smaller the region in which we should expect a null treatment effect to fall. Because our expectation based on the null becomes more precise, we will be able to reject the null based on smaller treatment effects. In this type of hypothesis testing, as with estimation, our goals matter. If we’re merely testing a hypothesis out of curiosity, perhaps we don’t want to measure too many cups of tea. But if we were designing the tea strategy for a major cafe chain, the stakes would be higher; in that case, maybe we’d want to do a more extensive experiment!</p>
 <div class="callout callout-style-default callout-note callout-titled" title="code">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-code
+<span class="screen-reader-only">Note</span>code
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -728,7 +898,7 @@ code
 <div class="callout-body-container callout-body">
 <p>We can do a more systematic simulation of the null regions for different sample sizes by simply adding a parameter to our simulation.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>null_model_multi_n <span class="ot">&lt;-</span> <span class="fu">expand_grid</span>(<span class="at">sim =</span> <span class="dv">1</span><span class="sc">:</span>n_sims, <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">24</span>, <span class="dv">48</span>, <span class="dv">96</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sim_data =</span> <span class="fu">map</span>(n, \(n_i) <span class="fu">make_tea_data</span>(<span class="at">n_total =</span> n_i, <span class="at">delta =</span> <span class="dv">0</span>))) <span class="sc">|&gt;</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="at">cols =</span> sim_data)</span>
@@ -743,11 +913,11 @@ code
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>null_model_quantiles_multi_n <span class="ot">&lt;-</span> null_model_summary_multi_n <span class="sc">|&gt;</span></span>
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(n) <span class="sc">|&gt;</span></span>
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">q_025 =</span> <span class="fu">quantile</span>(delta, .<span class="dv">025</span>),</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">q_975 =</span> <span class="fu">quantile</span>(delta, .<span class="dv">975</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">q_975 =</span> <span class="fu">quantile</span>(delta, .<span class="dv">975</span>)) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Here is the plotting code to produce a comparable figure to our illustration:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(null_model_summary_multi_n, <span class="fu">aes</span>(<span class="at">x =</span> delta)) <span class="sc">+</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(null_model_summary_multi_n, <span class="fu">aes</span>(<span class="at">x =</span> delta)) <span class="sc">+</span> </span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(n), <span class="at">nrow =</span> <span class="dv">1</span>, <span class="at">labeller =</span> label_both) <span class="sc">+</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> .<span class="dv">25</span>) <span class="sc">+</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"grey"</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>) <span class="sc">+</span> </span>
@@ -756,7 +926,7 @@ code
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">data =</span> null_model_quantiles_multi_n, </span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">xintercept =</span> q_975), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>) <span class="sc">+</span> </span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="sc">-</span><span class="fl">2.5</span>, <span class="fl">2.5</span>) <span class="sc">+</span> </span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Difference in rating"</span>, <span class="at">y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Difference in rating"</span>, <span class="at">y =</span> <span class="st">"Frequency"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -780,14 +950,14 @@ code
 Figure&nbsp;6.8: The Bayes Factor (BF).
 </figcaption>
 </figure>
-</div><div id="fn8"><p><sup>8</sup>&nbsp;Sometimes people refer to the BF in favor of <span class="math inline">\(H_1\)</span> as the <span class="math inline">\(BF_{10}\)</span> and the BF in favor of <span class="math inline">\(H_0\)</span> as the <span class="math inline">\(BF_{01}\)</span>. This notation is a bit confusing because the first of these looks like the number 10.</p></div></div><p>Informally, we’ve now discussed two different distinct hypotheses about the tea situation: our participants could have <em>no</em> tea discrimination ability—leading to chance performance. We call this <span class="math inline">\(H_0\)</span>. Or they could have some nonzero ability—leading to greater than chance performance. We call this <span class="math inline">\(H_1\)</span>. The Bayes Factor is simply the likelihood of the data (in the technical sense used above) under <span class="math inline">\(H_1\)</span> vs under <span class="math inline">\(H_0\)</span> (<a href="#fig-inference-bf" class="quarto-xref">figure&nbsp;<span>6.8</span></a>). The Bayes Factor is a ratio, so if it is greater than 1, the data are more likely under <span class="math inline">\(H_1\)</span> than they are under <span class="math inline">\(H_0\)</span>—and vice versa for values between 1 and 0. A BF of 3 means there is three times as much evidence for <span class="math inline">\(H_1\)</span> than <span class="math inline">\(H_0\)</span>, or equivalently 1/3 as much evidence for <span class="math inline">\(H_0\)</span> as <span class="math inline">\(H_1\)</span>.<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a></p>
+</div><div id="fn8"><p><sup>8</sup>&nbsp;Sometimes people refer to the BF in favor of <span class="math inline">\(H_1\)</span> as the <span class="math inline">\(\text{BF}_{10}\)</span> and the BF in favor of <span class="math inline">\(H_0\)</span> as the <span class="math inline">\(\text{BF}_{01}\)</span>. This notation is a bit confusing because the first of these looks like the number <span class="math inline">\(10\)</span>.</p></div></div><p>Informally, we’ve now discussed two different distinct hypotheses about the tea situation: our participants could have <em>no</em> tea discrimination ability—leading to chance performance. We call this <span class="math inline">\(H_0\)</span>. Or they could have some nonzero ability—leading to greater than chance performance. We call this <span class="math inline">\(H_1\)</span>. The Bayes Factor is simply the likelihood of the data (in the technical sense used above) under <span class="math inline">\(H_1\)</span> vs under <span class="math inline">\(H_0\)</span> (<a href="#fig-inference-bf" class="quarto-xref">figure&nbsp;<span>6.8</span></a>). The Bayes Factor is a ratio, so if it is greater than <span class="math inline">\(1\)</span>, the data are more likely under <span class="math inline">\(H_1\)</span> than they are under <span class="math inline">\(H_0\)</span>—and vice versa for values between <span class="math inline">\(1\)</span> and <span class="math inline">\(0\)</span>. A BF of <span class="math inline">\(3\)</span> means there is three times as much evidence for <span class="math inline">\(H_1\)</span> than <span class="math inline">\(H_0\)</span>, or equivalently <span class="math inline">\(1/3\)</span> as much evidence for <span class="math inline">\(H_0\)</span> as <span class="math inline">\(H_1\)</span>.<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a></p>
 <div class="callout callout-style-default callout-note callout-titled" title="code">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-code
+<span class="screen-reader-only">Note</span>code
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -795,18 +965,18 @@ code
 <div class="callout-body-container callout-body">
 <p>Bayes Factors are delightfully easy to compute using the <code>BayesFactor</code> R package <span class="citation" data-cites="morey2023">(<a href="#ref-morey2023" role="doc-biblioref">Morey and Rouder 2023</a>)</span>. All we do is feed in the two sets of ratings to the <code>ttestBF()</code> function!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BayesFactor)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BayesFactor)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>tea_bf <span class="ot">&lt;-</span> <span class="fu">ttestBF</span>(<span class="at">x =</span> <span class="fu">filter</span>(tea_data, condition <span class="sc">==</span> <span class="st">"milk first"</span>)<span class="sc">$</span>rating,</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">y =</span> <span class="fu">filter</span>(tea_data, condition <span class="sc">==</span> <span class="st">"tea first"</span>)<span class="sc">$</span>rating,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">paired =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">paired =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
 </div>
-<p>There are a couple of things to notice about the Bayes Factor. The first is that, like a <span class="math inline">\(p\)</span>-value, it is inherently a continuous measure. You can artificially dichotomize decisions based on the Bayes Factor by declaring a cutoff (say, BF &gt; 3 or BF &gt; 10), but there is no intrinsic threshold at which you would say the evidence is “significant.” Some guidelines for interpretation <span class="citation" data-cites="goodman1999">(from <a href="#ref-goodman1999" role="doc-biblioref">S. N. Goodman 1999</a>)</span> are shown in <a href="#tbl-inference-goodman" class="quarto-xref">table&nbsp;<span>6.1</span></a>.<a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a> On the other hand, cutoffs like BF &gt; 5 or <span class="math inline">\(p &lt; 0.05\)</span> are not very informative. So, although we provide this table to guide interpretation, we caution that you should always report and interpret the actual Bayes Factor, not whether it is above or below some cutoff.</p>
+<p>There are a couple of things to notice about the Bayes Factor. The first is that, like a <span class="math inline">\(p\)</span>-value, it is inherently a continuous measure. You can artificially dichotomize decisions based on the Bayes Factor by declaring a cutoff (say, <span class="math inline">\(\text{BF} &gt; 3\)</span> or <span class="math inline">\(\text{BF} &gt; 10\)</span>), but there is no intrinsic threshold at which you would say the evidence is “significant.” Some guidelines for interpretation <span class="citation" data-cites="goodman1999">(from <a href="#ref-goodman1999" role="doc-biblioref">S. N. Goodman 1999</a>)</span> are shown in <a href="#tbl-inference-goodman" class="quarto-xref">table&nbsp;<span>6.1</span></a>.<a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a> On the other hand, cutoffs like <span class="math inline">\(\text{BF} &gt; 5\)</span> or <span class="math inline">\(p &lt; 0.05\)</span> are not very informative. So, although we provide this table to guide interpretation, we caution that you should always report and interpret the actual Bayes Factor, not whether it is above or below some cutoff.</p>
 <!-- {{< include md/006-inference/goodman.md >}} -->
-<div class="no-row-height column-margin column-container"><div id="fn9"><p><sup>9</sup>&nbsp;Some like the guidelines provided by <span class="citation" data-cites="jeffreys1998">Jeffreys (<a href="#ref-jeffreys1998" role="doc-biblioref">1961</a>)</span>, which include categories such as “barely worth mentioning” (1 &gt; BF &gt; 3).</p></div><div class="">
+<div class="no-row-height column-margin column-container"><div id="fn9"><p><sup>9</sup>&nbsp;Some like the guidelines provided by <span class="citation" data-cites="jeffreys1998">Jeffreys (<a href="#ref-jeffreys1998" role="doc-biblioref">1961</a>)</span>, which include categories such as “barely worth mentioning” (<span class="math inline">\(1 &gt; \text{BF} &gt; 3\)</span>).</p></div><div class="">
 <div class="cell">
 <div id="tbl-inference-goodman" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -851,12 +1021,12 @@ Table&nbsp;6.1: <span class="citation" data-cites="goodman1999">S. N. Goodman (<
 <p>Now let’s turn back to NHST and the <span class="math inline">\(p\)</span>-value. We already have a working definition of what a <span class="math inline">\(p\)</span>-value is from our discussion above: it’s the probability of the data (or any data that would be more extreme) under the null hypothesis. How is this quantity related to either our Bayesian estimate or the BF? Well, the first thing to notice is that the <span class="math inline">\(p\)</span>-value is very close (but not identical) to the likelihood itself.<a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a></p>
 <div class="no-row-height column-margin column-container"><div id="fn11"><p><sup>11</sup>&nbsp;The likelihood—for both Bayesians and frequentists—is the probability of the data, just like the <span class="math inline">\(p\)</span>-value. But unlike the <span class="math inline">\(p\)</span>-value, it doesn’t include the probability of more extreme data as well.</p></div><div id="fn12"><p><sup>12</sup>&nbsp;<span class="math inline">\(t\)</span>-tests can also be used in cases where one sample is being compared to some baseline.</p></div></div><p>Next we can use a simple statistical test, a <span class="math inline">\(t\)</span>-test, to compute <span class="math inline">\(p\)</span>-values for our experiment. In case you haven’t encountered one, a <span class="math inline">\(t\)</span>-test is a procedure for computing a <span class="math inline">\(p\)</span>-value by comparing the distribution of two variables using the null hypothesis that there is no difference between them.<a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a> The <span class="math inline">\(t\)</span>-test uses the data to compute a <strong>test statistic</strong> whose distribution under the null hypothesis is known. Then the value of this statistic can be converted to <span class="math inline">\(p\)</span>-values for making an inference.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="code">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-code
+<span class="screen-reader-only">Note</span>code
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -864,9 +1034,9 @@ code
 <div class="callout-body-container callout-body">
 <p>The standard <code>t.test()</code> function is built into R via the default <code>stats</code> package. Here we simply make sure to specify the variety of test we want by using the flags <code>paired = FALSE</code> and <code>var.equal = TRUE</code> (denoting the assumption of equal variances).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>tea_t <span class="ot">&lt;-</span> <span class="fu">t.test</span>(<span class="at">x =</span> <span class="fu">filter</span>(tea_data, condition <span class="sc">==</span> <span class="st">"milk first"</span>)<span class="sc">$</span>rating,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>tea_t <span class="ot">&lt;-</span> <span class="fu">t.test</span>(<span class="at">x =</span> <span class="fu">filter</span>(tea_data, condition <span class="sc">==</span> <span class="st">"milk first"</span>)<span class="sc">$</span>rating,</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">y =</span> <span class="fu">filter</span>(tea_data, condition <span class="sc">==</span> <span class="st">"tea first"</span>)<span class="sc">$</span>rating,</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">paired =</span> <span class="cn">FALSE</span>, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">paired =</span> <span class="cn">FALSE</span>, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -889,7 +1059,7 @@ Table&nbsp;6.2: Comparison of <span class="math inline">\(p\)</span>-value and B
 </div>
 </div>
 </div></div><p>The expression <span class="math inline">\(t(46) = 2.86\)</span>, <span class="math inline">\(p = 0.006\)</span> is the standard way to report a <span class="math inline">\(t\)</span>-test according to the American Psychological Association. The first part of this report gives the <span class="math inline">\(t\)</span> value, qualified by the <strong>degrees of freedom</strong> for the test in parentheses. We won’t focus much on the idea of degrees of freedom here, but for now it’s enough to know that this number quantifies the amount of information given by the data, in this case 48 datapoints minus the two means (one for each of the samples).</p>
-<p>Let’s compare <span class="math inline">\(p\)</span>-values and Bayes Factors (computed using the default setup in the <code>BayesFactor</code> R package). In <a href="#tbl-p-bf-comparison" class="quarto-xref">table&nbsp;<span>6.2</span></a>, the rows represent simulated experiments with varying total numbers of participants (N) and varying average treatment effects. Both <span class="math inline">\(p\)</span> and BF go up with more participants and larger effects. In general, BFs tend to be a bit more conservative than <span class="math inline">\(p\)</span>-values, such that <span class="math inline">\(p&lt;0.05\)</span> can sometimes translate to a BF of less than 3 <span class="citation" data-cites="benjamin2018">(<a href="#ref-benjamin2018" role="doc-biblioref">Benjamin et al. 2018</a>)</span>. For example, take a look at the row with 48 participants and an effect size of 1: the <span class="math inline">\(p\)</span>-value is less than 0.05, but the Bayes Factor is only 2.0.</p>
+<p>Let’s compare <span class="math inline">\(p\)</span>-values and Bayes Factors (computed using the default setup in the <code>BayesFactor</code> R package). In <a href="#tbl-p-bf-comparison" class="quarto-xref">table&nbsp;<span>6.2</span></a>, the rows represent simulated experiments with varying total numbers of participants (N) and varying average treatment effects. Both <span class="math inline">\(p\)</span> and BF go up with more participants and larger effects. In general, BFs tend to be a bit more conservative than <span class="math inline">\(p\)</span>-values, such that <span class="math inline">\(p&lt;0.05\)</span> can sometimes translate to a BF of less than 3 <span class="citation" data-cites="benjamin2018">(<a href="#ref-benjamin2018" role="doc-biblioref">Benjamin et al. 2018</a>)</span>. For example, take a look at the row with 48 participants and an effect size of 1: the <span class="math inline">\(p\)</span>-value is less than <span class="math inline">\(0.05\)</span>, but the Bayes Factor is only <span class="math inline">\(2.0\)</span>.</p>
 <p>The critical thing about <span class="math inline">\(p\)</span>-values, though, is not just that they are a kind of data likelihoods. It is that they are used in a <em>specific inferential procedure</em>. The logic of NHST is that we make a binary decision about the presence of an effect. If <span class="math inline">\(p &lt; 0.05\)</span>, the null hypothesis is rejected; otherwise not. As <span class="citation" data-cites="fisher1949">Fisher (<a href="#ref-fisher1949" role="doc-biblioref">1949, 19</a>)</span> wrote,</p>
 <blockquote class="blockquote">
 <p>It should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis.</p>
@@ -909,16 +1079,16 @@ Figure&nbsp;6.9: Standard decision matrix for the Neyman-Pearson approach to sta
 <section id="sec-neyman-pearson" class="level3 page-columns page-full" data-number="6.3.3">
 <h3 data-number="6.3.3" class="anchored" data-anchor-id="sec-neyman-pearson"><span class="header-section-number">6.3.3</span> The Neyman-Pearson approach</h3>
 <p>One way to “patch” NHST is to introduce a decision-theoretic view, shown in <a href="#fig-inference-power-alpha" class="quarto-xref">figure&nbsp;<span>6.9</span></a>.<a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a> On this view, called the Neyman-Pearson view, there is a real <span class="math inline">\(H_1\)</span>, albeit one that is not specified. Then the true state of the world could be that <span class="math inline">\(H_0\)</span> is true or <span class="math inline">\(H_1\)</span> is true. The <span class="math inline">\(p&lt;0.05\)</span> criterion is the threshold at which we are willing to reject the null, and so this constitutes our false positive rate <span class="math inline">\(\alpha\)</span>. But we also need to define a false negative rate, which is conventionally called <span class="math inline">\(\beta\)</span>.<a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a></p>
-<div class="no-row-height column-margin column-container"><div id="fn13"><p><sup>13</sup>&nbsp;A little bit of useful history here is given in <span class="citation" data-cites="cohen1990">Cohen (<a href="#ref-cohen1990" role="doc-biblioref">1990</a>)</span>, and we also recommend <span class="citation" data-cites="gigerenzer1989">Gigerenzer (<a href="#ref-gigerenzer1989" role="doc-biblioref">1989</a>)</span> for a broader perspective.</p></div><div id="fn14"><p><sup>14</sup>&nbsp;Unfortunately, <span class="math inline">\(\beta\)</span> is very commonly used for regression coefficients—and for that reason we’ve used it as our symbol for causal effects. We’ll be using these <span class="math inline">\(\beta\)</span>s in the next chapter as well. Those <span class="math inline">\(\beta\)</span>s are not to be confused with false negative rates. Sorry, this is just a place where statisticians have used the same Greek letter for two different things.</p></div><div id="fn15"><p><sup>15</sup>&nbsp;To make really rational decisions, you could couple this chart to some kind of utility function that assessed the costs of different outcomes. For example, you might think it’s worse to proceed with an intervention that doesn’t work than to stay with business as usual. In that case, you’d assign a higher cost to a false positive and accordingly try to adopt a more conservative criterion. We won’t cover this kind of decision analysis here, but <span class="citation" data-cites="pratt1995">Pratt et al. (<a href="#ref-pratt1995" role="doc-biblioref">1995</a>)</span> is a classic textbook on statistical decision theory if you’re interested.</p></div></div><p>Setting these rates is a decision problem: If you are too conservative in your criteria for the intervention having an effect, then you risk a false negative, where you incorrectly conclude that it doesn’t work. And if you’re too liberal in your assessment of the evidence, then you risk a false positive.<a href="#fn15" class="footnote-ref" id="fnref15" role="doc-noteref"><sup>15</sup></a> In practice, however, people usually leave <span class="math inline">\(\alpha\)</span> at 0.05 and try to control the false negative rate by increasing their sample size.</p>
+<div class="no-row-height column-margin column-container"><div id="fn13"><p><sup>13</sup>&nbsp;A little bit of useful history here is given in <span class="citation" data-cites="cohen1990">Cohen (<a href="#ref-cohen1990" role="doc-biblioref">1990</a>)</span>, and we also recommend <span class="citation" data-cites="gigerenzer1989">Gigerenzer (<a href="#ref-gigerenzer1989" role="doc-biblioref">1989</a>)</span> for a broader perspective.</p></div><div id="fn14"><p><sup>14</sup>&nbsp;Unfortunately, <span class="math inline">\(\beta\)</span> is very commonly used for regression coefficients—and for that reason we’ve used it as our symbol for causal effects. We’ll be using these <span class="math inline">\(\beta\)</span>s in the next chapter as well. Those <span class="math inline">\(\beta\)</span>s are not to be confused with false negative rates. Sorry, this is just a place where statisticians have used the same Greek letter for two different things.</p></div><div id="fn15"><p><sup>15</sup>&nbsp;To make really rational decisions, you could couple this chart to some kind of utility function that assessed the costs of different outcomes. For example, you might think it’s worse to proceed with an intervention that doesn’t work than to stay with business as usual. In that case, you’d assign a higher cost to a false positive and accordingly try to adopt a more conservative criterion. We won’t cover this kind of decision analysis here, but <span class="citation" data-cites="pratt1995">Pratt et al. (<a href="#ref-pratt1995" role="doc-biblioref">1995</a>)</span> is a classic textbook on statistical decision theory if you’re interested.</p></div></div><p>Setting these rates is a decision problem: If you are too conservative in your criteria for the intervention having an effect, then you risk a false negative, where you incorrectly conclude that it doesn’t work. And if you’re too liberal in your assessment of the evidence, then you risk a false positive.<a href="#fn15" class="footnote-ref" id="fnref15" role="doc-noteref"><sup>15</sup></a> In practice, however, people usually leave <span class="math inline">\(\alpha\)</span> at <span class="math inline">\(0.05\)</span> and try to control the false negative rate by increasing their sample size.</p>
 <p>As we saw in <a href="#fig-inference-null-model" class="quarto-xref">figure&nbsp;<span>6.6</span></a>, the larger the sample, the better your chance of rejecting the null for any given non-null effect. But these chances will depend also on the effect size you are estimating. This formulation gives rise to the idea of classical power analysis, which we cover in <a href="010-sampling.html" class="quarto-xref"><span>chapter 10</span></a>. Most folks who defend binary inference are interested in using the Neyman-Pearson approach. In our view, this approach has its place (it’s especially useful for power analysis) but it still suffers from the substantial issues that plague all binary inference techniques.</p>
 <!-- \vspace{2.5em} -->
 <div class="callout callout-style-default callout-note callout-titled" title="depth">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-depth
+<span class="screen-reader-only">Note</span>depth
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -976,11 +1146,11 @@ Figure&nbsp;6.10: Schematic data from a small tea-tasting experiment with a skew
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">1</td>
-<td>“If <span class="math inline">\(p\)</span> = 0.05, the null hypothesis has only a 5% chance of being true.”</td>
+<td>“If <span class="math inline">\(p = 0.05\)</span>, the null hypothesis has only a 5% chance of being true.”</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">2</td>
-<td>“A nonsignificant difference (e.g., <span class="math inline">\(p \geq\)</span> 0.05) means there is no difference between groups.”</td>
+<td>“A nonsignificant difference (e.g., <span class="math inline">\(p \geq 0.05\)</span>) means there is no difference between groups.”</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">3</td>
@@ -988,7 +1158,7 @@ Figure&nbsp;6.10: Schematic data from a small tea-tasting experiment with a skew
 </tr>
 <tr class="even">
 <td style="text-align: right;">4</td>
-<td>“Studies with <span class="math inline">\(p\)</span>-values on opposite sides of 0.05 are conflicting.”</td>
+<td>“Studies with <span class="math inline">\(p\)</span>-values on opposite sides of <span class="math inline">\(0.05\)</span> are conflicting.”</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">5</td>
@@ -996,23 +1166,23 @@ Figure&nbsp;6.10: Schematic data from a small tea-tasting experiment with a skew
 </tr>
 <tr class="even">
 <td style="text-align: right;">6</td>
-<td>“<span class="math inline">\(p\)</span> = 0.05 means that we have observed data that would occur only 5% of the time under the null hypothesis.”</td>
+<td>“<span class="math inline">\(p = 0.05\)</span> means that we have observed data that would occur only 5% of the time under the null hypothesis.”</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">7</td>
-<td>“<span class="math inline">\(p\)</span> = 0.05 and <span class="math inline">\(p \leq\)</span> 0.05 mean the same thing.”</td>
+<td>“<span class="math inline">\(p = 0.05\)</span> and <span class="math inline">\(p \leq 0.05\)</span> mean the same thing.”</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">8</td>
-<td>“<span class="math inline">\(p\)</span>-values are properly written as inequalities (e.g., ‘<span class="math inline">\(p \leq\)</span> 0.02’ when <span class="math inline">\(p\)</span> = 0.015).”</td>
+<td>“<span class="math inline">\(p\)</span>-values are properly written as inequalities (e.g., ‘<span class="math inline">\(p \leq 0.02\)</span>’ when <span class="math inline">\(p = 0.015\)</span>).”</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">9</td>
-<td>“<span class="math inline">\(p\)</span> = 0.05 means that if you reject the null hypothesis, the probability of a false positive error is only 5%.”</td>
+<td>“<span class="math inline">\(p = 0.05\)</span> means that if you reject the null hypothesis, the probability of a false positive error is only 5%.”</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">10</td>
-<td>“With a <span class="math inline">\(p\)</span> = 0.05 threshold for significance, the chance of a false positive error will be 5%.”</td>
+<td>“With a <span class="math inline">\(p = 0.05\)</span> threshold for significance, the chance of a false positive error will be 5%.”</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">11</td>
@@ -1031,15 +1201,15 @@ Table&nbsp;6.3: A “dirty dozen” <span class="math inline">\(p\)</span>-value
 </figure>
 </div>
 <!-- ::: -->
-<p>Beyond these misconceptions, there’s another problem. The <span class="math inline">\(p\)</span>-value is a probability of a certain set of events happening (corresponding to the observed data or any “more extreme” data—that is to say, data further from the null). Since <span class="math inline">\(p\)</span>-values are probabilities, we can combine them together across different events. If we run a “null experiment”—an experiment where the true effect is zero—the probability of a dataset with <span class="math inline">\(p &lt; 0.05\)</span> is of course 0.05. But if we run two such experiments, we can get <span class="math inline">\(p &lt; 0.05\)</span> with probability 0.1. By the time we run 20 experiments, we have an 0.64 chance of getting a positive result.</p>
+<p>Beyond these misconceptions, there’s another problem. The <span class="math inline">\(p\)</span>-value is a probability of a certain set of events happening (corresponding to the observed data or any “more extreme” data—that is to say, data further from the null). Since <span class="math inline">\(p\)</span>-values are probabilities, we can combine them together across different events. If we run a “null experiment”—an experiment where the true effect is zero—the probability of a dataset with <span class="math inline">\(p &lt; 0.05\)</span> is of course <span class="math inline">\(0.05\)</span>. But if we run two such experiments, we can get <span class="math inline">\(p &lt; 0.05\)</span> with probability <span class="math inline">\(0.1\)</span>. By the time we run 20 experiments, we have an <span class="math inline">\(0.64\)</span> chance of getting a positive result.</p>
 <p>It would obviously be a major mistake to run 20 experiments and then report only the positive ones (which, by design, are false positives) as though these still were “statistically significant.” The same thing applies to doing 20 different statistical tests within a single experiment. There are many statistical corrections that can be made to adjust for this problem, which is known as the problem of <strong>multiple comparisons</strong>.<a href="#fn18" class="footnote-ref" id="fnref18" role="doc-noteref"><sup>18</sup></a> But the the broader issue is one of transparency: unless you <em>know</em> what the appropriate set of experiments or tests is, it’s not possible to implement one of these corrections!<a href="#fn19" class="footnote-ref" id="fnref19" role="doc-noteref"><sup>19</sup></a></p>
-<div class="no-row-height column-margin column-container"><div id="fn18"><p><sup>18</sup>&nbsp;The simplest and most versatile one, the Bonferroni correction, just divides 0.05 (or technically, whatever your threshold is) by the number of comparisons you are making. Using that correction, if you do 20 null experiments, you would have a 3% chance of a false positive.</p></div><div id="fn19"><p><sup>19</sup>&nbsp;This issue is especially problematic with <span class="math inline">\(p\)</span>-values because they are so often presented as an independent set of tests, but the problem of multiple comparisons comes up when you compute a lot of independent Bayes Factors as well. “Posterior hacking” via selective reporting of Bayes Factors is perfectly possible <span class="citation" data-cites="simonsohn2014">(<a href="#ref-simonsohn2014" role="doc-biblioref">Simonsohn 2014</a>)</span>.</p></div></div><div class="callout callout-style-default callout-note callout-titled" title="accident report">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="no-row-height column-margin column-container"><div id="fn18"><p><sup>18</sup>&nbsp;The simplest and most versatile one, the Bonferroni correction, just divides <span class="math inline">\(0.05\)</span> (or technically, whatever your threshold is) by the number of comparisons you are making. Using that correction, if you do 20 null experiments, you would have a 3% chance of a false positive.</p></div><div id="fn19"><p><sup>19</sup>&nbsp;This issue is especially problematic with <span class="math inline">\(p\)</span>-values because they are so often presented as an independent set of tests, but the problem of multiple comparisons comes up when you compute a lot of independent Bayes Factors as well. “Posterior hacking” via selective reporting of Bayes Factors is perfectly possible <span class="citation" data-cites="simonsohn2014">(<a href="#ref-simonsohn2014" role="doc-biblioref">Simonsohn 2014</a>)</span>.</p></div></div><div class="callout callout-style-default callout-note callout-titled" title="accident report">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-accident report
+<span class="screen-reader-only">Note</span>accident report
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -1048,8 +1218,8 @@ accident report
 <h3 class="unnumbered anchored" data-anchor-id="do-extraordinary-claims-require-extraordinary-evidence">Do extraordinary claims require extraordinary evidence?</h3>
 <p>In a blockbuster paper that may have inadvertently kicked off the replication crisis, <span class="citation" data-cites="bem2011">Bem (<a href="#ref-bem2011" role="doc-biblioref">2011</a>)</span> presented nine experiments he claimed provided evidence for precognition—that participants somehow had foreknowledge of the future. In the first of these experiments, Bem showed each of a group of 100 undergraduates 36 two-alternative forced choice trials in which they had to guess which of two locations on a screen would reveal a picture immediately before the picture was revealed. By chance, participants should choose the correct side 50% of the time of course. Bem found that, specifically for erotic pictures, participants’ guesses were 53.1% correct. This rate of guessing was unexpected under the null hypothesis of chance guessing (<span class="math inline">\(p = 0.01\)</span>). Eight other studies with a total of more than 1,000 participants yielded apparently supportive evidence, with participants appearing to show a variety of psychological effects even before the stimuli were shown!</p>
 <p>Based on this evidence, should we conclude that precognition exists? Probably not. <span class="citation" data-cites="wagenmakers2011">Wagenmakers et al. (<a href="#ref-wagenmakers2011" role="doc-biblioref">2011</a>)</span> presented a critique of Bem’s findings, arguing that (1) Bem’s experiments were exploratory (not preregistered) in nature, (2) that Bem’s conclusions were <em>a priori</em> unlikely, and (3) that the level of statistical evidence from his experiments was quite low. We find each of these arguments alone compelling; together they present a knockdown case against Bem’s interpretation.</p>
-<p>First, we’ve already discussed the need to be skeptical about situations where experimenters have the opportunity for analytic flexibility in their choice of measures, manipulations, samples, and analyses. Flexibility leads to the possibility of cherry-picking those set of decisions from the “garden of forking paths” that lead to a positive outcome for the researcher’s favored hypothesis (for more details, see <a href="011-prereg.html" class="quarto-xref"><span>chapter 11</span></a>). And there is plenty of flexibility on display even in experiment 1 of Bem’s paper. Although there were 100 participants in the study, they may have been combined post hoc from two distinct samples of 40 and 60, each of which saw different conditions. The 40 made guesses about the location of erotic, negative, and neutral pictures; the 60 saw erotic, positive non-romantic, and positive romantic pictures. The means of each of these conditions were presumably tested against chance (at least six comparisons, for a false positive rate of 0.26). Had positive romantic pictures been found significant, Bem certainly could have interpreted this finding the same way he interpreted the erotic ones.</p>
-<p>Second, as we discussed, a <span class="math inline">\(p\)</span>-value close to 0.05 does not necessarily provide strong evidence against the null hypothesis. Wagenmakers et al.&nbsp;computed the Bayes Factor for each of the experiments in Bem’s paper and found that, in many cases, the amount of evidence for <span class="math inline">\(H_1\)</span> was quite modest under a default Bayesian <span class="math inline">\(t\)</span>-test. Experiment 1 was no exception: the BF was 1.64, giving only “anecdotal” support for the hypothesis of some nonzero effect, even before the multiple-comparisons problem mentioned above.</p>
+<p>First, we’ve already discussed the need to be skeptical about situations where experimenters have the opportunity for analytic flexibility in their choice of measures, manipulations, samples, and analyses. Flexibility leads to the possibility of cherry-picking those set of decisions from the “garden of forking paths” that lead to a positive outcome for the researcher’s favored hypothesis (for more details, see <a href="011-prereg.html" class="quarto-xref"><span>chapter 11</span></a>). And there is plenty of flexibility on display even in experiment 1 of Bem’s paper. Although there were 100 participants in the study, they may have been combined post hoc from two distinct samples of 40 and 60, each of which saw different conditions. The 40 made guesses about the location of erotic, negative, and neutral pictures; the 60 saw erotic, positive non-romantic, and positive romantic pictures. The means of each of these conditions were presumably tested against chance (at least six comparisons, for a false positive rate of <span class="math inline">\(0.26\)</span>). Had positive romantic pictures been found significant, Bem certainly could have interpreted this finding the same way he interpreted the erotic ones.</p>
+<p>Second, as we discussed, a <span class="math inline">\(p\)</span>-value close to <span class="math inline">\(0.05\)</span> does not necessarily provide strong evidence against the null hypothesis. Wagenmakers et al.&nbsp;computed the Bayes Factor for each of the experiments in Bem’s paper and found that, in many cases, the amount of evidence for <span class="math inline">\(H_1\)</span> was quite modest under a default Bayesian <span class="math inline">\(t\)</span>-test. Experiment 1 was no exception: the BF was <span class="math inline">\(1.64\)</span>, giving only “anecdotal” support for the hypothesis of some nonzero effect, even before the multiple-comparisons problem mentioned above.</p>
 <p>Finally, since precognition is not supported by any prior compelling scientific evidence (despite many attempts to obtain such evidence) and defies well-established physical laws, perhaps we should assign a low prior probability to Bem’s <span class="math inline">\(H_1\)</span>, a nonzero precognition effect. Taking a strong Bayesian position, Wagenmakers et al.&nbsp;suggest that we might do well to adopt a prior reflecting how unlikely precognition is, say <span class="math inline">\(p(H_1) = 10^{-20}\)</span>. And if we adopt this prior, even a very well-designed, highly informative experiment (with a Bayes Factor conveying substantial or even decisive evidence) would still lead to a very low posterior probability of precognition.</p>
 <p>Wagenmakers et al.&nbsp;concluded that, rather than supporting precognition, the conclusion from Bem’s paper should be psychologists should revise how they think about analyzing their data (and avoid <span class="math inline">\(p\)</span>-hacking)!</p>
 </section>
@@ -1091,12 +1261,12 @@ accident report
 <!-- tea_ci_lower <- delta_hat - tea_se *1.96 -->
 <!-- tea_ci_upper <- delta_hat + tea_se *1.96 -->
 <!-- ``` -->
-<p>Confidence intervals (CIs) are constructed by estimating the middle 95% of the sampling distribution of <span class="math inline">\(\widehat{\beta}\)</span>. Because of our hero, the central limit theorem, we can treat the sampling distribution as normal for reasonably large samples. Given this, it’s common to construct a 95% confidence interval <span class="math inline">\(\widehat{\beta} \pm 1.96 \; \widehat{SE}\)</span>.<a href="#fn23" class="footnote-ref" id="fnref23" role="doc-noteref"><sup>23</sup></a> If we were to conduct the experiment 100 times and calculate a confidence interval each time, we should expect 95 of the intervals to contain the true <span class="math inline">\(\beta\)</span>, whereas we would expect the remaining 5 to not contain <span class="math inline">\(\beta\)</span>.<a href="#fn24" class="footnote-ref" id="fnref24" role="doc-noteref"><sup>24</sup></a></p>
+<p>Confidence intervals (CIs) are constructed by estimating the middle 95% of the sampling distribution of <span class="math inline">\(\widehat{\beta}\)</span>. Because of our hero, the central limit theorem, we can treat the sampling distribution as normal for reasonably large samples. Given this, it’s common to construct a 95% confidence interval <span class="math inline">\(\widehat{\beta} \pm 1.96 \; \widehat{\text{SE}}\)</span>.<a href="#fn23" class="footnote-ref" id="fnref23" role="doc-noteref"><sup>23</sup></a> If we were to conduct the experiment 100 times and calculate a confidence interval each time, we should expect 95 of the intervals to contain the true <span class="math inline">\(\beta\)</span>, whereas we would expect the remaining 5 to not contain <span class="math inline">\(\beta\)</span>.<a href="#fn24" class="footnote-ref" id="fnref24" role="doc-noteref"><sup>24</sup></a></p>
 <div class="no-row-height column-margin column-container"><div id="fn23"><p><sup>23</sup>&nbsp;This type of CI is called a “Wald” confidence interval.</p></div><div id="fn24"><p><sup>24</sup>&nbsp;In case you don’t have enough tea to do the experiment 100 times to confirm this, you can do it virtually using this nice simulation tool: <a href="https://istats.shinyapps.io/ExploreCoverage" class="uri">https://istats.shinyapps.io/ExploreCoverage</a>.</p></div></div><p>Confidence intervals are like betting on the inferences drawn from your sample. The sample you drew is like one pull of a slot machine that will pay off (i.e., have the confidence interval contain the true parameter) 95% of the time. Put more concisely: 95% of 95% confidence intervals contain the true value of the population parameter.</p>
 <div id="fig-inference-condition-cis" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" alt="A plot with the same points as 6.10 overlaid with confidence intervals and a rating difference confidence interval.">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-inference-condition-cis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="images/inference/cis.png" class="img-fluid figure-img" style="width:70.0%" alt="A plot with the same points as 6.10 overlaid with confidence intervals and a rating difference confidence interval.">
+<img src="images/inference/cis.png" class="img-fluid figure-img" style="width:75.0%" alt="A plot with the same points as 6.10 overlaid with confidence intervals and a rating difference confidence interval.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig margin-caption" id="fig-inference-condition-cis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;6.11: Confidence intervals on each of the two condition estimates, as well as on the difference between conditions.
@@ -1105,12 +1275,12 @@ Figure&nbsp;6.11: Confidence intervals on each of the two condition estimates, a
 </div>
 <p>For visualization, we can show the confidence intervals on individual estimates (left side of <a href="#fig-inference-condition-cis" class="quarto-xref">figure&nbsp;<span>6.11</span></a>). These tell us about the precision of our estimates of each quantity relative to the population estimate. But we’ve been talking primarily about the CI on the treatment effect <span class="math inline">\(\widehat{\beta}\)</span> (right side of <a href="#fig-inference-condition-cis" class="quarto-xref">figure&nbsp;<span>6.11</span></a>). This CI allows us to make an inference about whether or not it overlaps with zero—which is actually equivalent in this case to whether or not the <span class="math inline">\(t\)</span>-test is statistically significant.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="code">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-code
+<span class="screen-reader-only">Note</span>code
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -1118,7 +1288,7 @@ code
 <div class="callout-body-container callout-body">
 <p>Computing confidence intervals analytically is pretty easy. Here we first compute the standard error for the difference between conditions. The only tricky bit here is that we need to compute a pooled standard deviation.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>tea_ratings <span class="ot">&lt;-</span> <span class="fu">filter</span>(tea_data, condition <span class="sc">==</span> <span class="st">"tea first"</span>)<span class="sc">$</span>rating</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>tea_ratings <span class="ot">&lt;-</span> <span class="fu">filter</span>(tea_data, condition <span class="sc">==</span> <span class="st">"tea first"</span>)<span class="sc">$</span>rating</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>milk_ratings <span class="ot">&lt;-</span> <span class="fu">filter</span>(tea_data, condition <span class="sc">==</span> <span class="st">"milk first"</span>)<span class="sc">$</span>rating</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>n_tea <span class="ot">&lt;-</span> <span class="fu">length</span>(tea_ratings)</span>
@@ -1129,13 +1299,13 @@ code
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>tea_sd_pooled <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(((n_tea <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> sd_tea <span class="sc">^</span> <span class="dv">2</span> <span class="sc">+</span> (n_milk <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> sd_milk <span class="sc">^</span> <span class="dv">2</span>) <span class="sc">/</span> </span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                        (n_tea <span class="sc">+</span> n_milk <span class="sc">-</span> <span class="dv">2</span>))</span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>tea_se <span class="ot">&lt;-</span> tea_sd_pooled <span class="sc">*</span> <span class="fu">sqrt</span>((<span class="dv">1</span> <span class="sc">/</span> n_tea) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">/</span> n_milk))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>tea_se <span class="ot">&lt;-</span> tea_sd_pooled <span class="sc">*</span> <span class="fu">sqrt</span>((<span class="dv">1</span> <span class="sc">/</span> n_tea) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">/</span> n_milk))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Once we have the standard error, we can get the estimated difference between conditions and compute the confidence intervals by multiplying the standard error by 1.96.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>delta_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(milk_ratings) <span class="sc">-</span> <span class="fu">mean</span>(tea_ratings)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>delta_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(milk_ratings) <span class="sc">-</span> <span class="fu">mean</span>(tea_ratings)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>tea_ci_lower <span class="ot">&lt;-</span> delta_hat <span class="sc">-</span> tea_se <span class="sc">*</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>tea_ci_upper <span class="ot">&lt;-</span> delta_hat <span class="sc">+</span> tea_se <span class="sc">*</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>tea_ci_upper <span class="ot">&lt;-</span> delta_hat <span class="sc">+</span> tea_se <span class="sc">*</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -1143,13 +1313,13 @@ code
 </section>
 <section id="confidence-in-confidence-intervals" class="level3 page-columns page-full" data-number="6.5.2">
 <h3 data-number="6.5.2" class="anchored" data-anchor-id="confidence-in-confidence-intervals"><span class="header-section-number">6.5.2</span> Confidence in confidence intervals?</h3>
-<p>Confidence intervals are often misinterpreted by students and researchers alike <span class="citation" data-cites="hoekstra2014">(<a href="#ref-hoekstra2014" role="doc-biblioref">Hoekstra et al. 2014</a>)</span>. Imagine a researcher conducts an experiment and reports that “the 95% confidence interval for the mean ranges from 0.1 to 0.4.” All of the statements in <a href="#tbl-inference-ci-false" class="quarto-xref">table&nbsp;<span>6.4</span></a>, though tempting to make about this situation, are <em>technically false</em>.</p>
+<p>Confidence intervals are often misinterpreted by students and researchers alike <span class="citation" data-cites="hoekstra2014">(<a href="#ref-hoekstra2014" role="doc-biblioref">Hoekstra et al. 2014</a>)</span>. Imagine a researcher conducts an experiment and reports that “the 95% confidence interval for the mean ranges from <span class="math inline">\(0.1\)</span> to <span class="math inline">\(0.4\)</span>.” All of the statements in <a href="#tbl-inference-ci-false" class="quarto-xref">table&nbsp;<span>6.4</span></a>, though tempting to make about this situation, are <em>technically false</em>.</p>
 <!-- ::: {.margin-caption} -->
 <!-- \vspace{.5em} -->
 <div id="tbl-inference-ci-false" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full">
 <figure class="quarto-float quarto-float-tbl figure page-columns page-full">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl margin-caption" id="tbl-inference-ci-false-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;6.4: Confidence interval misconceptions for a confidence interval [0.1,0.4]. Adapted from <span class="citation" data-cites="hoekstra2014">Hoekstra et al. (<a href="#ref-hoekstra2014" role="doc-biblioref">2014</a>)</span>.
+Table&nbsp;6.4: Confidence interval misconceptions for a confidence interval <span class="math inline">\([0.1,0.4]\)</span>. Adapted from <span class="citation" data-cites="hoekstra2014">Hoekstra et al. (<a href="#ref-hoekstra2014" role="doc-biblioref">2014</a>)</span>.
 </figcaption>
 <div aria-describedby="tbl-inference-ci-false-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
@@ -1166,27 +1336,27 @@ Table&nbsp;6.4: Confidence interval misconceptions for a confidence interval [0.
 <tbody>
 <tr class="odd">
 <td>1</td>
-<td>“The probability that the true mean is greater than 0 is at least 95%.”</td>
+<td>“The probability that the true mean is greater than <span class="math inline">\(0\)</span> is at least 95%.”</td>
 </tr>
 <tr class="even">
 <td>2</td>
-<td>“The probability that the true mean equals 0 is smaller than 5%.”</td>
+<td>“The probability that the true mean equals <span class="math inline">\(0\)</span> is smaller than 5%.”</td>
 </tr>
 <tr class="odd">
 <td>3</td>
-<td>“The ‘null hypothesis’ that the true mean equals 0 is likely to be incorrect.”</td>
+<td>“The ‘null hypothesis’ that the true mean equals <span class="math inline">\(0\)</span> is likely to be incorrect.”</td>
 </tr>
 <tr class="even">
 <td>4</td>
-<td>“There is a 95% probability that the true mean lies between 0.1 and 0.4.”</td>
+<td>“There is a 95% probability that the true mean lies between <span class="math inline">\(0.1\)</span> and <span class="math inline">\(0.4\)</span>.”</td>
 </tr>
 <tr class="odd">
 <td>5</td>
-<td>“We can be 95% confident that the true mean lies between 0.1 and 0.4.”</td>
+<td>“We can be 95% confident that the true mean lies between <span class="math inline">\(0.1\)</span> and <span class="math inline">\(0.4\)</span>.”</td>
 </tr>
 <tr class="even">
 <td>6</td>
-<td>“If we were to repeat the experiment over and over, then 95% of the time the true mean falls between 0.1 and 0.4.”</td>
+<td>“If we were to repeat the experiment over and over, then 95% of the time the true mean falls between <span class="math inline">\(0.1\)</span> and <span class="math inline">\(0.4\)</span>.”</td>
 </tr>
 </tbody>
 </table>
@@ -1203,12 +1373,12 @@ Table&nbsp;6.4: Confidence interval misconceptions for a confidence interval [0.
 <h2 data-number="6.6" class="anchored" data-anchor-id="chapter-summary-inference"><span class="header-section-number">6.6</span> Chapter summary: Inference</h2>
 <p>Inference tools help you move from characteristics of the sample to characteristics of the population. This move is a critical part of generalization from research data. But we hope we’ve convinced you that inference doesn’t have to mean making a binary decision about the presence or absence of an effect. A strategy that seeks to estimate an effect and its associated precision is often much more helpful as a building block for theory. As we move toward estimating causal effects in more complex experimental designs, the process will require more sophisticated models. Toward that goal, the next chapter provides some guidance for how to build such models.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="discussion questions">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-discussion questions
+<span class="screen-reader-only">Note</span>discussion questions
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -1222,12 +1392,12 @@ discussion questions
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled" title="readings">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-readings
+<span class="screen-reader-only">Note</span>readings
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -1235,7 +1405,7 @@ readings
 <div class="callout-body-container callout-body">
 <ul>
 <li><p>Many of the concepts described here are illustrated beautifully via interactive visualizations. We recommend <a href="https://seeing-theory.brown.edu" class="uri">https://seeing-theory.brown.edu</a> for a broad overview of statistical concepts and <a href="https://rpsychologist.com/viz" class="uri">https://rpsychologist.com/viz</a> for a number of interactives that specifically illustrate concepts discussed in this chapter and the previous one, including <span class="math inline">\(p\)</span>-values, effect sizes, maximum likelihood estimation, confidence intervals, and Bayesian inference.</p></li>
-<li><p>A fun, polemical critique of NHST: Cohen, Jacob <span class="citation" data-cites="cohen1994">(<a href="#ref-cohen1994" role="doc-biblioref">1994</a>)</span>. “The Earth is Round (<span class="math inline">\(p\)</span> &lt; .05).” <em>American Psychologist</em> 49 (12):997–1003. <a href="https://doi.org/10.1037/0003-066X.49.12.997" class="uri">https://doi.org/10.1037/0003-066X.49.12.997</a>.</p></li>
+<li><p>A fun, polemical critique of NHST: Cohen, Jacob <span class="citation" data-cites="cohen1994">(<a href="#ref-cohen1994" role="doc-biblioref">1994</a>)</span>. “The Earth is Round (<span class="math inline">\(p &lt; .05\)</span>).” <em>American Psychologist</em> 49 (12):997–1003. <a href="https://doi.org/10.1037/0003-066X.49.12.997" class="uri">https://doi.org/10.1037/0003-066X.49.12.997</a>.</p></li>
 <li><p>A nice introduction to Bayesian data analysis: Kruschke, John K., and Torrin M. Liddell <span class="citation" data-cites="kruschke2018newcomers">(<a href="#ref-kruschke2018newcomers" role="doc-biblioref">2018a</a>)</span>. “Bayesian Data Analysis for Newcomers.” <em>Psychonomic Bulletin &amp; Review</em> 25 (1): 155–-177. <a href="https://doi.org/10.3758/s13423-017-1272-1" class="uri">https://doi.org/10.3758/s13423-017-1272-1</a>.</p></li>
 </ul>
 </div>
@@ -1347,383 +1517,256 @@ Wagenmakers, Eric-Jan, Ruud Wetzels, Denny Borsboom, and Han L J Van Der Maas. 2
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
     }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
         }
       }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
       return false;
     }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
       }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
     }
-    return false;
-  }
-  const onCopySuccess = function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
-      }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
       for (const childEl of codeEl.children) {
         if (isCodeAnnotation(childEl)) {
           childEl.remove();
         }
       }
       return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
-  });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
     });
-    clipboardModal.on('success', onCopySuccess);
-  }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
     }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start',
-    };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
           }
         }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
         }
-        return container.innerHTML
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
       } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
       }
     }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
           }
         } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
+            const note = htmlDoc.querySelector('main.content');
             if (note !== null) {
-              const html = processXRef(id, note);
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -1731,185 +1774,161 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            div.style.left = 0;
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+      }, function(instance) {
       });
     }
-  }
-});
-</script>
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./005-estimation.html" class="pagination-link" aria-label="Estimation">

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.56">
+<meta name="generator" content="quarto-1.8.24">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -52,17 +52,21 @@ div.csl-indent {
 <meta name="quarto:offset" content="./">
 <link href="./015-viz.html" rel="next">
 <link href="./013-management.html" rel="prev">
-<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-31c05e6bce3cfe91938cb3b7813f7d74.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-e343f61154b2a21dc751129c8b7c1acd.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-31c05e6bce3cfe91938cb3b7813f7d74.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -114,7 +118,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -132,7 +136,169 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-sidebar docked slimcontent">
+<body class="nav-sidebar docked slimcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -154,7 +320,9 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Experimentology</a> 
         <div class="sidebar-tools-main tools-wide">
@@ -358,7 +526,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./102-rmarkdown.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">R Markdown and Quarto</span></span></a>
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Quarto (and R Markdown)</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -417,6 +585,7 @@ window.Quarto = {
 <!-- main -->
 <main class="content page-columns page-full" id="quarto-document-content">
 
+
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./014-writing.html">Reporting</a></li><li class="breadcrumb-item"><a href="./014-writing.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Writing</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-writing" class="quarto-section-identifier"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Writing</span></span></h1>
@@ -442,7 +611,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-learning goals
+<span class="screen-reader-only">Note</span>learning goals
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -458,7 +627,7 @@ learning goals
 </div>
 <p>You’ve designed and run your experiment, and you have even analyzed your data. This final part of <em>Experimentology</em> discusses reporting your results. We begin by thinking through how to write clearly, reproducibly, and responsibly (this chapter); then we turn to the question of designing informative and pretty data visualizations (<a href="015-viz.html" class="quarto-xref"><span>chapter 15</span></a>). Our final chapter in the section introduces meta-analysis as a tool for research synthesis, allowing us to contextualize research results. These chapters focus on themes of <span class="smallcaps">transparency</span> as well as (especially for meta-analysis) <span class="smallcaps">bias reduction</span> and <span class="smallcaps">measurement precision</span>.</p>
 <p>All of the effort you put into designing and running an effective experiment may be wasted if you cannot clearly communicate what you did. Writing is a powerful tool—though you contribute to the conversation only once, it enables you to speak to a potentially infinite number of readers. So it’s important to get it right! Here we’ll provide some guidance on how to write scientific papers—the primary method for reporting on experiments—clearly, reproducibly, and responsibly.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
-<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;Clarity of communication was a founding principle of modern science. Early proto-scientists conducting alchemical experiments often made their work deliberately obscure—even writing in cryptic codes—so that others could not discover the “powerful secrets of nature.” Pioneers of scientific methodology, like Francis Bacon and Robert Boyle, pushed instead for transparency and clarity. Notoriously, Issac Newton (originally an alchemist and later a scientist), continued to write in a deliberately obscure fashion in order to “protect” his work <span class="citation" data-cites="heard2016">(<a href="#ref-heard2016" role="doc-biblioref">Heard 2016</a>)</span>.</p></div></div><section id="writing-clearly" class="level2 page-columns page-full" data-number="14.1">
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;Clarity of communication was a foundational principle of modern science. Early proto-scientists conducting alchemical experiments often made their work deliberately obscure—even writing in cryptic codes—so that others could not discover the “powerful secrets of nature.” Pioneers of scientific methodology, like Francis Bacon and Robert Boyle, pushed instead for transparency and clarity. Notoriously, Issac Newton (originally an alchemist and later a scientist), continued to write in a deliberately obscure way in order to “protect” his work <span class="citation" data-cites="heard2016">(<a href="#ref-heard2016" role="doc-biblioref">Heard 2016</a>)</span>.</p></div></div><section id="writing-clearly" class="level2 page-columns page-full" data-number="14.1">
 <h2 data-number="14.1" class="anchored" data-anchor-id="writing-clearly"><span class="header-section-number">14.1</span> Writing clearly</h2>
 <p>What is the purpose of writing? “Telepathy, of course,” says Stephen King <span class="citation" data-cites="king2000">(<a href="#ref-king2000" role="doc-biblioref">King 2000</a>)</span>. The goal of writing is to transfer information from your mind to the reader’s as effectively as possible. Unfortunately, for most of us, writing clearly does not come naturally; it is a craft we need to work at.</p>
 <p>One of the most effective ways to learn to write clearly is to read and to imitate the writing you admire. Many scientific articles are not clearly written, so you will need to be selective in which models you imitate. Fortunately, as a reader, you will know good writing when you see it—you will feel like the writer is sending ideas directly from their mind to yours. When you come across writing like that, try to find more work by the same author. The more good scientific writing you are exposed to, the more you will develop a sense of what works and what does not. You may pick up bad habits as well as good ones (we sure have!), but over time, your writing will improve if you make a conscious effort to weed out the bad, and keep the good.</p>
@@ -466,7 +635,7 @@ learning goals
 <section id="the-structure-of-a-scientific-paper" class="level3 page-columns page-full" data-number="14.1.1">
 <h3 data-number="14.1.1" class="anchored" data-anchor-id="the-structure-of-a-scientific-paper"><span class="header-section-number">14.1.1</span> The structure of a scientific paper</h3>
 <p>A scientific paper is not a novel. Rather than reading from beginning to end, readers typically jump between sections to extract information efficiently <span class="citation" data-cites="doumont2009">(<a href="#ref-doumont2009" role="doc-biblioref">Doumont 2009</a>)</span>. This “random access” is possible because research articles typically follow the same conventional structure (see <a href="#fig-writing-imrad" class="quarto-xref">figure&nbsp;<span>14.1</span></a>). The main body of the article includes four main sections: introduction, methods, results, and discussion (IMRaD).<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> This structure has a narrative logic: What’s the knowledge gap? (introduction); How did you address it? (methods); What did you find? (results); What do the results mean? (discussion).</p>
-<div class="no-row-height column-margin column-container"><div id="fn2"><p><sup>2</sup>&nbsp;In the old old days, there were few conventions—scientists would share their latest findings by writing letters to each other. But as the number of scientists and studies increased, this approach became unsustainable. The IMRaD structure gained traction in the 1800s and became dominant in the mid-1900s as scientific productivity rapidly expanded in the post-war era. We think IMRaD style articles are a big improvement, even if it is nice to receive a letter every now and again.</p></div></div><p>Structure helps writers as well as readers. Try starting the writing process with section headings as a structure, then flesh out the text, section by section. In each section, start by making a list of the key points you want to convey, each representing the first sentence of a new paragraph. Then add the content of each paragraph, and you’ll be well on your way to having a full first draft of your article.</p>
+<div class="no-row-height column-margin column-container"><div id="fn2"><p><sup>2</sup>&nbsp;In the old old days, there were few conventions around scientific communication—scientists would share their latest findings by writing letters to each other. But as the number of scientists and studies increased, this approach became unsustainable. The IMRaD article structure gained traction in the 1800s and became dominant in the mid-1900s when scientific productivity rapidly expanded in the post-war era. We think IMRaD style articles are a big improvement, even if it is nice to receive a letter every now and again.</p></div></div><p>Structure helps writers as well as readers. Try starting the writing process with section headings as a structure, then flesh out the text, section by section. In each section, start by making a list of the key points you want to convey, each representing the first sentence of a new paragraph. Then add the content of each paragraph, and you’ll be well on your way to having a full first draft of your article.</p>
 <p>Imagine that the breadth of focus in the body of your article has an “hourglass” structure (<a href="#fig-writing-imrad" class="quarto-xref">figure&nbsp;<span>14.1</span></a>). The start of the introduction should have a broad focus, providing the reader with the general context of your study. From there, the focus of the introduction should get increasingly narrow until you are describing the specific knowledge gap or problem you will address and (briefly) how you are going to address it. The methods and results sections are at the center of the hourglass because they are tightly focused on your study alone. In the discussion section, the focus shifts in the opposite direction, from narrow to broad. Begin by summarizing the results of your study, discuss limitations, then integrate the findings with existing literature and describe practical and theoretical implications.</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-writing-imrad" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A diagram of a funnel where breadth of writing is widest at introduction, narrower at methods/results, wider at discussion.">
@@ -478,7 +647,7 @@ learning goals
 Figure&nbsp;14.1: Conventional structure of a research article. The main body of the article consists of introduction, methods, results, and discussion (IMRaD) sections.
 </figcaption>
 </figure>
-</div></div><p>Research articles are often packed with complex information; it is easy for readers to get lost. A “cross-reference” is a helpful signpost that tells readers where they can find relevant additional information without disrupting the flow of your writing. For example, you can refer the reader to data visualizations by cross-referencing to figures or tables (e.g., “see Figure 1”), or additional methodological information in the supplementary information (e.g., “see Supplementary Information A”).</p>
+</div></div><p>Research articles are often packed with complex information; it is easy for readers to get lost. A cross-reference is a helpful signpost that tells readers where they can find relevant additional information without disrupting the flow of your writing. For example, you can refer the reader to data visualizations by cross-referencing to figures or tables (e.g., “see Figure 1”), or additional methodological information in the supplementary information (e.g., “see Supplementary Information A”).</p>
 <p>A useful trick for structuring complex arguments is to cross-reference your research aims or hypotheses with your results. For example, you could introduce numbered hypotheses in the introduction of an article and then refer to them directly when reporting the relevant analyses and results. These cross-references can serve to remind readers how different results or analyses relate back to your research goals.</p>
 </section>
 <section id="paragraphs-sentences-and-words" class="level3" data-number="14.1.2">
@@ -503,7 +672,7 @@ Figure&nbsp;14.1: Conventional structure of a research article. The main body of
 <!-- Importantly, you must resist the temptation to mask unclear thinking in unclear writing. Sometimes, your thinking will be unclear simply because *nobody* understands the topic you are addressing. Indeed, we should expect that to happen; the whole point of research is to expand the frontiers of human knowledge, so naturally, you will find yourself working on the fault line of what is and what is not well understood. If you have unresolvable uncertainty about something, say so explicitly, don't hide it in bad writing. -->
 <p><strong>Use acronyms sparingly</strong>. It’s tempting to replace lengthy terminology with short acronyms–why say “cognitive dissonance theory” when you can say “CDT”? Unfortunately, acronyms can increase the reader’s cognitive burden and cause misunderstandings.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> For example, if you shorten “odds ratio” to “OR,” the reader has to take the extra step of translating “OR” back to “odds ratio” every time they encounter it. The problem multiplies as you introduce more acronyms into your article. Worse, for some readers, “OR” tends to mean “operating room,” not “odds ratio.” Acronyms can be useful, but usually only when they are widely used and understood.</p>
 <!-- For example, "magnetic resonance imaging" ("MRI") and "deoxyribonucleic acid" (DNA). At a minimum, be sure to define all acronyms, even when they are likely to be familiar to most readers. -->
-<div class="no-row-height column-margin column-container"><div id="fn4"><p><sup>4</sup>&nbsp;<span class="citation" data-cites="barnett2020">Barnett and Doubleday (<a href="#ref-barnett2020" role="doc-biblioref">2020</a>)</span> found that acronyms are widely used in research articles and argued that they undermine clear communication. Here is one example of text Barnett and Doubleday extracted from a 2019 publication to illustrate the point: “Applying PROBAST showed that ADO, B-AE-D, B-AE-D-C, extended ADO, updated ADO, updated BODE, and a model developed by Bertens et al.&nbsp;were derived in studies assessed as being at low risk of bias.”</p></div></div><section id="drafting-and-revision" class="level3 page-columns page-full" data-number="14.2.1">
+<div class="no-row-height column-margin column-container"><div id="fn4"><p><sup>4</sup>&nbsp;<span class="citation" data-cites="barnett2020">Barnett and Doubleday (<a href="#ref-barnett2020" role="doc-biblioref">2020</a>)</span> found that acronyms are widely used in research articles and argued that they undermine clear communication. Here is one example of text that Barnett and Doubleday extracted from a 2019 publication to illustrate the point: “Applying PROBAST showed that ADO, B-AE-D, B-AE-D-C, extended ADO, updated ADO, updated BODE, and a model developed by Bertens et al.&nbsp;were derived in studies assessed as being at low risk of bias.”</p></div></div><section id="drafting-and-revision" class="level3 page-columns page-full" data-number="14.2.1">
 <h3 data-number="14.2.1" class="anchored" data-anchor-id="drafting-and-revision"><span class="header-section-number">14.2.1</span> Drafting and revision</h3>
 <p>The clearest and most effortless-seeming scientific writing has probably gone through extensive revision to appear that way. It can surprise many students to know the amount of revision that has gone into many “breezy” articles. For example, Tversky and Kahneman repeatedly drafted and redrafted each word of their famous (and highly readable) articles on judgment and decision-making, hunched over the typewriter together <span class="citation" data-cites="lewis2016undoing">(<a href="#ref-lewis2016undoing" role="doc-biblioref">Lewis 2016</a>)</span>.</p>
 <p>Think of the article you are writing as a garden. Your first draft may be an unruly mess of intertwined branches. Several rounds of pruning and sculpting will be needed before your writing reaches its most effective form. You’ll be amazed how often you find words you can omit or elaborate sentences you can simplify.</p>
@@ -530,43 +699,45 @@ Figure&nbsp;14.1: Conventional structure of a research article. The main body of
 <li><p><strong>Use defensive programming</strong>. Errors can still occur in scripted analyses. Defensive programming is a series of strategies to help anticipate, detect, and avoid errors in advance. A typical defensive programming tool is the inclusion of tests in your code, snippets that check if the code or data meet some assumptions. For example, you might test if a variable storing reaction times has taken on values below zero (which should be impossible). If the test passes, the analysis pipeline continues; if the test fails, the pipeline halts and an error message appears to alert you to the problem.</p></li>
 <li><p><strong>Use free/open-source software and programming languages</strong>. If possible, avoid using commercial software, like SPSS or Matlab, and instead use free, open-source software and programming languages, like R, Python, Jamovi, or JASP. This practice will make it easier for others to access, reuse, and verify your work—including yourself!<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a></p></li>
 <li><p><strong>Use version control</strong>. In <a href="013-management.html" class="quarto-xref"><span>chapter 13</span></a>, we introduced the benefits of version control—a great way to save your analysis pipeline incrementally as you build it, allowing you to roll back to a previous version if you accidentally introduce errors.</p></li>
-<li><p><strong>Preserve the computational environment</strong>. Even if your analysis pipeline is entirely reproducible on your own computer, you still need to consider whether it will run on somebody else’s computer, or even your own computer after software updates. You can address this issue by documenting and preserving the computational environment in which the analysis pipeline runs successfully. Various tools are available to help with this, including Docker, Code Ocean, renv (for R), and pip (for Python).<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a></p></li>
+<li><p><strong>Preserve the computational environment</strong>. Even if your analysis pipeline is entirely reproducible on your own computer, you still need to consider whether it will run on somebody else’s computer, or even your own computer after software updates. You can address this issue by documenting and preserving the computational environment in which the analysis pipeline runs successfully. Various tools are available to help with this, including Docker, Code Ocean, renv (for R), and venv (for Python).<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a></p></li>
 </ul>
 <div class="no-row-height column-margin column-container"><div id="fn6"><p><sup>6</sup>&nbsp;Modulo the privacy concerns discussed in <a href="013-management.html" class="quarto-xref"><span>chapter 13</span></a>, of course.</p></div><div id="fn7"><p><sup>7</sup>&nbsp;Several of us have libraries of old Matlab code. While discounted licenses are available to students, a full-price software license can be a major barrier to researchers with limited resources. if you move away from Matlab, it’s also terrible to have to ask yourself whether it’s worth the price of another year’s license just to rerun one old analysis.</p></div><div id="fn8"><p><sup>8</sup>&nbsp;If you are interested in going in this direction, we recommend <span class="citation" data-cites="peikert2021">Peikert and Brandmaier (<a href="#ref-peikert2021" role="doc-biblioref">2021</a>)</span>, which gives an advanced tutorial for complete computational reproducibility using Docker and <code>make</code> as tools to supplement Git and R Markdown.</p></div></div></section>
 <section id="the-reproducibility-collaboration-trade-off" class="level3 page-columns page-full" data-number="14.3.3">
 <h3 data-number="14.3.3" class="anchored" data-anchor-id="the-reproducibility-collaboration-trade-off"><span class="header-section-number">14.3.3</span> The reproducibility-collaboration trade-off</h3>
 <p>We would love to leave it there and watch you walk off into the sunset with a spring in your step and a reproducible report under your arm. Unfortunately, we have to admit that writing reproducibly can create a few practical difficulties when it comes to collaboration.</p>
-<p>A major aspect of collaboration is exchanging comments and inline text edits with coauthors. You can do this exchange with R Markdown files and Git, but these tools are not as user-friendly as, say, Word or Google Docs, and some collaborators will be completely unfamiliar with them. Most journals also expect articles to be submitted as Word documents. Outputting R Markdown files to Word can often introduce formatting issues, especially for moderately complex tables. So, until more user-friendly tools are introduced, some compromise between reproducibility and collaboration may be necessary. Here are two workflow styles for you to consider.</p>
-<p>First, the <em>maximal reproducibility</em> approach. If your collaborators are familiar with R Markdown and you don’t mind exchanging comments and edits via Git—or if they don’t mind giving you lists of comments and changes that you implement in the R Markdown document—then you can maintain a fully reproducible workflow for your project. The journal submission and publication process may still introduce some issues, such as incorporating changes made by the copy editor, but at least your submitted manuscript (and the preprint you have hopefully posted) will be fully reproducible.</p>
-<p>Second, the <em>two worlds</em> approach. This workflow is a bit clunky, but it facilitates collaboration and maintains reproducibility. First, write your results section in R Markdown and generate a Word document (see <a href="102-rmarkdown.html" class="quarto-xref"><span>appendix C</span></a>). Then, write the remainder of the manuscript in Word, including incorporating comments and changes from collaborators. When you have a final version, copy and paste the abstract, introduction, methods, and discussion into the R Markdown document.<a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a> Integrating any changes made to the results section back into the R Markdown requires a bit more effort, either using manual checking or Word’s “compare documents” feature.<a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a> The advantage of this approach is that you have a reproducible document and your collaborators have not had to deviate from their preferred workflow. Unfortunately, it requires more effort from you and is slightly more error-prone than the maximal reproducibility approach.</p>
-<div class="no-row-height column-margin column-container"><div id="fn9"><p><sup>9</sup>&nbsp;You can also incorporate Google Docs into this workflow—we find that cloud platforms like Docs are especially useful when gathering comments from multiple collaborators on the same document. Unfortunately, you cannot generate a Google Doc from R Markdown, so you will need to import and convert or else copy and paste.</p></div><div id="fn10"><p><sup>10</sup>&nbsp;Packages such as <code>trackdown</code> <span class="citation" data-cites="kothe2021">(<a href="#ref-kothe2021" role="doc-biblioref">Kothe et al. 2021</a>)</span> could help as well (<a href="https://claudiozandonella.github.io/trackdown" class="uri">https://claudiozandonella.github.io/trackdown</a>).</p></div></div></section>
+<p>A major aspect of collaboration is exchanging comments and inline text edits with coauthors. You can do this exchange with R Markdown or Quarto files and Git, but these tools are not as user-friendly as, say, Word or Google Docs, and some collaborators will be completely unfamiliar with them. Many journals also expect articles to be submitted as Word documents or LaTeX files. Outputting R Markdown or Quarto files to Word can often introduce formatting issues, especially for moderately complex tables. So, until more user-friendly tools are introduced, some compromise between reproducibility and collaboration may be necessary. Here are two workflow styles for you to consider.</p>
+<p>First, the <em>maximal reproducibility</em> approach. If your collaborators are familiar with R Markdown or Quarto and you don’t mind exchanging comments and edits via Git—or if they don’t mind giving you lists of comments and changes that you implement in the source document—then you can maintain a fully reproducible workflow for your project. The journal submission and publication process may still introduce some issues, such as incorporating changes made by the copy editor, but at least your submitted manuscript (and the preprint you have hopefully posted) will be fully reproducible.</p>
+<p>Second, the <em>two worlds</em> approach. This workflow is a bit clunky, but it facilitates collaboration and maintains reproducibility. First, write your results section in R Markdown or Quarto (see <a href="102-rmarkdown.html" class="quarto-xref"><span>appendix C</span></a>) and generate a Word document. Then, write the remainder of the manuscript in Word (or other word processing software), including incorporating comments and changes from collaborators. When you have a final version, copy and paste the abstract, introduction, methods, and discussion into the R Markdown or Quarto source document.<a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a> Integrating any changes made to the results section back into the R Markdown or Quarto document requires a bit more effort, either using manual checking or Word’s “compare documents” feature. The advantage of this approach is that you have a reproducible document and your collaborators have not had to deviate from their preferred workflow. Unfortunately, it requires more effort from you and is slightly more error-prone than the maximal reproducibility approach.</p>
+<div class="no-row-height column-margin column-container"><div id="fn9"><p><sup>9</sup>&nbsp;You can also incorporate Google Docs into this workflow—we find that cloud platforms like Docs are especially useful when gathering comments from multiple collaborators on the same document. The package <code>trackdown</code> <span class="citation" data-cites="kothe2021">(<a href="#ref-kothe2021" role="doc-biblioref">Kothe et al. 2021</a>)</span> helps manage this workflow (<a href="https://claudiozandonella.github.io/trackdown" class="uri">https://claudiozandonella.github.io/trackdown</a>).</p></div></div></section>
 </section>
 <section id="writing-responsibly" class="level2 page-columns page-full" data-number="14.4">
 <h2 data-number="14.4" class="anchored" data-anchor-id="writing-responsibly"><span class="header-section-number">14.4</span> Writing responsibly</h2>
 <p>As a scientific writer, you have both professional and ethical responsibilities. You must communicate all relevant information about your research so as to enable proper evaluation and verification by other scientists. It is also important not to overstate your findings and calibrate your conclusions to the available evidence <span class="citation" data-cites="hoekstra2021">(<a href="#ref-hoekstra2021" role="doc-biblioref">Hoekstra and Vazire 2021</a>)</span>. If errors are found in your work, you must respond and correct them when possible <span class="citation" data-cites="bishop2018">(<a href="#ref-bishop2018" role="doc-biblioref">Bishop 2018</a>)</span>. Finally, you must meet scholarly obligations with regards to authorship and citation practices.</p>
 <section id="responsible-disclosure-and-interpretation" class="level3 page-columns page-full" data-number="14.4.1">
 <h3 data-number="14.4.1" class="anchored" data-anchor-id="responsible-disclosure-and-interpretation"><span class="header-section-number">14.4.1</span> Responsible disclosure and interpretation</h3>
-<p>Back in school, we all learned that getting the right answer is not enough—you need to demonstrate how you arrived at that answer in order to get full marks. The same expectation applies to research reports. Don’t just tell the reader what you found, tell them how you found it.<a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a> That means describing the methods in full detail, as well as sharing data, materials, and analysis scripts.</p>
-<div class="no-row-height column-margin column-container"><div id="fn11"><p><sup>11</sup>&nbsp;It can be easy to overlook important details, especially when you reach the end of a project. Looking back at your study preregistration can be a helpful reminder. Reporting guidelines for different research designs can also provide useful checklists <span class="citation" data-cites="appelbaum2018">(<a href="#ref-appelbaum2018" role="doc-biblioref">Appelbaum et al. 2018</a>)</span>.</p></div></div><p>In a journal article, you typically have some flexibility in terms of how much detail you provide in the main body of the article and how much you relegate to the supplementary information. Readers have different needs; some may just want to know the highlights, and some will need detailed methodological information in order to replicate your study. As a rule of thumb, try to make sure there is nothing relegated to the supplementary information that might surprise the reader. You certainty should not use the supplementary information to hide important details deliberately or use it as a disorganized dumping ground—the principles of clear writing still apply!</p>
+<p>Back in school, we all learned that getting the right answer is not enough—you need to demonstrate how you arrived at that answer in order to get full marks. The same expectation applies to research reports. Don’t just tell the reader what you found, tell them how you found it.<a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a> That means describing the methods in full detail, as well as sharing data, materials, and analysis scripts.</p>
+<div class="no-row-height column-margin column-container"><div id="fn10"><p><sup>10</sup>&nbsp;It can be easy to overlook important details, especially when you reach the end of a project. Looking back at your study preregistration can be a helpful reminder. Reporting guidelines for different research designs can also provide useful checklists <span class="citation" data-cites="appelbaum2018">(<a href="#ref-appelbaum2018" role="doc-biblioref">Appelbaum et al. 2018</a>)</span>.</p></div></div><p>In a journal article, you typically have some flexibility in terms of how much detail you provide in the main body of the article and how much you relegate to the supplementary information. Readers have different needs; some may just want to know the highlights, and some will need detailed methodological information in order to replicate your study. As a rule of thumb, try to make sure there is nothing relegated to the supplementary information that might surprise the reader. You certainty should not use the supplementary information to hide important details deliberately or use it as a disorganized dumping ground—the principles of clear writing still apply!</p>
 <p>Here are a few more guidelines for responsible writing:</p>
 <ul>
-<li><p><strong>Don’t overclaim</strong>. Scientists often feel they are (and unfortunately, often are) evaluated based on the <em>results</em> of their research, rather than the <em>quality</em> of their research. Consequently, it can be tempting to make bigger and bolder claims than are really justified by the evidence. Think carefully about the limitations of your research and calibrate your conclusions to the evidence, rather than what you wish you were able to claim. Ensure that your conclusions are appropriately stated throughout the manuscript, especially in the title and abstract.</p></li>
-<li><p><strong>Acknowledge limitations on interpretation and generalizability</strong>. Even if you calibrate your claims appropriately throughout, there are likely specific limitations that are worth discussing, either as you introduce the design of the study in the introduction or as you interpret it in the discussion section. For example, if your experiment used one particular manipulation to instantiate a construct of interest, you might discuss this limitation and how it might be addressed by future work. Think carefully about the limitations of your study, state them clearly, and consider how they impact your conclusions <span class="citation" data-cites="clarke2023">(<a href="#ref-clarke2023" role="doc-biblioref">Clarke et al. 2023</a>)</span>.<a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a> Discussions of limitations are a great point to make an explicit statement about the <em>generalizability</em> of your findings <span class="citation" data-cites="simons2017">(see <a href="#ref-simons2017" role="doc-biblioref">Simons, Shoda, and Lindsay 2017</a> for guidance about these kinds of statements)</span>.</p></li>
+<li><strong>Don’t overclaim</strong>. Scientists often feel they are (and unfortunately, often are) evaluated based on the <em>results</em> of their research, rather than the <em>quality</em> of their research. Consequently, it can be tempting to make bigger and bolder claims than are really justified by the evidence. Think carefully about the limitations of your research and calibrate your conclusions to the evidence, rather than what you wish you were able to claim. Ensure that your conclusions are appropriately stated throughout the manuscript, especially in the title and abstract.</li>
+</ul>
+<ul>
+<li><p><strong>Acknowledge limitations on interpretation and generalizability</strong>. Even if you calibrate your claims appropriately throughout, there are likely specific limitations that are worth discussing, either as you introduce the design of the study in the introduction or as you interpret it in the discussion section. For example, if your experiment used one particular manipulation to instantiate a construct of interest, you might discuss this limitation and how it might be addressed by future work. Think carefully about the limitations of your study, state them clearly, and consider how they impact your conclusions <span class="citation" data-cites="clarke2023">(<a href="#ref-clarke2023" role="doc-biblioref">Clarke et al. 2023</a>)</span>.<a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a> Discussions of limitations are a great point to make an explicit statement about the <em>generalizability</em> of your findings <span class="citation" data-cites="simons2017">(see <a href="#ref-simons2017" role="doc-biblioref">Simons, Shoda, and Lindsay 2017</a> for guidance about these kinds of statements)</span>.</p></li>
 <li><p><strong>Discuss, don’t debate</strong>. The purpose of the discussion section is to help the reader interpret your research. Importantly, a journal article is not a debate—don’t feel the need to argue dogmatically for a particular position or interpretation. You should discuss the strengths and weaknesses of the evidence, and the relative merits of different interpretations. For example, perhaps there is a potential confounding variable that you were unable to eliminate with your research design. The reader might be able to spot this themselves, but regardless, its your responsibility to highlight it. Perhaps on balance you think the confound is unlikely to explain the results—that’s fine, but you need to explain your reasoning to the reader.</p></li>
 <li><p><strong>Disclose conflicts of interest and funding</strong>. Researchers are usually personally invested in the outcomes of their research, and this investment can lead to bias (for example, overclaiming or selective reporting). But sometimes your potential personal gains from a piece of research rise above a threshold and are considered <strong>conflicts of interest</strong>. Where this threshold lies is not always completely clear. The most obvious conflicts of interest occur when you stand to benefit financially from the outcomes of your research (for example, a drug developer evaluating their own drug). If you are in doubt about whether you have a potential conflict of interest, then you should disclose it. You should also disclose any funding you received for the research, partly because this is often a requirement of the funder and partly because it may represent a conflict of interest, for example, if the funder has a particular stake in the outcome of the research. To avoid ambiguity, you should also disclose when you do <em>not</em> have a conflict of interest or funding to declare.</p></li>
 <li><p><strong>Report transparently</strong>. In <a href="011-prereg.html" class="quarto-xref"><span>chapter 11</span></a>, you learned about the problem of selective reporting and how this practice can bias the research literature. There are several ways to avoid this issue in your own work. First, assuming you <em>have</em> reported everything, include a statement in the methods section that explicitly says so. A statement suggested by <span class="citation" data-cites="simmons2012">Simmons, Nelson, and Simonsohn (<a href="#ref-simmons2012" role="doc-biblioref">2012</a>)</span> is “We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study.” If you have preregistered your study, clearly link to the preregistration and state whether you deviated from your original plan. You can include a detailed preregistration disclosure table in the supplementary information and highlight any major deviations in the methods section. In the results section, clearly identify (e.g., with subheadings) which analyses were preplanned and included in the preregistration (confirmatory) and which were not planned (exploratory).</p></li>
 </ul>
-<div class="no-row-height column-margin column-container"><div id="fn12"><p><sup>12</sup>&nbsp;Should you just make your claims more modest and avoid writing about your study’s limitations? The balance between claims and limitations is tricky. One way to navigate this issue is to ask yourself, “Is it OK to say X in the abstract of my article, if I later go on to say state a limitation relevant to that claim, or will the reader feel tricked?”</p></div></div></section>
+<div class="no-row-height column-margin column-container"><div id="fn11"><p><sup>11</sup>&nbsp;Should you just make your claims more modest and avoid writing about your study’s limitations? The balance between claims and limitations is tricky. One way to navigate this issue is to ask yourself, “Is it OK to say X in the abstract of my article, if I later go on to say state a limitation relevant to that claim, or will the reader feel tricked?”</p></div></div></section>
 <section id="responsible-handling-of-errors" class="level3 page-columns page-full" data-number="14.4.2">
 <h3 data-number="14.4.2" class="anchored" data-anchor-id="responsible-handling-of-errors"><span class="header-section-number">14.4.2</span> Responsible handling of errors</h3>
-<p>It is not your responsibility to never make mistakes. But it <em>is</em> your responsibility to respond to errors in a timely, transparent, and professional manner <span class="citation" data-cites="bishop2018">(<a href="#ref-bishop2018" role="doc-biblioref">Bishop 2018</a>)</span>.<a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a> Regardless of how the error was identified (e.g., by yourself or by a reader), we recommend contacting the journal and requesting that they publish a correction statement (sometimes called an <em>erratum</em>). Several of us have corrected papers in the past. If the error is serious and cannot be fixed, you should consider retracting the article.</p>
-<div class="no-row-height column-margin column-container"><div id="fn13"><p><sup>13</sup>&nbsp;As jazz musician Miles Davis once said, “If you hit a wrong note, it’s the next note that you play that determines if it’s good or bad.”</p></div></div><div class="callout callout-style-default callout-note callout-titled" title="accident report">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<p>It is not your responsibility to never make mistakes. But it <em>is</em> your responsibility to respond to errors in a timely, transparent, and professional manner <span class="citation" data-cites="bishop2018">(<a href="#ref-bishop2018" role="doc-biblioref">Bishop 2018</a>)</span>.<a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a> Regardless of how the error was identified (e.g., by yourself or by a reader), we recommend contacting the journal and requesting that they publish a correction statement (sometimes called an <em>erratum</em>). Several of us have corrected papers in the past. If the error is serious and cannot be fixed, you should consider retracting the article.</p>
+<div class="no-row-height column-margin column-container"><div id="fn12"><p><sup>12</sup>&nbsp;As jazz musician Miles Davis once said, “If you hit a wrong note, it’s the next note that you play that determines if it’s good or bad.”</p></div></div><div class="callout callout-style-default callout-note callout-titled" title="accident report">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-accident report
+<span class="screen-reader-only">Note</span>accident report
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -597,24 +768,24 @@ accident report
 </section>
 <section id="responsible-authorship-practices" class="level3 page-columns page-full" data-number="14.4.4">
 <h3 data-number="14.4.4" class="anchored" data-anchor-id="responsible-authorship-practices"><span class="header-section-number">14.4.4</span> Responsible authorship practices</h3>
-<p>It is an ethical responsibility to credit the individuals who worked on a research project—so that they can reap the benefits if the work is influential, but also so that they can take responsibility for errors.<a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a></p>
-<div class="no-row-height column-margin column-container"><div id="fn14"><p><sup>14</sup>&nbsp;In 1975, physicist and mathematician Jack H. Hetherington wrote a paper he intended to submit to the journal <em>Physical Review Letters</em>. We’re not sure why, but Hetherington wrote the paper in first person plural (i.e., referring to himself as “we” rather than “I”). He subsequently discovered that the journal would not accept the use of “we” for single-authored articles. Hetherington had painstakingly tapped out the article on his typewriter, an exercise he was not keen to repeat. Instead, he opted for a less taxing solution and named his cat—a feline by the name of F. D. C. Willard—as a coauthor. The paper was accepted and published <span class="citation" data-cites="hetherington1975">(<a href="#ref-hetherington1975" role="doc-biblioref">Hetherington and Willard 1975</a>)</span>.</p></div></div><p>Currently in academia, the <em>authorship model</em> is dominant. Under this model, authorship and authorship order are important signals about researchers’ contributions to a project. It is generally expected that to qualify for authorship, an individual should have made a substantial contribution to the research (e.g., design, data collection, analysis) and assisted with writing the research report, and that they take joint responsibility for the research along with the other coauthors. Individuals who worked on the project but don’t reach this threshold are mentioned in a separate acknowledgments section and not considered authors.</p>
+<p>It is an ethical responsibility to credit the individuals who worked on a research project—so that they can reap the benefits if the work is influential, but also so that they can take responsibility for errors.<a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a></p>
+<div class="no-row-height column-margin column-container"><div id="fn13"><p><sup>13</sup>&nbsp;In 1975, physicist and mathematician Jack H. Hetherington wrote a paper he intended to submit to the journal <em>Physical Review Letters</em>. We’re not sure why, but Hetherington wrote the paper in first person plural (i.e., referring to himself as “we” rather than “I”). He subsequently discovered that the journal would not accept the use of “we” for single-authored articles. Hetherington had painstakingly tapped out the article on his typewriter, an exercise he was not keen to repeat. Instead, he opted for a less taxing solution and named his cat—a feline by the name of F. D. C. Willard—as a coauthor. The paper was accepted and published <span class="citation" data-cites="hetherington1975">(<a href="#ref-hetherington1975" role="doc-biblioref">Hetherington and Willard 1975</a>)</span>.</p></div></div><p>Currently in academia, the <em>authorship model</em> is dominant. Under this model, authorship and authorship order are important signals about researchers’ contributions to a project. It is generally expected that to qualify for authorship, an individual should have made a substantial contribution to the research (e.g., design, data collection, analysis) and assisted with writing the research report, and that they take joint responsibility for the research along with the other coauthors. Individuals who worked on the project but don’t reach this threshold are mentioned in a separate acknowledgments section and not considered authors.</p>
 <p><strong>Authorship order</strong> is often understood to signal the nature and extent of an author’s contribution. In psychology (and neighboring disciplines), the first author and last author are typically the project leaders. Typically—though certainly not always!—the first author is a junior colleague who implements the project, and the last author is a senior colleague who supervises the project.</p>
 <p>It has been argued that the authorship model should be replaced with a more inclusive <em>contributorship</em> model in which all individuals who worked on the project are acknowledged as “contributors.” Unlike the authorship model, there is no arbitrary threshold for contributorship. The actual contributions of each individual are explicitly described, rather than relying on the implicit conventions of authorship order. The contributorship model may facilitate collaboration and ensure student assistants are properly credited.</p>
-<p>You will probably find that most journals still expect you to use the authorship model. Nevertheless, it is usually possible—and sometimes required—to include a contributorship statement in your article that describes what everybody did. For example, the CREDIT taxonomy provides a structured taxonomy of research tasks, making for uniform contributorship reporting.<a href="#fn15" class="footnote-ref" id="fnref15" role="doc-noteref"><sup>15</sup></a></p>
-<div class="no-row-height column-margin column-container"><div id="fn15"><p><sup>15</sup>&nbsp;For larger projects, the tool Tenzing allows for CREDIT statements to be generated automatically from standardized forms <span class="citation" data-cites="holcombe2020">(<a href="#ref-holcombe2020" role="doc-biblioref">Holcombe et al. 2020</a>)</span>.</p></div><div id="fn16"><p><sup>16</sup>&nbsp;If you find yourself in a situation where all authors have contributed equally, you may have to draw inspiration from historical examples and determine authorship order based on a 25-game croquet series <span class="citation" data-cites="hassell1974">(<a href="#ref-hassell1974" role="doc-biblioref">Hassell and May 1974</a>)</span>; rock, paper, scissors <span class="citation" data-cites="kupfer2004">(<a href="#ref-kupfer2004" role="doc-biblioref">Kupfer, Webbeking, and Franklin 2004</a>)</span>; or a brownie bake-off <span class="citation" data-cites="young1992">(<a href="#ref-young1992" role="doc-biblioref">Young and Young 1992</a>)</span>. Alternatively, you can adopt the method of <span class="citation" data-cites="lakens2018">Lakens, Scheel, and Isager (<a href="#ref-lakens2018" role="doc-biblioref">2018</a>)</span> and randomize the authorship order in R!</p></div></div><p>Because authorship is such an important signal in academia, it’s important to agree on an authorship plan with your collaborators (particularly who will be the first and last authors) as early as possible.<a href="#fn16" class="footnote-ref" id="fnref16" role="doc-noteref"><sup>16</sup></a></p>
+<p>You will probably find that most journals still expect you to use the authorship model. Nevertheless, it is usually possible—and sometimes required—to include a contributorship statement in your article that describes what everybody did. For example, the CREDIT taxonomy provides a structured taxonomy of research tasks, making for uniform contributorship reporting.<a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a></p>
+<div class="no-row-height column-margin column-container"><div id="fn14"><p><sup>14</sup>&nbsp;For larger projects, the tool Tenzing allows for CREDIT statements to be generated automatically from standardized forms <span class="citation" data-cites="holcombe2020">(<a href="#ref-holcombe2020" role="doc-biblioref">Holcombe et al. 2020</a>)</span>.</p></div><div id="fn15"><p><sup>15</sup>&nbsp;If you find yourself in a situation where all authors have contributed equally, you may have to draw inspiration from historical examples and determine authorship order based on a 25-game croquet series <span class="citation" data-cites="hassell1974">(<a href="#ref-hassell1974" role="doc-biblioref">Hassell and May 1974</a>)</span>; rock, paper, scissors <span class="citation" data-cites="kupfer2004">(<a href="#ref-kupfer2004" role="doc-biblioref">Kupfer, Webbeking, and Franklin 2004</a>)</span>; or a brownie bake-off <span class="citation" data-cites="young1992">(<a href="#ref-young1992" role="doc-biblioref">Young and Young 1992</a>)</span>. Alternatively, you can adopt the method of <span class="citation" data-cites="lakens2018">Lakens, Scheel, and Isager (<a href="#ref-lakens2018" role="doc-biblioref">2018</a>)</span> and randomize the authorship order in R!</p></div></div><p>Because authorship is such an important signal in academia, it’s important to agree on an authorship plan with your collaborators (particularly who will be the first and last authors) as early as possible.<a href="#fn15" class="footnote-ref" id="fnref15" role="doc-noteref"><sup>15</sup></a></p>
 </section>
 </section>
 <section id="chapter-summary-writing" class="level2" data-number="14.5">
 <h2 data-number="14.5" class="anchored" data-anchor-id="chapter-summary-writing"><span class="header-section-number">14.5</span> Chapter summary: Writing</h2>
 <p>Writing a scientific article can be a rewarding endpoint for the process of doing experimental research. But writing is a craft, and writing clearly—especially about complex and technical topics—can require substantial practice and many drafts. Further, writing about research comes with ethical and professional responsibilities that are different than the burdens of other kinds of writing. A scientific author must work to ensure the reproducibility of their findings and report on those findings responsibly, noting limitations and weaknesses as well as strengths.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="discussion questions">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-discussion questions
+<span class="screen-reader-only">Note</span>discussion questions
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -628,12 +799,12 @@ discussion questions
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled" title="readings">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-readings
+<span class="screen-reader-only">Note</span>readings
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -748,383 +919,256 @@ Zinsser, William. 2006. <em>On Writing Well: The Classic Guide to Writing Nonfic
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
     }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
         }
       }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
       return false;
     }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
       }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
     }
-    return false;
-  }
-  const onCopySuccess = function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
-      }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
       for (const childEl of codeEl.children) {
         if (isCodeAnnotation(childEl)) {
           childEl.remove();
         }
       }
       return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
-  });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
     });
-    clipboardModal.on('success', onCopySuccess);
-  }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
     }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start',
-    };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
           }
         }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
         }
-        return container.innerHTML
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
       } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
       }
     }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
           }
         } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
+            const note = htmlDoc.querySelector('main.content');
             if (note !== null) {
-              const html = processXRef(id, note);
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -1132,185 +1176,161 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            div.style.left = 0;
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+      }, function(instance) {
       });
     }
-  }
-});
-</script>
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./013-management.html" class="pagination-link" aria-label="Project management">
