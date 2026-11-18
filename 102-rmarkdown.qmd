@@ -239,6 +239,60 @@ We did this using inline code blocks, e.g. `` `{{r}} round(ts$parameter, 2)`  ``
 
 Rounding $p$-values can occasionally get you in trouble. It's very easy to have an output of $p = 0$ when in fact $p$ can never be exactly equal to 0. Nonetheless, this can help you prevent the kinds of rounding errors that would get picked up by software like `statcheck`.
 
+## Checking your data against its codebook
+
+Defensive programming (@sec-writing) includes small tests that stop your analysis when the data break an assumption. A codebook (@sec-management) tells you which assumptions to test. Here is a short example in base R using `stopifnot()`. Each condition is labeled with a message, and the first condition that fails stops the code with that message.
+
+```{r}
+#| echo: true
+#| cache: false
+
+# Codebook: record_id is a unique trial label; condition is a text label;
+# rt_ms is reaction time in milliseconds, a number from 100 to 5000.
+trials <- data.frame(
+  record_id = c("t1", "t2", "t3", "t4"),
+  condition = c("congruent", "incongruent", "congruent", "incongruent"),
+  rt_ms     = c(200, 250, 300, 350)
+)
+
+check_trials <- function(d) {
+  stopifnot(
+    "a codebook column is missing" =
+      all(c("record_id", "condition", "rt_ms") %in% names(d)),
+    "record_id is repeated" = !any(duplicated(d[["record_id"]])),
+    "rt_ms must be numbers with no missing values" =
+      is.numeric(d[["rt_ms"]]) && !anyNA(d[["rt_ms"]]),
+    "rt_ms is outside 100-5000 ms" =
+      all(d[["rt_ms"]] >= 100 & d[["rt_ms"]] <= 5000)
+  )
+}
+```
+
+The column check comes first. If the `record_id` column is missing, `d[["record_id"]]` returns `NULL`, and the test for repeated IDs passes because there is nothing to repeat. The code also reads columns with `[[`, as in `d[["rt_ms"]]`, and avoids `$`. If a data frame has no `rt_ms` column, `d[["rt_ms"]]` returns `NULL`, but `d$rt_ms` silently returns a column whose name starts with `rt_ms`, such as `rt_ms_raw`.
+
+In your own document, call `check_trials()` right after you read in the data. If the data break a rule, rendering stops with that message, so the problem cannot flow silently into your results. Here we catch each error instead, so that six inputs can be shown side by side: the original data, two harmless rearrangements of it, and three common mistakes.
+
+```{r}
+#| echo: true
+#| cache: false
+
+cases <- list(
+  "original data"       = trials,
+  "rows reordered"      = trials[c(4, 1, 3, 2), ],
+  "columns reordered"   = trials[c("rt_ms", "record_id", "condition")],
+  "record_id repeated"  = trials[c(1, 1, 3, 4), ],
+  "rt_ms renamed to rt" = setNames(trials, c("record_id", "condition", "rt")),
+  "one rt_ms negative"  = transform(trials, rt_ms = c(200, -250, 300, 350))
+)
+result <- sapply(cases, function(d) tryCatch({
+  check_trials(d)
+  paste0("passes (mean RT ", mean(d[["rt_ms"]]), " ms)")
+}, error = conditionMessage))
+kable(data.frame(input = names(cases), result = result), row.names = FALSE)
+```
+
+A check like this catches only the problems you wrote rules for, so add a rule whenever you find a new way your data can go wrong.
+
 ## Writing APA-format papers
 
 The end-game of reproducible research is to render your entire paper into a submittable APA-style writeup\indexC{American Psychological Association (APA)}. Managing APA format is a pain in the best of times. The [apaquarto extension](https://wjschne.github.io/apaquarto/) allows you to simplify this task by rendering your manuscript directly from Quarto.^[The corresponding package for R Markdown is [papaja](https://frederikaust.com/papaja_man/).]
